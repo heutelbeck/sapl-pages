@@ -5,7 +5,7 @@ body {
 
 .card {
     background: transparent;
-    color: white;
+    color: #dadada;
     border: none;
 }
 
@@ -17,6 +17,10 @@ body {
 .main {
     display: flex;
     justify-content: stretch;
+    color: #dadada;
+}
+
+h1,h2,h3,h4,h5,h6 {
     color: white;
 }
 
