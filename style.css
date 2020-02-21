@@ -24,12 +24,27 @@ h1,h2,h3,h4,h5,h6 {
     color: white;
 }
 
+.header-brand-content {
+    display: flex;
+    align-items: center;
+}
+
+.header-brand-content img{
+    display: inline-block;
+    height: 60px;
+    margin-right: 10px;
+}
+
+.header-brand-content h2{
+    display: inline-block;
+}
+
 .sidebar-menu {
     left: 0;
 
     min-height: 100vh;
     min-width: 300px;
-    background-color: #235f7b;
+    background-color: rgb(2,131,146);
     padding: 20px 0;
 }
 
@@ -103,7 +118,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 footer {
-    background-color: #1a475c;
+    background-color: rgb(2,131,146);
     padding: 30px;
 }
 
@@ -114,7 +129,7 @@ footer {
 
 .slider {
     position: relative;
-    background: linear-gradient(56deg, rgba(130, 130, 130, 0.05) 0%, rgba(130, 130, 130, 0.05) 33.333%,rgba(255, 255, 255, 0.05) 33.333%, rgba(255, 255, 255, 0.05) 66.666%,rgba(198, 198, 198, 0.05) 66.666%, rgba(198, 198, 198, 0.05) 99.999%),linear-gradient(29deg, rgba(94, 94, 94, 0.05) 0%, rgba(94, 94, 94, 0.05) 33.333%,rgba(185, 185, 185, 0.05) 33.333%, rgba(185, 185, 185, 0.05) 66.666%,rgba(113, 113, 113, 0.05) 66.666%, rgba(113, 113, 113, 0.05) 99.999%),linear-gradient(129deg, rgba(196, 196, 196, 0.05) 0%, rgba(196, 196, 196, 0.05) 33.333%,rgba(148, 148, 148, 0.05) 33.333%, rgba(148, 148, 148, 0.05) 66.666%,rgba(24, 24, 24, 0.05) 66.666%, rgba(24, 24, 24, 0.05) 99.999%),linear-gradient(76deg, rgba(19, 19, 19, 0.05) 0%, rgba(19, 19, 19, 0.05) 33.333%,rgba(159, 159, 159, 0.05) 33.333%, rgba(159, 159, 159, 0.05) 66.666%,rgba(108, 108, 108, 0.05) 66.666%, rgba(108, 108, 108, 0.05) 99.999%),linear-gradient(112deg, rgba(225, 225, 225, 0.05) 0%, rgba(225, 225, 225, 0.05) 33.333%,rgba(13, 13, 13, 0.05) 33.333%, rgba(13, 13, 13, 0.05) 66.666%,rgba(81, 81, 81, 0.05) 66.666%, rgba(81, 81, 81, 0.05) 99.999%),linear-gradient(90deg, rgb(17, 89, 120),rgb(19, 116, 158));
+    background: linear-gradient(56deg, rgba(130, 130, 130, 0.05) 0%, rgba(130, 130, 130, 0.05) 33.333%,rgba(255, 255, 255, 0.05) 33.333%, rgba(255, 255, 255, 0.05) 66.666%,rgba(198, 198, 198, 0.05) 66.666%, rgba(198, 198, 198, 0.05) 99.999%),linear-gradient(29deg, rgba(94, 94, 94, 0.05) 0%, rgba(94, 94, 94, 0.05) 33.333%,rgba(185, 185, 185, 0.05) 33.333%, rgba(185, 185, 185, 0.05) 66.666%,rgba(113, 113, 113, 0.05) 66.666%, rgba(113, 113, 113, 0.05) 99.999%),linear-gradient(129deg, rgba(196, 196, 196, 0.05) 0%, rgba(196, 196, 196, 0.05) 33.333%,rgba(148, 148, 148, 0.05) 33.333%, rgba(148, 148, 148, 0.05) 66.666%,rgba(24, 24, 24, 0.05) 66.666%, rgba(24, 24, 24, 0.05) 99.999%),linear-gradient(76deg, rgba(19, 19, 19, 0.05) 0%, rgba(19, 19, 19, 0.05) 33.333%,rgba(159, 159, 159, 0.05) 33.333%, rgba(159, 159, 159, 0.05) 66.666%,rgba(108, 108, 108, 0.05) 66.666%, rgba(108, 108, 108, 0.05) 99.999%),linear-gradient(112deg, rgba(225, 225, 225, 0.05) 0%, rgba(225, 225, 225, 0.05) 33.333%,rgba(13, 13, 13, 0.05) 33.333%, rgba(13, 13, 13, 0.05) 66.666%,rgba(81, 81, 81, 0.05) 66.666%, rgba(81, 81, 81, 0.05) 99.999%),linear-gradient(90deg, rgb(2,131,146),rgb(2,131,146));
 }
 
 .slider .slider-content {
