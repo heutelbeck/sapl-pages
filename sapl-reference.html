@@ -529,7 +529,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Dominic Heutelbeck</span><br>
 <span id="revnumber">version 2.0,</span>
-<span id="revdate">2019-06-07</span>
+<span id="revdate">2020-04-22</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -806,6 +806,33 @@ where
     <span class="tag">&lt;artifactId&gt;</span>sapl-pdp-embedded<span class="tag">&lt;/artifactId&gt;</span>
     <span class="tag">&lt;version&gt;</span>2.0.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add the matching Maven repositories. Currentyl SAL is not yet hosted on the central repositories.:</p>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;repositories&gt;</span>
+    <span class="tag">&lt;repository&gt;</span>
+        <span class="tag">&lt;id&gt;</span>openconjurer-public<span class="tag">&lt;/id&gt;</span>
+        <span class="tag">&lt;name&gt;</span>OpenConjurer Nexus Maven Release Repository<span class="tag">&lt;/name&gt;</span>
+        <span class="tag">&lt;url&gt;</span>https://nexus.openconjurer.org/repository/releases/<span class="tag">&lt;/url&gt;</span>
+        <span class="tag">&lt;snapshots&gt;</span>
+            <span class="tag">&lt;enabled&gt;</span>false<span class="tag">&lt;/enabled&gt;</span>
+        <span class="tag">&lt;/snapshots&gt;</span>
+    <span class="tag">&lt;/repository&gt;</span>
+    <span class="tag">&lt;repository&gt;</span>
+        <span class="tag">&lt;id&gt;</span>openconjurer-public-snapshots<span class="tag">&lt;/id&gt;</span>
+        <span class="tag">&lt;name&gt;</span>OpenConjurer Nexus Maven Snapshot Repository<span class="tag">&lt;/name&gt;</span>
+        <span class="tag">&lt;url&gt;</span>https://nexus.openconjurer.org/repository/snapshots/<span class="tag">&lt;/url&gt;</span>
+        <span class="tag">&lt;snapshots&gt;</span>
+            <span class="tag">&lt;enabled&gt;</span>true<span class="tag">&lt;/enabled&gt;</span>
+            <span class="tag">&lt;updatePolicy&gt;</span>always<span class="tag">&lt;/updatePolicy&gt;</span>
+        <span class="tag">&lt;/snapshots&gt;</span>
+    <span class="tag">&lt;/repository&gt;</span>
+<span class="tag">&lt;/repositories&gt;</span></code></pre>
 </div>
 </div>
 </li>
@@ -3342,11 +3369,7 @@ NUMBER              = ? JavaScript number definition ?;</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0<br>
-Last updated 2020-01-25 20:04:27 +0100
-<ul>
-<li><a href="imprint.html">Imprint</a></li>
-<li><a href="data-privacy.html">Privacy Policy</a></li>
-</ul>
+Last updated 2020-04-22 12:57:22 +0200
 </div>
 </div>
 </body>
