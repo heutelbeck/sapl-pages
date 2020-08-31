@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Matomo -->
-<script type="text/javascript">
-  var _paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(["disableCookies"]);
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//www.ftk.de/statistik/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '2']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<!-- End Matomo Code -->
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -544,8 +528,8 @@ table.CodeRay td.code>pre{padding:0}
 <h1>SAPL - Structure and Agency Policy Language</h1>
 <div class="details">
 <span id="author" class="author">Dominic Heutelbeck</span><br>
-<span id="revnumber">version 2.0,</span>
-<span id="revdate">2020-04-22</span>
+<span id="revnumber">version 2.0-SNAPSHOT,</span>
+<span id="revdate">2020-08-31</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -606,7 +590,6 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#custom-attribute-finders">Custom Attribute Finders</a></li>
 </ul>
 </li>
-<li><a href="#appendix-formal-ebnf-grammar">Appendix: Formal EBNF grammar</a></li>
 </ul>
 </div>
 </div>
@@ -615,8 +598,8 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SAPL (Structure and Agency Policy Language) describes both a <strong>domain specific language (DSL)</strong> for expressing access control policies and a <strong>publish/subscribe protocol</strong> based on <a href="http://json.org/">JSON</a>.
-Policies expressed in the SAPL policy language describe conditions for access control in applications and distributed systems. The underlying policy engine implements a variant of Attribute-based Access control (ABAC) which is centered around data streams and reactive programming patterns. Namely, the SAPL policy engine implements Attribute Stream-based Access Control (ASBAC).</p>
+<p>SAPL (Streaming Attribute or Structure and Agency Policy Language) describes both a <strong>domain specific language (DSL)</strong> for expressing access control policies and a <strong>publish/subscribe protocol</strong> based on <a href="http://json.org/">JSON</a>.
+Policies expressed in SAPL describe conditions for access control in applications and distributed systems. The underlying policy engine implements a variant of Attribute-based Access control (ABAC) which is enables processing of data streams and follows reactive programming patterns. Namely, the SAPL policy engine implements Attribute Stream-based Access Control (ASBAC).</p>
 </div>
 <div class="paragraph">
 <p>A typical scenario for the application of SAPL would be a subject (e.g., a user or system) attempting to take an action (e.g., read or cancel an order) on a protected resource (e.g., a domain object of an application or a file). The subject makes a subscription request to the system (e.g., an application) for executing the action on the resource. The system implements a <strong>policy enforcement point (PEP)</strong> protecting the resources. The PEP collects information about the subject, action, resource, and potential other relevant data in an authorization subscription request and sends it to a <strong>policy decision point (PDP)</strong> which checks SAPL policies in order to decide whether access to the resource should be permitted as requested. This decision is packed in an authorization decision object and sent back to the PEP which accordingly either grants access according to the decision or prevents access to the resource. All data sources for the decision are subscribed to by the PDP and new decisions are sent to the PEP whenever indicated by the policies and data sources.</p>
@@ -826,7 +809,7 @@ where
 </div>
 </li>
 <li>
-<p>Add the matching Maven repositories. Currentyl SAL is not yet hosted on the central repositories.:</p>
+<p>Add the SAPL Maven repositories. Currently SAPL is not yet hosted on the central repositories:</p>
 <div class="listingblock">
 <div class="title">pom.xml</div>
 <div class="content">
@@ -1006,7 +989,7 @@ authzDecisions.subscribe(authzDecision -&gt; <span class="predefined-type">Syste
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-A PEP strongly depends on the application domain. SAPL comes with a default PEP implementation using a passed in constraint handler service to handle obligations and advices contained in an authorization decision. In the future, more generic PEPs integrating with various platforms (e.g., spring security) will be provided.
+A PEP strongly depends on the application domain. SAPL comes with a default PEP implementation using a passed in constraint handler service to handle obligations and advice contained in an authorization decision. PEPs should be integrated with the platforms and frameworks used by the application developers. SAPL comes with an Spring Security integration and matching spring-boot-starter modules.
 </td>
 </tr>
 </table>
@@ -2436,7 +2419,7 @@ Both <code>[3, 2, 2]</code> and <code>[2, 3]</code> return the same result.
 <p>In SAPL it is possible to receive attributes which are not contained in the authorization subscription. Those attributes can be provided by external PIPs and obtained through attribute finders. An attribute finder is called via the selection step <code>.&lt;finder.name&gt;</code>. <code>finder.name</code> either is a fully qualified attribute finder name or can be a shorter name if imports are used (the finder name or the library alias followed by a period <code>.</code> and the finder name).</p>
 </div>
 <div class="paragraph">
-<p>The attribute finder receives the result of the previous selection as an argument and returns a JSON value.</p>
+<p>The attribute finder receives the result of the previous selection as an argument and returns a JSON value.  Optionally, an attribute finder may be supplied with a list of parameters: <code>.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3249,6 +3232,9 @@ Transformation uncertainty may not occur using the <code>only-one-applicable</co
 <p>The concept of attribute finders can be used in a flexible manner: There may be finders which take an object (like in the example above, <code>subject.&lt;user.age&gt;</code>) as well as attribute finders which expect a primitive value (e.g., <code>subject.id.&lt;user.age&gt;</code> with <code>id</code> being a number). In addition attribute finders may also return an object which can be traversed in future selection steps (e.g., <code>subject.&lt;user.profile&gt;.age</code>). It is even possible to join multiple attribute finder steps in one expression (e.g., <code>subject.&lt;user.profile&gt;.supervisor.&lt;user.profile&gt;.age</code>).</p>
 </div>
 <div class="paragraph">
+<p>Optionally, an attribute finder may be supplied with a list of parameters: <code>.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>.</p>
+</div>
+<div class="paragraph">
 <p>Attribute finders often receive the information from external data sources such as files, databases or HTTP requests which may take a certain amount of time. Therefore they must not be used in a target expression. Attribute finders can access environment variables.</p>
 </div>
 <div class="sect2">
@@ -3296,96 +3282,11 @@ Transformation uncertainty may not occur using the <code>only-one-applicable</co
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="appendix-formal-ebnf-grammar"><a class="anchor" href="#appendix-formal-ebnf-grammar"></a>Appendix: Formal EBNF grammar</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The SAPL syntax is described by the following grammar provided in Extended Backus–Naur form:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code>(* SAPL grammar in EBNF, according to ISO/IEC 14977 *)
-
-sapl                = { import }, ( policy-set | policy );
-import              = "import", ID, { ".", ID }, ".", ( ID | "*" )
-                    | "import", { ID, "." }, ID, "as", ID;
-policy-set          = "set", STRING, combining-algorithm,
-                      [ "for", target-expression ],
-                      { value-definition, ";" }, policy, { policy };
-combining-algorithm = "deny-overrides" | "permit-overrides"
-                    | "first-applicable" | "only-one-applicable"
-                    | "deny-unless-permit" | "permit-unless-deny";
-target-expression   = expression;
-value-definition    = "val", ID, ":=", expression ;
-policy              = "policy", STRING, entitlement,
-                      [ target-expression ], [ "where", policy-body ],
-                      [ "obligation", expression ],
-                      [ "advice", expression ],
-                      [ "transform" expression ];
-entitlement         = "permit" | "deny";
-policy-body         = statement, ";", { statement, ";" };
-statement           = value-definition | expression;
-expression          = addition;
-addition            = multiplication,
-                      { ( "+" | "-" | "&amp;&amp;" | "&amp;" ), multiplication };
-multiplication      = comparison,
-                      { ( "*" | "/" | "||" | "|"), comparison };
-comparison          = prefixed,[ ( "==" | "=~" | "&lt;" | "&lt;="
-                                   | "&gt;=" | "&gt;" | "in" ),
-                      prefixed ] ;
-prefixed            = [ ( "-" | "!" ) ], basic-expression;
-basic-expression    = ( value | "@" | ID | function-call
-                      | ( "(", expression, ")" ) ),
-                      { selection-step }, [ ("|-", filter)
-                      | ( "::", value ) ];
-function-call       = ID, { ".", ID }, "(", [ expression,
-                      {",", expression } ], ")" ;
-selection-step      = key-step | index-step | wildcard-step |
-                    | rec-descent-step | rec-wildcard-step
-                    | slicing-step | expression-step | condition-step
-                    | union-step | attr-finder-step
-key-step            = ".", ID
-                    | "[", STRING, "]";
-index-step          = "[", NUMBER, "]";
-wildcard-step       = ".", "*"
-                    | "[", "*", "]" ;
-rec-descent-step    = "..", ID
-                    | "..", "[", STRING, "]"
-                    | "..", "[", NUMBER, "]";
-rec-wildcard-step   = "..", "*"
-                    | "..", "[", "*", "]";
-slicing-step        = "[", [ NUMBER ], ":", [ [ NUMBER ],
-                      [ ":", [ NUMBER ] ] ], "]";
-expression-step     = "[", "(", expression, ")", "]";
-condition-step      = "[", "?", "(", expression, ")", "]";
-union-step          = "[", NUMBER, ",", NUMBER, { ",", NUMBER }, "]"
-                    | "[", ID, ",", ID, { ",", ID }, "]";
-attr-finder-step    = ".", "&lt;", ID, { ".", ID }, "&gt;";
-filter              = [ "each" ], filter-function
-                    | "{", filter-statement, { ",", filter-statement }, "}";
-filter-statement    = [ "each" ], "@", {selection-step}, ":", filter-function;
-filter-function     = ID, { ".", ID },
-                      [ "(", [ expression, { ",", expression } ], ")" ];
-value               = object | array | NUMBER | STRING | "true" | "false"
-                    | "null" | "undefined";
-object              = "{", [ STRING, ":", expression,
-                      { ",", STRING, ":", expression } ], "}";
-array               = "[", [ expression, { ",", expression } ], "]" ;
-ID                  = ( LETTER | "_" | "$" ), { LETTER | DIGIT | "_" | "$" };
-LETTER              = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z" ;
-DIGIT               = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
-STRING              = '"', ? any character except " ?, '"'
-                    | "'", ? any character except ' ?, "'";
-NUMBER              = ? JavaScript number definition ?;</code></pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.0<br>
-Last updated 2020-04-22 12:57:22 +0200
+Version 2.0-SNAPSHOT<br>
+Last updated 2020-08-31 12:54:03 +0200
 </div>
 </div>
 </body>
