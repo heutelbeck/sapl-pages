@@ -791,95 +791,155 @@ where
 <div class="sect2">
 <h3 id="getting-started"><a class="anchor" href="#getting-started"></a>Getting Started</h3>
 <div class="paragraph">
-<p>SAPL provides an embedded PDP including an embedded PRP with a file system policy store which can be easily integrated in a Java application:</p>
+<p>SAPL provides an embedded PDP including an embedded PRP with a file system policy store which can be easily integrated in a Java applications. Besides this guide, the quickest way to start is to build upon the demo projects hosted on <a href="https://github.com/heutelbeck/sapl-demos">GitHub</a> some good demos to start from are the simple no-framework <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-embedded">Embedded PDP Demo</a> or the full-stack <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-mvc-app">Spring MVC Project</a> or the <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-reactive">Reactive Vaadin Application</a>.</p>
 </div>
+<div class="sect3">
+<h4 id="maven-dependencies"><a class="anchor" href="#maven-dependencies"></a>Maven Dependencies</h4>
+<div class="paragraph">
+<p>Currently, all SAPL artifacts are hosted on GitHub. To load these as dependencies into your Java project, you need to generate aGitHub personal access token (<a href="https://github.com/settings/tokens" class="bare">https://github.com/settings/tokens</a>), as GitHub does currently not allow unauthenticated access to Maven repositories.
+On availability, the 2.0.0 release will be pushed to the central repository, eliminating this step.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add your GitHub personal access token to your <code>settings.xml</code> file, usually located at: <code>~/.m2/settings.xml</code>.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML">   <span class="tag">&lt;/servers&gt;</span>
+      <span class="tag">&lt;server&gt;</span>
+         <span class="tag">&lt;id&gt;</span>sapl<span class="tag">&lt;/id&gt;</span>
+         <span class="tag">&lt;username&gt;</span>USERNAME<span class="tag">&lt;/username&gt;</span>
+         <span class="tag">&lt;password&gt;</span>TOKEN<span class="tag">&lt;/password&gt;</span>
+      <span class="tag">&lt;/server&gt;</span>
+   <span class="tag">&lt;/servers&gt;</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SAPL requires Java 11 or later</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML">   <span class="tag">&lt;properties&gt;</span>
+      <span class="tag">&lt;java.version&gt;</span>11<span class="tag">&lt;/java.version&gt;</span>
+      <span class="tag">&lt;maven.compiler.source&gt;</span>${java.version}<span class="tag">&lt;/maven.compiler.source&gt;</span>
+      <span class="tag">&lt;maven.compiler.target&gt;</span>${java.version}<span class="tag">&lt;/maven.compiler.target&gt;</span>
+   <span class="tag">&lt;/properties&gt;</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a SAPL dependency to your application. When using Maven you can add the following dependencies to your project&#8217;s <code>pom.xml</code>:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML">   <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>io.sapl<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>sapl-pdp-embedded<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;version&gt;</span>2.0.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+   <span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add the SAPL Maven repository to your <code>pom.xml</code>:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML">    <span class="tag">&lt;repositories&gt;</span>
+        <span class="comment">&lt;!-- The SAPL dependencies are hosted in this repository. A matching server
+            entry has to be set in the settings.xml using a GitHub personal access token --&gt;</span>
+        <span class="tag">&lt;repository&gt;</span>
+            <span class="tag">&lt;id&gt;</span>sapl<span class="tag">&lt;/id&gt;</span>
+            <span class="tag">&lt;name&gt;</span>SAPL Maven Repository<span class="tag">&lt;/name&gt;</span>
+            <span class="tag">&lt;url&gt;</span>https://maven.pkg.github.com/heutelbeck/packages<span class="tag">&lt;/url&gt;</span>
+            <span class="tag">&lt;snapshots&gt;</span>
+                <span class="tag">&lt;enabled&gt;</span>true<span class="tag">&lt;/enabled&gt;</span>
+                <span class="tag">&lt;updatePolicy&gt;</span>always<span class="tag">&lt;/updatePolicy&gt;</span>
+            <span class="tag">&lt;/snapshots&gt;</span>
+        <span class="tag">&lt;/repository&gt;</span>
+    <span class="tag">&lt;/repositories&gt;</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you plan to use more SAPL dependencies, a useful bill of materials POM is offered, centralizing the dependency management for SAPL artifacts:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML">   <span class="tag">&lt;dependencyManagement&gt;</span>
+      <span class="tag">&lt;dependencies&gt;</span>
+         <span class="tag">&lt;dependency&gt;</span>
+            <span class="tag">&lt;groupId&gt;</span>io.sapl<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>sapl-bom<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>${sapl.version}<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;type&gt;</span>pom<span class="tag">&lt;/type&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>import<span class="tag">&lt;/scope&gt;</span>
+         <span class="tag">&lt;/dependency&gt;</span>
+      <span class="tag">&lt;/dependencies&gt;</span>
+   <span class="tag">&lt;/dependencyManagement&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="coding"><a class="anchor" href="#coding"></a>Coding</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Add SAPL to your application. When using Maven you can add the following dependencies to your project&#8217;s <code>pom.xml</code>:</p>
-<div class="listingblock">
-<div class="title">pom.xml</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;dependency&gt;</span>
-    <span class="tag">&lt;groupId&gt;</span>io.sapl<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>sapl-pdp-embedded<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.0.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Add the SAPL Maven repositories. Currently SAPL is not yet hosted on the central repositories:</p>
-<div class="listingblock">
-<div class="title">pom.xml</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;repositories&gt;</span>
-    <span class="tag">&lt;repository&gt;</span>
-        <span class="tag">&lt;id&gt;</span>openconjurer-public<span class="tag">&lt;/id&gt;</span>
-        <span class="tag">&lt;name&gt;</span>OpenConjurer Nexus Maven Release Repository<span class="tag">&lt;/name&gt;</span>
-        <span class="tag">&lt;url&gt;</span>https://nexus.openconjurer.org/repository/releases/<span class="tag">&lt;/url&gt;</span>
-        <span class="tag">&lt;snapshots&gt;</span>
-            <span class="tag">&lt;enabled&gt;</span>false<span class="tag">&lt;/enabled&gt;</span>
-        <span class="tag">&lt;/snapshots&gt;</span>
-    <span class="tag">&lt;/repository&gt;</span>
-    <span class="tag">&lt;repository&gt;</span>
-        <span class="tag">&lt;id&gt;</span>openconjurer-public-snapshots<span class="tag">&lt;/id&gt;</span>
-        <span class="tag">&lt;name&gt;</span>OpenConjurer Nexus Maven Snapshot Repository<span class="tag">&lt;/name&gt;</span>
-        <span class="tag">&lt;url&gt;</span>https://nexus.openconjurer.org/repository/snapshots/<span class="tag">&lt;/url&gt;</span>
-        <span class="tag">&lt;snapshots&gt;</span>
-            <span class="tag">&lt;enabled&gt;</span>true<span class="tag">&lt;/enabled&gt;</span>
-            <span class="tag">&lt;updatePolicy&gt;</span>always<span class="tag">&lt;/updatePolicy&gt;</span>
-        <span class="tag">&lt;/snapshots&gt;</span>
-    <span class="tag">&lt;/repository&gt;</span>
-<span class="tag">&lt;/repositories&gt;</span></code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>In your application, create a new <code>EmbeddedPolicyDecisionPoint</code> (the builder methods declare multiple Exceptions which must be handled). The arguments <code>"C:/path/to/config"</code> and <code>"C:/path/to/policies"</code> are strings specifying the directories which contain the configuration file <code>pdp.json</code> and all policies respectively.</p>
+<p>In your application, create a new <code>EmbeddedPolicyDecisionPoint</code>. The argument <code>"~/sapl"</code> specifies directory which contain the configuration file <code>pdp.json</code> and all policies.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="Java"><table class="CodeRay"><tr>
   <td class="line-numbers"><pre>1
-2
-3
-4
 </pre></td>
-  <td class="code"><pre>EmbeddedPolicyDecisionPoint pdp = EmbeddedPolicyDecisionPoint.builder()
-    .withFilesystemPDPConfigurationProvider(<span class="string"><span class="delimiter">&quot;</span><span class="content">C:/path/to/config</span><span class="delimiter">&quot;</span></span>)
-    .withFilesystemPolicyRetrievalPoint(<span class="string"><span class="delimiter">&quot;</span><span class="content">C:/path/to/policies</span><span class="delimiter">&quot;</span></span>, IndexType.FAST)
-    .build();</pre></td>
+  <td class="code"><pre>EmbeddedPolicyDecisionPoint pdp = PolicyDecisionPointFactory.filesystemPolicyDecisionPoint(<span class="string"><span class="delimiter">&quot;</span><span class="content">~/sapl</span><span class="delimiter">&quot;</span></span>);</pre></td>
 </tr></table></code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Add a <code>pdp.json</code> with the following content to the directory <code>C:/path/to/config</code>:</p>
+<p>Add a <code>pdp.json</code> with the following content to the directory "~/sapl":</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="linenums">{
     &quot;algorithm&quot;: &quot;DENY_UNLESS_PERMIT&quot;,
-    &quot;variables&quot;: {},
-    &quot;attributeFinders&quot;: [],
-    &quot;libraries&quot;: []
+    &quot;variables&quot;: {}
 }</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Add some policy sets or policies to <code>C:/path/to/policies</code>. Both policy sets and policies are files with the extension <code>.sapl</code>. E.g., you could add the following policy:</p>
+<p>Add some policy sets or policies to <code>"~/sapl"</code>. Both policy sets and policies are files with the extension <code>.sapl</code>. E.g., you could add the following policy:</p>
+</li>
+</ol>
+</div>
 <div class="listingblock">
-<div class="title">test.sapl</div>
 <div class="content">
 <pre class="CodeRay highlight"><code>policy "test_policy"
 permit subject == "admin"</code></pre>
 </div>
 </div>
-</li>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Obtain a decision using the PDP&#8217;s <code>decide</code> method.</p>
-<div class="paragraph">
-<p>The whole source code to make use of the <code>test.sapl</code> policy could look as follows:</p>
+</li>
+</ol>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -887,68 +947,8 @@ permit subject == "admin"</code></pre>
   <td class="line-numbers"><pre>1
 2
 3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
 </pre></td>
-  <td class="code"><pre><span class="keyword">import</span> <span class="include">java.io.IOException</span>;
-<span class="keyword">import</span> <span class="include">java.net.URISyntaxException</span>;
-
-<span class="keyword">import</span> <span class="include">com.fasterxml.jackson.databind.node.JsonNodeFactory</span>;
-
-<span class="keyword">import</span> <span class="include">io.sapl.api.functions.FunctionException</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.api.interpreter.PolicyEvaluationException</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.api.pdp.PDPConfigurationException</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.api.pdp.PolicyDecisionPoint</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.api.pdp.AuthorizationSubscription</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.api.pdp.AuthorizationDecision</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.api.pip.AttributeException</span>;
-<span class="keyword">import</span> <span class="include">io.sapl.pdp.embedded.EmbeddedPolicyDecisionPoint.Builder.IndexType</span>;
-<span class="keyword">import</span> <span class="include">reactor.core.publisher.Flux</span>;
-
-PolicyDecisionPoint pdp = <span class="predefined-constant">null</span>;
-<span class="keyword">try</span> {
-    pdp = EmbeddedPolicyDecisionPoint.builder()
-            .withFilesystemPDPConfigurationProvider(<span class="string"><span class="delimiter">&quot;</span><span class="content">C:/path/to/config</span><span class="delimiter">&quot;</span></span>)
-            .withFilesystemPolicyRetrievalPoint(<span class="string"><span class="delimiter">&quot;</span><span class="content">C:/path/to/policies</span><span class="delimiter">&quot;</span></span>, IndexType.FAST)
-            .build();
-}
-<span class="keyword">catch</span> (<span class="exception">IOException</span> | <span class="exception">URISyntaxException</span> | PolicyEvaluationException |
-       PDPConfigurationException | FunctionException | <span class="exception">AttributeException</span> e) {
-    e.printStackTrace();
-}
-
-JsonNodeFactory JSON = JsonNodeFactory.instance;
-AuthorizationSubscription authzSubscription = <span class="keyword">new</span> AuthorizationSubscription(JSON.textNode(<span class="string"><span class="delimiter">&quot;</span><span class="content">admin</span><span class="delimiter">&quot;</span></span>),
-    JSON.textNode(<span class="string"><span class="delimiter">&quot;</span><span class="content">an_action</span><span class="delimiter">&quot;</span></span>), JSON.textNode(<span class="string"><span class="delimiter">&quot;</span><span class="content">a_resource</span><span class="delimiter">&quot;</span></span>), <span class="predefined-constant">null</span>);
-
+  <td class="code"><pre>var subscription = AuthorizationSubscription.of(<span class="string"><span class="delimiter">&quot;</span><span class="content">admin</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">an_action</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">a_resource</span><span class="delimiter">&quot;</span></span>);
 Flux&lt;AuthorizationDecision&gt; authzDecisions = pdp.decide(authzSubscription);
 authzDecisions.subscribe(authzDecision -&gt; <span class="predefined-type">System</span>.out.println(authzDecision.getDecision()));</pre></td>
 </tr></table></code></pre>
@@ -957,8 +957,9 @@ authzDecisions.subscribe(authzDecision -&gt; <span class="predefined-type">Syste
 <div class="paragraph">
 <p>The console output should be <code>PERMIT</code>. With subject set to <code>"alice"</code> instead of <code>"admin"</code>, the output should be <code>DENY</code>.</p>
 </div>
-</li>
-</ol>
+<div class="paragraph">
+<p>Not at runtime you can modify the policy, add or remove polices and observe how the decision change.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2355,6 +2356,18 @@ Applied to the Array <code>[1, 2, 3, 4, 5]</code>, the selection step <code>[-2:
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If start and end are to be left empty, the two colons must be separated by a whitespace to avoid confusion with the sub-template operator. So write <code>[: :-2]</code> instead of <code>[::-2]</code>.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect5">
 <h6 id="index-union-index1-index2"><a class="anchor" href="#index-union-index1-index2"></a>Index Union <code>[index1, index2, &#8230;&#8203;]</code></h6>
@@ -2416,10 +2429,32 @@ Both <code>[3, 2, 2]</code> and <code>[2, 3]</code> return the same result.
 <div class="sect5">
 <h6 id="attribute-finder-finder-name"><a class="anchor" href="#attribute-finder-finder-name"></a>Attribute Finder <code>.&lt;finder.name&gt;</code></h6>
 <div class="paragraph">
-<p>In SAPL it is possible to receive attributes which are not contained in the authorization subscription. Those attributes can be provided by external PIPs and obtained through attribute finders. An attribute finder is called via the selection step <code>.&lt;finder.name&gt;</code>. <code>finder.name</code> either is a fully qualified attribute finder name or can be a shorter name if imports are used (the finder name or the library alias followed by a period <code>.</code> and the finder name).</p>
+<p>In SAPL it is possible to receive attributes which are not contained in the authorization subscription. Those attributes can be provided by external PIPs and obtained through attribute finders.</p>
 </div>
 <div class="paragraph">
-<p>The attribute finder receives the result of the previous selection as an argument and returns a JSON value.  Optionally, an attribute finder may be supplied with a list of parameters: <code>.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>.</p>
+<p>The standard attributes in SAPL are indented to gather more information with regards to a given JSON value, i.e., the subject, action, resource, environment objects in the subscription or any other JSON value.</p>
+</div>
+<div class="paragraph">
+<p>A standard attribute finder is called via the selection step <code>.&lt;finder.name&gt;</code>. Where <code>finder.name</code> either is a fully qualified attribute finder name or can be a shorter name if imports are used (the finder name or the library alias followed by a period <code>.</code> and the finder name). this step may follow any number of selection steps.</p>
+</div>
+<div class="paragraph">
+<p>An attribute accessed this way is treated as a subscription. I.e., the PDP will subscribe to the data source and whenever a new value is returned the policy is reevaluated and a new decision is calculated.</p>
+</div>
+<div class="paragraph">
+<p>The attribute finder receives the result of the previous selection as an argument and returns a JSON value. Optionally, an attribute finder may be supplied with a list of parameters: <code>.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>Attribute finders may be nested: <code>subject.&lt;finder.name2&gt;.&lt;finder.name(p1,action.&lt;finder.name3&gt;,&#8230;&#8203;)&gt;</code>. Here, whenever the attributes with <code>name2</code> and  <code>name3</code> all have a first result and whenever one of the results change, the attribute with name <code>name</code> is re-subscribed with the new input parameters.</p>
+</div>
+<div class="paragraph">
+<p>An environment attribute finder is an attribute finder intended for accessing information possibly independent of subscription data, e.g., current time or an organization wide emergency level. These environment attributes are not to be confused with the data which is contained in the environment object in the subscription. The data contained there is environment data provided by the PEP from its application context at subscription time and may not be accessible from the PDP otherwise. Environment attributes do not require a left hand input and can be accessed without a leading value, variable, or sequence of selection steps: <code>&lt;organization.emergencyLevel&gt;</code> may refer to a stream indicating an emergency level in an organization. Analogous, to standard attributes, these attributes may be parameterized and nested.</p>
+</div>
+<div class="paragraph">
+<p>All attribute finders may be followed by arbitrary selection steps.</p>
+</div>
+<div class="paragraph">
+<p>In some scenarios it may not be the right thing to subscribe to attributes, but to just retrieve the data once on subscription time.
+For this, SAPL offers the head operator for both standard and environment attributes. Prepending the pipe symbol <code>|</code> in front of an attribute finder step will only return the first value returned by the attribute finder. E.g.: <code>subject.id.|&lt;geo.location&gt;</code>. However such an attribute may still return a stream, if used with nested attributes which do not employ the head operator.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3286,7 +3321,7 @@ Transformation uncertainty may not occur using the <code>only-one-applicable</co
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-08-31 12:54:03 +0200
+Last updated 2021-02-16 12:02:59 +0100
 </div>
 </div>
 </body>
