@@ -800,28 +800,6 @@ where
 </div>
 <div class="sect3">
 <h4 id="maven-dependencies"><a class="anchor" href="#maven-dependencies"></a>Maven Dependencies</h4>
-<div class="paragraph">
-<p>Currently, all SAPL artifacts are hosted on GitHub. To load these as dependencies into your Java project, you need to generate aGitHub personal access token (<a href="https://github.com/settings/tokens" class="bare">https://github.com/settings/tokens</a>), as GitHub does currently not allow unauthenticated access to Maven repositories.
-On availability, the 2.0.0 release will be pushed to the central repository, eliminating this step.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Add your GitHub personal access token to your <code>settings.xml</code> file, usually located at: <code>~/.m2/settings.xml</code>.</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="XML">   <span class="tag">&lt;/servers&gt;</span>
-      <span class="tag">&lt;server&gt;</span>
-         <span class="tag">&lt;id&gt;</span>sapl<span class="tag">&lt;/id&gt;</span>
-         <span class="tag">&lt;username&gt;</span>USERNAME<span class="tag">&lt;/username&gt;</span>
-         <span class="tag">&lt;password&gt;</span>TOKEN<span class="tag">&lt;/password&gt;</span>
-      <span class="tag">&lt;/server&gt;</span>
-   <span class="tag">&lt;/servers&gt;</span></code></pre>
-</div>
-</div>
 <div class="ulist">
 <ul>
 <li>
@@ -857,22 +835,18 @@ On availability, the 2.0.0 release will be pushed to the central repository, eli
 <div class="ulist">
 <ul>
 <li>
-<p>Add the SAPL Maven repository to your <code>pom.xml</code>:</p>
+<p>Add the Maven Central snapshot repository to your <code>pom.xml</code>:</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="XML">    <span class="tag">&lt;repositories&gt;</span>
-        <span class="comment">&lt;!-- The SAPL dependencies are hosted in this repository. A matching server
-            entry has to be set in the settings.xml using a GitHub personal access token --&gt;</span>
         <span class="tag">&lt;repository&gt;</span>
-            <span class="tag">&lt;id&gt;</span>sapl<span class="tag">&lt;/id&gt;</span>
-            <span class="tag">&lt;name&gt;</span>SAPL Maven Repository<span class="tag">&lt;/name&gt;</span>
-            <span class="tag">&lt;url&gt;</span>https://maven.pkg.github.com/heutelbeck/packages<span class="tag">&lt;/url&gt;</span>
+            <span class="tag">&lt;id&gt;</span>ossrh<span class="tag">&lt;/id&gt;</span>
+            <span class="tag">&lt;url&gt;</span>https://s01.oss.sonatype.org/content/repositories/snapshots<span class="tag">&lt;/url&gt;</span>
             <span class="tag">&lt;snapshots&gt;</span>
                 <span class="tag">&lt;enabled&gt;</span>true<span class="tag">&lt;/enabled&gt;</span>
-                <span class="tag">&lt;updatePolicy&gt;</span>always<span class="tag">&lt;/updatePolicy&gt;</span>
             <span class="tag">&lt;/snapshots&gt;</span>
         <span class="tag">&lt;/repository&gt;</span>
     <span class="tag">&lt;/repositories&gt;</span></code></pre>
@@ -892,7 +866,7 @@ On availability, the 2.0.0 release will be pushed to the central repository, eli
          <span class="tag">&lt;dependency&gt;</span>
             <span class="tag">&lt;groupId&gt;</span>io.sapl<span class="tag">&lt;/groupId&gt;</span>
             <span class="tag">&lt;artifactId&gt;</span>sapl-bom<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>${sapl.version}<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;version&gt;</span>2.0.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
             <span class="tag">&lt;type&gt;</span>pom<span class="tag">&lt;/type&gt;</span>
             <span class="tag">&lt;scope&gt;</span>import<span class="tag">&lt;/scope&gt;</span>
          <span class="tag">&lt;/dependency&gt;</span>
@@ -3555,7 +3529,7 @@ Transformation uncertainty may not occur using the <code>only-one-applicable</co
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-03-10 13:35:57 UTC
+Last updated 2021-03-11 16:04:20 UTC
 </div>
 </div>
 </body>
