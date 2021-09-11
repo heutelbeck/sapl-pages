@@ -510,6 +510,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#custom-attribute-finders">Custom Attribute Finders</a></li>
 </ul>
 </li>
+<li><a href="#testing-your-sapl-policies">Testing your SAPL policies</a>
+<ul class="sectlevel2">
+<li><a href="#unit-tests">Unit-Tests</a></li>
+<li><a href="#policy-integration-tests">Policy-Integration-Tests</a></li>
+<li><a href="#writing-your-test-case">Writing your test case</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#code-coverage-reports-via-the-sapl-maven-plugin">Code-Coverage Reports via the SAPL-Maven-Plugin</a></li>
+</ul>
+</li>
+<li><a href="#appendix-formal-ebnf-grammar">Appendix: Formal EBNF grammar</a></li>
 </ul>
 </div>
 </div>
@@ -702,7 +712,10 @@ where
 <div class="sect2">
 <h3 id="getting-started"><a class="anchor" href="#getting-started"></a>Getting Started</h3>
 <div class="paragraph">
-<p>SAPL provides an embedded PDP including an embedded PRP with a file system policy store which can be easily integrated in a Java applications. Besides this guide, the quickest way to start is to build upon the demo projects hosted on <a href="https://github.com/heutelbeck/sapl-demos">GitHub</a> some good demos to start from are the simple no-framework <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-embedded">Embedded PDP Demo</a> or the full-stack <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-mvc-app">Spring MVC Project</a> or the <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-reactive">Reactive Vaadin Application</a>.</p>
+<p>To learn the SAPL policy language and checkout some example policies, you can try out the <a href="https://playground.sapl.io/">SAPL-Playground</a>.</p>
+</div>
+<div class="paragraph">
+<p>In addition SAPL provides an embedded PDP including an embedded PRP with a file system policy store which can be easily integrated in Java applications. Besides this guide, the quickest way to start is to build upon the demo projects hosted on <a href="https://github.com/heutelbeck/sapl-demos">GitHub</a>. Some good demos to start from are the simple no-framework <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-embedded">Embedded PDP Demo</a> or the full-stack <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-mvc-app">Spring MVC Project</a> or the <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-reactive">Reactive Vaadin Application</a>.</p>
 </div>
 <div class="sect3">
 <h4 id="maven-dependencies"><a class="anchor" href="#maven-dependencies"></a>Maven Dependencies</h4>
@@ -3421,11 +3434,545 @@ public static JsonNode userprofile(
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="testing-your-sapl-policies"><a class="anchor" href="#testing-your-sapl-policies"></a>Testing your SAPL policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Version 2.0.0 of the SAPL policy introduces a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration test of all of your SAPL policies via the PDP interface.</p>
+</div>
+<div class="sect2">
+<h3 id="unit-tests"><a class="anchor" href="#unit-tests"></a>Unit-Tests</h3>
+<div class="paragraph">
+<p>The JUnit-Test-Framework is used for execution of the SAPL unit test cases. You create and setup a <code>SaplUnitTestFixture</code> for example in the <code>@BeforeStep</code> of a JUnit test case.</p>
+</div>
+<div class="paragraph">
+<p>Here you define the name of the SAPL document under test or the path to this file. In addition you can register PIPs and FunctionLibrarys to be used during test execution by providing these objects to the <code>SaplUnitTestFixture</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">    private SaplTestFixture fixture;
+
+    @BeforeEach
+    void setUp() throws InitializationException {
+        fixture = new SaplUnitTestFixture("policyStreaming")
+                //.registerPIP(...)
+                .registerFunctionLibrary(new TemporalFunctionLibrary());
+    }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-integration-tests"><a class="anchor" href="#policy-integration-tests"></a>Policy-Integration-Tests</h3>
+<div class="paragraph">
+<p>Instead of testing a single SAPL document, you can test all policies together via the PDP interface just like when you&#8217;re using a PDP embedded in your application or a SAPL server implementation.</p>
+</div>
+<div class="paragraph">
+<p>For this you create a <code>SaplIntegrationTestFixture</code> again for example in the <code>@BeforeStep</code> of your JUnit test case. Likewise you can register PIPs and FunctionLibraries in addition to a combining algorithm.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">    private SaplTestFixture fixture;
+
+    @BeforeEach
+    void setUp() {
+        fixture = new SaplIntegrationTestFixture("policiesIT")
+            .withPDPPolicyCombiningAlgorithm(PolicyDocumentCombiningAlgorithm.PERMIT_UNLESS_DENY);
+    }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="writing-your-test-case"><a class="anchor" href="#writing-your-test-case"></a>Writing your test case</h3>
+<div class="paragraph">
+<p>The Step-Builder-Pattern is used for defining the concrete test case. It consists of the following four steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Given-Step: Define mocks for attributes and functions</p>
+</li>
+<li>
+<p>When-Step: Specify the <code>AuthorizationSubscription</code></p>
+</li>
+<li>
+<p>Expect-Step: Define expectations for generated <code>AuthorizationDecision</code></p>
+</li>
+<li>
+<p>Verify-Step: Verify the generated <code>AuthorizationDecision</code></p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/StepBuilderPatternForSaplTest_English.svg" alt="Step Builder Pattern">
+</div>
+</div>
+<div class="paragraph">
+<p>Starting with constructTestCaseWithMocks() or constructTestCase() called on your fixture, the test case definition process is started at the Given-Step or the When-Step.</p>
+</div>
+<div class="sect3">
+<h4 id="given-step"><a class="anchor" href="#given-step"></a>Given-Step</h4>
+<div class="paragraph">
+<p><strong>Mocking of functions</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>via the <code>givenFunction</code> methods you can mock a function returning the <code>Val</code> specified in the method parameters for every call.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>you can specify a single value</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("time.dayOfWeek", Val.of("SATURDAY"))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>a single value only returned when the paramters of the function call match some expectations</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("corp.subjectConverter", Val.of("ROLE_ADMIN"),
+    whenParameters(is(Val.of("USER")), is(Val.of("nikolai"))))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>or a Lambda-Expression evaluating the parameters of the function call</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("company.complexFunction", (FunctionCall call) -&gt; {
+
+    //probably you should check for number and type of parameters first
+    Double param0 = call.getArgument(0).get().asDouble();
+    Double param1 = call.getArgument(1).get().asDouble();
+
+    return param0 % param1 == 0 ? Val.of(true) : Val.of(false);
+})</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>and verify the number of calls to this mock</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("time.dayOfWeek", Val.of("SATURDAY"), times(1))</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>via the <code>givenFunctionOnce</code> methods you can specify a <code>Val</code> or multiple <code>Val</code>-Objects which are emitted once (in a sequence) when this mocked function is called</p>
+<div class="ulist">
+<ul>
+<li>
+<p>a single value</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunctionOnce("time.localSecond", Val.of(4))
+.givenFunctionOnce("time.localSecond", Val.of(5))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>or a sequence of values</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunctionOnce("time.localSecond", Val.of(3), Val.of(4), Val.of(5))</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mocking of attributes</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>via the <code>givenAttribute</code> methods you can mock an attribute</p>
+<div class="ulist">
+<ul>
+<li>
+<p>to return one or more <code>Val</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenAttribute("clock.ticker", timestamp0, timestamp1, timestamp2)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>to return a sequence of <code>Val</code> in an interval of <code>Duration</code>. Do not forget to call the <code>withVirtualTime</code> method to use the virtual time feature of Project Reactor</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.withVirtualTime()
+.givenAttribute("clock.ticker", Duration.ofSeconds(10), timestamp0, timestamp1, timestamp2, timestamp3, timestamp4, timestamp5)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The virtual time feature can be used with real time-based PIPs registrated at the fixture level. But be aware that virtual time is "no silver bullet" to cite the <a href="https://projectreactor.io/docs/core/release/reference/#_manipulating_time">Project Reactor Reference Guide</a>. It says further that "[v]irtual time also gets very limited with infinite sequences, which might hog the thread on which both the sequence and its verification run."</p>
+</div>
+</li>
+<li>
+<p>to mark an attribute to be mocked and specify return values in a sequence next to your expectations</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenAttribute("company.pip1")
+.givenAttribute("company.pip2")
+.when(AuthorizationSubscription.of("User1", "read", "heartBeatData"))
+.thenAttribute("company.pip1", Val.of(1))
+.thenAttribute("company.pip2", Val.of("foo"))
+.expectNextPermit()
+.thenAttribute("company.pip2", Val.of("bar"))
+.expectNextNotApplicable()</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can check out further mock types or overloaded methods <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-test/src/main/java/io/sapl/test/steps/GivenStep.java">here</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="when-step"><a class="anchor" href="#when-step"></a>When-Step</h4>
+<div class="paragraph">
+<p>In the next step you define the <code>AuthorizationSubscription</code> for the policy evaluation.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>pass an <code>AuthorizationSubscription</code> created via it&#8217;s factory methods</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.when(AuthorizationSubscription.of("willi", "read", "something"))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>pass a JSON-String to be parsed to an <code>AuthorizationSubscription</code> via the framework</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.when("{\"subject\":\"willi\", \"action\":\"read\", \"resource\":\"something\", \"environment\":{}}")</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>pass a <code>JsonNode</code> object of the Jackson-Framework (<a href="https://fasterxml.github.io/jackson-databind/javadoc/2.7/com/fasterxml/jackson/databind/JsonNode.html">Reference</a>)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">JsonNode authzSub = mapper.createObjectNode()
+    .put("subject", "willi")
+    .put("action", "read")
+    .put("resource", "something")
+    .put("environment", "test");
+...
+    .when(authzSub)</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="expect-step"><a class="anchor" href="#expect-step"></a>Expect-Step</h4>
+<div class="paragraph">
+<p>Define the expected <code>AuthorizationDecision</code> in this step.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>check only the Decision via</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.expectPermit()
+.expectDeny()
+.expectIndeterminate()
+.expectNotApplicable()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>pass a <code>AuthorizationDecision</code> object to be checked for equality</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">ObjectNode obligation = mapper.createObjectNode();
+obligation.put("type", "logAccess");
+obligation.put("message", "Willi has accessed patient data (id=56) as an administrator.");
+ArrayNode obligations = mapper.createArrayNode();
+obligations.add(obligation);
+
+AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).withObligations(obligations);
+
+...
+
+    .expect(decision)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>use a Predicate-Callback to manually define checks</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.expect((AuthorizationDecision dec) -&gt; {
+    // some complex and custom assertions
+    if(dec.getObligations().isEmpty()) {
+        return true;
+    }
+    return false;
+})</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>use Hamcrest Matcher prodivded by the sapl-hamcrest modul to express complex expectations on the decision, obligations, advices or resources of the <code>AuthorizationDecision</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.expect(
+    allOf(
+        isPermit(),
+        hasObligationContainingKeyValue("type", "logAccess"),
+        isResourceMatching((JsonNode resource) -&gt; resource.get("id").asText().equals("56"))
+        ...
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All avaliable <code>Matcher&lt;AuthorizationDecision&gt;</code> can be find <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-hamcrest/src/main/java/io/sapl/hamcrest/Matchers.java#L104">here</a></p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All of these methods come with additional methods ( for example <code>expectNextPermit</code>) to define multiple expectations for testing of stream-based policies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.expectNextPermit(3)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can check out all available methods <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-test/src/main/java/io/sapl/test/steps/ExpectStep.jav">here</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="verify-step"><a class="anchor" href="#verify-step"></a>Verify-Step</h4>
+<div class="paragraph">
+<p>At the end of every test case definition you call the <code>verify</code> method to evaluate the policy/policies and verify the expectations.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
+<div class="paragraph">
+<p>In the following you can find a full and minimal example of a SAPL unit test.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class B_PolicyWithSimpleFunctionTest {
+
+    private SaplTestFixture fixture;
+
+    @BeforeEach
+    void setUp() {
+        fixture = new SaplUnitTestFixture("policyWithSimpleFunction.sapl");
+    }
+
+    @Test
+    void test() {
+        fixture.constructTestCaseWithMocks()
+                .givenFunction("time.dayOfWeek", Val.of("SATURDAY"), times(1))
+                .when(AuthorizationSubscription.of("willi", "read", "something"))
+                .expectPermit()
+                .verify();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A lot of additional examples showcasing the various features of this SAPL test framework can be found in the demo project <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-testing/src/test/java/io/sapl/test">here</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-coverage-reports-via-the-sapl-maven-plugin"><a class="anchor" href="#code-coverage-reports-via-the-sapl-maven-plugin"></a>Code-Coverage Reports via the SAPL-Maven-Plugin</h3>
+<div class="paragraph">
+<p>For measuring the policy code coverage of your SAPL policies you can use the sapl-maven-plugin to analyze the coverage and generate reports in various formats.</p>
+</div>
+<div class="paragraph">
+<p>Currently three coverage criteria are supported:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>PolicySet Hit Coverage</strong>: Measures the percentage of PolicySets which were at least once applicable to an <code>AuthorizationSubscription</code> in your tests.</p>
+</li>
+<li>
+<p><strong>Policy Hit Coverage</strong>: Measures the percentage of Policies which were at least once applicable to an <code>AuthorizationSubscription</code> in your tests.</p>
+</li>
+<li>
+<p><strong>Condition Hit Coverage</strong>: Measures the percentage of conditions  evaluated to true or false during your tests. Twice the number of conditions is taken and compared with the number of positively and negatively evaluated conditions.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Simply add the following configuration to your <code>pom.xml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;io.sapl&lt;/groupId&gt;
+    &lt;artifactId&gt;sapl-maven-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;policyHitRatio&gt;100&lt;/policyHitRatio&gt;
+        &lt;policyConditionHitRatio&gt;50&lt;/policyConditionHitRatio&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;id&gt;coverage&lt;/id&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;enable-coverage-collection&lt;/goal&gt;
+                &lt;goal&gt;report-coverage-information&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The plugin can be configured via the following paramters:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>coverageEnabled</strong>: When set to false, this parameter disables the execution of the sapl-maven-plugin (defaultValue = true).</p>
+</li>
+<li>
+<p><strong>policyPath</strong>: Defines the path on the classpath to the folder containing the policies under test. Specify the same path used in your <code>SaplIntegrationTestFixture</code> or the parent folder of the path to your SAPL documents in the <code>SaplUnitTestFixture</code> (defaultValue = policies).</p>
+</li>
+<li>
+<p><strong>outputDir</strong>: Set this parameter to the path where generated reports should be written to (per default the maven build output directory is used).</p>
+</li>
+<li>
+<p><strong>policySetHitRatio</strong>: A value between 0 - 100 to define the ratio of PolicySets your tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the maven lifecycle. (defaultValue = 0)</p>
+</li>
+<li>
+<p><strong>policyHitRatio</strong>: A value between 0 - 100 to define the ratio of Policies your tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the maven lifecycle (defaultValue = 0).</p>
+</li>
+<li>
+<p><strong>policyConditionHitRatio</strong>: A value between 0 - 100 to define the ratio of condition results your tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the maven lifecycle (defaultValue = 0).</p>
+</li>
+<li>
+<p><strong>enableSonarReport</strong>: When set to true a coverage report with the <a href="https://monteverdi.informatik.uni-freiburg.de/sonar/documentation/analysis/generic-test/">Sonarqube Generic Coverage Format</a> is generated. This format is currently not useable as SonarQube does not import generic coverage data for languages unknown to SonarQube. Currently there is no SonarQube Lanaguage Plugin for SAPL (defaultValue = false).</p>
+</li>
+<li>
+<p><strong>enableHtmlReport</strong>: When set to true a HTML coverage report is created. This report is similar to JaCoCo reports showing colorized line coverage and number of covered branches for conditions in a line. The path to the <code>index.html</code> on the filesystem is printed in the maven log. Terminals like Powershell allow you to click on these paths and open the report directly in your browser (defaultValue = true).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="appendix-formal-ebnf-grammar"><a class="anchor" href="#appendix-formal-ebnf-grammar"></a>Appendix: Formal EBNF grammar</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SAPL syntax is described by the following grammar provided in Extended Backus–Naur form:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(* SAPL grammar in EBNF, according to ISO/IEC 14977 *)
+
+sapl                = { import }, ( policy-set | policy );
+import              = "import", ID, { ".", ID }, ".", ( ID | "*" )
+                    | "import", { ID, "." }, ID, "as", ID;
+policy-set          = "set", STRING, combining-algorithm,
+                      [ "for", target-expression ],
+                      { value-definition, ";" }, policy, { policy };
+combining-algorithm = "deny-overrides" | "permit-overrides"
+                    | "first-applicable" | "only-one-applicable"
+                    | "deny-unless-permit" | "permit-unless-deny";
+target-expression   = expression;
+value-definition    = "val", ID, ":=", expression ;
+policy              = "policy", STRING, entitlement,
+                      [ target-expression ], [ "where", policy-body ],
+                      [ "obligation", expression ],
+                      [ "advice", expression ],
+                      [ "transform" expression ];
+entitlement         = "permit" | "deny";
+policy-body         = statement, ";", { statement, ";" };
+statement           = value-definition | expression;
+expression          = addition;
+addition            = multiplication,
+                      { ( "+" | "-" | "&amp;&amp;" | "&amp;" ), multiplication };
+multiplication      = comparison,
+                      { ( "*" | "/" | "||" | "|"), comparison };
+comparison          = prefixed,[ ( "==" | "=~" | "&lt;" | "&lt;="
+                                   | "&gt;=" | "&gt;" | "in" ),
+                      prefixed ] ;
+prefixed            = [ ( "-" | "!" ) ], basic-expression;
+basic-expression    = ( value | "@" | ID | function-call
+                      | ( "(", expression, ")" ) ),
+                      { selection-step }, [ ("|-", filter)
+                      | ( "::", value ) ];
+function-call       = ID, { ".", ID }, "(", [ expression,
+                      {",", expression } ], ")" ;
+selection-step      = key-step | index-step | wildcard-step |
+                    | rec-descent-step | rec-wildcard-step
+                    | slicing-step | expression-step | condition-step
+                    | union-step | attr-finder-step
+key-step            = ".", ID
+                    | "[", STRING, "]";
+index-step          = "[", NUMBER, "]";
+wildcard-step       = ".", "*"
+                    | "[", "*", "]" ;
+rec-descent-step    = "..", ID
+                    | "..", "[", STRING, "]"
+                    | "..", "[", NUMBER, "]";
+rec-wildcard-step   = "..", "*"
+                    | "..", "[", "*", "]";
+slicing-step        = "[", [ NUMBER ], ":", [ [ NUMBER ],
+                      [ ":", [ NUMBER ] ] ], "]";
+expression-step     = "[", "(", expression, ")", "]";
+condition-step      = "[", "?", "(", expression, ")", "]";
+union-step          = "[", NUMBER, ",", NUMBER, { ",", NUMBER }, "]"
+                    | "[", ID, ",", ID, { ",", ID }, "]";
+attr-finder-step    = ".", "&lt;", ID, { ".", ID }, "&gt;";
+filter              = [ "each" ], filter-function
+                    | "{", filter-statement, { ",", filter-statement }, "}";
+filter-statement    = [ "each" ], "@", {selection-step}, ":", filter-function;
+filter-function     = ID, { ".", ID },
+                      [ "(", [ expression, { ",", expression } ], ")" ];
+value               = object | array | NUMBER | STRING | "true" | "false"
+                    | "null" | "undefined";
+object              = "{", [ STRING, ":", expression,
+                      { ",", STRING, ":", expression } ], "}";
+array               = "[", [ expression, { ",", expression } ], "]" ;
+ID                  = ( LETTER | "_" | "$" ), { LETTER | DIGIT | "_" | "$" };
+LETTER              = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z" ;
+DIGIT               = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+STRING              = '"', ? any character except " ?, '"'
+                    | "'", ? any character except ' ?, "'";
+NUMBER              = ? JavaScript number definition ?;</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-03-16 16:57:31 UTC
+Last updated 2021-09-11 16:28:53 UTC
 </div>
 </div>
 </body>
