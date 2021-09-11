@@ -3476,7 +3476,9 @@ public static JsonNode userprofile(
     @BeforeEach
     void setUp() {
         fixture = new SaplIntegrationTestFixture("policiesIT")
-            .withPDPPolicyCombiningAlgorithm(PolicyDocumentCombiningAlgorithm.PERMIT_UNLESS_DENY);
+            .withPDPPolicyCombiningAlgorithm(
+                PolicyDocumentCombiningAlgorithm.PERMIT_UNLESS_DENY
+            );
     }</code></pre>
 </div>
 </div>
@@ -3720,7 +3722,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </li>
 <li>
-<p>use a Predicate-Callback to manually define checks</p>
+<p>use a predicate function to manually define checks</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.expect((AuthorizationDecision dec) -&gt; {
@@ -3800,7 +3802,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </div>
 <div class="paragraph">
-<p>A lot of additional examples showcasing the various features of this SAPL test framework can be found in the demo project <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-testing/src/test/java/io/sapl/test">here</a></p>
+<p>A lot of additional examples showcasing the various features of this SAPL test framework can be found in the demo project <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-testing/src/test/java/io/sapl/test">here</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -3972,7 +3974,7 @@ NUMBER              = ? JavaScript number definition ?;</pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-09-11 16:28:53 UTC
+Last updated 2021-09-11 16:35:54 UTC
 </div>
 </div>
 </body>
