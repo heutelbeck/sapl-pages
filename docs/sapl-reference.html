@@ -512,6 +512,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#testing-your-sapl-policies">Testing your SAPL policies</a>
 <ul class="sectlevel2">
+<li><a href="#usage-scenarios">Usage scenarios</a></li>
 <li><a href="#unit-tests">Unit-Tests</a></li>
 <li><a href="#policy-integration-tests">Policy-Integration-Tests</a></li>
 <li><a href="#writing-your-test-case">Writing your test case</a></li>
@@ -3438,7 +3439,30 @@ public static JsonNode userprofile(
 <h2 id="testing-your-sapl-policies"><a class="anchor" href="#testing-your-sapl-policies"></a>Testing your SAPL policies</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Version 2.0.0 of the SAPL policy introduces a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration test of all of your SAPL policies via the PDP interface.</p>
+<p>Version 2.0.0 of the SAPL policy engine introduces a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration test of all of your SAPL policies via the PDP interface.</p>
+</div>
+<div class="sect2">
+<h3 id="usage-scenarios"><a class="anchor" href="#usage-scenarios"></a>Usage scenarios</h3>
+<div class="paragraph">
+<p>With the SAPL testframework you can test SAPL policies no matter if you use SAPL via a embedded PDP in your application or via a central SAPL server.</p>
+</div>
+<div class="sect3">
+<h4 id="embedded-pdp-2"><a class="anchor" href="#embedded-pdp-2"></a>Embedded PDP</h4>
+<div class="paragraph">
+<p>If you&#8217;re using a embedded PDP in your application, you can treat your SAPL policy tests like your "normal" unit and integration tests. Organize them next to these tests and execute them identically via the Maven lifecycle on your local workstation or in your CI pipeline.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="sapl-server"><a class="anchor" href="#sapl-server"></a>SAPL-Server</h4>
+<div class="paragraph">
+<p>The following <a href="https://github.com/heutelbeck/sapl-server-lt-gitops-example">Repo</a> is showcasing a deployment pipeline with SAPL policy tests in a <a href="https://www.weave.works/blog/gitops-operations-by-pull-request">GitOps</a>-Style for the headless SAPL-Server-LT.
+Here every change to the policies is introduced via a pull request on the main branch. For every pull request the CI pipeline executes the policy tests and breaks the pipeline run, if policy tests are failing.
+If a pull request is merged on the main branch, the policies are automatically synced to the SAPL-Server-LT instance.</p>
+</div>
+<div class="paragraph">
+<p>Currently there is no support for writing SAPL test cases via the SAPL DSL - only in Java. So it&#8217;s not possible to use the SAPL test framework when deploying SAPL-Server-Implementations with GUI-based PAP (SAPL-Server-CE or SAPL-Server-EE).</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="unit-tests"><a class="anchor" href="#unit-tests"></a>Unit-Tests</h3>
@@ -3617,8 +3641,17 @@ public static JsonNode userprofile(
 .givenAttribute("clock.ticker", Duration.ofSeconds(10), timestamp0, timestamp1, timestamp2, timestamp3, timestamp4, timestamp5)</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The virtual time feature can be used with real time-based PIPs registrated at the fixture level. But be aware that virtual time is "no silver bullet" to cite the <a href="https://projectreactor.io/docs/core/release/reference/#_manipulating_time">Project Reactor Reference Guide</a>. It says further that "[v]irtual time also gets very limited with infinite sequences, which might hog the thread on which both the sequence and its verification run."</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The virtual time feature can be used with real time-based PIPs registrated at the fixture level. But be aware that virtual time is "no silver bullet" to cite the <a href="https://projectreactor.io/docs/core/release/reference/#_manipulating_time">Project Reactor Reference Guide</a>. It says further that "[v]irtual time also gets very limited with infinite sequences, which might hog the thread on which both the sequence and its verification run."
+</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
@@ -3929,7 +3962,7 @@ basic-expression    = ( value | "@" | ID | function-call
                       | ( "::", value ) ];
 function-call       = ID, { ".", ID }, "(", [ expression,
                       {",", expression } ], ")" ;
-selection-step      = key-step | index-step | wildcard-step |
+selection-step      = key-step | index-step | wildcard-step
                     | rec-descent-step | rec-wildcard-step
                     | slicing-step | expression-step | condition-step
                     | union-step | attr-finder-step
@@ -3949,7 +3982,8 @@ expression-step     = "[", "(", expression, ")", "]";
 condition-step      = "[", "?", "(", expression, ")", "]";
 union-step          = "[", NUMBER, ",", NUMBER, { ",", NUMBER }, "]"
                     | "[", ID, ",", ID, { ",", ID }, "]";
-attr-finder-step    = ".", "&lt;", ID, { ".", ID }, "&gt;";
+attr-finder-step    = ".", "&lt;", ID, { ".", ID }, "(", [ expression,
+                      {",", expression } ], ")", "&gt;";
 filter              = [ "each" ], filter-function
                     | "{", filter-statement, { ",", filter-statement }, "}";
 filter-statement    = [ "each" ], "@", {selection-step}, ":", filter-function;
@@ -3961,7 +3995,14 @@ object              = "{", [ STRING, ":", expression,
                       { ",", STRING, ":", expression } ], "}";
 array               = "[", [ expression, { ",", expression } ], "]" ;
 ID                  = ( LETTER | "_" | "$" ), { LETTER | DIGIT | "_" | "$" };
-LETTER              = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z" ;
+LETTER              = "A" | "B" | "C" | "D" | "E" | "F" | "G"
+                    | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+                    | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+                    | "V" | "W" | "X" | "Y" | "Z"
+                    | "a" | "b" | "c" | "d" | "e" | "f" | "g"
+                    | "h" | "i" | "j" | "k" | "l" | "m" | "n"
+                    | "o" | "p" | "q" | "r" | "s" | "t" | "u"
+                    | "v" | "w" | "x" | "y" | "z";
 DIGIT               = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 STRING              = '"', ? any character except " ?, '"'
                     | "'", ? any character except ' ?, "'";
@@ -3974,7 +4015,7 @@ NUMBER              = ? JavaScript number definition ?;</pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-09-11 16:35:54 UTC
+Last updated 2021-09-25 17:04:00 UTC
 </div>
 </div>
 </body>
