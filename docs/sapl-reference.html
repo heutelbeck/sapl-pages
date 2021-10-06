@@ -500,17 +500,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#functions">Functions</a>
 <ul class="sectlevel2">
-<li><a href="#the-standard-function-library">The Standard Function Library</a></li>
 <li><a href="#custom-function-libraries">Custom Function Libraries</a></li>
 </ul>
 </li>
 <li><a href="#attribute-finders">Attribute Finders</a>
 <ul class="sectlevel2">
-<li><a href="#the-standard-attribute-finders">The Standard Attribute Finders</a></li>
 <li><a href="#custom-attribute-finders">Custom Attribute Finders</a></li>
 </ul>
 </li>
-<li><a href="#deploying-custom-function-libraries-and-attribute-finders">Deploying Custom Function Libraries and Attribute Finders</a></li>
 <li><a href="#testing-your-sapl-policies">Testing your SAPL policies</a>
 <ul class="sectlevel2">
 <li><a href="#usage-scenarios">Usage scenarios</a></li>
@@ -3328,16 +3325,19 @@ Transformation uncertainty may not occur using the <code>only-one-applicable</co
 <div class="paragraph">
 <p>Functions can be used in any part of a SAPL document, especially in the target expression. Thus their output should only depend on the input arguments and they should not access external resources. Functions do not have access to environment variables.</p>
 </div>
-<div class="sect2">
-<h3 id="the-standard-function-library"><a class="anchor" href="#the-standard-function-library"></a>The Standard Function Library</h3>
 <div class="paragraph">
-<p>SAPL will come with a standard function library providing the most important functions.</p>
-</div>
+<p>SAPL will comes with a standard function library providing some basic functions.</p>
 </div>
 <div class="sect2">
 <h3 id="custom-function-libraries"><a class="anchor" href="#custom-function-libraries"></a>Custom Function Libraries</h3>
 <div class="paragraph">
+<p>For a more in-depth look at the process of creating a custom function library, please refer to the demo project. It will walk you through the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
+</div>
+<div class="paragraph">
 <p>The standard functions can be extended by custom functions. Function libraries available in SAPL documents are collected in the PDP&#8217;s function context. The embedded PDP provides an <code>AnnotationFunctionContext</code> where Java classes with annotations can be provided as function libraries:</p>
+</div>
+<div class="paragraph">
+<p>SAPL functions must not perform any IO operations. Functions are to be used as "immediate" data transformation functions.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3357,9 +3357,7 @@ public class SampleFunctionLibrary {
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">@Function(docs = "returns the length")
-public static JsonNode length(
-        @Text parameter
-) {
+public static Val length(@Text Val parameter) {
     ...
 }</code></pre>
 </div>
@@ -3383,63 +3381,60 @@ public static JsonNode length(
 <p>Attribute finders are organized in libraries as well and follow the same naming conventions as functions, including the use of imports. An attribute finder library constitutes a PIP (e.g., <code>user</code>) and can contain any number of attributes (e.g., <code>age</code>). They are called by a selection step applied to any value, e.g., <code>subject.&lt;user.age&gt;</code>. The attribute finder step receives the previous selection result (in the example: <code>subject</code>) and returns the requested attribute.</p>
 </div>
 <div class="paragraph">
-<p>The concept of attribute finders can be used in a flexible manner: There may be finders which take an object (like in the example above, <code>subject.&lt;user.age&gt;</code>) as well as attribute finders which expect a primitive value (e.g., <code>subject.id.&lt;user.age&gt;</code> with <code>id</code> being a number). In addition attribute finders may also return an object which can be traversed in future selection steps (e.g., <code>subject.&lt;user.profile&gt;.age</code>). It is even possible to join multiple attribute finder steps in one expression (e.g., <code>subject.&lt;user.profile&gt;.supervisor.&lt;user.profile&gt;.age</code>).</p>
+<p>The concept of attribute finders can be used in a flexible manner: There may be finders which take an object (like in the example above, <code>subject.&lt;user.age&gt;</code>) as well as attribute finders which expect a primitive value (e.g., <code>subject.id.&lt;user.age&gt;</code> with <code>id</code> being a number). In addition attribute finders may also return an object which can be traversed in subsequent selection steps (e.g., <code>subject.&lt;user.profile&gt;.age</code>). It is even possible to join multiple attribute finder steps in one expression (e.g., <code>subject.&lt;user.profile&gt;.supervisor.&lt;user.profile&gt;.age</code>).</p>
 </div>
 <div class="paragraph">
-<p>Optionally, an attribute finder may be supplied with a list of parameters: <code>.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>.</p>
+<p>Optionally, an attribute finder may be supplied with a list of parameters: <code>x.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>. Also, here nesting is possible. Thus <code>x.&lt;finder.name(p1.&lt;finder.name2&gt;,p2,&#8230;&#8203;)&gt;</code> is a legal construct.</p>
+</div>
+<div class="paragraph">
+<p>Further, attribute finders may be used without any leading value <code>&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>. These are called environment attributes.</p>
+</div>
+<div class="paragraph">
+<p>The way to ready a statement with an attribute finder is as follows. For <code>subject.&lt;groups.membership("studygroup")&gt;</code> you would say "get the attribute <code>group.membership</code> with parameter <code>"studygroup"</code> of subject".</p>
 </div>
 <div class="paragraph">
 <p>Attribute finders often receive the information from external data sources such as files, databases or HTTP requests which may take a certain amount of time. Therefore they must not be used in a target expression. Attribute finders can access environment variables.</p>
 </div>
 <div class="sect2">
-<h3 id="the-standard-attribute-finders"><a class="anchor" href="#the-standard-attribute-finders"></a>The Standard Attribute Finders</h3>
-<div class="paragraph">
-<p>Most attribute finders will be specific to an organization or an environment. E.g., a hospital might provide information about medical units, doctors and patients and use specific attribute finders for this information. Yet SAPL will offer a number of general purpose attribute finders.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="custom-attribute-finders"><a class="anchor" href="#custom-attribute-finders"></a>Custom Attribute Finders</h3>
 <div class="paragraph">
-<p>Attribute finders are functions which take exactly one argument and return any value. Each attribute finder library (also called PIP) has to be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code> which takes Java classes as PIPs.</p>
+<p>For a more in-depth look at the process of creating a custom PIP, please refer to the demo project. It will walk you through the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>To be recognized as a PIP, the class has to be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. The attribute value is a string consisting of one or more identifiers separated by periods. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
+<div class="paragraph">
+<p>Attribute finders are functions which potentially take a left hand argument (i.e., the Object of which the attribute is to be determined), a Map of variables defined in the current evaluation scope and an optional list of incoming parameter Streams.</p>
+</div>
+<div class="paragraph">
+<p>In SAPL a PolicyInformationPoint is an instance of a class which supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class has to be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code> which takes arbitrary Java classes as PIPs. To be recognized as a PIP, the class has to be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@PolicyInformationPoint(name = "user", description = "a sample pip")
+<pre class="highlight"><code class="language-java" data-lang="java">@PolicyInformationPoint(name = "user", description = "This the documentation of the PIP")
 public class SampleUserPIP {
     ...
 }</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>The annotation <code>@Attribute</code> identifies an attribute finder, i.e., a function returning an attribute. An optional annotation attribute <code>name</code> can contain a name for the attribute. The attribute has to be a string containing an identifier. By default, the name of the function will be used. The annotation attribute <code>docs</code> can contain a string describing the attribute.</p>
+<div class="paragraph">
+<p>The individual attributes supplied by the PIP are identified by adding the annotation <code>@Attribute</code>. An optional annotation attribute <code>name</code> can contain a name for the attribute. The attribute has to be a string containing an identifier. By default, the name of the function will be used. The annotation attribute <code>docs</code> can contain a string describing the attribute.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">@Attribute(name = "profile", docs = "returns user profile as JSON")
-public static JsonNode userprofile(
-        @Number id
-) {
+public Flux&lt;Val&gt; userprofile(@Number leftHandObjectOfTheAttribute, Map&lt;String, JsonNode&gt; variablesInCurrentEvaluationContext, Flux&lt;Val&gt; parameter1, Flux&lt;Val&gt; parameter2) {
     ...
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Each attribute function must have exactly one parameter which can be annotated with any number of <code>@Array</code>, <code>@Bool</code>, <code>@Int</code>, <code>@JsonObject</code>, <code>@Long</code>, <code>@Number</code> and <code>@Text</code>. The annotations describe which types are allowed for the argument passed (in case of multiple annotations each of these types is allowed).</p>
-</div>
-</li>
-</ul>
+<p>+</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="deploying-custom-function-libraries-and-attribute-finders"><a class="anchor" href="#deploying-custom-function-libraries-and-attribute-finders"></a>Deploying Custom Function Libraries and Attribute Finders</h2>
-<div class="sectionbody">
-
 </div>
 </div>
 <div class="sect1">
@@ -3451,7 +3446,7 @@ public static JsonNode userprofile(
 <div class="sect2">
 <h3 id="usage-scenarios"><a class="anchor" href="#usage-scenarios"></a>Usage scenarios</h3>
 <div class="paragraph">
-<p>With the SAPL testframework you can test SAPL policies no matter if you use SAPL via a embedded PDP in your application or via a central SAPL server.</p>
+<p>With the SAPL test framework you can test SAPL policies no matter if you use SAPL via a embedded PDP in your application or via a central SAPL server.</p>
 </div>
 <div class="sect3">
 <h4 id="embedded-pdp-2"><a class="anchor" href="#embedded-pdp-2"></a>Embedded PDP</h4>
@@ -4022,7 +4017,7 @@ NUMBER              = ? JavaScript number definition ?;</pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-10-06 09:04:33 UTC
+Last updated 2021-10-06 14:37:38 UTC
 </div>
 </div>
 </body>
