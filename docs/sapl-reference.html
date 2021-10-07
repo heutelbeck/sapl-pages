@@ -818,28 +818,24 @@ where
 </li>
 <li>
 <p>Add some policy sets or policies to <code>"~/sapl"</code>. Both policy sets and policies are files with the extension <code>.sapl</code>. E.g., you could add the following policy:</p>
-</li>
-</ol>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>policy "test_policy"
 permit subject == "admin"</code></pre>
 </div>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
+</li>
 <li>
 <p>Obtain a decision using the PDP&#8217;s <code>decide</code> method.</p>
-</li>
-</ol>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-Java" data-lang="Java">var subscription = AuthorizationSubscription.of("admin", "an_action", "a_resource");
 Flux&lt;AuthorizationDecision&gt; authzDecisions = pdp.decide(authzSubscription);
 authzDecisions.subscribe(authzDecision -&gt; System.out.println(authzDecision.getDecision()));</code></pre>
 </div>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>The console output should be <code>PERMIT</code>. With subject set to <code>"alice"</code> instead of <code>"admin"</code>, the output should be <code>DENY</code>.</p>
@@ -1079,7 +1075,7 @@ All of them accept <code>POST</code> requests and <code>application/json</code> 
 <p>A PEP which is a client to the SSE PDP API encountering connectivity issues or errors must interpret this as an INDETERMINATE decision and thus deny access during this time of uncertainty and take appropriate steps to reconnect with the PDP, using a matching back-off strategy to not overload the PDP.</p>
 </div>
 <div class="paragraph">
-<p>A PEP must determine if it can enforce obligations before granting access. It must enforce obligation upon granting access at the point in time (e.g., before or after granting access) implied by the semantics of the obligation, and it should enforce advices at their appropriate point in time when possible.</p>
+<p>A PEP must determine if it can enforce obligations before granting access. It must enforce obligation upon granting access at the point in time (e.g., before or after granting access) implied by the semantics of the obligation, and it should enforce any advice at their appropriate point in time when possible.</p>
 </div>
 <div class="paragraph">
 <p>Upon subscription the PDP server will respond with an unbound stream of decisions. The client must close the connection to stop receiving decision events. A connection termination by the server is a error state and must be handled as discussed.</p>
@@ -3771,7 +3767,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </li>
 <li>
-<p>use Hamcrest Matcher prodivded by the sapl-hamcrest modul to express complex expectations on the decision, obligations, advices or resources of the <code>AuthorizationDecision</code></p>
+<p>use Hamcrest Matcher provided by the sapl-hamcrest modul to express complex expectations on the decision, obligations, advice or resources of the <code>AuthorizationDecision</code></p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.expect(
@@ -4017,7 +4013,7 @@ NUMBER              = ? JavaScript number definition ?;</pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-10-06 14:37:38 UTC
+Last updated 2021-10-07 08:40:36 UTC
 </div>
 </div>
 </body>
