@@ -3556,8 +3556,8 @@ If a pull request is merged on the main branch, the policies are automatically s
 <p>a single value only returned when the paramters of the function call match some expectations</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("corp.subjectConverter", Val.of("ROLE_ADMIN"),
-    whenParameters(is(Val.of("USER")), is(Val.of("nikolai"))))</code></pre>
+<pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("corp.subjectConverter",
+    whenFunctionParams(is(Val.of("USER")), is(Val.of("nikolai"))), Val.of("ROLE_ADMIN"))</code></pre>
 </div>
 </div>
 </li>
@@ -3663,6 +3663,22 @@ The virtual time feature can be used with real time-based PIPs registrated at th
 .expectNextPermit()
 .thenAttribute("company.pip2", Val.of("bar"))
 .expectNextNotApplicable()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>to mock an attribute depending on the parent value</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenAttribute("test.upper", whenParentValue(val("willi")), thenReturn(Val.of("WILLI")))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>to mock an attribute depending on the parent value and every value the arguments are called for</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.givenAttribute("pip.attributeWithParams", whenAttributeParams(parentValue(val(true)), arguments(val(2), val(2))), thenReturn(Val.of(true)))</code></pre>
 </div>
 </div>
 </li>
@@ -4012,7 +4028,7 @@ NUMBER              = ? JavaScript number definition ?;</pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-10-10 12:13:35 UTC
+Last updated 2021-10-25 06:29:37 UTC
 </div>
 </div>
 </body>
