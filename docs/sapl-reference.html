@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>SAPL - Streaming Attribute Policy Language</h1>
 <div class="details">
 <span id="author" class="author">Dominic Heutelbeck</span><br>
-<span id="revnumber">version 2.0.0-SNAPSHOT</span>
+<span id="revdate">Version 2.0.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -517,7 +517,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#code-coverage-reports-via-the-sapl-maven-plugin">Code-Coverage Reports via the SAPL-Maven-Plugin</a></li>
 </ul>
 </li>
-<li><a href="#appendix-formal-ebnf-grammar">Appendix: Formal EBNF grammar</a></li>
 </ul>
 </div>
 </div>
@@ -3436,7 +3435,7 @@ public Flux&lt;Val&gt; userprofile(@Number leftHandObjectOfTheAttribute, Map&lt;
 <h2 id="testing-your-sapl-policies"><a class="anchor" href="#testing-your-sapl-policies"></a>Testing your SAPL policies</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Version 2.0.0 of the SAPL policy engine introduces a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration test of all of your SAPL policies via the PDP interface.</p>
+<p>The SAPL policy engine provides a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration test of all of your SAPL policies via the PDP interface.</p>
 </div>
 <div class="sect2">
 <h3 id="usage-scenarios"><a class="anchor" href="#usage-scenarios"></a>Usage scenarios</h3>
@@ -3931,104 +3930,10 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="appendix-formal-ebnf-grammar"><a class="anchor" href="#appendix-formal-ebnf-grammar"></a>Appendix: Formal EBNF grammar</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The SAPL syntax is described by the following grammar provided in Extended Backus–Naur form:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>(* SAPL grammar in EBNF, according to ISO/IEC 14977 *)
-
-sapl                = { import }, ( policy-set | policy );
-import              = "import", ID, { ".", ID }, ".", ( ID | "*" )
-                    | "import", { ID, "." }, ID, "as", ID;
-policy-set          = "set", STRING, combining-algorithm, 
-                      [ "for", target-expression ], 
-                      { value-definition, ";" }, policy, { policy };
-combining-algorithm = "deny-overrides" | "permit-overrides"
-                    | "first-applicable" | "only-one-applicable"
-                    | "deny-unless-permit" | "permit-unless-deny";
-target-expression   = expression;
-value-definition    = "val", ID, ":=", expression ;
-policy              = "policy", STRING, entitlement, 
-                      [ target-expression ], [ "where", policy-body ], 
-                      [ "obligation", expression ],
-                      [ "advice", expression ], 
-                      [ "transform" expression ];
-entitlement         = "permit" | "deny";
-policy-body         = statement, ";", { statement, ";" };
-statement           = value-definition | expression;
-expression          = addition;
-addition            = multiplication, 
-                      { ( "+" | "-" | "&amp;&amp;" | "&amp;" ), multiplication };
-multiplication      = comparison, 
-                      { ( "*" | "/" | "||" | "|"), comparison };
-comparison          = prefixed,[ ( "==" | "=~" | "&lt;" | "&lt;=" 
-                                   | "&gt;=" | "&gt;" | "in" ),
-                      prefixed ] ;
-prefixed            = [ ( "-" | "!" ) ], basic-expression;
-basic-expression    = ( value | "@" | ID | function-call 
-                      | ( "(", expression, ")" ) ),
-                      { selection-step }, [ ("|-", filter) 
-                      | ( "::", value ) ];
-function-call       = ID, { ".", ID }, "(", [ expression, 
-                      {",", expression } ], ")" ;
-selection-step      = key-step | index-step | wildcard-step
-                    | rec-descent-step | rec-wildcard-step
-                    | slicing-step | expression-step | condition-step
-                    | union-step | attr-finder-step
-key-step            = ".", ID
-                    | "[", STRING, "]";
-index-step          = "[", NUMBER, "]";
-wildcard-step       = ".", "*"
-                    | "[", "*", "]" ;
-rec-descent-step    = "..", ID
-                    | "..", "[", STRING, "]"
-                    | "..", "[", NUMBER, "]";
-rec-wildcard-step   = "..", "*"
-                    | "..", "[", "*", "]";
-slicing-step        = "[", [ NUMBER ], ":", [ [ NUMBER ], 
-                      [ ":", [ NUMBER ] ] ], "]";
-expression-step     = "[", "(", expression, ")", "]";
-condition-step      = "[", "?", "(", expression, ")", "]";
-union-step          = "[", NUMBER, ",", NUMBER, { ",", NUMBER }, "]"
-                    | "[", ID, ",", ID, { ",", ID }, "]";
-attr-finder-step    = ".", "&lt;", ID, { ".", ID }, "(", [ expression, 
-                      {",", expression } ], ")", "&gt;";
-filter              = [ "each" ], filter-function
-                    | "{", filter-statement, { ",", filter-statement }, "}";
-filter-statement    = [ "each" ], "@", {selection-step}, ":", filter-function;
-filter-function     = ID, { ".", ID },
-                      [ "(", [ expression, { ",", expression } ], ")" ];
-value               = object | array | NUMBER | STRING | "true" | "false" 
-                    | "null" | "undefined";
-object              = "{", [ STRING, ":", expression,
-                      { ",", STRING, ":", expression } ], "}";
-array               = "[", [ expression, { ",", expression } ], "]" ;
-ID                  = ( LETTER | "_" | "$" ), { LETTER | DIGIT | "_" | "$" };
-LETTER              = "A" | "B" | "C" | "D" | "E" | "F" | "G"
-                    | "H" | "I" | "J" | "K" | "L" | "M" | "N"
-                    | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
-                    | "V" | "W" | "X" | "Y" | "Z" 
-                    | "a" | "b" | "c" | "d" | "e" | "f" | "g"
-                    | "h" | "i" | "j" | "k" | "l" | "m" | "n"
-                    | "o" | "p" | "q" | "r" | "s" | "t" | "u"
-                    | "v" | "w" | "x" | "y" | "z";
-DIGIT               = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
-STRING              = '"', ? any character except " ?, '"'
-                    | "'", ? any character except ' ?, "'";
-NUMBER              = ? JavaScript number definition ?;</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.0.0-SNAPSHOT<br>
-Last updated 2021-10-26 21:56:47 UTC
+Last updated 2021-10-29 14:10:13 UTC
 </div>
 </div>
 </body>
