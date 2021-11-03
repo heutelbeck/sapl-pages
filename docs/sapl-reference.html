@@ -507,7 +507,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#custom-attribute-finders">Custom Attribute Finders</a></li>
 </ul>
 </li>
-<li><a href="#testing-your-sapl-policies">Testing your SAPL policies</a>
+<li><a href="#testing-sapl-policies">Testing SAPL policies</a>
 <ul class="sectlevel2">
 <li><a href="#usage-scenarios">Usage scenarios</a></li>
 <li><a href="#unit-tests">Unit-Tests</a></li>
@@ -881,13 +881,13 @@ A PEP strongly depends on the application domain. SAPL comes with a default PEP 
 <p>A policy may refer to attributes not included in the authorization subscription object. It will have to obtain them from an external <strong>Policy Information Point (PIP)</strong>. The PDP fetches those attributes while evaluating the policy. To be able to access external PIPs, developers can extend the PDP by adding custom attribute finders. Policies might also contain functions not included in the default SAPL implementation. Developers may add custom functions by implementing <strong>Function Libraries</strong>.</p>
 </div>
 <div class="paragraph">
-<p>SAPL provides two simple PDP implementations: An <strong>embedded PDP</strong> with an embedded PRP which can be integrated easily into a Java application, and a <strong>remote PDP client</strong> which obtains decisions through a RESTful interface.</p>
+<p>SAPL provides two simple PDP implementations: An <strong>embedded PDP</strong> with an embedded PRP which can be integrated easily into a Java application, and a <strong>remote PDP client</strong> that obtains decisions through a RESTful interface.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="policy-administration-point-pap"><a class="anchor" href="#policy-administration-point-pap"></a>Policy Administration Point (PAP)</h3>
 <div class="paragraph">
-<p>The PAP is an entity that allows managing policies contained in the policy store. In the embedded PDP with the Resources PRP, the policy store can be a simple folder within the local file system containing <code>.sapl</code> files. Therefore, any access to files in this folder (e.g., FTP or SSH) can be seen as a very simple PAP. The PAP may be a separate application or can be included in an existing administration panel.</p>
+<p>The PAP is an entity that allows managing policies contained in the policy store. In the embedded PDP with the Resources PRP, the policy store can be a simple folder within the local file system containing <code>.sapl</code> files. Therefore, any access to files in this folder (e.g., FTP or SSH) can be seen as a straightforward PAP. The PAP may be a separate application or can be included in an existing administration panel.</p>
 </div>
 </div>
 </div>
@@ -901,7 +901,7 @@ A PEP strongly depends on the application domain. SAPL comes with a default PEP 
 <div class="sect2">
 <h3 id="sapl-authorization-subscription"><a class="anchor" href="#sapl-authorization-subscription"></a>SAPL Authorization Subscription</h3>
 <div class="paragraph">
-<p>A SAPL authorization subscription contains attributes with the names <code>subject</code>, <code>resource</code>, <code>action</code>, and <code>environment</code>. Each attribute value can be any JSON value (i.e., an object, an array,ber, a string, <code>true</code>, <code>false</code> or <code>null</code>).</p>
+<p>A SAPL authorization subscription contains attributes with the names <code>subject</code>, <code>resource</code>, <code>action</code>, and <code>environment</code>. Each attribute value can be any JSON value (i.e., an object, an array, a number, a string, <code>true</code>, <code>false</code>, or <code>null</code>).</p>
 </div>
 </div>
 <div class="sect2">
@@ -934,7 +934,7 @@ A PEP strongly depends on the application domain. SAPL comes with a default PEP 
 <div class="sect3">
 <h4 id="resource"><a class="anchor" href="#resource"></a>Resource</h4>
 <div class="paragraph">
-<p>The PEP knows for which resource it requested access. Thus, there usually is no need to return this resource in the authorization decision object. However, SAPL policies may contain a <code>transform</code> statement describing how the resource needs to be altered before it is returned to the subject seeking permission. This can be used to remove or blacken certain parts of the resource document (e.g., a policy could allow doctors to view patient data but remove any bank account details as they can only be accessed by the accounting department). If a policy taht evaluates to <code>PERMIT</code> contains a <code>transform</code> statement, the authorization decision attribute <code>resource</code> contains the transformed resource. Otherwise, there will not be a <code>resource</code> attribute in the authorization decision object.</p>
+<p>The PEP knows for which resource it requested access. Thus, there usually is no need to return this resource in the authorization decision object. However, SAPL policies may contain a <code>transform</code> statement describing how the resource needs to be altered before it is returned to the subject seeking permission. This can be used to remove or blacken certain parts of the resource document (e.g., a policy could allow doctors to view patient data but remove any bank account details as they can only be accessed by the accounting department). If a policy that evaluates to <code>PERMIT</code> contains a <code>transform</code> statement, the authorization decision attribute <code>resource</code> contains the transformed resource. Otherwise, there will not be a <code>resource</code> attribute in the authorization decision object.</p>
 </div>
 </div>
 <div class="sect3">
@@ -962,7 +962,7 @@ A PEP strongly depends on the application domain. SAPL comes with a default PEP 
 <div class="sect2">
 <h3 id="policy-evaluation"><a class="anchor" href="#policy-evaluation"></a>Policy Evaluation</h3>
 <div class="paragraph">
-<p>To come to the final decision included in the authorization decision object, the PDP evaluates all existing policy sets and top-level policies (i.e., policies which are not part of a policy set) against the authorization subscription and combines the results. Each policy set and policy evaluates to <code>PERMIT</code>, <code>DENY</code>, <code>NOT_APPLICABLE</code>, or <code>INDETERMINATE</code> (see <a href="#evaluation">below</a>). The PDP can be configured with a <strong>combining algorithm</strong> which determines how to deal with multiple results. E.g., if access should only be granted if at least one policy evaluates to <code>PERMIT</code> and should be denied otherwise, the algorithm <code>deny-unless-permit</code> could be used.</p>
+<p>To come to the final decision included in the authorization decision object, the PDP evaluates all existing policy sets and top-level policies (i.e., policies which are not part of a policy set) against the authorization subscription and combines the results. Each policy set and policy evaluates to <code>PERMIT</code>, <code>DENY</code>, <code>NOT_APPLICABLE</code>, or <code>INDETERMINATE</code> (see <a href="#evaluation">below</a>). The PDP can be configured with a <strong>combining algorithm</strong> which determines how to deal with multiple results. E.g., if access should only be granted if at least one policy evaluates to <code>PERMIT</code> and should be denied. Otherwise, the algorithm <code>deny-unless-permit</code> could be used.</p>
 </div>
 <div class="paragraph">
 <p>Available combining algorithms for the PDP are:</p>
@@ -1022,7 +1022,7 @@ A PEP strongly depends on the application domain. SAPL comes with a default PEP 
 <p>The multi-subscription shown in the example above contains two authorization subscriptions. The user <code>bs@simpsons.com</code> wants to <code>read</code> the file <code><a href="file://example/med/record/patient/BartSimpson" class="bare">file://example/med/record/patient/BartSimpson</a></code>, and the user <code>ms@simpsons.com</code> wants to <code>read</code> the file <code><a href="file://example/med/record/patient/MaggieSimpson" class="bare">file://example/med/record/patient/MaggieSimpson</a></code>.</p>
 </div>
 <div class="paragraph">
-<p>The SAPL PDP processes all individual authorization subscriptions contained in the multi-subscription in parallel and either returns the related authorization decisions as soon as they are available, or it collects all the authorization decisions of the individual authorization subscriptions and returns them as a multi-decision. In both cases, the authorization decisions are associated with the subscription IDs of the related authorization subscription. The following listings show the JSON structures of the two authorization decision types:</p>
+<p>The SAPL PDP processes all individual authorization subscriptions contained in the multi-subscription in parallel and returns the related authorization decisions as soon as they are available, or it collects all the authorization decisions of the individual authorization subscriptions and returns them as a multi-decision. In both cases, the authorization decisions are associated with the subscription IDs of the related authorization subscription. The following listings show the JSON structures of the two authorization decision types:</p>
 </div>
 <div class="listingblock">
 <div class="title">Single Authorization Decision with Associated Subscription ID - JSON Structure</div>
@@ -1065,10 +1065,10 @@ A PEP strongly depends on the application domain. SAPL comes with a default PEP 
 <h3 id="http-server-sent-events-api"><a class="anchor" href="#http-server-sent-events-api"></a>HTTP Server-Sent Events API</h3>
 <div class="paragraph">
 <p>A PDP to be used as a network service has to implement some HTTP endpoints.
-All of them accept <code>POST</code> requests and <code>application/json</code>. They produce <code>application/x-ndjson</code> as <a href="https://www.w3.org/TR/eventsource/">Server-Sent Events (SSE)</a>. A PDP server must be accessed over encrypted TLS connections. All connections should be authenticated. The means of authentications are left open for the organization deploying the PDP to decide, or do be defined by a specific server implementation. All endpoints should be located under a shared base URL, e.g., <code><a href="https://pdp.sapl.io/api/pdp/" class="bare">https://pdp.sapl.io/api/pdp/</a></code>.</p>
+All of them accept <code>POST</code> requests and <code>application/json</code>. They produce <code>application/x-ndjson</code> as <a href="https://www.w3.org/TR/eventsource/">Server-Sent Events (SSE)</a>. A PDP server must be accessed over encrypted TLS connections. All connections should be authenticated. The means of authentications are left open for the organization deploying the PDP to decide or to be defined by a specific server implementation. All endpoints should be located under a shared base URL, e.g., <code><a href="https://pdp.sapl.io/api/pdp/" class="bare">https://pdp.sapl.io/api/pdp/</a></code>.</p>
 </div>
 <div class="paragraph">
-<p>A PEP which is a client to the SSE PDP API encountering connectivity issues or errors must interpret this as an INDETERMINATE decision and thus deny access during this time of uncertainty and take appropriate steps to reconnect with the PDP, using a matching back-off strategy to not overload the PDP.</p>
+<p>A PEP which is a client to the SSE PDP API encountering connectivity issues or errors, must interpret this as an INDETERMINATE decision and thus deny access during this time of uncertainty and take appropriate steps to reconnect with the PDP, using a matching back-off strategy to not overload the PDP.</p>
 </div>
 <div class="paragraph">
 <p>A PEP must determine if it can enforce obligations before granting access. It must enforce obligation upon granting access at the point in time (e.g., before or after granting access) implied by the semantics of the obligation, and it should enforce any advice at their appropriate point in time when possible.</p>
@@ -1172,7 +1172,7 @@ All of them accept <code>POST</code> requests and <code>application/json</code>.
 <pre class="highlight"><code class="language-java" data-lang="java">/**
  * The policy decision point is the component in the system, which will take an
  * authorization subscription, retrieve matching policies from the policy
- * retrieval point, evaluate the policies, while potentially consulting external
+ * retrieval point, evaluate the policies while potentially consulting external
  * resources (e.g., through attribute finders), and return a {@link Flux} of
  * authorization decision objects.
  *
@@ -1281,7 +1281,7 @@ public interface PolicyDecisionPoint {
 <div class="sect3">
 <h4 id="spring-security-integration-and-pep-implementation"><a class="anchor" href="#spring-security-integration-and-pep-implementation"></a>Spring Security Integration and PEP Implementation</h4>
 <div class="paragraph">
-<p>For Spring Security (<a href="https://spring.io/projects/spring-security" class="bare">https://spring.io/projects/spring-security</a>) a full PEP implementation is available. A matching Spring PDP implementation also must be declared to use the integration (see above).</p>
+<p>For Spring Security (<a href="https://spring.io/projects/spring-security" class="bare">https://spring.io/projects/spring-security</a>), a full PEP implementation is available. A matching Spring PDP implementation also must be declared to use the integration (see above).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1301,7 +1301,7 @@ public interface PolicyDecisionPoint {
 <div class="sectionbody">
 <div class="paragraph">
 <p>SAPL defines a feature-rich domain-specific language (DSL) for creating access policies.
-Those access policies describe when access requests will be granted and when access will be denied. The underlying concept to describe these permissions is an attribute-based access control model (ABAC): A SAPL authorization subscription is a JSON object with the attributes <code>subject</code>, <code>action</code>, <code>resource</code> and <code>environment</code> each with an assigned JSON value. Each of these values may be a JSON object itself containing multiple attributes. Policies can make use of boolean conditions referring to those attributes (e.g., <code>subject.username == "admin"</code>).</p>
+Those access policies describe when access requests will be granted and when access will be denied. The underlying concept to describe these permissions is an attribute-based access control model (ABAC): A SAPL authorization subscription is a JSON object with the attributes <code>subject</code>, <code>action</code>, <code>resource</code> and <code>environment</code> each with an assigned JSON value. Each of these values may be a JSON object itself containing multiple attributes. Policies can use of boolean conditions referring to those attributes (e.g., <code>subject.username == "admin"</code>).</p>
 </div>
 <div class="paragraph">
 <p>However, a role-based access control (RBAC) system in which permissions are assigned to a certain role and roles can be assigned to users can be created with SAPL as well.</p>
@@ -1436,7 +1436,7 @@ var dbUser = "admin";<i class="conum" data-value="5"></i><b>(5)</b>
 <p>SAPL provides access to functions or attribute finders stored in libraries. The names of those libraries usually consist of different parts separated by periods (e.g., <code>sapl.pip.http</code> - a library containing functions to obtain attributes through HTTP requests). In policy documents, the functions and finders can be accessed by their fully qualified name, i.e., the name of the library followed by a period (<code>.</code>) and the function or finder name, e.g., <code>sapl.pip.http.get</code>.</p>
 </div>
 <div class="paragraph">
-<p>For any SAPL top-level document (i.e., a policy set or a policy that is not part of a policy set) any number of imports can be specified. Imports allow using a shorter name instead of the fully qualified name for a function or an attribute finder within a SAPL document. Thus, imports can make policy sets and policies easier to read and write.</p>
+<p>For any SAPL top-level document (i.e., a policy set or a policy that is not part of a policy set), any number of imports can be specified. Imports allow using a shorter name instead of the fully qualified name for a function or an attribute finder within a SAPL document. Thus, imports can make policy sets and policies easier to read and write.</p>
 </div>
 <div class="paragraph">
 <p>Each import statement starts with the keyword <code>import</code>.</p>
@@ -1480,7 +1480,7 @@ policy "sample"
 <div class="sect3">
 <h4 id="name"><a class="anchor" href="#name"></a>Name</h4>
 <div class="paragraph">
-<p>The keyword <code>policy</code> is followed by the policy name. The name is a string <em>identifying</em> the policy, therefore it must be unique. Accordingly, in systems with many policy sets and policies it is recommended to use a schema to create names (e.g., <code>"policy:patientdata:permit-doctors-read"</code>).</p>
+<p>The keyword <code>policy</code> is followed by the policy name. The name is a string <em>identifying</em> the policy. Therefore it must be unique. Accordingly, in systems with many policy sets and policies, it is recommended to use a schema to create names (e.g., <code>"policy:patientdata:permit-doctors-read"</code>).</p>
 </div>
 </div>
 <div class="sect3">
@@ -1510,7 +1510,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>If the target expression evaluates to <code>true</code> for a certain authorization subscription, the policy <em>matches</em> this subscription. A missing target expression makes the policy match any subscription.</p>
 </div>
 <div class="paragraph">
-<p>A matching policy whose conditions in the body evaluate to <code>true</code> is called <em>applicable</em> to an authorization subscription and returns its entitlement. Both target expression and body define conditions that must be satisfied for the policy to be applicable. Although they seem to serve a similar purpose there is an important difference: For an authorization subscription, the target expression of each top-level document is checked to select policies matching the subscription from a possibly large set of policy documents. Indexing mechanisms may be used to fulfill this task efficiently.</p>
+<p>A matching policy whose conditions in the body evaluate to <code>true</code> is called <em>applicable</em> to an authorization subscription and returns its entitlement. Both target expression and body define conditions that must be satisfied for the policy to be applicable. Although they seem to serve a similar purpose, there is an important difference: For an authorization subscription, the target expression of each top-level document is checked to select policies matching the subscription from a possibly large set of policy documents. Indexing mechanisms may be used to fulfill this task efficiently.</p>
 </div>
 <div class="paragraph">
 <p>Accordingly, there are two limitations regarding the elements allowed in the target:</p>
@@ -1518,7 +1518,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="ulist">
 <ul>
 <li>
-<p>As lazy evaluation deviates from boolean logic and prevents effective indexing, the logical operators <code>&amp;&amp;</code> and <code>||</code> may not be used. Instead, the target needs to make use of the operators <code>&amp;</code> and <code>|</code>, for which eager evaluation is applied.</p>
+<p>As lazy evaluation deviates from boolean logic and prevents effective indexing, the logical operators <code>&amp;&amp;</code> and <code>||</code> may not be used. Instead, the target needs to use the operators <code>&amp;</code> and <code>|</code>, for which eager evaluation is applied.</p>
 </li>
 <li>
 <p><a href="#attribute-finders">Attribute finder steps</a> that have access to environment variables and may contact external PIPs are not allowed in the target. Functions may be used because their output only depends on the arguments passed.</p>
@@ -1529,7 +1529,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="sect3">
 <h4 id="body"><a class="anchor" href="#body"></a>Body</h4>
 <div class="paragraph">
-<p>The policy body is <strong>optional</strong> and starts with the keyword <code>where</code>. It contains one or more statements each of which must evaluate to <code>true</code> for the policy to apply to a certain authorization subscription. Accordingly, the body extends the condition in the target expression and further limits the policy&#8217;s applicability.</p>
+<p>The policy body is <strong>optional</strong> and starts with the keyword <code>where</code>. It contains one or more statements, each of which must evaluate to <code>true</code> for the policy to apply to a certain authorization subscription. Accordingly, the body extends the condition in the target expression and further limits the policy&#8217;s applicability.</p>
 </div>
 <div class="paragraph">
 <p>A statement within the body can either be a variable assignment which makes a variable available under a certain name (and always evaluates to <code>true</code>)</p>
@@ -1556,7 +1556,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>There are no restrictions on the syntax elements allowed in the policy body. Lazy evaluation is used for the conjunction of the statements - i.e., if one statement evaluates to <code>false</code>, the policy returns the decision <code>NOT_APPLICABLE</code>, even if future statements would cause an error.</p>
 </div>
 <div class="paragraph">
-<p>If the body is missing (or does not contain any condition statement) the policy is applicable to any authorization subscription which the policy matches (i.e., for which the target expression evaluates to <code>true</code>).</p>
+<p>If the body is missing (or does not contain any condition statement), the policy is applicable to any authorization subscription which the policy matches (i.e., for which the target expression evaluates to <code>true</code>).</p>
 </div>
 <div class="sect4">
 <h5 id="variable-assignment"><a class="anchor" href="#variable-assignment"></a>Variable Assignment</h5>
@@ -1564,10 +1564,10 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>A variable assignment starts with the keyword <code>var</code>, followed by an identifier under which the assigned value should be available, followed by <code>=</code> and an expression.</p>
 </div>
 <div class="paragraph">
-<p>After a variable assignment, the result of evaluating the expression can be used in later conditions within the same policy under the specified name. This is useful because it allows to execute time-consuming calculations or requests to external attribute stores only once and the result can be used in multiple expressions. Additionally, it can make policies shorter and improve readability.</p>
+<p>After a variable assignment, the result of evaluating the expression can be used in later conditions within the same policy under the specified name. This is useful because it allows to execute time-consuming calculations or requests to external attribute stores only once, and the result can be used in multiple expressions. Additionally, it can make policies shorter and improve readability.</p>
 </div>
 <div class="paragraph">
-<p>The expression can make use of any element of the SAPL expression language, especially of attribute finder steps that are not allowed in the target expression.</p>
+<p>The expression can use any element of the SAPL expression language, especially of attribute finder steps that are not allowed in the target expression.</p>
 </div>
 <div class="paragraph">
 <p>The value assignment statement always evaluates to <code>true</code>.</p>
@@ -1579,7 +1579,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>A condition statement simply consists of an expression that has to evaluate to <code>true</code> or <code>false</code>.</p>
 </div>
 <div class="paragraph">
-<p>The expression can make use of any element of the SAPL expression language, especially of attribute finder steps that are not allowed in the target expression. Conditions in the policy body are used to further limit the applicability of a policy.</p>
+<p>The expression can use any element of the SAPL expression language, especially of attribute finder steps that are not allowed in the target expression. Conditions in the policy body are used to further limit the applicability of a policy.</p>
 </div>
 </div>
 </div>
@@ -1589,7 +1589,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>An <strong>optional</strong> obligation expression contains a task which the PEP must fulfill before granting or denying access. It consists of the keyword <code>obligation</code> followed by an expression.</p>
 </div>
 <div class="paragraph">
-<p>A common situation in which obligations are useful is <em>Break the Glass Scenarios</em>. Assuming in case of an emergency a doctor should also have access to medical records that she normally cannot read. However, this emergency access has to be logged to prevent abuse. In this situation, logging is a requirement for granting access and therefore must be commanded in an obligation.</p>
+<p>A common situation in which obligations are useful is <em>Break the Glass Scenarios</em>. Assuming in case of an emergency, a doctor should also have access to medical records that she normally cannot read. However, this emergency access has to be logged to prevent abuse. In this situation, logging is a requirement for granting access and therefore must be commanded in an obligation.</p>
 </div>
 <div class="paragraph">
 <p>Obligations are only returned in the authorization decision if the decision is <code>PERMIT</code> or <code>DENY</code>. The PDP simply collects all obligations from policies evaluating to one of these entitlements. Depending on the final decision, the obligations and advice which belong to this decision are included in the authorization decision object. It does not matter if the obligation is described with a string (like <code>"create_emergency_access_log"</code>) or an object (like <code>{ "task" : "create_log", "content" : "emergency_access" }</code>) or another JSON value - only the PEP must be implemented in a way that it knows how to process these obligations.</p>
@@ -1598,7 +1598,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="sect3">
 <h4 id="advice-2"><a class="anchor" href="#advice-2"></a>Advice</h4>
 <div class="paragraph">
-<p>An <strong>optional</strong> advice expression is treated similarly to an obligation expression. Unlike obligations, fulfilling the described tasks in advice is not a requirement for granting or denying access. The advice expression consists of the keyword <code>advice</code> followed by any expression.</p>
+<p>An <strong>optional</strong> advice expression is treated similarly to an obligation expression. Unlike obligations, fulfilling the described tasks in the advice is not a requirement for granting or denying access. The advice expression consists of the keyword <code>advice</code> followed by any expression.</p>
 </div>
 <div class="paragraph">
 <p>If the final decision is <code>PERMIT</code> or <code>DENY</code>, advice from all policies evaluating to this decision is included in the authorization decision object by the PDP.</p>
@@ -1610,7 +1610,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>An <strong>optional</strong> transformation statement is preluded with the keyword <code>transform</code> and followed by an expression. If a transformation statement is supplied and the policy evaluates to <code>permit</code>, the result of evaluating the expression will be returned as the <code>resource</code> in the authorization decision object.</p>
 </div>
 <div class="paragraph">
-<p>Accordingly, a transformation statement might be used to hide certain information (e.g., <em>a doctor can access patient data but should not see bank account details</em>). This can be reached by applying a filter to the original resource which removes or blackens certain attributes. Thus SAPL allows for <strong>fine-grained</strong> or <strong>field-level</strong> access control without the need to treat each attribute as a resource and write a specific  policy for it.</p>
+<p>Accordingly, a transformation statement might be used to hide certain information (e.g., <em>a doctor can access patient data but should not see bank account details</em>). This can be reached by applying a filter to the original resource, which removes or blackens certain attributes. Thus SAPL allows for <strong>fine-grained</strong> or <strong>field-level</strong> access control without the need to treat each attribute as a resource and write a specific  policy for it.</p>
 </div>
 <div class="paragraph">
 <p>The original resource is accessible via the identifier <code>resource</code> and can be filtered as follows:</p>
@@ -1629,7 +1629,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>The example would remove the attribute <code>someValue</code> and blacken the value of the attribute <code>anotherValue</code>. The filtering functions are described in more detail <a href="#filtering">below</a>.</p>
 </div>
 <div class="paragraph">
-<p>It is not possible to combine multiple transformation statements through multiple policies. Each combining algorithm in SAPL will not return the decision <code>PERMIT</code> if there is more than one policy evaluating to <code>PERMIT</code> and at least one of them contains a transformation statement (this is called <em>transformation uncertainty</em>). For more details, <a href="#combining-algorithms">see below</a>.</p>
+<p>It is not possible to combine multiple transformation statements through multiple policies. Each combining algorithm in SAPL will not return the decision <code>PERMIT</code> if there is more than one policy evaluating to <code>PERMIT</code>, and at least one of them contains a transformation statement (this is called <em>transformation uncertainty</em>). For more details, <a href="#combining-algorithms">see below</a>.</p>
 </div>
 <div class="paragraph">
 <p>Transformation statements can be interpreted as a special case of obligation, requiring the PEP to replace the resource accordingly.</p>
@@ -1639,7 +1639,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="sect2">
 <h3 id="sapl-policy-set"><a class="anchor" href="#sapl-policy-set"></a>SAPL Policy Set</h3>
 <div class="paragraph">
-<p>While a policy can either be a top-level SAPL document or be contained in a policy set, policy sets are always top-level documents. I.e., for evaluating an authorization subscription, the PDP evaluates an existing policy set. Policy sets are evaluated against an authorization subscription by checking their target expression if applicable evaluating their policies and, if necessary, combining multiple decisions according to a combining algorithm specified in the policy set. Finally, similarly to policies, policy sets evaluate to either <code>PERMIT</code>, <code>DENY</code>, <code>NOT_APPLICABLE</code> or <code>INDETERMINATE</code>.</p>
+<p>While a policy can either be a top-level SAPL document or be contained in a policy set, policy sets are always top-level documents. I.e., for evaluating an authorization subscription, the PDP evaluates an existing policy set. Policy sets are evaluated against an authorization subscription by checking their target expression, if applicable evaluating their policies, and, if necessary, combining multiple decisions according to a combining algorithm specified in the policy set. Finally, similarly to policies, policy sets evaluate to either <code>PERMIT</code>, <code>DENY</code>, <code>NOT_APPLICABLE</code> or <code>INDETERMINATE</code>.</p>
 </div>
 <div class="paragraph">
 <p>Policy sets are used to structure multiple policies and provide an order for the policies they contain. Hence, their policies can be evaluated one after another.</p>
@@ -1690,7 +1690,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="sect3">
 <h4 id="target-expression-2"><a class="anchor" href="#target-expression-2"></a>Target Expression</h4>
 <div class="paragraph">
-<p>After the combining algorithm, an <strong>optional</strong> target expression can be specified. The target expression is a condition for applying the policy set. It starts with the keyword <code>for</code> followed by an expression that must evaluate to either <code>true</code> or <code>false</code>. If the condition evaluates to <code>true</code> for a certain authorization subscription the policy set <em>matches</em> this subscription. In case the target expression is missing the policy set matches any authorization subscription.</p>
+<p>After the combining algorithm, an <strong>optional</strong> target expression can be specified. The target expression is a condition for applying the policy set. It starts with the keyword <code>for</code> followed by an expression that must evaluate to either <code>true</code> or <code>false</code>. If the condition evaluates to <code>true</code> for a certain authorization subscription, the policy set <em>matches</em> this subscription. In case the target expression is missing, the policy set matches any authorization subscription.</p>
 </div>
 <div class="paragraph">
 <p>The policy sets' target expression is used to select matching policy sets from a large collection of policy documents before evaluating them. As this needs to be done efficiently, there are no <a href="#attribute-finders">attribute finder steps</a> allowed at this place.</p>
@@ -1702,7 +1702,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>The target expression can be followed by any number of variable assignments. Variable assignments are used to make a value available in all subsequent policies under a certain name. An assignment starts with the keyword <code>var</code>, followed by an identifier under which the assigned value should be available, followed by <code>=</code> and an expression (see <a href="#value-assignment">above</a>).</p>
 </div>
 <div class="paragraph">
-<p>Since variable assignments are evaluated only if the policy set&#8217;s target matches, attribute finders may be used.</p>
+<p>Since variable assignments are only evaluated if the policy set&#8217;s target matches, attribute finders may be used.</p>
 </div>
 <div class="paragraph">
 <p>In case a policy within the policy set assigns a variable already assigned in the policy set, the assignment in the policy overwrites the old. The overwritten value only exists within the particular policy. In other policies, the variable has the value defined in the policy set.</p>
@@ -1714,7 +1714,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <p>Each policy set must contain one or more policies. <a href="#policy">See above</a> how to describe a SAPL policy. If the combining algorithm <code>first-applicable</code> is used, the policies are evaluated in the order in which they appear in the policy set.</p>
 </div>
 <div class="paragraph">
-<p>In each policy, functions and attribute finders imported at the beginning of the SAPL document can be used under their shorter name. All variables assigned for the policy set (see <a href="#policy-set-value-assignments">Value Assignments</a>) are available within the policies but can be overwritten for a particular policy. The same applies to imports - imports at the policy level overwrite imports defined for the policy set, but are only valid for the particular policy.</p>
+<p>In each policy, functions and attribute finders imported at the beginning of the SAPL document can be used under their shorter name. All variables assigned for the policy set (see <a href="#policy-set-value-assignments">Value Assignments</a>) are available within the policies but can be overwritten for a particular policy. The same applies to imports - imports at the policy level overwrite imports defined for the policy set but are only valid for the particular policy.</p>
 </div>
 </div>
 </div>
@@ -1788,7 +1788,7 @@ Remove before deployment! */</code></pre>
 <div class="sect2">
 <h3 id="sapl-expressions"><a class="anchor" href="#sapl-expressions"></a>SAPL Expressions</h3>
 <div id="expressions" class="paragraph">
-<p>To ensure flexibility, various parts of a policy can be <strong>expressions</strong> which are evaluated at runtime. E.g., a policy&#8217;s target has to be an expression evaluating to <code>true</code> or <code>false</code>. SAPL contains a uniform expression language which offers various useful features while still being easy to read and write.</p>
+<p>To ensure flexibility, various parts of a policy can be <strong>expressions</strong> that are evaluated at runtime. E.g., a policy&#8217;s target has to be an expression evaluating to <code>true</code> or <code>false</code>. SAPL contains a uniform expression language that offers various useful features while still being easy to read and write.</p>
 </div>
 <div class="paragraph">
 <p>Since JSON is the base data model, each expression evaluates to a JSON data type. These data types and the expression syntax are described in this section.</p>
@@ -1797,7 +1797,7 @@ Remove before deployment! */</code></pre>
 <h4 id="json-data-types"><a class="anchor" href="#json-data-types"></a>JSON Data Types</h4>
 <div class="paragraph">
 <p>SAPL is based on the <strong>JavaScript Object Notation</strong> or <strong>JSON</strong>, an <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">ECMA Standard</a> for the representation of structured data.
-Any value occurring within the SAPL language is a JSON data type and any expression within a policy evaluates to a JSON data type.
+Any value occurring within the SAPL language is a JSON data type, and any expression within a policy evaluates to a JSON data type.
 The types and their JSON notations are:</p>
 </div>
 <div class="ulist">
@@ -1807,7 +1807,7 @@ The types and their JSON notations are:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Number</strong>: A signed decimal number, e.g., <code>-1.9</code>. There is no distinction between integer and floating-point numbers. In case an integer is expected (e.g., for an numeric index), the decimal number is rounded to an integer number.</p>
+<p><strong>Number</strong>: A signed decimal number, e.g., <code>-1.9</code>. There is no distinction between integer and floating-point numbers. In case an integer is expected (e.g., for a numeric index), the decimal number is rounded to an integer number.</p>
 </li>
 <li>
 <p><strong>String</strong>: A sequence of zero or more characters, written in double or single quotes, e.g., <code>"a string"</code> or <code>'a string'</code>.</p>
@@ -1826,7 +1826,7 @@ The types and their JSON notations are:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Object</strong>: An unordered set of name/value pairs. The name is a string, the value has to be one of the available data types. It can also be an object itself. The name/value pair is also called attribute of the object. E.g.</p>
+<p><strong>Object</strong>: An unordered set of name/value pairs. The name is a string. The value has to be one of the available data types. It can also be an object itself. The name/value pair is also called an attribute of the object. E.g.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
@@ -1868,7 +1868,7 @@ The types and their JSON notations are:</p>
 <p><strong>Value Expression</strong>: a value explicitly defined in the corresponding JSON notation (e.g., <code>"a value"</code>)</p>
 </li>
 <li>
-<p><strong>Identifier Expression</strong>: the name of a variable or of an authorization subscription attribute (<code>subject</code>, <code>resource</code>, <code>action</code> or <code>environment</code>)</p>
+<p><strong>Identifier Expression</strong>: the name of a variable or of an authorization subscription attribute (<code>subject</code>, <code>resource</code>, <code>action</code>, or <code>environment</code>)</p>
 </li>
 <li>
 <p><strong>Function Expression</strong>: a function call (e.g., <code>simple.get_minimum(resource.array)</code>)</p>
@@ -1877,15 +1877,15 @@ The types and their JSON notations are:</p>
 <p><strong>Relative Expression</strong>: <code>@</code>, which refers to a certain value depending on the context</p>
 </li>
 <li>
-<p><strong>Grouped Expression</strong>: any expression enclosed in parantheses, e.g., <code>(1 + 1)</code></p>
+<p><strong>Grouped Expression</strong>: any expression enclosed in parentheses, e.g., <code>(1 + 1)</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Each of these basic expressions can contain one or more <strong>selection steps</strong> (e.g., <code>subject.name</code> which is the identifier expression <code>subject</code> followed by the selection step <code>.name</code> selecting the value of the <code>name</code> attribute). Additionally, a basic expression can contain a <strong>filter component</strong> (<code>|- Filter</code>) which will be applied to the evaluation result. If the expression evaluates to an array, instead of applying a filter each item can be transformed using a <strong>subtemplate component</strong> (<code>:: Subtemplate</code>).</p>
+<p>Each of these basic expressions can contain one or more <strong>selection steps</strong> (e.g., <code>subject.name</code>, which is the identifier expression <code>subject</code> followed by the selection step <code>.name</code> selecting the value of the <code>name</code> attribute). Additionally, a basic expression can contain a <strong>filter component</strong> (<code>|- Filter</code>) which will be applied to the evaluation result. If the expression evaluates to an array, instead of applying a filter,  each item can be transformed using a <strong>subtemplate component</strong> (<code>:: Subtemplate</code>).</p>
 </div>
 <div class="paragraph">
-<p><strong>Operator expressions</strong> can be constructed using prefix or infix <strong>operators</strong> (e.g., <code>1 + subject.age</code> or <code>! subject.isBlocked</code>). SAPL supports infix and prefix operators. They may be applied in connection with any expression. An operator expression within parantheses (e.g., <code>(1 + subject.age)</code>) is a basic expression again and thus may contain selection steps, filter or subtemplate statements.</p>
+<p><strong>Operator expressions</strong> can be constructed using prefix or infix <strong>operators</strong> (e.g., <code>1 + subject.age</code> or <code>! subject.isBlocked</code>). SAPL supports infix and prefix operators. They may be applied in connection with any expression. An operator expression within parentheses (e.g., <code>(1 + subject.age)</code>) is a basic expression again and thus may contain selection steps, filter, or subtemplate statements.</p>
 </div>
 <div class="sect4">
 <h5 id="value-expressions"><a class="anchor" href="#value-expressions"></a>Value Expressions</h5>
@@ -1893,10 +1893,10 @@ The types and their JSON notations are:</p>
 <p>A basic value expression is the most simple type. The value is denoted in the corresponding JSON format.</p>
 </div>
 <div class="paragraph">
-<p><code>true</code>, <code>false</code> and <code>null</code> are value expressions as well as <code>"a string"</code>, <code>'a string'</code> or any number (like <code>6</code> or <code>100.51</code>).</p>
+<p><code>true</code>, <code>false</code>, and <code>null</code> are value expressions as well as <code>"a string"</code>, <code>'a string'</code>, or any number (like <code>6</code> or <code>100.51</code>).</p>
 </div>
 <div class="paragraph">
-<p>For denoting objects the keys need to be strings and the values can be any expression, e.g.</p>
+<p>For denoting objects, the keys need to be strings, and the values can be any expression, e.g.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1907,7 +1907,7 @@ The types and their JSON notations are:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>For arrays the items can be any expression, e.g.</p>
+<p>For arrays, the items can be any expression, e.g.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1921,7 +1921,7 @@ The types and their JSON notations are:</p>
 <div class="sect4">
 <h5 id="identifier-expressions"><a class="anchor" href="#identifier-expressions"></a>Identifier Expressions</h5>
 <div class="paragraph">
-<p>A basic identifier expression consists of the name of a variable or the name of an authorization subscription attribute (i.e., <code>subject</code>, <code>resource</code>, <code>action</code> or <code>environment</code>).</p>
+<p>A basic identifier expression consists of the name of a variable or the name of an authorization subscription attribute (i.e., <code>subject</code>, <code>resource</code>, <code>action</code>, or <code>environment</code>).</p>
 </div>
 <div class="paragraph">
 <p>It evaluates to the variable or the attribute&#8217;s value.</p>
@@ -1947,7 +1947,7 @@ The types and their JSON notations are:</p>
 <p>If there are no arguments passed to the function, empty parentheses have to be denoted (e.g., <code>random_number()</code>).</p>
 </div>
 <div class="paragraph">
-<p>When evaluating a function expression, the expressions representing the function call arguments are evaluated first. Afterwards the results are passed to the function as arguments. The expression evaluates to the function&#8217;s return value.</p>
+<p>When evaluating a function expression, the expressions representing the function call arguments are evaluated first. Afterward, the results are passed to the function as arguments. The expression evaluates to the function&#8217;s return value.</p>
 </div>
 </div>
 <div class="sect4">
@@ -1979,12 +1979,12 @@ The types and their JSON notations are:</p>
 <div class="sect3">
 <h4 id="operators"><a class="anchor" href="#operators"></a>Operators</h4>
 <div class="paragraph">
-<p>SAPL provides a collection of arithmetic, comparison, logical, string and filtering operators which can be used to build expressions from other expressions.</p>
+<p>SAPL provides a collection of arithmetic, comparison, logical, string and filtering operators, which can be used to build expressions from other expressions.</p>
 </div>
 <div class="sect4">
 <h5 id="arithmetic-operators"><a class="anchor" href="#arithmetic-operators"></a>Arithmetic Operators</h5>
 <div class="paragraph">
-<p>Assuming <code>exp1</code> and <code>exp2</code> are expressions evaluating to numbers, the following operators can be applied. All of them evaluate tober.</p>
+<p>Assuming <code>exp1</code> and <code>exp2</code> are expressions evaluating to numbers, the following operators can be applied. All of them evaluate to number.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2009,7 +2009,7 @@ The types and their JSON notations are:</p>
 <p>An expression can contain multiple arithmetic operators. The order in which they are evaluated can be specified using <strong>parentheses</strong>, e.g., <code>(1 + 2) * 3</code>.</p>
 </div>
 <div class="paragraph">
-<p>In case multiple operators are used without parentheses (e.g., <code>4 + 3 * 2</code>) the <strong>operator precedence</strong> determines how the expression is evaluated. Operators with higher precedence are evaluated first. The following precedence is assigned to arithmetic operators:</p>
+<p>In case multiple operators are used without parentheses (e.g., <code>4 + 3 * 2</code>), the <strong>operator precedence</strong> determines how the expression is evaluated. Operators with higher precedence are evaluated first. The following precedence is assigned to arithmetic operators:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2096,7 +2096,7 @@ The types and their JSON notations are:</p>
 <li>
 <p>Precedence and Associativity</p>
 <div class="paragraph">
-<p>All comparison operators have the precedence <strong>3</strong>. This is important for combining them with logical operators (see below).</p>
+<p>All comparison operators have precedence <strong>3</strong>. This is important for combining them with logical operators (see below).</p>
 </div>
 <div class="paragraph">
 <p><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>==</code>,<code>=~</code> and <code>in</code> are <strong>non-associative</strong>, i.e., an expression may not contain multiple comparison operators (like <code>3 &lt; var &lt; 5</code>). However, they can be combined with logical operators which have a different precedence (thus, the faulty example could be replaced by <code>3 &lt; var &amp;&amp; var &lt; 5</code>).</p>
@@ -2124,7 +2124,7 @@ The types and their JSON notations are:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The difference between <code>&amp;&amp;</code> and <code>&amp;</code> (or <code>||</code> and <code>|</code>) is that for <code>&amp;&amp;</code> lazy evaluation is used while <code>&amp;</code> causes eager evaluation. Using <code>&amp;&amp;</code>, if the left side evaluates to <code>false</code> and the right side would cause an error, the result of the operator is <code>false</code>, the right side is not evaluated. The same applies for <code>||</code> if the left side evaluates to <code>true</code>. In this case, the operator evaluates to <code>true</code>, even if the right side would cause an error - the right side is ignored if the result can already be determined. This is different for <code>&amp;</code> and <code>|</code> which always evaluate both sides first (eager evaluation). Whenever there is an error, the expression does not return a result. In a target expression, only the eager evaluation expressions <code>&amp;</code> and <code>|</code> can be used.</p>
+<p>The difference between <code>&amp;&amp;</code> and <code>&amp;</code> (or <code>||</code> and <code>|</code>) is that for <code>&amp;&amp;</code> lazy evaluation is used while <code>&amp;</code> causes eager evaluation. Using <code>&amp;&amp;</code>, if the left side evaluates to <code>false</code> and the right side would cause an error, the result of the operator is <code>false</code>. The right side is not evaluated. The same applies for <code>||</code> if the left side evaluates to <code>true</code>. In this case, the operator evaluates to <code>true</code>, even if the right side would cause an error - the right side is ignored if the result can already be determined. This is different for <code>&amp;</code> and <code>|</code> which always evaluate both sides first (eager evaluation). Whenever there is an error, the expression does not return a result. In a target expression, only the eager evaluation expressions <code>&amp;</code> and <code>|</code> can be used.</p>
 </div>
 <div class="paragraph">
 <p>The operators are already listed in descending order of their <strong>precedence</strong>, i.e., <code>!</code> has the highest precedence followed by <code>&amp;&amp;</code>/<code>&amp;</code> and <code>||</code>/<code>|</code>. The order of evaluation can be changed by using parentheses.</p>
@@ -2146,7 +2146,7 @@ The types and their JSON notations are:</p>
 <div class="sect3">
 <h4 id="selection-steps"><a class="anchor" href="#selection-steps"></a>Selection Steps</h4>
 <div class="paragraph">
-<p>SAPL provides an easy way of accessing attributes of an object (or items of an array). The <strong>basic access</strong> mechanism has a similar syntax to programming languages like JavaScript or Java (e.g., <code>object.attribute</code>, <code>user.address.street</code> or <code>array[10]</code>). Beyond that SAPL offers <strong>extended possibilities</strong> for expressing more sophisticated queries against JSON structures (e.g., <code>persons[?(@.age &gt;= 50)]</code>).</p>
+<p>SAPL provides an easy way of accessing attributes of an object (or items of an array). The <strong>basic access</strong> mechanism has a similar syntax to programming languages like JavaScript or Java (e.g., <code>object.attribute</code>, <code>user.address.street</code> or <code>array[10]</code>). Beyond that, SAPL offers <strong>extended possibilities</strong> for expressing more sophisticated queries against JSON structures (e.g., <code>persons[?(@.age &gt;= 50)]</code>).</p>
 </div>
 <div class="sect4">
 <h5 id="overview-2"><a class="anchor" href="#overview-2"></a>Overview</h5>
@@ -2239,7 +2239,7 @@ The types and their JSON notations are:</p>
 </div>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><strong>Wildcard step</strong> applied to an object returns an array with the value of each attribute - applied to an array it returns the array itself</p>
+<p><strong>Wildcard step</strong> applied to an object, it returns an array with the value of each attribute - applied to an array, it returns the array itself</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2285,7 +2285,7 @@ The types and their JSON notations are:</p>
 <p><code>5</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><strong>Expression step</strong> that evaluates tober (index) - can also evaluate to an attribute name</p>
+<p><strong>Expression step</strong> that evaluates to number (index) - can also evaluate to an attribute name</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2332,10 +2332,10 @@ The types and their JSON notations are:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Attributes of an object</strong> can be accessed by their key (<strong>key step</strong>) using the <em>dot notation</em> (<code>resource.key</code>) or the <em>bracket notation</em> (<code>resource["key"]</code>,<code>resource['key']</code>). Both expressions return the value of the specified attribute. For using the dot notation the specified key has to be an <a href="#identifier">identifiers</a>. Otherwise, the bracket notation with a string between square brackets is necessary, e.g., if the key contains whitespace characters (<code>resource['another key']</code>).</p>
+<p><strong>Attributes of an object</strong> can be accessed by their key (<strong>key step</strong>) using the <em>dot notation</em> (<code>resource.key</code>) or the <em>bracket notation</em> (<code>resource["key"]</code>,<code>resource['key']</code>). Both expressions return the value of the specified attribute. For using the dot notation, the specified key has to be an <a href="#identifiers">identifier</a>. Otherwise, the bracket notation with a string between square brackets is necessary, e.g., if the key contains whitespace characters (<code>resource['another key']</code>).</p>
 </li>
 <li>
-<p><strong>Indices of an array</strong> may be accessed by putting the index between square brackets (<strong>index step</strong>, <code>array[3]</code>). The index can be a negative number <code>-n</code> which evaluates to the <code>n</code>-th element from the end of the array, starting with -1 as the last element&#8217;s index. <code>array[-2]</code> would return the second last element of the Array <code>array</code>.</p>
+<p><strong>Indices of an array</strong> may be accessed by putting the index between square brackets (<strong>index step</strong>, <code>array[3]</code>). The index can be a negative number <code>-n</code>, which evaluates to the <code>n</code>-th element from the end of the array, starting with -1 as the last element&#8217;s index. <code>array[-2]</code> would return the second last element of the array <code>array</code>.</p>
 </li>
 </ul>
 </div>
@@ -2356,12 +2356,12 @@ The types and their JSON notations are:</p>
 <div class="sect4">
 <h5 id="extended-possibilities"><a class="anchor" href="#extended-possibilities"></a>Extended Possibilities</h5>
 <div class="paragraph">
-<p>SAPL supports querying for specific parts of a JSON structure. Except for an <strong>expression step</strong>, all of these steps return an array since the number of elements found can vary. Even if only a single result is retrieved the expression returns an array containing one item.</p>
+<p>SAPL supports querying for specific parts of a JSON structure. Except for an <strong>expression step</strong>, all of these steps return an array since the number of elements found can vary. Even if only a single result is retrieved, the expression returns an array containing one item.</p>
 </div>
 <div class="sect5">
 <h6 id="expression-step-expression"><a class="anchor" href="#expression-step-expression"></a>Expression Step <code>[(Expression)]</code></h6>
 <div class="paragraph">
-<p>Returns the value of an attribute with a key or an array item with an index specified by an expression. <code>Expression</code> must evaluate to a string orber. If <code>Expression</code> evaluates to a string, the selection can only be applied to an object. If <code>Expression</code> evaluates tober, the selection can only be applied to an array.</p>
+<p>An expression step returns the value of an attribute with a key or an array item with an index specified by an expression. <code>Expression</code> must evaluate to a string or a number. If <code>Expression</code> evaluates to a string, the selection can only be applied to an object. If <code>Expression</code> evaluates to a number, the selection can only be applied to an array.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2379,7 +2379,7 @@ The expression step can be used to refer to custom variables (<code>object.array
 <div class="sect5">
 <h6 id="wildcard-step-or"><a class="anchor" href="#wildcard-step-or"></a>Wildcard Step <code>.*</code> or <code>[*]</code></h6>
 <div class="paragraph">
-<p>Can be applied to an object or an array. When applied to an object, it returns an array containing all attribute values. As attributes of an object have no ordering, the sorting of the result is not defined. When applied to an array, the step just leaves the array untouched.</p>
+<p>A wildcard step can be applied to an object or an array. When applied to an object, it returns an array containing all attribute values. As attributes of an object have no order, the sorting of the result is not defined. When applied to an array, the step just leaves the array untouched.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2424,7 +2424,7 @@ Applied to an array <code>[1, 2, 3]</code>, the selection step <code>.<strong></
 </div>
 </div>
 <div class="paragraph">
-<p>the selection step <code>object..key</code> returns the following array: <code>["value1", "value2"]</code> (any attribute value with key <code>key</code>, the items may be in a different order).</p>
+<p>The selection step <code>object..key</code> returns the following array: <code>["value1", "value2"]</code> (any attribute value with key <code>key</code>, the items may be in a different order).</p>
 </div>
 <div class="paragraph">
 <p>The wildcard selection step <code>object..<strong></code> or <code>object..[</strong>]</code> returns <code>["value1", {"key":"value2"}, "value2"]</code> (recursively each attribute value and array item in the whole structure <code>object</code>, the sorting may be different).</p>
@@ -2437,7 +2437,7 @@ Applied to an array <code>[1, 2, 3]</code>, the selection step <code>.<strong></
 <div class="sect5">
 <h6 id="condition-condition"><a class="anchor" href="#condition-condition"></a>Condition <code>[?(Condition)]</code></h6>
 <div class="paragraph">
-<p>Returns an array containing all attribute values or array items for which <code>Condition</code> evaluates to <code>true</code>. Can be applied to both an object (then it checks each attribute value) and an array (then it checks each item). <code>Condition</code> must be an expression, in which <a href="#basic-relative">relative expressions</a> starting with <code>@</code> can be used. <code>@</code> evaluates to the current attribute value or array item for which the condition is evaluated and can be followed by further selection steps.</p>
+<p>Condition steps return an array containing all attribute values or array items for which <code>Condition</code> evaluates to <code>true</code>. It can be applied to both an object (then it checks each attribute value) and an array (then it checks each item). <code>Condition</code> must be an expression in which <a href="#basic-relative">relative expressions</a> starting with <code>@</code> can be used. <code>@</code> evaluates to the current attribute value or array item for which the condition is evaluated and can be followed by further selection steps.</p>
 </div>
 <div class="paragraph">
 <p>As attributes have no order, the sorting of the result array of a condition step applied to an object is not specified.</p>
@@ -2458,7 +2458,7 @@ Applied to the array <code>[1, 2, 3, 4, 5]</code>, the selection step <code>[?(@
 <div class="sect5">
 <h6 id="array-slicing-startstopstep"><a class="anchor" href="#array-slicing-startstopstep"></a>Array Slicing <code>[Start:Stop:Step]</code></h6>
 <div class="paragraph">
-<p>The slice contains the items with indices between <code>Start</code> and <code>Stop</code> with <code>Start</code> being inclusive and <code>Stop</code> being exclusive. <code>Step</code> describes the distance between the elements to be included in the slice, i.e., with a <code>Step</code> of 2, only each second element would be included (with <code>Start</code> as the first element&#8217;s index). All parts except the first colon are optional. <code>Step</code> defaults to 1.</p>
+<p>The slice contains the items with indices between <code>Start</code> and <code>Stop</code>, with <code>Start</code> being inclusive and <code>Stop</code> being exclusive. <code>Step</code> describes the distance between the elements to be included in the slice, i.e., with a <code>Step</code> of 2, only each second element would be included (with <code>Start</code> as the first element&#8217;s index). All parts except the first colon are optional. <code>Step</code> defaults to 1.</p>
 </div>
 <div class="paragraph">
 <p>In case <code>Step</code> is positive, <code>Start</code> defaults to 0 and <code>Stop</code> defaults to the length of the array. If <code>Step</code> is negative, <code>Start</code> defaults to the length of the array minus 1 (i.e., the last element&#8217;s index) and <code>Stop</code> defaults to -1. A <code>Step</code> of 0 leads to an error.</p>
@@ -2482,7 +2482,7 @@ Applied to the Array <code>[1, 2, 3, 4, 5]</code>, the selection step <code>[-2:
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If start and end are to be left empty, the two colons must be separated by a whitespace to avoid confusion with the sub-template operator. So write <code>[: :-2]</code> instead of <code>[::-2]</code>.
+If Start and Stop are to be left empty, the two colons must be separated by a whitespace to avoid confusion with the sub-template operator. So write <code>[: :-2]</code> instead of <code>[::-2]</code>.
 </td>
 </tr>
 </table>
@@ -2491,7 +2491,7 @@ If start and end are to be left empty, the two colons must be separated by a whi
 <div class="sect5">
 <h6 id="index-union-index1-index2"><a class="anchor" href="#index-union-index1-index2"></a>Index Union <code>[index1, index2, &#8230;&#8203;]</code></h6>
 <div class="paragraph">
-<p>Using the bracket notation, a set of multiple array indices (numbers) can be denoted separated by commas. This returns an array containing the items of the original array if the item&#8217;s index is contained in the specified indices. Since a <strong>set</strong> of indices is specified, the indices' order is ignored and duplicate elements are removed. The result array contains the specified elements in their original order. Indices which do not exist in the original array are ignored.</p>
+<p>By using the bracket notation, a set of multiple array indices (numbers) can be denoted separated by commas. This returns an array containing the items of the original array if the item&#8217;s index is contained in the specified indices. Since a <strong>set</strong> of indices is specified, the indices' order is ignored, and duplicate elements are removed. The result array contains the specified elements in their original order. Indices that do not exist in the original array are ignored.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2509,13 +2509,13 @@ Both <code>[3, 2, 2]</code> and <code>[2, 3]</code> return the same result.
 <div class="sect5">
 <h6 id="attribute-union-attribute1-attribute2"><a class="anchor" href="#attribute-union-attribute1-attribute2"></a>Attribute Union <code>["attribute1", "attribute2", &#8230;&#8203;]</code></h6>
 <div class="paragraph">
-<p>Using the bracket notation, a set of multiple attribute keys (strings) can be denoted separated by commas. This returns an array containing the values of the denoted attributes. Since a <strong>set</strong> of attribute keys is specified, the keys' order is ignored and duplicate elements are removed. As attributes have no order, the sorting of the result array is not specified. Attributes which do not exist are ignored.</p>
+<p>By using the bracket notation, a set of multiple attribute keys (strings) can be denoted separated by commas. This returns an array containing the values of the denoted attributes. Since a <strong>set</strong> of attribute keys is specified, the keys' order is ignored, and duplicate elements are removed. As attributes have no order, the sorting of the resulting array is not specified. Attributes that do not exist are ignored.</p>
 </div>
 </div>
 <div class="sect5">
 <h6 id="attribute-selection-on-array"><a class="anchor" href="#attribute-selection-on-array"></a>Attribute Selection on Array</h6>
 <div class="paragraph">
-<p>Although arrays do not have attributes (they have items), a key step can be applied to an array (e.g., <code>array.value</code>). This will loop through each item of the array and look for the specified attribute in this item. An array containing all values of the attributes found is returned. In other words the selection step is not applied to the result of the previous step (the array) but to each item of the result and the (sub-)results are concatenated. In case an array item is no object or does not contain the specified attribute, it is skipped.</p>
+<p>Although arrays do not have attributes (they have items), a key step can be applied to an array (e.g., <code>array.value</code>). This will loop through each item of the array and look for the specified attribute in this item. An array containing all values of the attributes found is returned. In other words, the selection step is not applied to the result of the previous step (the array) but to each item of the result, and the (sub-)results are concatenated. In case an array item is no object or does not contain the specified attribute, it is skipped.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2548,32 +2548,32 @@ Both <code>[3, 2, 2]</code> and <code>[2, 3]</code> return the same result.
 <div class="sect5">
 <h6 id="attribute-finder-finder-name"><a class="anchor" href="#attribute-finder-finder-name"></a>Attribute Finder <code>.&lt;finder.name&gt;</code></h6>
 <div class="paragraph">
-<p>In SAPL it is possible to receive attributes which are not contained in the authorization subscription. Those attributes can be provided by external PIPs and obtained through attribute finders.</p>
+<p>In SAPL, it is possible to receive attributes that are not contained in the authorization subscription. Those attributes can be provided by external PIPs and obtained through attribute finders.</p>
 </div>
 <div class="paragraph">
-<p>The standard attributes in SAPL are indented to gather more information with regards to a given JSON value, i.e., the subject, action, resource, environment objects in the subscription or any other JSON value.</p>
+<p>The standard attributes in SAPL are intended to gather more information with regards to a given JSON value, i.e., the subject, action, resource, environment objects in the subscription, or any other JSON value.</p>
 </div>
 <div class="paragraph">
-<p>A standard attribute finder is called via the selection step <code>.&lt;finder.name&gt;</code>. Where <code>finder.name</code> either is a fully qualified attribute finder name or can be a shorter name if imports are used (the finder name or the library alias followed by a period <code>.</code> and the finder name). This step may by followed any number of selection steps.</p>
+<p>A standard attribute finder is called via the selection step <code>.&lt;finder.name&gt;</code>. Where <code>finder.name</code> either is a fully qualified attribute finder name or can be a shorter name if imports are used (the finder name or the library alias followed by a period <code>.</code> and the finder name). Any number of selection steps can be appended after such a step.</p>
 </div>
 <div class="paragraph">
-<p>An attribute accessed this way is treated as a subscription. I.e., the PDP will subscribe to the data source and whenever a new value is returned the policy is reevaluated and a new decision is calculated.</p>
+<p>An attribute accessed this way is treated as a subscription. I.e., the PDP will subscribe to the data source, and whenever a new value is returned, the policy is reevaluated, and a new decision is calculated.</p>
 </div>
 <div class="paragraph">
 <p>The attribute finder receives the result of the previous selection as an argument and returns a JSON value. Optionally, an attribute finder may be supplied with a list of parameters: <code>.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>.</p>
 </div>
 <div class="paragraph">
-<p>Attribute finders may be nested: <code>subject.&lt;finder.name2&gt;.&lt;finder.name(p1,action.&lt;finder.name3&gt;,&#8230;&#8203;)&gt;</code>. Here, whenever the attributes with <code>name2</code> and  <code>name3</code> all have a first result and whenever one of the results change, the attribute with name <code>name</code> is re-subscribed with the new input parameters.</p>
+<p>Attribute finders may be nested: <code>subject.&lt;finder.name2&gt;.&lt;finder.name(p1,action.&lt;finder.name3&gt;,&#8230;&#8203;)&gt;</code>. Here, whenever the attributes with <code>name2</code> and  <code>name3</code> all have an initial result, and whenever one of the results change, the attribute with name <code>name</code> is re-subscribed with the new input parameters.</p>
 </div>
 <div class="paragraph">
-<p>An environment attribute finder is an attribute finder intended for accessing information possibly independent of subscription data, e.g., current time or an organization wide emergency level. These environment attributes are not to be confused with the data which is contained in the environment object in the subscription. The data contained there is environment data provided by the PEP from its application context at subscription time and may not be accessible from the PDP otherwise. Environment attributes do not require a left hand input and can be accessed without a leading value, variable, or sequence of selection steps: <code>&lt;organization.emergencyLevel&gt;</code> may refer to a stream indicating an emergency level in an organization. Analogous, to standard attributes, these attributes may be parameterized and nested.</p>
+<p>An environment attribute finder is an attribute finder intended for accessing information possibly independent of subscription data, e.g., current time or an organization-wide emergency level. These environment attributes are not to be confused with the data which is contained in the environment object in the subscription. The data contained there is environment data provided by the PEP from its application context at subscription time and may not be accessible from the PDP otherwise. Environment attributes do not require a left-hand input and can be accessed without a leading value, variable, or sequence of selection steps: <code>&lt;organization.emergencyLevel&gt;</code> may refer to a stream indicating an emergency level in an organization. Analogous to standard attributes, these attributes may be parameterized and nested.</p>
 </div>
 <div class="paragraph">
 <p>All attribute finders may be followed by arbitrary selection steps.</p>
 </div>
 <div class="paragraph">
-<p>In some scenarios it may not be the right thing to subscribe to attributes, but to just retrieve the data once on subscription time.
-For this, SAPL offers the head operator for both standard and environment attributes. Prepending the pipe symbol <code>|</code> in front of an attribute finder step will only return the first value returned by the attribute finder. E.g.: <code>subject.id.|&lt;geo.location&gt;</code>. However, such an attribute may still return a stream, if used with nested attributes which do not employ the head operator.</p>
+<p>In some scenarios, it may not be the right thing to subscribe to attributes, but to just retrieve the data once on subscription time.
+For this, SAPL offers the head operator for both standard and environment attributes. Prepending the pipe symbol <code>|</code> in front of an attribute finder step will only return the first value returned by the attribute finder. E.g.: <code>subject.id.|&lt;geo.location&gt;</code>. However, such an attribute may still return a stream if used with nested attributes which do not employ the head operator.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2603,7 +2603,7 @@ For this, SAPL offers the head operator for both standard and environment attrib
 <div class="sect3">
 <h4 id="filtering"><a class="anchor" href="#filtering"></a>Filtering</h4>
 <div class="paragraph">
-<p>SAPL provides syntax elements for having a value pass <strong>filters</strong> and thereby modifying it.</p>
+<p>SAPL provides syntax elements filtering values by applying <strong>filters</strong>, and that can potentially modify the value.</p>
 </div>
 <div class="paragraph">
 <p>Filters can only be applied to basic expressions (remember that an expression in parentheses is a basic expression). Filtering is denoted by the <code>|-</code> operator after the expression. Which <strong>filter function</strong> is applied in what way can be defined by a <strong>simple filtering component</strong> or by an <strong>extended filtering component</strong>, which consists of several filter statements.</p>
@@ -2623,7 +2623,7 @@ For this, SAPL offers the head operator for both standard and environment attrib
 </div>
 <div class="paragraph">
 <div class="title">filter.blacken(disclose\_left=0,disclose\_right=0,replacement="X")</div>
-<p>Replaces each char of a attribute or item (which has to be a string) by <code>replacement</code>, leaving <code>show\_left</code> chars from the beginning and <code>show\_right</code> chars from the end unchanged. By default, no chars are visible and each char is replaced by <code>X</code>.</p>
+<p>Replaces each char of an attribute or item (which has to be a string) by <code>replacement</code>, leaving <code>show\_left</code> chars from the beginning and <code>show\_right</code> chars from the end unchanged. By default, no chars are visible, and each char is replaced by <code>X</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2689,7 +2689,7 @@ For this, SAPL offers the head operator for both standard and environment attrib
 </div>
 </div>
 <div class="paragraph">
-<p><code>BasicExpression</code> is evaluated to a value, the function is applied to this value and the result is returned. If no other arguments are passed to the function, the empty parentheses <code>()</code> after the function name can be omitted.</p>
+<p><code>BasicExpression</code> is evaluated to a value, the function is applied to this value, and the result is returned. If no other arguments are passed to the function, the empty parentheses <code>()</code> after the function name can be omitted.</p>
 </div>
 <div class="paragraph">
 <p>In case <code>BasicExpression</code> evaluates to an array, the whole array is passed to the filter function. The <strong>keyword <code>each</code></strong> before <code>Function</code> can be used to apply the function to each array item instead:</p>
@@ -2731,7 +2731,7 @@ For this, SAPL offers the head operator for both standard and environment attrib
 </div>
 </div>
 <div class="paragraph">
-<p>Without the keyword <code>each</code>, the function <code>blacken</code> would be applied to the array itself, resulting in an error (since as stated above, <code>blacken</code> can only be applied to a String).</p>
+<p>Without the keyword <code>each</code>, the function <code>blacken</code> would be applied to the array itself, resulting in an error, as stated above, <code>blacken</code> can only be applied to a String.</p>
 </div>
 </div>
 </div>
@@ -2773,7 +2773,7 @@ For this, SAPL offers the head operator for both standard and environment attrib
 </div>
 </div>
 <div class="paragraph">
-<p><code>each</code> is an optional keyword. If used, the <code>TargetRelativeExpression</code> has to evaluate to an array. In this case <code>Function</code> is applied to each item of that array.</p>
+<p><code>each</code> is an optional keyword. If used, the <code>TargetRelativeExpression</code> has to evaluate to an array. In this case, <code>Function</code> is applied to each item of that array.</p>
 </div>
 <div class="paragraph">
 <p><code>TargetRelativeExpression</code> contains a basic relative expression starting with <code>@</code>. The character <code>@</code> references the result of the evaluation of <code>Expression</code>, so attributes of the value to filter can be accessed easily. Bear in mind that attribute finder steps are not allowed at this place. The value of the attribute selected by the target expression is replaced by the result of the filter function.</p>
@@ -2788,7 +2788,7 @@ For this, SAPL offers the head operator for both standard and environment attrib
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Some filter functions can be applied to both arrays and other types (e.g., <code>remove</code>). Yet there are selection steps resulting in a "helper array" that cannot be modified. If, for instance, <code>.*</code> is applied to the object <code>{"key1" : "value1", "key2" : "value2"}</code>, the result would be <code>["value1", "value2"]</code>. It is not possible to apply a filter function directly to this array because changing the array itself would not have any effect. The array has been constructed merely to hold multiple values for further processing. In this case the policy would <strong>have to</strong> use the keyword <code>each</code> and apply the function to each item. Attempting to alter a helper array results in an error.
+Some filter functions can be applied to both arrays and other types (e.g., <code>remove</code>). Yet, there are selection steps resulting in a "helper array" that cannot be modified. If, for instance, <code>.*</code> is applied to the object <code>{"key1" : "value1", "key2" : "value2"}</code>, the result would be <code>["value1", "value2"]</code>. It is not possible to apply a filter function directly to this array because changing the array itself would not have any effect. The array has been constructed merely to hold multiple values for further processing. In this case, the policy would <strong>have to</strong> use the keyword <code>each</code> and apply the function to each item. The attempt to alter a helper array will result in an error.
 </td>
 </tr>
 </table>
@@ -2797,10 +2797,10 @@ Some filter functions can be applied to both arrays and other types (e.g., <code
 <div class="sect4">
 <h5 id="custom-filter-functions"><a class="anchor" href="#custom-filter-functions"></a>Custom Filter Functions</h5>
 <div class="paragraph">
-<p>Any function available in SAPL can be used in a filter statement, hence it is easy to add custom filter functions.</p>
+<p>Any function available in SAPL can be used in a filter statement. Hence it is easy to add custom filter functions.</p>
 </div>
 <div class="paragraph">
-<p>When used in a filter statement, the value to filter is passed to the function as its first argument. Consequently the arguments specified in the function call are passed as second, third etc. arguments.</p>
+<p>When used in a filter statement, the value to filter is passed to the function as its first argument. Consequently, the arguments specified in the function call are passed as second, third, etc., arguments.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2809,7 +2809,7 @@ Some filter functions can be applied to both arrays and other types (e.g., <code
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Assuming a filter function <code>roundto</code> should round a value to the closest multiple of a given number, e.g., <code>207 |- roundto(100)</code> should return <code>200</code>. In its definition the function needs two formal parameters, the first one is reserved for the original value and the second one for the number to round to.
+Assuming a filter function <code>roundto</code> should round a value to the closest multiple of a given number, e.g., <code>207 |- roundto(100)</code> should return <code>200</code>. In its definition, the function needs two formal parameters. The first parameter is reserved for the original value and the second one for the number to round to.
 </td>
 </tr>
 </table>
@@ -2819,10 +2819,10 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <div class="sect3">
 <h4 id="subtemplate"><a class="anchor" href="#subtemplate"></a>Subtemplate</h4>
 <div class="paragraph">
-<p>It is possible to define a subtemplate for an array to replace each item of the array by this subtemplate. A subtemplate component is an optional part of a basic expression.</p>
+<p>It is possible to define a subtemplate for an array to replace each item of the array with this subtemplate. A subtemplate component is an optional part of a basic expression.</p>
 </div>
 <div class="paragraph">
-<p>E.g., the basic expression</p>
+<p>E.g., the basic expression:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2832,7 +2832,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 </div>
 </div>
 <div class="paragraph">
-<p>would return the <code>patients</code> array from the resource but with each item containing only one attribute <code>name</code>.</p>
+<p>This expression would return the <code>patients</code> array from the resource but with each item containing only one attribute <code>name</code>.</p>
 </div>
 <div class="paragraph">
 <p>The subtemplate is denoted after a double colon:</p>
@@ -2843,7 +2843,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 </div>
 </div>
 <div class="paragraph">
-<p><code>Expression</code> represents the replacement template. In this expression, basic relative expressions (starting with <code>@</code>) can be used to access the attributes of the current array item. <code>@</code> references the array item which is currently being replaced. <code>Array</code> has to evaluate to an array. For each item of <code>Array</code>, <code>Expression</code> is evaluated, and the item is replaced by the result.</p>
+<p>This <code>Expression</code> represents the replacement template. In this expression, basic relative expressions (starting with <code>@</code>) can be used to access the attributes of the current array item. <code>@</code> references the array item, which is currently being replaced. <code>Array</code> has to evaluate to an array. For each item of <code>Array</code>, <code>Expression</code> is evaluated, and the item is replaced by the result.</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
@@ -2893,7 +2893,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <h2 id="authorization-subscription-evaluation"><a class="anchor" href="#authorization-subscription-evaluation"></a>Authorization Subscription Evaluation</h2>
 <div class="sectionbody">
 <div id="evaluation" class="paragraph">
-<p>For any authorization subscription the PDP evaluates each top-level SAPL document against the subscription and combines the decisions. If a top-level document is a policy set, it contains multiple policies which have to be evaluated first. Their decisions are combined to form an evaluation decision for the policy set. Finally, a resource might be added to the final result as well as obligations and advice.</p>
+<p>For any authorization subscription, the PDP evaluates each top-level SAPL document against the subscription and combines the decisions. If a top-level document is a policy set, it contains multiple policies which have to be evaluated first. Their decisions are combined to form an evaluation decision for the policy set. Finally, a resource might be added to the final result, as well as obligations and advice.</p>
 </div>
 <div class="paragraph">
 <p>The underlying concept assumes that during evaluation, a decision is assigned to each document. This process will be explained in the following sections.</p>
@@ -2901,7 +2901,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <div class="sect2">
 <h3 id="policy-2"><a class="anchor" href="#policy-2"></a>Policy</h3>
 <div class="paragraph">
-<p>Evaluating a policy against an authorization subscription means assigning a value of <code>NOT_APPLICABLE</code>, <code>INDETERMINATE</code>, <code>PERMIT</code> or <code>DENY</code> to it. The assigned value depends on the result of evaluating the policy&#8217;s target and condition (which are conditions that can either be <code>true</code> or <code>false</code>):</p>
+<p>Evaluating a policy against an authorization subscription means assigning a value of <code>NOT_APPLICABLE</code>, <code>INDETERMINATE</code>, <code>PERMIT</code>, or <code>DENY</code> to it. The assigned value depends on the result of evaluating the policy&#8217;s target and condition (which are conditions that can either be <code>true</code> or <code>false</code>):</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. Policy Evaluation Table</caption>
@@ -3038,13 +3038,13 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <p>The value, which is assigned to the authorization subscription, i.e., the final authorization decision to be returned by the PDP, is the result of applying a combining algorithm to the values assigned to all top-level SAPL documents.</p>
 </div>
 <div class="paragraph">
-<p>Finally in case the decision is <code>PERMIT</code> and there is a <code>transform</code> statement, the transformed resource is added to the authorization decision. Additionally, there might be an obligation and advice contained in the policies which has to be added to the authorization decision.</p>
+<p>Finally, in case the decision is <code>PERMIT</code>, and there is a <code>transform</code> statement, the transformed resource is added to the authorization decision. Additionally, there might be an obligation and advice contained in the policies which have to be added to the authorization decision.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="combining-algorithm-2"><a class="anchor" href="#combining-algorithm-2"></a>Combining Algorithm</h3>
 <div id="combining-algorithms" class="paragraph">
-<p>There are two layers with possibly multiple decisions which finally need to be consolidated into a single decision:</p>
+<p>There are two layers with possibly multiple decisions that finally need to be consolidated into a single decision:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3052,7 +3052,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <p>A policy set might contain multiple policies evaluating to different decisions. There must be a final decision for the policy set (<em>Policy Combination</em>).</p>
 </li>
 <li>
-<p>The PDP might know multiple policy sets and policies which may evaluate to different decisions. In the end the PDP has to include a final decision in the SAPL authorization decision (<em>Document Combination</em>).</p>
+<p>The PDP might know multiple policy sets and policies which may evaluate to different decisions. In the end, the PDP has to include a final decision in the SAPL authorization decision (<em>Document Combination</em>).</p>
 </li>
 </ul>
 </div>
@@ -3060,7 +3060,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <p>A combining algorithm describes how to come to the final decision. Both the PDP itself and each policy set must be configured with a combining algorithm.</p>
 </div>
 <div class="paragraph">
-<p>Some complexity is added to the algorithms if transformation statements in policies are used: There is no possibility to combine multiple transformation statements. Hence the combining algorithms have to deal with the situation that multiple policies evaluate to <code>PERMIT</code> and at least one of them contains a transformation part. In case of such <em>transformation uncertainty</em> the decision must not be <code>PERMIT</code>.</p>
+<p>Some complexity is added to the algorithms if transformation statements in policies are used: There is no possibility to combine multiple transformation statements. Hence the combining algorithms have to deal with the situation that multiple policies evaluate to <code>PERMIT</code>, and at least one of them contains a transformation part. In case of such <em>transformation uncertainty</em>, the decision must not be <code>PERMIT</code>.</p>
 </div>
 <div class="paragraph">
 <p>SAPL provides the following combining algorithms:</p>
@@ -3088,7 +3088,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 </ul>
 </div>
 <div class="paragraph">
-<p>The algorithms work similarly on the PDP and on the policy set level. Thus the following section describes their function in general, using the term <em>policy document</em> for a policy and a policy set. If the algorithm is used on the PDP level, a <em>policy document</em> could be either a (top-level) policy or a policy set, on the policy set level a <em>policy document</em> is always a policy.</p>
+<p>The algorithms work similarly on the PDP and on the policy set level. Thus the following section describes their function in general, using the term <em>policy document</em> for a policy and a policy set. If the algorithm is used on the PDP level, a <em>policy document</em> could be either a (top-level) policy or a policy set. On the policy set level, a <em>policy document</em> is always a policy.</p>
 </div>
 <div class="sect3">
 <h4 id="deny-unless-permit"><a class="anchor" href="#deny-unless-permit"></a><code>deny-unless-permit</code></h4>
@@ -3131,7 +3131,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <div class="sect3">
 <h4 id="only-one-applicable"><a class="anchor" href="#only-one-applicable"></a><code>only-one-applicable</code></h4>
 <div class="paragraph">
-<p>This algorithm is used if policy sets, and policies are constructed in a way that multiple policy documents with a matching target are considered an error. A <code>PERMIT</code> or <code>DENY</code> decision will only be returned if there is exactly one policy set or policy with matching target expression and if this policy document evaluates to <code>PERMIT</code> or <code>DENY</code>.</p>
+<p>This algorithm is used if policy sets and policies are constructed in a way that multiple policy documents with a matching target are considered an error. A <code>PERMIT</code> or <code>DENY</code> decision will only be returned if there is exactly one policy set or policy with matching target expression and if this policy document evaluates to <code>PERMIT</code> or <code>DENY</code>.</p>
 </div>
 <div class="paragraph">
 <p>It works as follows:</p>
@@ -3149,7 +3149,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <p>If there is no matching policy document, the decision is <code>NOT_APPLICABLE</code>.</p>
 </li>
 <li>
-<p>Otherwise, (i.e., there is exactly one matching policy document) the decision is the result of evaluating this policy document.</p>
+<p>Otherwise (i.e., there is exactly one matching policy document), the decision is the result of evaluating this policy document.</p>
 </li>
 </ol>
 </div>
@@ -3163,7 +3163,7 @@ Assuming a filter function <code>roundto</code> should round a value to the clos
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Transformation uncertainty cannot not occur using the <code>only-one-applicable</code> combining algorithm.
+Transformation uncertainty cannot occur using the <code>only-one-applicable</code> combining algorithm.
 </td>
 </tr>
 </table>
@@ -3187,7 +3187,7 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>If there is any <code>INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code> and at least one of them has a transformation statement), the decision is <code>INDETERMINATE</code>.</p>
+<p>If there is any <code>INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code>, and at least one of them has a transformation statement), the decision is <code>INDETERMINATE</code>.</p>
 </li>
 <li>
 <p>Otherwise (no policy document evaluates to <code>DENY</code>, no policy document evaluates to <code>INDETERMINATE</code>, no transform uncertainty):</p>
@@ -3226,14 +3226,14 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>If there is any <code>INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code> and at least one of them has a transformation statement), the decision is <code>INDETERMINATE</code>.</p>
+<p>If there is any <code>INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code>, and at least one of them has a transformation statement), the decision is <code>INDETERMINATE</code>.</p>
 </li>
 <li>
 <p>Otherwise (no policy document evaluates to <code>DENY</code>, no policy document evaluates to <code>INDETERMINATE</code>, no transform uncertainty):</p>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
 <li>
-<p>If there is any <code>DENY</code> the decision is <code>DENY</code>.</p>
+<p>If there is any <code>DENY</code>, the decision is <code>DENY</code>.</p>
 </li>
 <li>
 <p>Otherwise, the decision is <code>NOT_APPLICABLE</code>.</p>
@@ -3250,7 +3250,7 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <div class="sect3">
 <h4 id="first-applicable"><a class="anchor" href="#first-applicable"></a><code>first-applicable</code></h4>
 <div class="paragraph">
-<p>This algorithm is used if the policy administrator manages the policy&#8217;s priority by their order in a policy set. As soon as the first policy returns <code>PERMIT</code>, <code>DENY</code> or <code>INDETERMINATE</code>, its result is the final decision. Thus a "default" can be specified by creating a last policy without any conditions. If a decision is found, errors which might occur in later policies are ignored.</p>
+<p>This algorithm is used if the policy administrator manages the policy&#8217;s priority by their order in a policy set. As soon as the first policy returns <code>PERMIT</code>, <code>DENY</code>, or <code>INDETERMINATE</code>, its result is the final decision. Thus a "default" can be specified by creating a last policy without any conditions. If a decision is found, errors that might occur in later policies are ignored.</p>
 </div>
 <div class="paragraph">
 <p>Since there is no order in the policy documents known to the PDP, the PDP cannot be configured with this algorithm. <code>first-applicable</code> might only be used for policy combination inside a policy set.</p>
@@ -3286,7 +3286,7 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <div class="sect2">
 <h3 id="transformation-2"><a class="anchor" href="#transformation-2"></a>Transformation</h3>
 <div class="paragraph">
-<p>A policy with entitlement <code>permit</code> can contain a transformation statement. If the decision is <code>PERMIT</code> and there is a policy evaluating to <code>PERMIT</code> with transformation, the result of evaluating the expression after the keyword <code>transform</code> is returned as <code>resource</code> in the authorization decision.</p>
+<p>A policy with an entitlement <code>permit</code> can contain a transformation statement. If the decision is <code>PERMIT</code> and there is a policy evaluating to <code>PERMIT</code> with transformation, the result of evaluating the expression after the keyword <code>transform</code> is returned as the <code>resource</code> in the authorization decision.</p>
 </div>
 <div class="paragraph">
 <p>The combining algorithms ensure that transformation is always unambiguous. Consequently, there either is exactly one transformation or none.</p>
@@ -3295,7 +3295,7 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <div class="sect2">
 <h3 id="obligation-advice"><a class="anchor" href="#obligation-advice"></a>Obligation / Advice</h3>
 <div class="paragraph">
-<p>Finally, obligation and advice might be added to the authorization decision. Both can be defined for each policy individually. If a final decision is <code>PERMIT</code> there can be multiple policies and policy sets evaluating to <code>PERMIT</code>, each of them containing an obligation and/or advice statement - same goes for <code>DENY</code>. The final authorization decision with a certain decision must contain all obligations and advice of policy documents evaluating to this decision, but not the obligation and advice of those policy documents evaluating to a different decision.</p>
+<p>Finally, obligation and advice might be added to the authorization decision. Both can be defined for each policy individually. If a final decision is <code>PERMIT</code>, there can be multiple policies and policy sets evaluating to <code>PERMIT</code>, each of them containing an obligation and/or advice statement - same goes for <code>DENY</code>. The final authorization decision with a certain decision must contain all obligations and advice of policy documents evaluating to this decision, but not the obligation and advice of those policy documents evaluating to a different decision.</p>
 </div>
 <div class="paragraph">
 <p>On the two levels (PDP and policy set), collection of obligation and advice works as follows:</p>
@@ -3303,13 +3303,13 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Policy Set</strong>: If the policy set evaluates to a certain decision (<code>PERMIT</code> or <code>DENY</code>), the obligation and advice from all contained policies evaluating to this decision is bundled as the obligation and advice of the policy set.</p>
+<p><strong>Policy Set</strong>: If the policy set evaluates to a certain decision (<code>PERMIT</code> or <code>DENY</code>), the obligation and advice from all contained policies evaluating to this decision are bundled as the obligation and advice of the policy set.</p>
 <div class="paragraph">
-<p>(For the combining algorithm <code>first-applicable</code> not all policies might be evaluated. A value <code>PERMIT</code> or <code>DENY</code> is only assigned to evaluated policies. Thus, the policy set&#8217;s obligation and advice merely contains obligation and advice from evaluated policies.)</p>
+<p>(For the combining algorithm <code>first-applicable</code>, not all policies might be evaluated. A value <code>PERMIT</code> or <code>DENY</code> is only assigned to evaluated policies. Thus, the policy set&#8217;s obligation and advice merely contains obligation and advice from evaluated policies.)</p>
 </div>
 </li>
 <li>
-<p><strong>PDP</strong>: If the final decision is <code>PERMIT</code> or <code>DENY</code>, the obligation and advice from all top-level policy documents evaluating to this final decision is collected as the final decision&#8217;s obligation and advice.</p>
+<p><strong>PDP</strong>: If the final decision is <code>PERMIT</code> or <code>DENY</code>, the obligation and advice from all top-level policy documents evaluating to this final decision are collected as the final decision&#8217;s obligation and advice.</p>
 </li>
 </ul>
 </div>
@@ -3320,16 +3320,16 @@ Transformation uncertainty cannot not occur using the <code>only-one-applicable<
 <h2 id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Functions can be used within SAPL expressions (basic function expressions). A function takesber of inputs (called <em>arguments</em>) and returns an output value.</p>
+<p>Functions can be used within SAPL expressions (basic function expressions). A function takes some inputs (called <em>arguments</em>) and returns an output value.</p>
 </div>
 <div class="paragraph">
 <p>Functions are organized in function libraries. Each function library has a <em>name</em> consisting of one or more identifiers separated by periods <code>.</code> (e.g., <code>simple.string</code> or <code>filter</code>). The <em>fully qualified name</em> of a function consists of the library name followed by a period and the function name (e.g., <code>simple.string.append</code>).</p>
 </div>
 <div class="paragraph">
-<p>Functions can be used in any part of a SAPL document, especially in the target expression. Therefore, their output should only depend on the input arguments and they should not access external resources. Functions do not have access to environment variables.</p>
+<p>Functions can be used in any part of a SAPL document, especially in the target expression. Therefore, their output should only depend on the input arguments, and they should not access external resources. Functions do not have access to environment variables.</p>
 </div>
 <div class="paragraph">
-<p>SAPL will comes with a standard function library providing some basic functions.</p>
+<p>SAPL ships with a standard function library providing some basic functions.</p>
 </div>
 <div class="sect2">
 <h3 id="custom-function-libraries"><a class="anchor" href="#custom-function-libraries"></a>Custom Function Libraries</h3>
@@ -3366,7 +3366,7 @@ public static Val length(@Text Val parameter) {
 </div>
 </div>
 <div class="paragraph">
-<p>Each parameter can be annotated with any number of <code>@Array</code>, <code>@Bool</code>, <code>@Int</code>, <code>@JsonObject</code>, <code>@Long</code>, <code>@Number</code> and <code>@Text</code>. The annotations describe which types are allowed for the parameter (in case of multiple annotations, each of these types is allowed).</p>
+<p>Each parameter can be annotated with any number of <code>@Array</code>, <code>@Bool</code>, <code>@Int</code>, <code>@JsonObject</code>, <code>@Long</code>, <code>@Number</code>, and <code>@Text</code>. The annotations describe which types are allowed for the parameter (in the case of multiple annotations, each of these types is allowed).</p>
 </div>
 </li>
 </ul>
@@ -3378,13 +3378,13 @@ public static Val length(@Text Val parameter) {
 <h2 id="attribute-finders"><a class="anchor" href="#attribute-finders"></a>Attribute Finders</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Attribute finders are used to receive attributes which are not included in the authorization subscription context from external PIPs. Just like in <code>subject.age</code>, the selection step <code>.age</code> selects the attribute <code>age</code>s value, <code>subject.&lt;user.age&gt;</code> could be used to fetch an <code>age</code> attribute which is not included in <code>subject</code> but can be obtained from a PIP named <code>user</code>.</p>
+<p>Attribute finders are used to receive attributes that are not included in the authorization subscription context from external PIPs. Just like in <code>subject.age</code>, the selection step <code>.age</code> selects the attribute <code>age</code>s value, <code>subject.&lt;user.age&gt;</code> could be used to fetch an <code>age</code> attribute which is not included in the <code>subject</code> but can be obtained from a PIP named <code>user</code>.</p>
 </div>
 <div class="paragraph">
 <p>Attribute finders are organized in libraries as well and follow the same naming conventions as functions, including the use of imports. An attribute finder library constitutes a PIP (e.g., <code>user</code>) and can contain any number of attributes (e.g., <code>age</code>). They are called by a selection step applied to any value, e.g., <code>subject.&lt;user.age&gt;</code>. The attribute finder step receives the previous selection result (in the example: <code>subject</code>) and returns the requested attribute.</p>
 </div>
 <div class="paragraph">
-<p>The concept of attribute finders can be used in a flexible manner: There may be finders which take an object (like in the example above, <code>subject.&lt;user.age&gt;</code>) as well as attribute finders which expect a primitive value (e.g., <code>subject.id.&lt;user.age&gt;</code> with <code>id</code> beingber). In addition attribute finders may also return an object which can be traversed in subsequent selection steps (e.g., <code>subject.&lt;user.profile&gt;.age</code>). It is even possible to join multiple attribute finder steps in one expression (e.g., <code>subject.&lt;user.profile&gt;.supervisor.&lt;user.profile&gt;.age</code>).</p>
+<p>The concept of attribute finders can be used in a flexible manner: There may be finders that take an object (like in the example above, <code>subject.&lt;user.age&gt;</code>) as well as attribute finders which expect a primitive value (e.g., <code>subject.id.&lt;user.age&gt;</code> with <code>id</code> being a number). In addition, attribute finders may also return an object which can be traversed in subsequent selection steps (e.g., <code>subject.&lt;user.profile&gt;.age</code>). It is even possible to join multiple attribute finder steps in one expression (e.g., <code>subject.&lt;user.profile&gt;.supervisor.&lt;user.profile&gt;.age</code>).</p>
 </div>
 <div class="paragraph">
 <p>Optionally, an attribute finder may be supplied with a list of parameters: <code>x.&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>. Also, here nesting is possible. Thus <code>x.&lt;finder.name(p1.&lt;finder.name2&gt;,p2,&#8230;&#8203;)&gt;</code> is a working construct.</p>
@@ -3393,10 +3393,10 @@ public static Val length(@Text Val parameter) {
 <p>Furthermore, attribute finders may be used without any leading value <code>&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>. These are called environment attributes.</p>
 </div>
 <div class="paragraph">
-<p>The way to read a statement with an attribute finder is as follows. For <code>subject.&lt;groups.membership("studygroup")&gt;</code> you would say "get the attribute <code>group.membership</code> with parameter <code>"studygroup"</code> of subject".</p>
+<p>The way to read a statement with an attribute finder is as follows. For <code>subject.&lt;groups.membership("studygroup")&gt;</code> you would say "get the attribute <code>group.membership</code> with parameter <code>"studygroup"</code> of the subject".</p>
 </div>
 <div class="paragraph">
-<p>Attribute finders often receive the information from external data sources such as files, databases or HTTP requests which may take a certain amount of time. Therefore they must not be used in a target expression. Attribute finders can access environment variables.</p>
+<p>Attribute finders often receive information from external data sources such as files, databases, or HTTP requests which may take a certain amount of time. Therefore they must not be used in a target expression. Attribute finders can access environment variables.</p>
 </div>
 <div class="sect2">
 <h3 id="custom-attribute-finders"><a class="anchor" href="#custom-attribute-finders"></a>Custom Attribute Finders</h3>
@@ -3404,10 +3404,10 @@ public static Val length(@Text Val parameter) {
 <p>For a more in-depth look at the process of creating a custom PIP, please refer to the demo project. It will walk you through the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
 </div>
 <div class="paragraph">
-<p>Attribute finders are functions which potentially take a left-hand argument (i.e., the Object of which the attribute is to be determined), a <code>Map</code> of variables defined in the current evaluation scope and an optional list of incoming parameter streams.</p>
+<p>Attribute finders are functions that potentially take a left-hand argument (i.e., the Object of which the attribute is to be determined), a <code>Map</code> of variables defined in the current evaluation scope, and an optional list of incoming parameter streams.</p>
 </div>
 <div class="paragraph">
-<p>In SAPL a Policy Information Point is an instance of a class which supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class has to be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code> which takes arbitrary Java classes as PIPs. To be recognized as a PIP, the class has to be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
+<p>In SAPL, a Policy Information Point is an instance of a class that supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class has to be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code>,  which takes arbitrary Java classes as PIPs. To be recognized as a PIP, the class has to be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
 </div>
 <div class="paragraph">
 <p>+</p>
@@ -3441,31 +3441,31 @@ public Flux&lt;Val&gt; userprofile(@Number leftHandObjectOfTheAttribute, Map&lt;
 </div>
 </div>
 <div class="sect1">
-<h2 id="testing-your-sapl-policies"><a class="anchor" href="#testing-your-sapl-policies"></a>Testing your SAPL policies</h2>
+<h2 id="testing-sapl-policies"><a class="anchor" href="#testing-sapl-policies"></a>Testing SAPL policies</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The SAPL policy engine provides a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration tests of all of your SAPL policies via the PDP interface.</p>
+<p>The SAPL policy engine provides a framework to test SAPL policies. This framework supports unit tests of a single SAPL document or policy integration tests of all SAPL policies of an application via the PDP interface.</p>
 </div>
 <div class="sect2">
 <h3 id="usage-scenarios"><a class="anchor" href="#usage-scenarios"></a>Usage scenarios</h3>
 <div class="paragraph">
-<p>With the SAPL test framework you can test SAPL policies no matter if you use SAPL via a embedded PDP in your application or via a central SAPL server.</p>
+<p>With the SAPL test framework, developers can test SAPL policies whether they use SAPL via an embedded PDP in an application or via a central SAPL server.</p>
 </div>
 <div class="sect3">
 <h4 id="embedded-pdp-2"><a class="anchor" href="#embedded-pdp-2"></a>Embedded PDP</h4>
 <div class="paragraph">
-<p>If you&#8217;re using a embedded PDP in your application, you can treat your SAPL policy tests like your "normal" unit and integration tests. Organize them next to these tests and execute them identically via the Maven lifecycle on your local workstation or in your CI pipeline.</p>
+<p>If an application uses an embedded PDP, SAPL policy tests are treated like traditional unit and integration tests. Developers can deploy policy tests alongside these tests and execute them identically via the Maven lifecycle on a local workstation or in a CI pipeline.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="sapl-server"><a class="anchor" href="#sapl-server"></a>SAPL-Server</h4>
 <div class="paragraph">
-<p>The following the repository <a href="https://github.com/heutelbeck/sapl-server-lt-gitops-example">GitOps Demo</a> is showcasing a deployment pipeline with SAPL policy tests in a <a href="https://www.weave.works/blog/gitops-operations-by-pull-request">GitOps</a>-Style for the headless SAPL-Server-LT.
-Here every change to the policies is introduced via a pull request on the main branch. For every pull request the CI pipeline executes the policy tests and breaks the pipeline run if policy tests are failing.
-If a pull request is merged on the main branch, the policies are automatically synced to the SAPL-Server-LT instance.</p>
+<p>The following repository <a href="https://github.com/heutelbeck/sapl-server-lt-gitops-example">GitOps Demo</a> showcases a deployment pipeline with SAPL policy tests in a <a href="https://www.weave.works/blog/gitops-operations-by-pull-request">GitOps</a>-Style for the headless SAPL-Server-LT.
+Here every change to the policies is introduced via a pull request on the main branch. The CI pipeline executes the policy tests for every pull request and breaks the pipeline run if policy tests are failing.
+Merging a pull request on the main branch triggers automatic synchronization of the policies to a SAPL-Server-LT instance.</p>
 </div>
 <div class="paragraph">
-<p>Currently there is no support for writing SAPL test cases via the SAPL DSL - only in Java. So it&#8217;s not possible to use the SAPL test framework when deploying SAPL-Server-Implementations with GUI-based PAP (SAPL-Server-CE or SAPL-Server-EE).</p>
+<p>SAPL tests use Java. Therefore, it is impossible to use the SAPL test framework when deploying SAPL-Server-Implementations with GUI-based PAP (i.e., SAPL-Server-CE or SAPL-Server-EE).</p>
 </div>
 </div>
 </div>
@@ -3942,7 +3942,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-03 14:28:06 UTC
+Last updated 2021-11-03 15:55:37 UTC
 </div>
 </div>
 </body>
