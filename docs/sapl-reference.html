@@ -512,7 +512,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#usage-scenarios">Usage scenarios</a></li>
 <li><a href="#unit-tests">Unit-Tests</a></li>
 <li><a href="#policy-integration-tests">Policy-Integration-Tests</a></li>
-<li><a href="#writing-your-test-case">Writing your test case</a></li>
+<li><a href="#writing-test-cases">Writing test cases</a></li>
 <li><a href="#examples">Examples</a></li>
 <li><a href="#code-coverage-reports-via-the-sapl-maven-plugin">Code-Coverage Reports via the SAPL-Maven-Plugin</a></li>
 </ul>
@@ -730,7 +730,7 @@ where
 <div class="ulist">
 <ul>
 <li>
-<p>Add a SAPL dependency to the application. When using Maven you can add the following dependencies to your project&#8217;s <code>pom.xml</code>:</p>
+<p>Add a SAPL dependency to the application. When using Maven one can add the following dependencies to the project&#8217;s <code>pom.xml</code>:</p>
 </li>
 </ul>
 </div>
@@ -766,7 +766,7 @@ where
 <div class="ulist">
 <ul>
 <li>
-<p>If you plan to use more SAPL dependencies, a useful bill of materials POM is offered, centralizing the dependency management for SAPL artifacts:</p>
+<p>If more SAPL dependencies are expected to be used, a useful bill of materials POM is offered, centralizing the dependency management for SAPL artifacts:</p>
 </li>
 </ul>
 </div>
@@ -834,7 +834,7 @@ authzDecisions.subscribe(authzDecision -&gt; System.out.println(authzDecision.ge
 <p>The console output should be <code>PERMIT</code>. With subject set to <code>"alice"</code> instead of <code>"admin"</code>, the output should be <code>DENY</code>.</p>
 </div>
 <div class="paragraph">
-<p>Not at runtime you can modify the policy, add or remove polices and observe how the decision change.</p>
+<p>Note at runtime the policies can be modified. Adding or removing polices can immediately trigger a change in the decisions.</p>
 </div>
 </div>
 </div>
@@ -3334,7 +3334,7 @@ Transformation uncertainty cannot occur using the <code>only-one-applicable</cod
 <div class="sect2">
 <h3 id="custom-function-libraries"><a class="anchor" href="#custom-function-libraries"></a>Custom Function Libraries</h3>
 <div class="paragraph">
-<p>For a more in-depth look at the process of creating a custom function library, please refer to the demo project. It will walk you through the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
+<p>For a more in-depth look at the process of creating a custom function library, please refer to the demo project. It provides a walkthrough of the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
 </div>
 <div class="paragraph">
 <p>The standard functions can be extended by custom functions. Function libraries available in SAPL documents are collected in the PDP&#8217;s function context. The embedded PDP provides an <code>AnnotationFunctionContext</code> where Java classes with annotations can be provided as function libraries:</p>
@@ -3393,7 +3393,7 @@ public static Val length(@Text Val parameter) {
 <p>Furthermore, attribute finders may be used without any leading value <code>&lt;finder.name(p1,p2,&#8230;&#8203;)&gt;</code>. These are called environment attributes.</p>
 </div>
 <div class="paragraph">
-<p>The way to read a statement with an attribute finder is as follows. For <code>subject.&lt;groups.membership("studygroup")&gt;</code> you would say "get the attribute <code>group.membership</code> with parameter <code>"studygroup"</code> of the subject".</p>
+<p>The way to read a statement with an attribute finder is as follows. For <code>subject.&lt;groups.membership("studygroup")&gt;</code> one would say "get the attribute <code>group.membership</code> with parameter <code>"studygroup"</code> of the subject".</p>
 </div>
 <div class="paragraph">
 <p>Attribute finders often receive information from external data sources such as files, databases, or HTTP requests which may take a certain amount of time. Therefore they must not be used in a target expression. Attribute finders can access environment variables.</p>
@@ -3401,7 +3401,7 @@ public static Val length(@Text Val parameter) {
 <div class="sect2">
 <h3 id="custom-attribute-finders"><a class="anchor" href="#custom-attribute-finders"></a>Custom Attribute Finders</h3>
 <div class="paragraph">
-<p>For a more in-depth look at the process of creating a custom PIP, please refer to the demo project. It will walk you through the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
+<p>For a more in-depth look at the process of creating a custom PIP, please refer to the demo project. It provides a walkthrough of the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
 </div>
 <div class="paragraph">
 <p>Attribute finders are functions that potentially take a left-hand argument (i.e., the Object of which the attribute is to be determined), a <code>Map</code> of variables defined in the current evaluation scope, and an optional list of incoming parameter streams.</p>
@@ -3472,10 +3472,11 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <div class="sect2">
 <h3 id="unit-tests"><a class="anchor" href="#unit-tests"></a>Unit-Tests</h3>
 <div class="paragraph">
-<p>The JUnit-Test-Framework is used for execution of the SAPL unit test cases. You create and setup a <code>SaplUnitTestFixture</code> for example in the <code>@BeforeStep</code> of a JUnit test case.</p>
+<p>SAPL tests use JUnit for executing SAPL unit test cases. Each test is prepared by creating <code>SaplUnitTestFixture</code>. This can be don in the  <code>@BeforeEachStep</code> of a JUnit test case.</p>
 </div>
 <div class="paragraph">
-<p>Here you define the name of the SAPL document under test or the path to this file. In addition you can register PIPs and FunctionLibrarys to be used during test execution by providing these objects to the <code>SaplUnitTestFixture</code>.</p>
+<p>The <code>SaplUnitTestFixture</code> defines the name of the SAPL document under test or the path to its file.
+In addition, the fixture sets up PIPs and FunctionLibrarys to be used during test execution.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3493,10 +3494,10 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <div class="sect2">
 <h3 id="policy-integration-tests"><a class="anchor" href="#policy-integration-tests"></a>Policy-Integration-Tests</h3>
 <div class="paragraph">
-<p>Instead of testing a single SAPL document, you can test all policies together via the PDP interface just like when you&#8217;re using a PDP embedded in your application or a SAPL server implementation.</p>
+<p>Instead of testing a single SAPL document, all policies can be tested together using the PDP interface, just like when an application uses an embedded PDP or a SAPL server implementation.</p>
 </div>
 <div class="paragraph">
-<p>For this you create a <code>SaplIntegrationTestFixture</code> again for example in the <code>@BeforeStep</code> of your JUnit test case. Likewise you can register PIPs and FunctionLibraries in addition to a combining algorithm.</p>
+<p>These kinds of integrations tests are managed by the <code>SaplIntegrationTestFixture</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3513,7 +3514,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 </div>
 </div>
 <div class="sect2">
-<h3 id="writing-your-test-case"><a class="anchor" href="#writing-your-test-case"></a>Writing your test case</h3>
+<h3 id="writing-test-cases"><a class="anchor" href="#writing-test-cases"></a>Writing test cases</h3>
 <div class="paragraph">
 <p>The Step-Builder-Pattern is used for defining the concrete test case. It consists of the following four steps:</p>
 </div>
@@ -3539,7 +3540,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 </div>
 </div>
 <div class="paragraph">
-<p>Starting with constructTestCaseWithMocks() or constructTestCase() called on your fixture, the test case definition process is started at the Given-Step or the When-Step.</p>
+<p>Starting with constructTestCaseWithMocks() or constructTestCase() called on the fixture, the test case definition process is started at the Given-Step or the When-Step.</p>
 </div>
 <div class="sect3">
 <h4 id="given-step"><a class="anchor" href="#given-step"></a>Given-Step</h4>
@@ -3549,11 +3550,11 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <div class="ulist">
 <ul>
 <li>
-<p>via the <code>givenFunction</code> methods you can mock a function returning the <code>Val</code> specified in the method parameters for every call.</p>
+<p>the <code>givenFunction</code> methods can be used to mock a function returning a <code>Val</code> specified in the method parameters for every call.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>you can specify a single value</p>
+<p>a single value can be specified</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("time.dayOfWeek", Val.of("SATURDAY"))</code></pre>
@@ -3561,7 +3562,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 </div>
 </li>
 <li>
-<p>a single value only returned when the paramters of the function call match some expectations</p>
+<p>a single value only returned when the parameters of the function call match some expectations</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("corp.subjectConverter",
@@ -3575,7 +3576,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.givenFunction("company.complexFunction", (FunctionCall call) -&gt; {
 
-    //probably you should check for number and type of parameters first
+    //probably one should check for number and type of parameters first
     Double param0 = call.getArgument(0).get().asDouble();
     Double param1 = call.getArgument(1).get().asDouble();
 
@@ -3596,7 +3597,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 </div>
 </li>
 <li>
-<p>via the <code>givenFunctionOnce</code> methods you can specify a <code>Val</code> or multiple <code>Val</code>-Objects which are emitted once (in a sequence) when this mocked function is called</p>
+<p><code>givenFunctionOnce</code> can specify a <code>Val</code> or multiple <code>Val</code>-Objects which are emitted once (in a sequence) when this mocked function is called</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3627,7 +3628,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <div class="ulist">
 <ul>
 <li>
-<p>via the <code>givenAttribute</code> methods you can mock an attribute</p>
+<p><code>givenAttribute</code> methods can mock attributes</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3639,7 +3640,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 </div>
 </li>
 <li>
-<p>to return a sequence of <code>Val</code> in an interval of <code>Duration</code>. Do not forget to call the <code>withVirtualTime</code> method to use the virtual time feature of Project Reactor</p>
+<p>to return a sequence of <code>Val</code> in an interval of <code>Duration</code>. Using <code>withVirtualTime</code> activates the virtual time feature of Project Reactor</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.withVirtualTime()
@@ -3653,14 +3654,14 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-The virtual time feature can be used with real time-based PIPs registrated at the fixture level. But be aware that virtual time is "no silver bullet" to cite the <a href="https://projectreactor.io/docs/core/release/reference/#_manipulating_time">Project Reactor Reference Guide</a>. It says further that "[v]irtual time also gets very limited with infinite sequences, which might hog the thread on which both the sequence and its verification run."
+The virtual time feature can be used with real time-based PIPs registered the fixture level. Virtual time is "no silver bullet" to cite the <a href="https://projectreactor.io/docs/core/release/reference/#_manipulating_time">Project Reactor Reference Guide</a>. It says further that "[v]irtual time also gets very limited with infinite sequences, which might hog the thread on which both the sequence and its verification run."
 </td>
 </tr>
 </table>
 </div>
 </li>
 <li>
-<p>to mark an attribute to be mocked and specify return values in a sequence next to your expectations</p>
+<p>to mark an attribute to be mocked and specify return values in a sequence next to expectations</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.givenAttribute("company.pip1")
@@ -3696,13 +3697,13 @@ The virtual time feature can be used with real time-based PIPs registrated at th
 </ul>
 </div>
 <div class="paragraph">
-<p>You can check out further mock types or overloaded methods <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-test/src/main/java/io/sapl/test/steps/GivenStep.java">here</a>.</p>
+<p>Further mock types or overloaded methods are available <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-test/src/main/java/io/sapl/test/steps/GivenStep.java">here</a>.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="when-step"><a class="anchor" href="#when-step"></a>When-Step</h4>
 <div class="paragraph">
-<p>In the next step you define the <code>AuthorizationSubscription</code> for the policy evaluation.</p>
+<p>The next defines the <code>AuthorizationSubscription</code> for the policy evaluation.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3742,7 +3743,7 @@ The virtual time feature can be used with real time-based PIPs registrated at th
 <div class="sect3">
 <h4 id="expect-step"><a class="anchor" href="#expect-step"></a>Expect-Step</h4>
 <div class="paragraph">
-<p>Define the expected <code>AuthorizationDecision</code> in this step.</p>
+<p>This step defines the expected <code>AuthorizationDecision</code>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3790,7 +3791,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </li>
 <li>
-<p>use Hamcrest Matcher provided by the sapl-hamcrest modul to express complex expectations on the decision, obligations, advice or resources of the <code>AuthorizationDecision</code></p>
+<p>Hamcrest matchers provided by the sapl-hamcrest module can be used to express complex expectations on the decision, obligations, advice or resources of the <code>AuthorizationDecision</code></p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">.expect(
@@ -3804,7 +3805,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </div>
 <div class="paragraph">
-<p>All avaliable <code>Matcher&lt;AuthorizationDecision&gt;</code> can be found <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-hamcrest/src/main/java/io/sapl/hamcrest/Matchers.java#L104">here</a></p>
+<p>All available <code>Matcher&lt;AuthorizationDecision&gt;</code> can be found <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-hamcrest/src/main/java/io/sapl/hamcrest/Matchers.java">here</a></p>
 </div>
 </li>
 </ul>
@@ -3818,20 +3819,20 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </div>
 <div class="paragraph">
-<p>You can check out all available methods <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-test/src/main/java/io/sapl/test/steps/ExpectStep.jav">here</a>.</p>
+<p>More available methods are documented <a href="https://github.com/heutelbeck/sapl-policy-engine/blob/master/sapl-test/src/main/java/io/sapl/test/steps/ExpectStep.jav">here</a>.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="verify-step"><a class="anchor" href="#verify-step"></a>Verify-Step</h4>
 <div class="paragraph">
-<p>At the end of every test case definition, you must call the <code>verify()</code> method to evaluate the policy/policies and verify the expectations.</p>
+<p>To complete a test definition the <code>verify()</code> method triggers the evaluation of the policy/policies and verifies the expectations.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
 <div class="paragraph">
-<p>In the following you can find a full and minimal example of a SAPL unit test.</p>
+<p>The following example constitutes a full minimal SAPL unit test:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3862,7 +3863,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <div class="sect2">
 <h3 id="code-coverage-reports-via-the-sapl-maven-plugin"><a class="anchor" href="#code-coverage-reports-via-the-sapl-maven-plugin"></a>Code-Coverage Reports via the SAPL-Maven-Plugin</h3>
 <div class="paragraph">
-<p>For measuring the policy code coverage of your SAPL policies you can use the sapl-maven-plugin to analyze the coverage and generate reports in various formats.</p>
+<p>For measuring the policy code coverage of SAPL policies developers can use the sapl-maven-plugin to analyze the coverage and generate reports in various formats.</p>
 </div>
 <div class="paragraph">
 <p>Currently three coverage criteria are supported:</p>
@@ -3870,18 +3871,18 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <div class="ulist">
 <ul>
 <li>
-<p><strong>PolicySet Hit Coverage</strong>: Measures the percentage of PolicySets which were at least once applicable to an <code>AuthorizationSubscription</code> in your tests.</p>
+<p><strong>PolicySet Hit Coverage</strong>: Measures the percentage of PolicySets which were at least once applicable to an <code>AuthorizationSubscription</code> in the tests.</p>
 </li>
 <li>
-<p><strong>Policy Hit Coverage</strong>: Measures the percentage of Policies which were at least once applicable to an <code>AuthorizationSubscription</code> in your tests.</p>
+<p><strong>Policy Hit Coverage</strong>: Measures the percentage of Policies which were at least once applicable to an <code>AuthorizationSubscription</code> in the tests.</p>
 </li>
 <li>
-<p><strong>Condition Hit Coverage</strong>: Measures the percentage of conditions  evaluated to true or false during your tests. Twice the number of conditions is taken and compared with the number of positively and negatively evaluated conditions.</p>
+<p><strong>Condition Hit Coverage</strong>: Measures the percentage of conditions  evaluated to true or false during the tests. Twice the number of conditions is taken and compared with the number of positively and negatively evaluated conditions.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Simply add the following configuration to your <code>pom.xml</code></p>
+<p>The Maven plugin can be added to Maven by adding the following configuration to the <code>pom.xml</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3906,7 +3907,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 </div>
 <div class="paragraph">
-<p>The plugin can be configured via the following paramters:</p>
+<p>The plugin can be configured via the following parameters:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3914,25 +3915,25 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <p><strong>coverageEnabled</strong>: When set to false, this parameter disables the execution of the sapl-maven-plugin (defaultValue = true).</p>
 </li>
 <li>
-<p><strong>policyPath</strong>: Defines the path in the classpath to the folder containing the policies under test. Specify the same path used in your <code>SaplIntegrationTestFixture</code> or the parent folder of the path to your SAPL documents in the <code>SaplUnitTestFixture</code> (defaultValue = policies).</p>
+<p><strong>policyPath</strong>: Defines the path in the classpath to the folder containing the policies under test. Specify the same path used in the <code>SaplIntegrationTestFixture</code> or the parent folder of the path to the SAPL documents in the <code>SaplUnitTestFixture</code> (defaultValue = policies).</p>
 </li>
 <li>
-<p><strong>outputDir</strong>: Set this parameter to the path where generated reports should be written to (per default the maven build output directory is used).</p>
+<p><strong>outputDir</strong>: Set this parameter to the path where generated reports should be written to (per default the Maven build output directory is used).</p>
 </li>
 <li>
-<p><strong>policySetHitRatio</strong>: A value between 0 - 100 to define the ratio of PolicySets your tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the maven lifecycle. (defaultValue = 0)</p>
+<p><strong>policySetHitRatio</strong>: A value between 0 - 100 to define the ratio of PolicySets the tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the Maven lifecycle. (defaultValue = 0)</p>
 </li>
 <li>
-<p><strong>policyHitRatio</strong>: A value between 0 - 100 to define the ratio of Policies your tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the maven lifecycle (defaultValue = 0).</p>
+<p><strong>policyHitRatio</strong>: A value between 0 - 100 to define the ratio of Policies the tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
 </li>
 <li>
-<p><strong>policyConditionHitRatio</strong>: A value between 0 - 100 to define the ratio of condition results your tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the maven lifecycle (defaultValue = 0).</p>
+<p><strong>policyConditionHitRatio</strong>: A value between 0 - 100 to define the ratio of condition results the tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
 </li>
 <li>
 <p><strong>enableSonarReport</strong>: When set to true a coverage report with the <a href="https://monteverdi.informatik.uni-freiburg.de/sonar/documentation/analysis/generic-test/">Sonarqube Generic Coverage Format</a> is generated. This format is currently not useable as SonarQube does not import generic coverage data for languages unknown to SonarQube. Currently there is no SonarQube Lanaguage Plugin for SAPL (defaultValue = false).</p>
 </li>
 <li>
-<p><strong>enableHtmlReport</strong>: When set to true a HTML coverage report is created. This report is similar to JaCoCo reports showing colorized line coverage and number of covered branches for conditions in a line. The path to the <code>index.html</code> on the filesystem is printed in the maven log. Terminals like Powershell allow you to click on these paths and open the report directly in your browser (defaultValue = true).</p>
+<p><strong>enableHtmlReport</strong>: When set to true a HTML coverage report is created. This report is similar to JaCoCo reports showing colorized line coverage and number of covered branches for conditions in a line. The path to the <code>index.html</code> on the filesystem is printed in the Maven log. Terminals like Powershell allow to click on these paths and open the report directly in the browser (defaultValue = true).</p>
 </li>
 </ul>
 </div>
@@ -3942,7 +3943,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-03 15:55:37 UTC
+Last updated 2021-11-03 16:43:27 UTC
 </div>
 </div>
 </body>
