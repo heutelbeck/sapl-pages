@@ -3409,9 +3409,6 @@ public static Val length(@Text Val parameter) {
 <div class="paragraph">
 <p>In SAPL, a Policy Information Point is an instance of a class that supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class has to be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code>,  which takes arbitrary Java classes as PIPs. To be recognized as a PIP, the class has to be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
 </div>
-<div class="paragraph">
-<p>+</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">@PolicyInformationPoint(name = "user", description = "This the documentation of the PIP")
@@ -3422,9 +3419,6 @@ public class SampleUserPIP {
 </div>
 <div class="paragraph">
 <p>The individual attributes supplied by the PIP are identified by adding the annotation <code>@Attribute</code>. An optional annotation attribute <code>name</code> can contain a name for the attribute. The attribute has to be a string containing an identifier. By default, the name of the function will be used. The annotation attribute <code>docs</code> can contain a string describing the attribute.</p>
-</div>
-<div class="paragraph">
-<p>+</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3472,7 +3466,7 @@ Merging a pull request on the main branch triggers automatic synchronization of 
 <div class="sect2">
 <h3 id="unit-tests"><a class="anchor" href="#unit-tests"></a>Unit-Tests</h3>
 <div class="paragraph">
-<p>SAPL tests use JUnit for executing SAPL unit test cases. Each test is prepared by creating <code>SaplUnitTestFixture</code>. This can be don in the  <code>@BeforeEachStep</code> of a JUnit test case.</p>
+<p>SAPL tests use JUnit for executing SAPL unit test cases. Each test is prepared by creating <code>SaplUnitTestFixture</code>. This can be done in the  <code>@BeforeEachStep</code> of a JUnit test case.</p>
 </div>
 <div class="paragraph">
 <p>The <code>SaplUnitTestFixture</code> defines the name of the SAPL document under test or the path to its file.
@@ -3494,10 +3488,10 @@ In addition, the fixture sets up PIPs and FunctionLibrarys to be used during tes
 <div class="sect2">
 <h3 id="policy-integration-tests"><a class="anchor" href="#policy-integration-tests"></a>Policy-Integration-Tests</h3>
 <div class="paragraph">
-<p>Instead of testing a single SAPL document, all policies can be tested together using the PDP interface, just like when an application uses an embedded PDP or a SAPL server implementation.</p>
+<p>Instead of testing a single SAPL document, all policies can be tested together using the PDP interface, just like when an application uses an embedded PDP or a SAPL server.</p>
 </div>
 <div class="paragraph">
-<p>These kinds of integrations tests are managed by the <code>SaplIntegrationTestFixture</code>.</p>
+<p>The <code>SaplIntegrationTestFixture</code> manages these kinds of integrations tests.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3811,7 +3805,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </ul>
 </div>
 <div class="paragraph">
-<p>All of these methods come with additional methods (for example <code>expectNextPermit</code>) to define multiple expectations for testing of stream-based policies.</p>
+<p>These methods come with additional methods (e.g., <code>expectNextPermit</code>) to define multiple expectations for testing stream-based policies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3825,7 +3819,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <div class="sect3">
 <h4 id="verify-step"><a class="anchor" href="#verify-step"></a>Verify-Step</h4>
 <div class="paragraph">
-<p>To complete a test definition the <code>verify()</code> method triggers the evaluation of the policy/policies and verifies the expectations.</p>
+<p>The <code>verify()</code> method completes the test definition, and triggers the evaluation of the policy/policies and verifies the expectations.</p>
 </div>
 </div>
 </div>
@@ -3863,21 +3857,21 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <div class="sect2">
 <h3 id="code-coverage-reports-via-the-sapl-maven-plugin"><a class="anchor" href="#code-coverage-reports-via-the-sapl-maven-plugin"></a>Code-Coverage Reports via the SAPL-Maven-Plugin</h3>
 <div class="paragraph">
-<p>For measuring the policy code coverage of SAPL policies developers can use the sapl-maven-plugin to analyze the coverage and generate reports in various formats.</p>
+<p>For measuring the policy code coverage of SAPL policies, developers can use the sapl-maven-plugin to analyze the coverage and generate reports in various formats.</p>
 </div>
 <div class="paragraph">
-<p>Currently three coverage criteria are supported:</p>
+<p>Currently, three coverage criteria are supported:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>PolicySet Hit Coverage</strong>: Measures the percentage of PolicySets which were at least once applicable to an <code>AuthorizationSubscription</code> in the tests.</p>
+<p><strong>PolicySet Hit Coverage</strong>: Measures the percentage of PolicySets that were at least once applicable to an <code>AuthorizationSubscription</code> in the tests.</p>
 </li>
 <li>
-<p><strong>Policy Hit Coverage</strong>: Measures the percentage of Policies which were at least once applicable to an <code>AuthorizationSubscription</code> in the tests.</p>
+<p><strong>Policy Hit Coverage</strong>: Measures the percentage of Policies that were at least once applicable to an <code>AuthorizationSubscription</code> in the tests.</p>
 </li>
 <li>
-<p><strong>Condition Hit Coverage</strong>: Measures the percentage of conditions  evaluated to true or false during the tests. Twice the number of conditions is taken and compared with the number of positively and negatively evaluated conditions.</p>
+<p><strong>Condition Hit Coverage</strong>: Measures the percentage of conditions evaluated to true or false during the tests. The number of conditions times two is compared with the number of positively and negatively evaluated conditions.</p>
 </li>
 </ul>
 </div>
@@ -3918,22 +3912,22 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <p><strong>policyPath</strong>: Defines the path in the classpath to the folder containing the policies under test. Specify the same path used in the <code>SaplIntegrationTestFixture</code> or the parent folder of the path to the SAPL documents in the <code>SaplUnitTestFixture</code> (defaultValue = policies).</p>
 </li>
 <li>
-<p><strong>outputDir</strong>: Set this parameter to the path where generated reports should be written to (per default the Maven build output directory is used).</p>
+<p><strong>outputDir</strong>: Set this parameter to the path where generated reports should be written (per default, the Maven build output directory is used).</p>
 </li>
 <li>
-<p><strong>policySetHitRatio</strong>: A value between 0 - 100 to define the ratio of PolicySets the tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the Maven lifecycle. (defaultValue = 0)</p>
+<p><strong>policySetHitRatio</strong>: A value between 0 - 100 to define the ratio of PolicySets the tests should cover. If this ratio isn&#8217;t fulfilled, the sapl-maven-plugin is going to stop the Maven lifecycle. (defaultValue = 0)</p>
 </li>
 <li>
-<p><strong>policyHitRatio</strong>: A value between 0 - 100 to define the ratio of Policies the tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
+<p><strong>policyHitRatio</strong>: A value between 0 - 100 to define the ratio of Policies the tests should cover. If this ratio isn&#8217;t fulfilled, the sapl-maven-plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
 </li>
 <li>
-<p><strong>policyConditionHitRatio</strong>: A value between 0 - 100 to define the ratio of condition results the tests should cover. If this ratio isn&#8217;t fulfilled the sapl-maven-plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
+<p><strong>policyConditionHitRatio</strong>: A value between 0 - 100 to define the ratio of condition results the tests should cover. If this ratio isn&#8217;t fulfilled, the sapl-maven-plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
 </li>
 <li>
-<p><strong>enableSonarReport</strong>: When set to true a coverage report with the <a href="https://monteverdi.informatik.uni-freiburg.de/sonar/documentation/analysis/generic-test/">Sonarqube Generic Coverage Format</a> is generated. This format is currently not useable as SonarQube does not import generic coverage data for languages unknown to SonarQube. Currently there is no SonarQube Lanaguage Plugin for SAPL (defaultValue = false).</p>
+<p><strong>enableSonarReport</strong>: When set to true, a coverage report with the <a href="https://monteverdi.informatik.uni-freiburg.de/sonar/documentation/analysis/generic-test/">Sonarqube Generic Coverage Format</a> is generated. This format is currently not useable as SonarQube does not import generic coverage data for languages unknown to SonarQube. Currently, there is no SonarQube Language plugin for SAPL (defaultValue = false).</p>
 </li>
 <li>
-<p><strong>enableHtmlReport</strong>: When set to true a HTML coverage report is created. This report is similar to JaCoCo reports showing colorized line coverage and number of covered branches for conditions in a line. The path to the <code>index.html</code> on the filesystem is printed in the Maven log. Terminals like Powershell allow to click on these paths and open the report directly in the browser (defaultValue = true).</p>
+<p><strong>enableHtmlReport</strong>: When set to true a HTML coverage report is created. This report is similar to JaCoCo reports showing colorized line coverage and the number of covered branches for conditions in a line. The path to the <code>index.html</code> on the filesystem is printed in the Maven log. Terminals like Powershell allow clicking on these paths and opening the report directly in the browser (defaultValue = true).</p>
 </li>
 </ul>
 </div>
@@ -3943,7 +3937,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-03 16:43:27 UTC
+Last updated 2021-11-03 16:59:35 UTC
 </div>
 </div>
 </body>
