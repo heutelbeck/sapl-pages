@@ -3404,10 +3404,10 @@ public static Val length(@Text Val parameter) {
 <p>For a more in-depth look at the process of creating a custom PIP, please refer to the demo project. It provides a walkthrough of the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension" class="bare">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
 </div>
 <div class="paragraph">
-<p>Attribute finders are functions that potentially take a left-hand argument (i.e., the Object of which the attribute is to be determined), a <code>Map</code> of variables defined in the current evaluation scope, and an optional list of incoming parameter streams.</p>
+<p><strong>Attribute finders</strong> are functions that potentially take a left-hand argument (i.e., the object of which the attribute is to be determined), a <code>Map</code> of variables defined in the current evaluation scope, and an optional list of incoming parameter streams.</p>
 </div>
 <div class="paragraph">
-<p>In SAPL, a Policy Information Point is an instance of a class that supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class must be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code>,  which takes arbitrary Java classes as PIPs. To be recognized as a PIP, the class must be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
+<p>In SAPL, a Policy Information Point is an instance of a class that supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class must be known to the PDP. The embedded PDP provides an <code>AnnotationAttributeContext</code>,  which takes arbitrary Java objects as PIPs. To be recognized as a PIP, the respective class must be annotated with <code>@PolicyInformationPoint</code>. The optional annotation attribute <code>name</code> contains the PIP&#8217;s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code>description</code> contains a string describing the PIP for documentation purposes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3420,16 +3420,104 @@ public class SampleUserPIP {
 <div class="paragraph">
 <p>The individual attributes supplied by the PIP are identified by adding the annotation <code>@Attribute</code>. An optional annotation attribute <code>name</code> can contain a name for the attribute. The attribute must be a string containing an identifier. By default, the name of the function will be used. The annotation attribute <code>docs</code> can contain a string describing the attribute.</p>
 </div>
+<div class="paragraph">
+<p>SAPL allows for attribute name overloading. This means that can be multiple implementations for resolving an attribute with one name. For example, you could implement, an environment attribute (<code>&lt;some.attribute&gt;</code>), a regular attribute (<code>"UTC".&lt;some.attribute&gt;</code>), both with parameters (<code>&lt;some.attribute("UTC")&gt;</code>, <code>"UTC.&lt;some.attribute(5000)&gt;</code>), and maybe even with a variable number of arguments (<code>&lt;some.attribute&gt;("a","b","c","d",123,4)</code>).</p>
+</div>
+<div class="paragraph">
+<p>For an attribute of some other object, this object is called the left-hand parameter of the attribute. When writing a method implementing an attribute that takes a left-hand parameter, this parameter must be the first parameter of the method, and it must be of type <code>Val</code>:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Attribute(name = "profile", docs = "returns user profile as JSON")
-public Flux&lt;Val&gt; userprofile(@Number leftHandObjectOfTheAttribute, Map&lt;String, JsonNode&gt; variablesInCurrentEvaluationContext, Flux&lt;Val&gt; parameter1, Flux&lt;Val&gt; parameter2) {
+<pre class="highlight"><code class="language-java" data-lang="java">/* subject.&lt;user.attribute&gt; */
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute(@Object Val leftHandObjectOfTheAttribute) {
     ...
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>+</p>
+<p>Input parameters of the method may be annotated with type validation annotations (see module <code>sapl-extension-api</code>, package <code>io.sapl.api.validation</code>). When present, the policy engine validates the contents of the parameters before calling the method.  Therefore, if present, the method does not need to perform additional type validation. The method will only be called if the left-hand parameter is a JSON Object in the example above. While different parameter types can be used to disambiguate overloaded methods in languages like Java, this is not possible in SAPL.</p>
+</div>
+<div class="paragraph">
+<p>A typical use-case for attribute finder is retrieving attribute data from an external data source. If this is a network service like an API or database, the attribute finder usually must know the network address and credentials to authenticate with the service. Such data should never be hardcoded in the PIP. Also, developers should never store this data in policies. In SAPL, developers should store this information and further configuration data for PIPs in the environment variables. For the SAPL Server LT these variables are stored in the pdp.json configuration file, and for the SAPL Server CE they can be edited via the UI.</p>
+</div>
+<div class="paragraph">
+<p>To access the environment variables, attribute finder methods can consume a Map&lt;String,JsonNode&gt;. The PDP will inject this map at runtime. The map contains all variables available in the current evaluation scope. This map must be the first parameter of the left-hand parameter, or it must be the first parameter for environment attributes. Note that attempting to overload an attribute name with and without variables as a parameter that accept the same number of other parameters will fail. The engine cannot disambiguate these two attributes at runtime.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">/* subject.&lt;user.attribute&gt; definition would clash with last example if defined at the same time in the same PIP*/
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute(@Object Val leftHandObjectOfTheAttribute, Map&lt;String,JsonNode&gt; variables) {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To define environment attributes, i.e., attributes without left-hand parameters, the method definition explicitly does not define a <code>Val</code> parameter as its first parameter.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">/* &lt;user.attribute&gt; */
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute() {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Optionally, the environment attribute can consume variables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">/* &lt;user.attribute&gt; definition would clash with last example if defined at the same time in the same PIP */
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute(Map&lt;String,JsonNode&gt; variables) {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A unique feature of SAPL is the possibility to parameterize attribute finders in polices. E.g., <code>subject.&lt;employees.qualificationOfType("IT")&gt;</code> could return all qualifications of the subject in the domain of <code>"IT"</code>. Syntactically, SAPL also allows for the concatenation (<code>subject.&lt;pip1.attr1&gt;.&lt;pip2.attr2&gt;</code>) and nesting of attribute (<code>subject.&lt;pip1.attr1(resource.&lt;pip2.attr2&gt;,&lt;pip3.attr3&gt;)&gt;</code>).</p>
+</div>
+<div class="paragraph">
+<p>Regardless of if the attribute is an environment attribute or not, the parameters in brackets are declared as parameters of the method with the type <code>Flux&lt;Val&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">/* subject.&lt;user.attribute("param1",123)&gt; */
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute(@Object Val leftHandObjectOfTheAttribute, Map&lt;String,JsonNode&gt; variables, @Text Flux&lt;Val&gt; param1, @Number Flux&lt;Val&gt; param2) {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Additionally, using Java variable argument lists, it is possible to declare attributes with a variable number of attributes. If a method wants to use variable arguments, the method must not declare any other parameters besides the optional left-hand or variables parameters. If an attribute is overloaded, an implementation with an exact match of the number of arguments takes precedence over a variable arguments implementation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">/* subject.&lt;user.attribute("AA","BB","CC")&gt; */
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute(@Object Val leftHandObjectOfTheAttribute, Map&lt;String,JsonNode&gt; variables, @Text Flux&lt;Val&gt;... params) {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively defining the variable arguments can be defined as an array.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">/* &lt;user.attribute("AA","BB","CC")&gt; */
+@Attribute(name = "attribute", docs = "documentation")
+public Flux&lt;Val&gt; attribute(@Text Flux&lt;Val&gt;[] params) {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The methods must not declare any further arguments.</p>
 </div>
 </div>
 </div>
@@ -3937,7 +4025,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-12 08:22:47 UTC
+Last updated 2021-11-12 10:50:32 UTC
 </div>
 </div>
 </body>
