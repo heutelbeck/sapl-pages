@@ -33,7 +33,15 @@
         </div>
         <div class="navbar-nav d-lg-block d-none">
             <div class="d-flex">
-                <a class="btn btn-outline-light ms-5" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Documentation</a>
+                <div class="dropdown position-relative">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Documentation
+                    </button>
+                    <ul class="dropdown-menu position-absolute" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Release</a></li>
+                        <li><a class="dropdown-item" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Snapshot</a></li>
+                    </ul>
+                </div>
                 <a class="btn btn-outline-light ms-5" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
                 <a class="btn btn-outline-light ms-5" href="https://github.com/heutelbeck/sapl-demos">Demos</a>
             </div>
@@ -43,8 +51,16 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
-        <div class="collapse w-100" id="navbarToggleMenuContent">
-            <a class="btn btn-outline-light mt-2 d-block" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Documentation</a>
+        <div class="collapse w-100 d-lg-none" id="navbarToggleMenuContent">
+            <div class="dropdown d-block">
+                <button class="btn btn-outline-light dropdown-toggle d-block w-100" type="button" id="dropdownMenuButtonMobile1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Documentation
+                </button>
+                <ul class="dropdown-menu w-100 d-lg-none" aria-labelledby="dropdownMenuButtonMobile1">
+                    <li><a class="dropdown-item" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Release</a></li>
+                    <li><a class="dropdown-item" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Snapshot</a></li>
+                </ul>
+            </div>
             <a class="btn btn-outline-light mt-2 d-block" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
             <a class="btn btn-outline-light mt-2 d-block" href="https://github.com/heutelbeck/sapl-demos">Demos</a>
         </div>
