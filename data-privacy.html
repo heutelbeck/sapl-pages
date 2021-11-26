@@ -30,12 +30,22 @@
                 <img src="images/logo-header.png">
             </a>
         </div>
-        <div class="navbar-nav">
-            <div class="d-flex justify-content-end">
-                <a class="btn btn-outline-light me-5" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Documentation</a>
-                <a class="btn btn-outline-light me-5" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
-                <a class="btn btn-outline-light me-5" href="https://github.com/heutelbeck/sapl-demos">Demos</a>-->
+        <div class="navbar-nav d-lg-block d-none">
+            <div class="d-flex">
+                <a class="btn btn-outline-light ms-5" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Documentation</a>
+                <a class="btn btn-outline-light ms-5" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
+                <a class="btn btn-outline-light ms-5" href="https://github.com/heutelbeck/sapl-demos">Demos</a>
             </div>
+        </div>
+        <div class="navbar-nav navbar-dark d-lg-none navbar-mobile">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleMenuContent" aria-controls="navbarToggleMenuContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse w-100" id="navbarToggleMenuContent">
+            <a class="btn btn-outline-light mt-2 d-block" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Documentation</a>
+            <a class="btn btn-outline-light mt-2 d-block" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
+            <a class="btn btn-outline-light mt-2 d-block" href="https://github.com/heutelbeck/sapl-demos">Demos</a>
         </div>
     </div>
 </div>
