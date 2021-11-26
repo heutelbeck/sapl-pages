@@ -148,3 +148,11 @@ footer a {
 footer a:hover {
     color: white;
 }
+
+
+@media (max-width: 500px) {
+    .header-brand-content img {
+        width: 15rem;
+        object-fit: contain;
+    }
+}
