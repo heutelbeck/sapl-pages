@@ -822,7 +822,7 @@ permit subject == "admin"</code></pre>
 <p>Obtain a decision using the PDP&#8217;s <code>decide</code> method.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-Java" data-lang="Java">var subscription = AuthorizationSubscription.of("admin", "an_action", "a_resource");
+<pre class="highlight"><code class="language-Java" data-lang="Java">var authzSubscription = AuthorizationSubscription.of("admin", "an_action", "a_resource");
 Flux&lt;AuthorizationDecision&gt; authzDecisions = pdp.decide(authzSubscription);
 authzDecisions.subscribe(authzDecision -&gt; System.out.println(authzDecision.getDecision()));</code></pre>
 </div>
@@ -4028,7 +4028,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-12-10 10:33:39 UTC
+Last updated 2022-02-03 18:35:33 UTC
 </div>
 </div>
 </body>
