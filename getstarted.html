@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="style.css" type="text/css" rel="stylesheet">
-    <title>Streaming Attribute Policy Language (SAPL) - Home</title>
+    <title>Streaming Attribute Policy Language (SAPL) - Getting Started</title>
     <meta name="viewport" content="width=device-width">
     <!-- Matomo -->
 <script type="text/javascript">
@@ -24,48 +24,45 @@
 <!-- End Matomo Code -->
 </head>
 <body>
-<div class="navbar menu">
-    <div class="container">
-        <div class="navbar-brand">
+
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+        </button>
+		<div class="navbar-brand">
             <a href="index.html" class="header-brand-content">
                 <img src="images/logo-header.png">
             </a>
+        </div>        
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"> <a class="nav-link" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a> </li>
+				<li class="nav-item"> <a class="nav-link" href="https://github.com/heutelbeck/sapl-demos">Demos</a> </li>
+				<!-- <li class="nav-item"> <a class="nav-link active" href="getstarted.html">Getting Started</a> </li> -->
+				<li class="nav-item"> <a class="nav-link" href="https://playground.sapl.io">Playground</a> </li>
+				<li class="nav-item"> <a class="nav-link" href="publications.html">Publications</a> </li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						Documentation
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="offcanvasNavbarDropdown">
+						<li><a class="dropdown-item" href="docs/2.0.1/sapl-reference.html">2.0.1 Release</a></li>
+						<li><a class="dropdown-item" href="docs/2.1.0-SNAPSHOT/sapl-reference.html">2.1.0-SNAPSHOT</a></li>
+					</ul>
+				</li>	
+			</ul>
+		  	<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link" href="https://discord.gg/pRXEVWm3xM">
+						<img alt="Discord" src="images/Discord-Logo-White.svg" height="20"/>
+					</a>
+				</li>					
+			</ul>          
         </div>
-        <div class="navbar-nav d-lg-block d-none">
-            <div class="d-flex">
-                <div class="dropdown position-relative">
-                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        Documentation
-                    </button>
-                    <ul class="dropdown-menu w-100 d-lg-none" aria-labelledby="dropdownMenuButtonMobile1">
-                            <li><a class="dropdown-item" href="docs/2.0.1/sapl-reference.html">2.0.1 Release</a></li>
-                            <li><a class="dropdown-item" href="docs/2.1.0-SNAPSHOT/sapl-reference.html">2.1.0-SNAPSHOT</a></li>
-                   </ul>
-                </div>
-                <a class="btn btn-outline-light ms-5" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
-                <a class="btn btn-outline-light ms-5" href="https://github.com/heutelbeck/sapl-demos">Demos</a>
-            </div>
-        </div>
-        <div class="navbar-nav navbar-dark d-lg-none navbar-mobile">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleMenuContent" aria-controls="navbarToggleMenuContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        <div class="collapse w-100 d-lg-none" id="navbarToggleMenuContent">
-            <div class="dropdown d-block">
-                <button class="btn btn-outline-light dropdown-toggle d-block w-100" type="button" id="dropdownMenuButtonMobile1" data-bs-toggle="dropdown" aria-expanded="false">
-                    Documentation
-                </button>
-                <ul class="dropdown-menu w-100 d-lg-none" aria-labelledby="dropdownMenuButtonMobile1">
-                    <li><a class="dropdown-item" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Release</a></li>
-                    <li><a class="dropdown-item" href="docs/2.0.0-SNAPSHOT/sapl-reference.html">Snapshot</a></li>
-                </ul>
-            </div>
-            <a class="btn btn-outline-light mt-2 d-block" href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
-            <a class="btn btn-outline-light mt-2 d-block" href="https://github.com/heutelbeck/sapl-demos">Demos</a>
-        </div>
-    </div>
-</div>
+      </div>
+    </nav>
+    
 
 <div class="main">
     <div class="sidebar-menu">
@@ -136,6 +133,8 @@
         </div>
     </div>
 </footer>
-<script rel="script" src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
