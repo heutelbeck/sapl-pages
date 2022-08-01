@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Implementing Attribute-based Access Control (ABAC) with Spring and SAPL"
-date:   2022-07-27 11:20:22 +0200
+title: "Implementing Attribute-based Access Control (ABAC) with Spring and SAPL"
+date: 2022-07-27 11:20:22 +0200
 tags: abac asbac sapl spring spring-boot tutorial
 categories: tutorials
 excerpt_separator: <!--more-->
@@ -35,17 +35,17 @@ SAPL implements its interpretation of ABAC called Attribute Stream-Based Access 
 
 In your application, there will be several code paths where a subject attempts to perform some action on a resource, and based on the domain's requirements, the action must be authorized. For example, in a zero-trust system, all actions triggered by users or other components must be explicitly authorized. 
 
-A **Policy Enforcement Point (PEP)** is the logic in your application in these code paths that do:
-* mediate access to the **Resource Access Point (RAP)**, i.e., the component executing the action and potentially retrieving data 
-* formulate the authorization question in the form of an **authorization subscription**, i.e., a JSON object containing values for the subject, resource, action, and possibly the environment. The PEP determines the values based on the domain and context of the current attempt to execute the action.
-* delegates the decision-making for the authorization question to the **Policy Decision Point (PDP)** by subscribing to it using the authorization subscription.
+A *Policy Enforcement Point (PEP)* is the logic in your application in these code paths that do:
+* mediate access to the *Resource Access Point (RAP)*, i.e., the component executing the action and potentially retrieving data 
+* formulate the authorization question in the form of an *authorization subscription*, i.e., a JSON object containing values for the subject, resource, action, and possibly the environment. The PEP determines the values based on the domain and context of the current attempt to execute the action.
+* delegates the decision-making for the authorization question to the *Policy Decision Point (PDP)* by subscribing to it using the authorization subscription.
 * enforces all decisions made by the PDP.
 
 This tutorial will not examine the subscription nature of SAPL authorization. And instead, it will only look at PEPs requiring a single decision. Later tutorials will teach you how to use authorization subscriptions to handle reactive datatypes like ```Flux<>```, Axon subscription queries, or interactive web applications with Vaadin.
 
-In SAPL, decisions may contain additional requirements for the PEP to enforce beyond the simple permission or denial of access. SAPL decisions may include constraints, i.e., further actions the PEP has to perform to grant success. If a constraint is optional, it is called **advice**. If the constraint is mandatory, it is called an **obligation**. 
+In SAPL, decisions may contain additional requirements for the PEP to enforce beyond the simple permission or denial of access. SAPL decisions may include constraints, i.e., further actions the PEP has to perform to grant success. If a constraint is optional, it is called *advice*. If the constraint is mandatory, it is called an *obligation*. 
 
-SAPL also denotes a policy language used to express the rules describing the overall policies governing access control in the organization. For each authorization subscription, the PDP monitors the **Policy Retrieval Point (PRP)** for policies responsible, i.e., **applicable**, to the subscription. Individual policies may refer to attributes not stored within the authorization subscription. The PDP can subscribe to these attributes using domain-specific **Policy Information Points (PIPs)**. The PDP continuously evaluates the policies as the PIP attributes change and the policy documents are updated. It notifies the PEP whenever the implied **authorization decision** changes.
+SAPL also denotes a policy language used to express the rules describing the overall policies governing access control in the organization. For each authorization subscription, the PDP monitors the *Policy Retrieval Point (PRP)* for policies responsible, i.e., *applicable*, to the subscription. Individual policies may refer to attributes not stored within the authorization subscription. The PDP can subscribe to these attributes using domain-specific *Policy Information Points (PIPs)*. The PDP continuously evaluates the policies as the PIP attributes change and the policy documents are updated. It notifies the PEP whenever the implied *authorization decision* changes.
 
 When developing an application using SAPL or ABAC in general, the PDP and systems used by the PDP are usually well developed and only require the integration of domain-specific PIPs. A significant part of the effort in adopting the ABAC pattern lies in implementing the PEPs. Developing a PEP capable of flexible handling of decisions with constraints can become very complex. SAPL provides several libraries that make this process as unintrusive as possible and integrate deeply into the supported frameworks. This tutorial will teach you how to deploy PEPs in a Spring Boot application, securing a JPA repository as an example.
 
@@ -497,7 +497,7 @@ policy "permit all" permit
 
 The keyword ``policy``` indicates that the document contains a single policy, not a policy set. You will learn about policy sets later.
 This keyword is always followed by the name of the SPAL document as a string, i.e., ```"permit all"```. 
-The name of a policy must always be followed by the **entitlement** which is either ```permit``` or ```deny```.
+The name of a policy must always be followed by the *entitlement* which is either ```permit``` or ```deny```.
 The entitlement expresses which decision the PDP should return when all policy rules are satisfied. 
 In this case, the policy does not have any rules. Therefore, all of its rules are satisfied, and the policy tells the PDP always to return a ```permit```
 decision, regardless of any details of the attributes contained in the authorization subscription or any external attributes from PIPs.
@@ -524,7 +524,7 @@ And your log should read like this:
  i.s.g.s.i.CombiningAlgorithmImplCustom   :   |- Evaluate: permit all 
  i.s.grammar.sapl.impl.PolicyImplCustom   :   |  |- Evaluate 'permit all'
  i.s.grammar.sapl.impl.PolicyImplCustom   :   |     |- PERMIT 'permit all': AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
- UnlessPermitCombiningAlgorithmImplCustom :   |- **PERMIT** Combined AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
+ UnlessPermitCombiningAlgorithmImplCustom :   |- *PERMIT* Combined AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
  s.s.m.b.PreEnforcePolicyEnforcementPoint : AuthzDecision    : AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
 ```
 
@@ -550,7 +550,7 @@ The PDP will grant access, and the log will look similar to this:
  i.s.g.s.i.CombiningAlgorithmImplCustom   :   |- Evaluate: deny all 
  i.s.grammar.sapl.impl.PolicyImplCustom   :   |  |- Evaluate 'deny all'
  i.s.grammar.sapl.impl.PolicyImplCustom   :   |     |- DENY 'deny all': AuthorizationDecision(decision=DENY, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
- UnlessPermitCombiningAlgorithmImplCustom :   |- **PERMIT** Combined AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
+ UnlessPermitCombiningAlgorithmImplCustom :   |- *PERMIT* Combined AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
  s.s.m.b.PreEnforcePolicyEnforcementPoint : AuthzDecision    : AuthorizationDecision(decision=PERMIT, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
 ```
 
@@ -590,7 +590,7 @@ The log now reads like this:
 
 The PDP returns ```not applicable``` because it did not find a document making a decision explicitly, and ```deny-overrides``` does not have a default decision. The PDP may also return ```indeterminate``` if an error occurred during policy evaluation. In both cases, a PEP must not grant access.
 
-In this section, you learned how a PEP and PDP interact in SAPL and how the PDP combines outcomes of different policies. In the next step, you will learn how to write more practical policies and when precisely a policy is **applicable**, i.e., matches, for an authorization subscription. 
+In this section, you learned how a PEP and PDP interact in SAPL and how the PDP combines outcomes of different policies. In the next step, you will learn how to write more practical policies and when precisely a policy is *applicable*, i.e., matches, for an authorization subscription. 
 
 ### Create Domain-Specific Policies
 
@@ -611,7 +611,7 @@ public interface BookRepository {
 ```
 
 
-Let us write a policy that states, "only bob may see individual book entries." Note that this kind of statement is a requirement also called a **natural language policy (NLP)**. Create the policy document ```permit_bob_for_books.sapl``` in the policies folder of the resources. And translate the NLP to a SAPL policy document as follows:
+Let us write a policy that states, "only bob may see individual book entries." Note that this kind of statement is a requirement also called a *natural language policy (NLP)*. Create the policy document ```permit_bob_for_books.sapl``` in the policies folder of the resources. And translate the NLP to a SAPL policy document as follows:
 
 ```
 policy "only bob may see individual book entries"
@@ -660,7 +660,7 @@ The application denies access, and the log reads:
 As you can see, there are several differences in the decision-making process of the PDP. First, let us examine what leads to the fact that there are no applicable (matching) documents when accessing ```/api/books```.
 
 If you look at the policy, there is an expression following the entitlement ```permit``` that states ```action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$"``` and ends before the (optional) keyword ```where```.
-An expression at this position in a policy is called the **target expression**. 
+An expression at this position in a policy is called the *target expression*. 
 The target expression is a rule which determines if the policy is applicable to a given authorization subscription. 
 A policy is applicable if the expression evaluates to ```true``` for the given subscription. 
 The PDP only evaluates applicable policies. 
@@ -673,7 +673,7 @@ These expressions explain why the PDP identified the policy as applicable in bot
 
 Please note that SAPL distinguishes between lazy Boolean operators, i.e., ```&&``` and ```||``` for AND and OR, and eager Boolean operators ```&``` and ```|``` respectively. Target expressions only allow eager operators, a requirement for efficient indexing of larger sets of policies.
 
-The PDP evaluates the complete policy in the two cases where the user attempts to access the individual book, i.e., the rules following ```where``` are evaluated. This section of the policy is called the ***where block***. 
+The PDP evaluates the complete policy in the two cases where the user attempts to access the individual book, i.e., the rules following ```where``` are evaluated. This section of the policy is called the **where block**. 
 The where contains an arbitrary number of rules. Each rule is a Boolean expression ending with a ```;```. The where block as a whole evaluates to ```true``` when all of its rules evaluate to true. Rules are evaluated lazily from top to bottom. 
 
 In the situations above, the rule ```subject.name == "bob";``` is only ```true``` for the case where bob is accessing the book. 
@@ -827,7 +827,7 @@ where
 
 You can download a project version with the age enforcement in place from [GitHub](https://github.com/heutelbeck/sapl-tutorial-01-spring/tree/0e154a6a92765dad32882c0a5a082b344730c7d7).
 
-## Transformations and Constraints
+## How to use SAPL Policies to Transform a Resource ?
 
 In this part of the tutorial, you will learn how to use policies to change the outcome of queries and how to trigger side effects using constraints.
 
@@ -872,7 +872,22 @@ transform
    }
 ```
 
-Also, ensure that the original age checking policy is still in place. Now, restart and log in as Alice. 
+This policy introduces a new concept, i.e., the ```transform``` expression. 
+If the policy is applicable, i.e., all rules evaluate to ```true```, whatever 
+JSON value the ```transform``` expression evaluates to is added to authorization 
+decision as the property ```resource``` and is sent back to the PEP. 
+The presence of a ```resource``` object instructs the PEP to replace the resource data with itself.
+
+In this case, the so-called filter operator ```|-``` is applied to the resource object. 
+The filter operator enables to select indivividual parts of a JSON value and to manipulate this 
+part by, e.g., applying function to the selected value. 
+In this case, the operator selects the ```content``` key of the resource and replaces it with a 
+version of its content only exposing the the three leftmost characters and replacing the rest with 
+a black square ("\u2588" in unicode). 
+The selection expression is very powerful. 
+Please refer to the [SAPL Documentation](/docs/2.1.0-SNAPSHOT/sapl-reference.html#filtering) for a full explanation.
+
+Ensure that the original age checking policy is still in place. Now, restart and log in as Alice. 
 
 When accessing ```http://localhost:8080/api/books/1```, you will get:
 
@@ -910,6 +925,91 @@ The logs for this access attempt read as follows:
  enyOverridesCombiningAlgorithmImplCustom : | |-- PERMIT Combined AuthorizationDecision: AuthorizationDecision(decision=PERMIT, resource=Optional[{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa████████████"}], obligations=Optional.empty, advice=Optional.empty)
 ```
 
+The PRP discovered both polices to be matching the subscription. 
+The PDP starts to evaluate both and the ```check age compact``` policy evaluats to ```NOT_APPLICABLE```, because Alice is not old enough to read "The Three-Body Problem". 
+At the same time, the ```check age transform``` policy evaluates to ```permit```. 
+However, the authorization decision also contains a ```resource``` object. 
+Thus, the PEP replaced the value returned by the modified ```resource``` object.
+
+## How to enforce Obligations and Advice of SAPL Policies?
+
+The ```transform``` expression of SAPL policies is a first example of a policy that instructs the PEP to only grant access once additional conditions are met. SAPL call this type of instructions *constraints*. SAPL supports three types of constraints:
+* *obligations*, i.e., a mandatory constranit that must be fulfilled, i.e., the PEP must successfully execute the instruction, or else the PEP must deny access.
+* *advice*, i.e., am optional constraint that should be fulfilled, i.e., the PEP should make a best effort to execute the instruction. However if it fails to do so, access is still franted, if the original decision was ```permit```.
+* *resource replacement*, i.e., a special case of an obligation expressing that the accessed resource must be replaced with the data supplied in the authorization decision.
+
+An authorization decision containing a constraint expresses that the access should be granted (or denied) only when obligations fulfilled sucessfully.
+
+For example, any doctor may access a patient's medical record in an emergency situation, but the access must be logged if the doctor is not the attending doctor of the patient in question, and an audit process has to be triggered. This is the so-called "breaking the glass scenario".
+
+In the library example, access age-inappropriate books must be logged in order to enable parents to discuss the accessed material later.
+
+To do so, modify the ```check_age_transform.sapl``` policy as follows:
+
+```
+import time.*
+policy "check age transform" 
+permit action == "read book"
+where 
+   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
+   age < resource.ageRating;
+obligation {
+				"type": "logAccess",
+				"message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
+           }
+transform
+   resource |- {
+        @.content : filter.blacken(3,0,"\u2588")
+   }
+```
+
+When logging in as Alice and attempting to access ```http://localhost:8080/api/books/2``` access will be denied and the logs look as follows:
+
+```
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] nericInMemoryIndexedPolicyRetrievalPoint :   |- Matching documents:
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] nericInMemoryIndexedPolicyRetrievalPoint :   |  * 'check age compact'
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] nericInMemoryIndexedPolicyRetrievalPoint :   |  * 'check age transform'
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] i.s.g.s.i.CombiningAlgorithmImplCustom   :   |- Evaluate: check age compact 
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] i.s.grammar.sapl.impl.PolicyImplCustom   :   |  |- Evaluate 'check age compact'
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] i.s.g.s.i.CombiningAlgorithmImplCustom   :   |- Evaluate: check age transform 
+2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] i.s.grammar.sapl.impl.PolicyImplCustom   :   |  |- Evaluate 'check age transform'
+2022-08-02 01:09:05.781 DEBUG 80816 --- [nio-8080-exec-1] i.s.grammar.sapl.impl.PolicyImplCustom   :   |     |- NOT_APPLICABLE 'check age compact': AuthorizationDecision(decision=NOT_APPLICABLE, resource=Optional.empty, obligations=Optional.empty, advice=Optional.empty)
+2022-08-02 01:09:05.782 DEBUG 80816 --- [nio-8080-exec-1] i.s.grammar.sapl.impl.PolicyImplCustom   :   |     |- PERMIT 'check age transform': AuthorizationDecision(decision=PERMIT, resource=Optional[{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got█████████████████"}], obligations=Optional[[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]], advice=Optional.empty)
+2022-08-02 01:09:05.782 DEBUG 80816 --- [nio-8080-exec-1] enyOverridesCombiningAlgorithmImplCustom : | |-- PERMIT Combined AuthorizationDecision: AuthorizationDecision(decision=PERMIT, resource=Optional[{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got█████████████████"}], obligations=Optional[[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]], advice=Optional.empty)
+2022-08-02 01:09:05.782 DEBUG 80816 --- [nio-8080-exec-1] .s.m.b.PostEnforcePolicyEnforcementPoint : AuthzDecision    : AuthorizationDecision(decision=PERMIT, resource=Optional[{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got█████████████████"}], obligations=Optional[[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]], advice=Optional.empty)
+```
+
+The PDP clearly communicated a ```permit``` decision containing the two constraints to replace the resource and to log the access to the console. 
+The PEP failed to enforce the logging obligation and thus denied access. 
+
+In SAPL, constraints may be expressed as arbritary JSON objects. Also, SAPL does not know which types of constraints may be relevant in an application domain and how policies decide to describe them.
+
+To support the logging obligation, implement a so-called *constraint handler provider*:
+
+```Java
+@Slf4j
+@Service
+public class LoggingConstraintHandlerProvider implements RunnableConstraintHandlerProvider {
+
+	@Override
+	public Signal getSignal() {
+		return Signal.ON_DECISION;
+	}
+
+	@Override
+	public boolean isResponsible(JsonNode constraint) {
+		return constraint != null && constraint.has("type")
+				&& "logAccess".equals(constraint.findValue("type").asText());
+	}
+
+	@Override
+	public Runnable getHandler(JsonNode constraint) {
+		return () -> log.info(constraint.findValue("message").asText());
+
+	}
+
+}
+```
 
 ## Conclusions
 
