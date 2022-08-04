@@ -1,7 +1,8 @@
 ---
 layout: post
+author: Dominic Heutelbeck
 title: "Implementing Attribute-based Access Control (ABAC) with Spring and SAPL"
-date: 2022-07-27 11:20:22 +0200
+date: 2022-08-04
 tags: abac asbac sapl spring spring-boot tutorial
 categories: tutorials
 excerpt_separator: <!--more-->
@@ -14,6 +15,8 @@ Attribute-based Access Control (ABAC) is an expressive access control model.
 In this tutorial, you will learn how secure services and APIs of a Spring Boot application using the SAPL Engine to implement ABAC. The tutorial assumes basic familiarity with the development process of Spring applications.
 
 <!--more-->
+
+![ABAC](/assets/tutorial_01/abac.png)
 
 ABAC decides on granting access by inspecting attributes of the subject, resource, action, and environment. 
 
@@ -100,7 +103,7 @@ SAPL provides a bill of materials module, helping you to use compatible versions
  
 To develop an application using SAPL, you need two components. First, you need a component for making authorization decisions, the so-called policy decision point (PDP). You may embed the PDP within your application or use a dedicated server application and delegate the decision-making to this remote service. This tutorial uses an embedded PDP making decisions locally based on policies stored in the application resources. Add the following dependency to your project:
 
-```XML
+```xml
         <dependency>
             <groupId>io.sapl</groupId>
             <artifactId>sapl-spring-pdp-embedded</artifactId>
@@ -109,7 +112,7 @@ To develop an application using SAPL, you need two components. First, you need a
 
 SAPL provides deep integration with Spring Security. This integration enables simple deployment of policy enforcement points in Spring application using a declarative aspect-oriented programming style. Add the following dependency to your project:
 
-```XML
+```xml
         <dependency>
             <groupId>io.sapl</groupId>
             <artifactId>sapl-spring-security</artifactId>
@@ -118,7 +121,7 @@ SAPL provides deep integration with Spring Security. This integration enables si
 
 Finally, create a new folder in the resources folder ```src/main/resources``` called ```policies``` and create a file called ```pdp.json```: 
 
-```JSON
+```json
 {
     "algorithm": "DENY_UNLESS_PERMIT",
     "variables": {}
@@ -139,7 +142,7 @@ The application domain of this tutorial will be a library of books, where the bo
 
 First, define a book entity. You can use project Lombok annotations to create getters, setters, and constructors as follows automatically:
 
-```Java
+```java
 @Data
 @Entity
 @NoArgsConstructor
@@ -154,7 +157,7 @@ public class Book {
 
 Now define a matching repository interface. For now, only include a ```findAll```, ```findById```, and ```save``` method:
 
-```Java
+```java
 public interface BookRepository {
     Iterable<Book> findAll();
     Optional<Book> findById(Long id);
@@ -164,7 +167,7 @@ public interface BookRepository {
 
 Also, define a matching repository bean to have Spring Data automatically instantiate a repository implementing your interface:
 
-```Java
+```java
 @Repository
 public interface JpaBookRepository extends CrudRepository<Book, Long>, BookRepository { }
 ```
@@ -173,7 +176,7 @@ public interface JpaBookRepository extends CrudRepository<Book, Long>, BookRepos
 
 To expose the books to the users, implement a simple REST controller. We use Lombok annotation to create a constructor taking the required beans as parameters for dependency injection of the repository implementation:
 
-```Java
+```java
 @RestController
 @RequiredArgsConstructor
 public class BookController {
@@ -197,10 +200,10 @@ public class BookController {
 
 Now create a custom ```UserDetails``` implementation which contains the birthdate of the user:
 
-```Java
+```java
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class LibraryUser extends user implements UserDetails {
+public class LibraryUser extends User implements UserDetails {
 
     @Getter
     private LocalDate birthday;
@@ -241,7 +244,7 @@ public class LibraryUserDetailsService implements UserDetailsService {
 
 The default configuration with H2 and JPA will create a volatile in-memory database. Therefore, we want the system to contain some books and users each time the application starts. For this, create a ```CommandLineRunner```. This class executes once the application context is loaded successfully:
 
-```Java
+```java
 @Component
 @RequiredArgsConstructor
 public class DemoData implements CommandLineRunner {
@@ -269,7 +272,7 @@ public class DemoData implements CommandLineRunner {
 
 The application domain is complete, and you can test the application. Run it by executing ```mvn spring-boot:run``` on the command line or use the matching tools in your IDE. After the application starts, go to ```http://localhost:8080/api/books```. The browser will forward you to the login page. Use one of the users above to log in. You will end up on an error page, as we have not set up forwarding after successful login. But we try to keep configuration to a minimum in this tutorial. You can go back to ```http://localhost:8080/api/books```, and you should see a list of all books:
 
-```JSON
+```json
 [
     {
         "id"       : 1,
@@ -304,7 +307,7 @@ So far, this tutorial has not used any features of SAPL, and you just created a 
 
 SAPL extends the Spring Security framework's method security features. To activate SAPL's method security, add the following configuration to the application:
 
-```Java
+```java
 @Configuration
 @EnableGlobalMethodSecurity
 public class MethodSecurityConfiguration extends SaplMethodSecurityConfiguration {
@@ -323,7 +326,7 @@ public class MethodSecurityConfiguration extends SaplMethodSecurityConfiguration
 
 The SAPL Spring Boot integration uses annotations to add PEPs to methods and classes. As a first example, add the ```@PreEnforce``` annotation the ```findById```method of the ```BookRepository``` interface:
 
-```Java
+```java
 public interface BookRepository {
     Iterable<Book> findAll();
 
@@ -350,10 +353,10 @@ Inspect the console, and you will find out what happened behind the scenes. The 
 
 The first log entry states that the PDP is starting the decision-making process for an authorization subscription. The subscription is not very readable this way. Let us apply some formatting to the JSON data to unpack what the subscription object:
 
-```JSON
+```json
 {
     "subject": {
-        "name":"zoe"
+        "name":"zoe",
         "authorities":[],
         "authenticated":true,
         "details": {
@@ -368,7 +371,7 @@ The first log entry states that the PDP is starting the decision-making process 
             "credentialsNonExpired":true,
             "enabled":true,
             "birthday":"2005-07-11"
-        },
+        }
     },
     "action": {
         "http": {
@@ -495,7 +498,7 @@ Let us start with a "permit all" policy. Add a file ```permit_all.sapl``` to the
 policy "permit all" permit
 ```
 
-The keyword ``policy``` indicates that the document contains a single policy, not a policy set. You will learn about policy sets later.
+The keyword ```policy``` indicates that the document contains a single policy, not a policy set. You will learn about policy sets later.
 This keyword is always followed by the name of the SPAL document as a string, i.e., ```"permit all"```. 
 The name of a policy must always be followed by the *entitlement* which is either ```permit``` or ```deny```.
 The entitlement expresses which decision the PDP should return when all policy rules are satisfied. 
@@ -597,7 +600,7 @@ In this section, you learned how a PEP and PDP interact in SAPL and how the PDP 
 In this step, you will build the application and configuration. You can also download the tutorial application in this stage from GitHub [here](https://github.com/heutelbeck/sapl-tutorial-01-spring/tree/f7d636de156674c2a3e15dbbe6a1160c5217008b).
 
 First, add a PEP to the ```findAll``` method of the ```BookRepository```:
-```Java
+```java
 public interface BookRepository {
 
     @PreEnforce
@@ -693,7 +696,7 @@ Generally, there are two potential sources for attributes: the authorization sub
 
 Consider the age rating of the book. This information is not known to the PEP before executing the query. Therefore, in the ```BookRepository```, replace the ```@PreEnforce``` on ```findById``` with a ```@PostEnforce``` annotation as follows:
 
-```Java
+```java
 public interface BookRepository {
     
     @PreEnforce
@@ -827,13 +830,13 @@ where
 
 You can download a project version with the age enforcement in place from [GitHub](https://github.com/heutelbeck/sapl-tutorial-01-spring/tree/0e154a6a92765dad32882c0a5a082b344730c7d7).
 
-## How to use SAPL Policies to Transform a Resource ?
+## How to use SAPL Policies to Transform a Resource?
 
 In this part of the tutorial, you will learn how to use policies to change the outcome of queries and how to trigger side effects using constraints.
 
 To have some more data to work with, first, extend the domain model by adding some content to the books:
 
-```Java
+```java
 @Data
 @Entity
 @NoArgsConstructor
@@ -849,7 +852,7 @@ public class Book {
 
 Also, extend the ```DemoData``` accordingly:
 
-```Java
+```java
 bookRepository.save(new Book(1L, "Clifford: It's Pool Time!", 0, "*Woof*"));
 bookRepository.save(new Book(2L, "The Rescue Mission: (Pokemon: Kalos Reader #1)", 4, "Gotta catch 'em all!"));
 bookRepository.save(new Book(3L, "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight", 9, "Some fantasy story."));
@@ -874,16 +877,13 @@ transform
 
 This policy introduces a new concept, i.e., the ```transform``` expression. 
 If the policy is applicable, i.e., all rules evaluate to ```true```, whatever 
-JSON value the ```transform``` expression evaluates to is added to authorization 
-decision as the property ```resource``` and is sent back to the PEP. 
+JSON value the ```transform``` expression evaluates to is added to the authorization decision as the property ```resource```.
 The presence of a ```resource``` object instructs the PEP to replace the resource data with itself.
 
 In this case, the so-called filter operator ```|-``` is applied to the resource object. 
-The filter operator enables to select indivividual parts of a JSON value and to manipulate this 
-part by, e.g., applying function to the selected value. 
-In this case, the operator selects the ```content``` key of the resource and replaces it with a 
-version of its content only exposing the the three leftmost characters and replacing the rest with 
-a black square ("\u2588" in unicode). 
+The filter operator enables the selection of individual parts of a JSON value for manipulation, e.g., applying a function to the selected value. 
+In this case, the operator selects the ```content``` key of the resource and replaces it with a version of its content, only exposing the three leftmost characters and replacing the rest with 
+a black square ("\u2588" in Unicode). 
 The selection expression is very powerful. 
 Please refer to the [SAPL Documentation](/docs/2.1.0-SNAPSHOT/sapl-reference.html#filtering) for a full explanation.
 
@@ -891,7 +891,7 @@ Ensure that the original age checking policy is still in place. Now, restart and
 
 When accessing ```http://localhost:8080/api/books/1```, you will get:
 
-```JSON
+```json
 {
     "id"        : 1,
     "name"      : "Clifford: It's Pool Time!",
@@ -901,7 +901,7 @@ When accessing ```http://localhost:8080/api/books/1```, you will get:
 ```
 
 But of course, because Alice is only three years old, the content of the age-inappropriate book ```http://localhost:8080/api/books/4``` will be blackened:
-```JSON
+```json
 {
     "id"        : 4,
     "name"      : "The Three-Body Problem",
@@ -925,24 +925,24 @@ The logs for this access attempt read as follows:
  enyOverridesCombiningAlgorithmImplCustom : | |-- PERMIT Combined AuthorizationDecision: AuthorizationDecision(decision=PERMIT, resource=Optional[{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa████████████"}], obligations=Optional.empty, advice=Optional.empty)
 ```
 
-The PRP discovered both polices to be matching the subscription. 
-The PDP starts to evaluate both and the ```check age compact``` policy evaluats to ```NOT_APPLICABLE```, because Alice is not old enough to read "The Three-Body Problem". 
+The PRP discovered both policies to be matching the subscription. 
+The PDP starts to evaluate both, and the ```check age compact``` policy evaluates to ```NOT_APPLICABLE```, because Alice is not old enough to read "The Three-Body Problem". 
 At the same time, the ```check age transform``` policy evaluates to ```permit```. 
 However, the authorization decision also contains a ```resource``` object. 
 Thus, the PEP replaced the value returned by the modified ```resource``` object.
 
 ## How to enforce Obligations and Advice of SAPL Policies?
 
-The ```transform``` expression of SAPL policies is a first example of a policy that instructs the PEP to only grant access once additional conditions are met. SAPL call this type of instructions *constraints*. SAPL supports three types of constraints:
-* *obligations*, i.e., a mandatory constranit that must be fulfilled, i.e., the PEP must successfully execute the instruction, or else the PEP must deny access.
-* *advice*, i.e., am optional constraint that should be fulfilled, i.e., the PEP should make a best effort to execute the instruction. However if it fails to do so, access is still franted, if the original decision was ```permit```.
-* *resource replacement*, i.e., a special case of an obligation expressing that the accessed resource must be replaced with the data supplied in the authorization decision.
+The ```transform``` expression of SAPL policies is the first example of a policy that instructs the PEP to only grant access while enforcing the execution of additional instructions. SAPL calls this type of instruction *constraints*. SAPL supports three types of constraints:
+* *obligations*, i.e., a mandatory constraint that the PEP must fulfill, i.e., the PEP must successfully execute the instruction, or else the PEP must deny access.
+* *advice*, i.e., am optional constraint that the PEP should fulfill, i.e., the PEP should make the best effort to execute the instruction. However, if it fails, access is still granted if the original decision was ```permit```.
+* *resource replacement*, i.e., a special case of an obligation expressing that the PEP must replace the accessed resource with the data supplied in the authorization decision.
 
-An authorization decision containing a constraint expresses that the access should be granted (or denied) only when obligations fulfilled sucessfully.
+An authorization decision containing a constraint expresses that the PEP must only grant (or deny) access when it can fulfill all obligations.
 
-For example, any doctor may access a patient's medical record in an emergency situation, but the access must be logged if the doctor is not the attending doctor of the patient in question, and an audit process has to be triggered. This is the so-called "breaking the glass scenario".
+For example, any doctor may access a patient's medical record in an emergency. However,  the system must log access if the doctor is not the attending doctor of the patient in question, triggering an audit process. Such a set of requirements is a so-called "breaking the glass scenario."
 
-In the library example, access age-inappropriate books must be logged in order to enable parents to discuss the accessed material later.
+In the library example, the system must log access to age-inappropriate books to let parents discuss the material later with their children.
 
 To do so, modify the ```check_age_transform.sapl``` policy as follows:
 
@@ -963,7 +963,7 @@ transform
    }
 ```
 
-When logging in as Alice and attempting to access ```http://localhost:8080/api/books/2``` access will be denied and the logs look as follows:
+When logging in as Alice and attempting to access ```http://localhost:8080/api/books/2```, access will be denied, and the logs look as follows:
 
 ```
 2022-08-02 01:09:05.780 DEBUG 80816 --- [nio-8080-exec-1] nericInMemoryIndexedPolicyRetrievalPoint :   |- Matching documents:
@@ -979,14 +979,14 @@ When logging in as Alice and attempting to access ```http://localhost:8080/api/b
 2022-08-02 01:09:05.782 DEBUG 80816 --- [nio-8080-exec-1] .s.m.b.PostEnforcePolicyEnforcementPoint : AuthzDecision    : AuthorizationDecision(decision=PERMIT, resource=Optional[{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got█████████████████"}], obligations=Optional[[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]], advice=Optional.empty)
 ```
 
-The PDP clearly communicated a ```permit``` decision containing the two constraints to replace the resource and to log the access to the console. 
+The PDP communicated a ```permit``` decision containing the two constraints to replace the resource and log the console's access. 
 The PEP failed to enforce the logging obligation and thus denied access. 
 
-In SAPL, constraints may be expressed as arbritary JSON objects. Also, SAPL does not know which types of constraints may be relevant in an application domain and how policies decide to describe them.
+SAPL expresses constraints as arbitrary JSON objects. Also, SAPL does not know which constraints may be relevant in an application domain and how policies decide to describe them.
 
 To support the logging obligation, implement a so-called *constraint handler provider*:
 
-```Java
+```java
 @Slf4j
 @Service
 public class LoggingConstraintHandlerProvider implements RunnableConstraintHandlerProvider {
@@ -1011,5 +1011,30 @@ public class LoggingConstraintHandlerProvider implements RunnableConstraintHandl
 }
 ```
 
+The SAPL Spring integration offers different hooks in the execution path where applications can add constraint handlers. Depending on the annotation, and if the underlying method returns a value synchronously or uses reactive datatypes like ```Flux<>``` different hooks are available. 
+For each of these hooks, the constraint handlers can influence the execution differently. E.g., for ```@PreEnforce``` the constraint handler may attempt to change the arguments handed over to the method. The different hooks map to interfaces a service bean can implement to provide the capability of enforcing different types of constraints. You can find a full list of the potential interfaces in the [```sapl-pep-api``` Module](https://github.com/heutelbeck/sapl-policy-engine/tree/master/sapl-pep-api/src/main/java/io/sapl/spring/constraints/api).
+
+In the case of logging, the constraint handler triggers a side-effect by logging the message contained in the obligation to the console. Therefore, the ```RunnableConstraintHandlerProvider``` is the appropriate service interface to implement. 
+This interface requires three methods:
+* ```getSignal``` returns when the ```Runnable``` should be executed. Here, the  PDP immediately executes the ```Runnable```  after it receives the decision from the PDP. Most other signals are primarily relevant for reactive data types and are out of the scope of this tutorial.
+* ```isResponsible``` returns ```true``` if the handlers provided can fulfill the constraint.
+* ```getHandler``` returns the ```Runnable``` enforcing the constraint.
+
+When logging in as Alice and attempting to access ```http://localhost:8080/api/books/2``` access will be granted, and the logs now contain the following line:
+
+```
+[nio-8080-exec-1] i.s.t.s.LoggingConstraintHandlerProvider : Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'.
+``` 
+
+You can download the demo project from the [GitHub repository for this tutorial](https://github.com/heutelbeck/sapl-tutorial-01-spring).
+
+
 ## Conclusions
 
+In this tutorial series, you have learned the basics of attribute-based access control and how to secure a Spring application with SAPL. 
+
+You can achieve much more with SAPL, including deploying flexible distributed organization-wide authorization infrastructures.
+The following tutorials in this series will focus on more complex obligations, testing, reactive data types, data streaming, customizing UIs 
+based on policies and applications based on the Axon framework.
+
+Feel free to engage with the developers and community on our [Discord Server](https://discord.gg/pRXEVWm3xM).
