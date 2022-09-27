@@ -1595,6 +1595,9 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="paragraph">
 <p>Obligations are only returned in the authorization decision if the decision is <code>PERMIT</code> or <code>DENY</code>. The PDP simply collects all obligations from policies evaluating to one of these entitlements. Depending on the final decision, the obligations and advice which belong to this decision are included in the authorization decision object. It does not matter if the obligation is described with a string (like <code>"create_emergency_access_log"</code>) or an object (like <code>{ "task" : "create_log", "content" : "emergency_access" }</code>) or another JSON value - only the PEP must be implemented in a way that it knows how to process these obligations.</p>
 </div>
+<div class="paragraph">
+<p>In any policy an arbitrary number of obligation expressions, all introduced with the <strong>obligation</strong> keyword may be present. All obligation expressions must be written down before any <strong>advice</strong>.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="advice-2"><a class="anchor" href="#advice-2"></a>Advice</h4>
@@ -1603,6 +1606,9 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 </div>
 <div class="paragraph">
 <p>If the final decision is <code>PERMIT</code> or <code>DENY</code>, advice from all policies evaluating to this decision is included in the authorization decision object by the PDP.</p>
+</div>
+<div class="paragraph">
+<p>In any policy an arbitrary number of advice expressions, all introduced with the <strong>advice</strong> keyword may be present. All advice expressions must be written down after any <strong>obligation</strong>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4029,7 +4035,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-09-12 14:28:55 UTC
+Last updated 2022-09-27 15:45:07 UTC
 </div>
 </div>
 </body>
