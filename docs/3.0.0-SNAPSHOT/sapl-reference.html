@@ -3229,14 +3229,14 @@ Transformation uncertainty cannot occur using the <code>only-one-applicable</cod
 <p>If any policy document evaluates to <code>PERMIT</code> and there is no <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code> and at least one of them has a transformation statement), the decision is <code>PERMIT</code>.</p>
 </li>
 <li>
-<p>Otherwise (no policy document evaluates to <code>DENY</code>):</p>
+<p>Otherwise (no policy document evaluates to <code>PERMIT</code>):</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
 <p>If there is any <code>INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code>, and at least one of them has a transformation statement), the decision is <code>INDETERMINATE</code>.</p>
 </li>
 <li>
-<p>Otherwise (no policy document evaluates to <code>DENY</code>, no policy document evaluates to <code>INDETERMINATE</code>, no transform uncertainty):</p>
+<p>Otherwise (no policy document evaluates to <code>PERMIT</code>, no policy document evaluates to <code>INDETERMINATE</code>, no transform uncertainty):</p>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
 <li>
@@ -4087,7 +4087,7 @@ sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.sapl</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-12-12 19:18:34 UTC
+Last updated 2023-12-13 19:18:41 UTC
 </div>
 </div>
 </body>
