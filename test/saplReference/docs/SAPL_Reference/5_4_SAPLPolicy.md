@@ -45,7 +45,7 @@ A statement within the body can either be a variable assignment which makes a va
 
 Sample Variable Assignment
 
-```
+```java
 var a_name = expression;
 ```
 
@@ -53,7 +53,7 @@ or a condition, i.e., an expression that evaluates to `true` or `false`.
 
 Sample Condition
 
-```
+```java
 a_name == "a_string";
 ```
 

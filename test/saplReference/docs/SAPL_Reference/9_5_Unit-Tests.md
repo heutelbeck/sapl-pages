@@ -13,7 +13,7 @@ SAPL tests use JUnit for executing SAPL unit test cases. Each test is prepared b
 
 The `SaplUnitTestFixture` defines the name of the SAPL document under test or the path to its file. In addition, the fixture sets up PIPs and FunctionLibrarys to be used during test execution.
 
-```
+```java
     private SaplTestFixture fixture;
 
     @BeforeEach

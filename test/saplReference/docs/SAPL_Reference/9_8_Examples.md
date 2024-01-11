@@ -11,7 +11,7 @@ nav_order: 8
 
 The following example constitutes a full minimal SAPL unit test:
 
-```
+```java
 public class B_PolicyWithSimpleFunctionTest {
 
     private SaplTestFixture fixture;

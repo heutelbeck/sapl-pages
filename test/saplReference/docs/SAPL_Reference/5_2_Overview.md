@@ -17,7 +17,7 @@ A SAPL policy consists of optional **imports**, a **name**, an **entitlement** s
 
 Sample SAPL Policy
 
-```
+```java
 import filter as filter (1)
 
 policy "test_policy" (2)
@@ -56,7 +56,7 @@ A SAPL policy set contains optional **imports**, a **name**, a **combining algor
 
 Sample SAPL Policy Set
 
-```
+```java
 import filter.* (1)
 
 set "test_policy_set" (2)

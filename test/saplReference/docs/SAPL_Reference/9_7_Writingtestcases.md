@@ -29,18 +29,18 @@ Starting with constructTestCaseWithMocks() or constructTestCase() called on the 
 - the `givenFunction` methods can be used to mock a function returning a `Val` specified in the method parameters for every call. 
   - a single value can be specified
 
-    ```
+    ```java
     .givenFunction("time.dayOfWeek", Val.of("SATURDAY"))
     ```
   - a single value only returned when the parameters of the function call match some expectations
 
-    ```
+    ```java
     .givenFunction("corp.subjectConverter",
         whenFunctionParams(is(Val.of("USER")), is(Val.of("nikolai"))), Val.of("ROLE_ADMIN"))
     ```
   - or a Lambda-Expression evaluating the parameters of the function call
 
-    ```
+    ```java
     .givenFunction("company.complexFunction", (FunctionCall call) -> {
     
         //probably one should check for number and type of parameters first
@@ -52,19 +52,19 @@ Starting with constructTestCaseWithMocks() or constructTestCase() called on the 
     ```
   - and verify the number of calls to this mock
 
-    ```
+    ```java
     .givenFunction("time.dayOfWeek", Val.of("SATURDAY"), times(1))
     ```
 - `givenFunctionOnce` can specify a `Val` or multiple `Val`\-Objects which are emitted once (in a sequence) when this mocked function is called 
   - a single value
 
-    ```
+    ```java
     .givenFunctionOnce("time.secondOf", Val.of(4))
     .givenFunctionOnce("time.secondOf", Val.of(5))
     ```
   - or a sequence of values
 
-    ```
+    ```java
     .givenFunctionOnce("time.secondOf", Val.of(3), Val.of(4), Val.of(5))
     ```
 
@@ -73,12 +73,12 @@ Starting with constructTestCaseWithMocks() or constructTestCase() called on the 
 - `givenAttribute` methods can mock attributes 
   - to return one or more `Val`
 
-    ```
+    ```java
     .givenAttribute("time.now", timestamp0, timestamp1, timestamp2)
     ```
   - to return a sequence of `Val` in an interval of `Duration`. Using `withVirtualTime` activates the virtual time feature of Project Reactor
 
-    ```
+    ```java
     .withVirtualTime()
     .givenAttribute("time.now", Duration.ofSeconds(10), timestamp0, timestamp1, timestamp2, timestamp3, timestamp4, timestamp5)
     ```
@@ -89,7 +89,7 @@ Starting with constructTestCaseWithMocks() or constructTestCase() called on the 
 
   - to mark an attribute to be mocked and specify return values in a sequence next to expectations
 
-    ```
+    ```java
     .givenAttribute("company.pip1")
     .givenAttribute("company.pip2")
     .when(AuthorizationSubscription.of("User1", "read", "heartBeatData"))
@@ -101,12 +101,12 @@ Starting with constructTestCaseWithMocks() or constructTestCase() called on the 
     ```
   - to mock an attribute depending on the parent value
 
-    ```
+    ```java
     .givenAttribute("test.upper", whenParentValue(val("willi")), thenReturn(Val.of("WILLI")))
     ```
   - to mock an attribute depending on the parent value and every value the arguments are called for
 
-    ```
+    ```java
     .givenAttribute("pip.attributeWithParams", whenAttributeParams(parentValue(val(true)), arguments(val(2), val(2))), thenReturn(Val.of(true)))
     ```
 
@@ -118,17 +118,17 @@ The next defines the `AuthorizationSubscription` for the policy evaluation.
 
 - pass an `AuthorizationSubscription` created by it’s factory methods
 
-  ```
+  ```java
   .when(AuthorizationSubscription.of("willi", "read", "something"))
   ```
 - pass a JSON-String to be parsed to an `AuthorizationSubscription` via the framework
 
-  ```
+  ```java
   .when("{\"subject\":\"willi\", \"action\":\"read\", \"resource\":\"something\", \"environment\":{}}")
   ```
 - pass a `JsonNode` object of the Jackson-Framework ([Reference](https://fasterxml.github.io/jackson-databind/javadoc/2.7/com/fasterxml/jackson/databind/JsonNode.html))
 
-  ```
+  ```java
   JsonNode authzSub = mapper.createObjectNode()
       .put("subject", "willi")
       .put("action", "read")
@@ -144,7 +144,7 @@ This step defines the expected `AuthorizationDecision`.
 
 - check only the Decision via
 
-  ```
+  ```java
   .expectPermit()
   .expectDeny()
   .expectIndeterminate()
@@ -152,7 +152,7 @@ This step defines the expected `AuthorizationDecision`.
   ```
 - pass a `AuthorizationDecision` object to be checked for equality
 
-  ```
+  ```java
   ObjectNode obligation = mapper.createObjectNode();
   obligation.put("type", "logAccess");
   obligation.put("message", "Willi has accessed patient data (id=56) as an administrator.");
@@ -167,7 +167,7 @@ This step defines the expected `AuthorizationDecision`.
   ```
 - use a predicate function to manually define checks
 
-  ```
+  ```java
   .expect((AuthorizationDecision dec) -> {
       // some complex and custom assertions
       if(dec.getObligations().isEmpty()) {
@@ -178,7 +178,7 @@ This step defines the expected `AuthorizationDecision`.
   ```
 - Hamcrest matchers provided by the sapl-hamcrest module can be used to express complex expectations on the decision, obligations, advice or resources of the `AuthorizationDecision`
 
-  ```
+  ```java
   .expect(
       allOf(
           isPermit(),
@@ -193,7 +193,7 @@ This step defines the expected `AuthorizationDecision`.
 
 These methods come with additional methods (e.g., `expectNextPermit`) to define multiple expectations for testing stream-based policies.
 
-```
+```java
 .expectNextPermit(3)
 ```
 

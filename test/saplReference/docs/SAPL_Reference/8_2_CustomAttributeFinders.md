@@ -15,7 +15,7 @@ For a more in-depth look at the process of creating a custom PIP, please refer t
 
 In SAPL, a Policy Information Point is an instance of a class that supplies a set of such functions. To declare functions and classes to be attributes or PIPs, SAPL uses annotations. Each PIP class must be known to the PDP. The embedded PDP provides an `AnnotationAttributeContext`, which takes arbitrary Java objects as PIPs. To be recognized as a PIP, the respective class must be annotated with `@PolicyInformationPoint`. The optional annotation attribute `name` contains the PIP’s name as it will be available in SAPL policies. If the attribute is missing, the name of the Java class is used. The optional annotation attribute `description` contains a string describing the PIP for documentation purposes.
 
-```
+```java
 @PolicyInformationPoint(name = "user", description = "This the documentation of the PIP")
 public class SampleUserPIP {
     ...
@@ -28,7 +28,7 @@ SAPL allows for attribute name overloading. This means that can be multiple impl
 
 For an attribute of some other object, this object is called the left-hand parameter of the attribute. When writing a method implementing an attribute that takes a left-hand parameter, this parameter must be the first parameter of the method, and it must be of type `Val`:
 
-```
+```java
 /* subject.<user.attribute> */
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute) {
@@ -42,7 +42,7 @@ A typical use-case for attribute finder is retrieving attribute data from an ext
 
 To access the environment variables, attribute finder methods can consume a Map<String,JsonNode>. The PDP will inject this map at runtime. The map contains all variables available in the current evaluation scope. This map must be the first parameter of the left-hand parameter, or it must be the first parameter for environment attributes. Note that attempting to overload an attribute name with and without variables as a parameter that accept the same number of other parameters will fail. The engine cannot disambiguate these two attributes at runtime.
 
-```
+```java
 /* subject.<user.attribute> definition would clash with last example if defined at the same time in the same PIP*/
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute, Map<String,JsonNode> variables) {
@@ -52,7 +52,7 @@ public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute, Map<String,
 
 To define environment attributes, i.e., attributes without left-hand parameters, the method definition explicitly does not define a `Val` parameter as its first parameter.
 
-```
+```java
 /* <user.attribute> */
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute() {
@@ -62,7 +62,7 @@ public Flux<Val> attribute() {
 
 Optionally, the environment attribute can consume variables:
 
-```
+```java
 /* <user.attribute> definition would clash with last example if defined at the same time in the same PIP */
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute(Map<String,JsonNode> variables) {
@@ -74,7 +74,7 @@ A unique feature of SAPL is the possibility to parameterize attribute finders in
 
 Regardless of if the attribute is an environment attribute or not, the parameters in brackets are declared as parameters of the method with the type `Flux<Val>`.
 
-```
+```java
 /* subject.<user.attribute("param1",123)> */
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute, Map<String,JsonNode> variables, @Text Flux<Val> param1, @Number Flux<Val> param2) {
@@ -84,7 +84,7 @@ public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute, Map<String,
 
 Additionally, using Java variable argument lists, it is possible to declare attributes with a variable number of attributes. If a method wants to use variable arguments, the method must not declare any other parameters besides the optional left-hand or variables parameters. If an attribute is overloaded, an implementation with an exact match of the number of arguments takes precedence over a variable arguments implementation.
 
-```
+```java
 /* subject.<user.attribute("AA","BB","CC")> */
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute, Map<String,JsonNode> variables, @Text Flux<Val>... params) {
@@ -94,7 +94,7 @@ public Flux<Val> attribute(@Object Val leftHandObjectOfTheAttribute, Map<String,
 
 Alternatively defining the variable arguments can be defined as an array.
 
-```
+```java
 /* <user.attribute("AA","BB","CC")> */
 @Attribute(name = "attribute", docs = "documentation")
 public Flux<Val> attribute(@Text Flux<Val>[] params) {

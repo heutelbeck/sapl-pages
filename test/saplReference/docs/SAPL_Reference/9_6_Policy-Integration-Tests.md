@@ -13,7 +13,7 @@ Instead of testing a single SAPL document, all policies can be tested together u
 
 The `SaplIntegrationTestFixture` manages these kinds of integrations tests.
 
-```
+```java
     private SaplTestFixture fixture;
 
     @BeforeEach

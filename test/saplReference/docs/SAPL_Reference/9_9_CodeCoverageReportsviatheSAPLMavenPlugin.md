@@ -28,7 +28,7 @@ Currently, three coverage criteria are supported:
 
 The SAPL Maven Plugin can be added to the Maven project by adding the following configuration to the `pom.xml`
 
-```
+```xml
 <plugin>
     <groupId>io.sapl</groupId>
     <artifactId>sapl-maven-plugin</artifactId>

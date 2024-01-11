@@ -17,7 +17,7 @@ SAPL functions must not perform any IO operations. Functions are to be used as "
 
 - To be recognized as a function library, a class must be annotated with `@FunctionLibrary`. The optional annotation attribute `name` contains the library’s name as it will be available in SAPL policies. The attribute value must be a string consisting of one or more identifiers separated by periods. If the attribute is missing, the name of the Java class is used. The optional annotation attribute `description` contains a string describing the library for documentation purposes.
 
-  ```
+  ```java
   @FunctionLibrary(name = "sample.functions", description = "a sample library")
   public class SampleFunctionLibrary {
       ...
@@ -25,7 +25,7 @@ SAPL functions must not perform any IO operations. Functions are to be used as "
   ```
 - The annotation `@Function` identifies a function in the library. An optional annotation attribute `name` can contain a function name. The attribute is a string containing an identifier. By default, the name of the Java function will be used. The annotation attribute `docs` can contain a string describing the function.
 
-  ```
+  ```java
   @Function(docs = "returns the length")
   public static Val length(@Text Val parameter) {
       ...

@@ -54,7 +54,7 @@ A basic value expression is the simplest type. The value is denoted in the corre
 
 For denoting objects, the keys need to be strings, and the values can be any expression, e.g.
 
-```
+```json
 {
     "id" : (3+5),
     "name" : functions.generate_name()
@@ -63,7 +63,7 @@ For denoting objects, the keys need to be strings, and the values can be any exp
 
 For arrays, the items can be any expression, e.g.
 
-```
+```json
 [
     (3+5),
     subject.name
@@ -80,7 +80,7 @@ It evaluates to the variable or the attribute’s value.
 
 A basic function expression consists of a function name and any number of arguments between parentheses which are separated by commas. The arguments must be expressions, e.g.
 
-```
+```java
 library.a_function(subject.name, (environment.day_of_week + 1))
 ```
 
