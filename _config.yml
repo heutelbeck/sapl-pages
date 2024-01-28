@@ -45,7 +45,7 @@ minima:
 # their entries' file path in the `include:` list.
 #
 exclude:
-  - test/
+  - md-files/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
