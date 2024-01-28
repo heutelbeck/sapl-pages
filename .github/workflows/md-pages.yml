@@ -1,0 +1,57 @@
+# Sample workflow for building and deploying a Jekyll site to GitHub Repository
+name: saplWebsite
+
+on:
+#  # Runs on pushes targeting the default branch
+#  push:
+#    branches: ["master"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Repository
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  pull-requests: write
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          cache-version: 0 # Increment this number if you need to re-download cached gems
+
+      - name: Install Bundler and Jekyll
+        run: |
+          gem install bundler
+          bundle install
+        working-directory: ./md-files/saplWebsite
+
+      - name: Build Jekyll Site
+        run: bundle exec jekyll build
+        working-directory: ./md-files/saplWebsite
+
+      - name: Create Subfolder
+        run: mkdir -p ./docs/3.0.0-SNAPSHOT-MD/saplWebsite
+
+      - name: Copy Generated SAPL-Website Pages to Subfolder
+        run: cp -R ./md-files/saplWebsite/_site/* ./docs/3.0.0-SNAPSHOT-MD/saplWebsite/
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.email "ha247@t-online.de"
+          git config --global user.name "HAAL2023"
+          git add ./docs/3.0.0-SNAPSHOT-MD/saplWebsite/
+          git commit -m "Update generated pages"
+          git push
