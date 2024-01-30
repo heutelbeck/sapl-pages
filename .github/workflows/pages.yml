@@ -53,7 +53,7 @@ jobs:
           ls -hal
           cd ./md-files/saplReference/
           ls -hal
-          bundle exec jekyll build
+          bundle exec jekyll build -c ./_config.yml
         working-directory: ./
 
       - name: Create Subfolder
