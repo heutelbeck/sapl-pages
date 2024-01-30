@@ -482,7 +482,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#overview">Overview</a></li>
 <li><a href="#imports">Imports</a></li>
-<li><a href="#schemas-for-authorization-subscription-attributes">Schemas for Authorization Subscription Attributes</a></li>
 <li><a href="#sapl-policy">SAPL Policy</a></li>
 <li><a href="#sapl-policy-set">SAPL Policy Set</a></li>
 <li><a href="#language-elements">Language Elements</a></li>
@@ -1317,27 +1316,25 @@ A policy set contains an ordered set of connected policies.</p>
 <div class="sect3">
 <h4 id="policy-structure"><a class="anchor" href="#policy-structure"></a>Policy Structure</h4>
 <div class="paragraph">
-<p>A SAPL policy consists of optional <strong>imports</strong>, optional <strong>schemas</strong> for authorization subscription elements,  a <strong>name</strong>, an <strong>entitlement</strong> specification, an optional <strong>target expression</strong>, an optional <strong>body</strong> with one or more statements, and optional sections for <strong>obligation</strong>, <strong>advice</strong>, and <strong>transformation</strong>. An example of a simple policy is:</p>
+<p>A SAPL policy consists of optional <strong>imports</strong>,  a <strong>name</strong>, an <strong>entitlement</strong> specification, an optional <strong>target expression</strong>, an optional <strong>body</strong> with one or more statements, and optional sections for <strong>obligation</strong>, <strong>advice</strong>, and <strong>transformation</strong>. An example of a simple policy is:</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample SAPL Policy</div>
 <div class="content">
 <pre class="highlight"><code>import filter as filter <i class="conum" data-value="1"></i><b>(1)</b>
-subject schema aSubjectSchema <i class="conum" data-value="2"></i><b>(2)</b>
 
-policy "test_policy" <i class="conum" data-value="3"></i><b>(3)</b>
-permit <i class="conum" data-value="4"></i><b>(4)</b>
-    subject.id == "anId" | action == "anAction" <i class="conum" data-value="5"></i><b>(5)</b>
+policy "test_policy" <i class="conum" data-value="2"></i><b>(2)</b>
+permit <i class="conum" data-value="3"></i><b>(3)</b>
+    subject.id == "anId" | action == "anAction" <i class="conum" data-value="4"></i><b>(4)</b>
 where
     var variable = "anAttribute";
-    subject.attribute == variable; <i class="conum" data-value="6"></i><b>(6)</b>
-    var foo = true schema {"type": "boolean"} <i class="conum" data-value="7"></i><b>(7)</b>
+    subject.attribute == variable; <i class="conum" data-value="5"></i><b>(5)</b>
 obligation
-    "logging:log_access" <i class="conum" data-value="8"></i><b>(8)</b>
+    "logging:log_access" <i class="conum" data-value="6"></i><b>(6)</b>
 advice
-    "logging:inform_admin" <i class="conum" data-value="9"></i><b>(9)</b>
+    "logging:inform_admin" <i class="conum" data-value="7"></i><b>(7)</b>
 transform
-    resource.content |- filter.blacken <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
+    resource.content |- filter.blacken <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1348,38 +1345,30 @@ transform
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Schemas (optional)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Name</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Entitlement</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Target Expression (optional)</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Body (optional)</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Schemas (optional)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Obligation (optional)</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Advice (optional)</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>Transformation (optional)</td>
 </tr>
 </table>
@@ -1482,12 +1471,6 @@ policy "sample"
 </div>
 </div>
 <div class="sect2">
-<h3 id="schemas-for-authorization-subscription-attributes"><a class="anchor" href="#schemas-for-authorization-subscription-attributes"></a>Schemas for Authorization Subscription Attributes</h3>
-<div class="paragraph">
-<p>SAPL offers the possibility to predefine the structure of an attribute of the authorization subscription using a JSON schema. The attribute name is followed by the keyword <code>schema</code> and the schema expression. The schema expression must evaluate to a valid JSON schema.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="sapl-policy"><a class="anchor" href="#sapl-policy"></a>SAPL Policy</h3>
 <div id="policy" class="paragraph">
 <p>This section describes the elements of a SAPL policy in more detail. A policy contains an entitlement (<code>permit</code> or <code>deny</code>) and can be evaluated against an authorization subscription. If the conditions in the target expression and in the body are fulfilled, the policy evaluates to its entitlement. Otherwise, it evaluates to <code>NOT_APPLICABLE</code> (if one of the conditions is not satisfied) or <code>INDETERMINATE</code> (if an error occurred).</p>
@@ -1579,7 +1562,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="sect4">
 <h5 id="variable-assignment"><a class="anchor" href="#variable-assignment"></a>Variable Assignment</h5>
 <div id="value-assignment" class="paragraph">
-<p>A variable assignment starts with the keyword <code>var</code>, followed by an identifier under which the assigned value should be available, followed by <code>=</code> and an expression. The assignment can be followed by the optional keyword <code>schema</code> and one or more schema expressions separated by <code>,</code>. The schema expression(s) must evaluate to a valid JSON schema.</p>
+<p>A variable assignment starts with the keyword <code>var</code>, followed by an identifier under which the assigned value should be available, followed by <code>=</code> and an expression.</p>
 </div>
 <div class="paragraph">
 <p>After a variable assignment, the result of evaluating the expression can be used in later conditions within the same policy under the specified name. This is useful because it allows to execute time-consuming calculations or requests to external attribute stores only once, and the result can be used in multiple expressions. Additionally, it can make policies shorter and improve readability.</p>
@@ -4156,7 +4139,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-01-23 12:25:27 UTC
+Last updated 2024-01-11 12:29:40 UTC
 </div>
 </div>
 </body>
