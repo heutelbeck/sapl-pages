@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>SAPL - The Streaming Attribute Policy Language and Engine | SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="SAPL - The Streaming Attribute Policy Language and Engine" />
+<meta name="author" content="GitHub User" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
+<meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
+<link rel="canonical" href="https://heutelbeck.github.io/" />
+<meta property="og:url" content="https://heutelbeck.github.io/" />
+<meta property="og:site_name" content="SAPL - The Streaming Attribute Policy Language and Engine" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SAPL - The Streaming Attribute Policy Language and Engine" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"GitHub User"},"description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL - The Streaming Attribute Policy Language and Engine","name":"SAPL - The Streaming Attribute Policy Language and Engine","url":"https://heutelbeck.github.io/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://heutelbeck.github.io/feed.xml" title="SAPL - The Streaming Attribute Policy Language and Engine" />    <link rel="icon" href="/assets/favicon.png" type="image/png">
+    <!-- Matomo -->
+    <script type="text/javascript">
+        var _paq = window._paq || [];    
+        _paq.push(["disableCookies"]);
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+            var u="//www.ftk.de/statistik/";
+            _paq.push(['setTrackerUrl', u+'matomo.php']);
+            _paq.push(['setSiteId', '2']);
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        })();
+    </script>
+    <!-- End Matomo Code --></head>
+<body><header class="site-header">
+    <div class="wrapper"><a class="site-logo" rel="author" href="/"><img src="/assets/logo-header-45.png" alt="SAPL - The Streaming Attribute Policy Language and Engine"  height="45px" width="282px"></a><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+  
+          <div class="trigger">
+                    <a class="page-link" href="/about">About</a>
+                
+                    <a class="page-link" href="/blog">Blog</a>
+                
+                    <a class="page-link" href="/documentation">Docs</a>
+                
+                    <a class="page-link" href="/faq">FAQ</a>
+                
+                    <a class="page-link" href="/publications">Publications</a>
+                <a class="page-link" href="https://playground.sapl.io/">Playground</a>
+            <a class="page-link" href="https://discord.gg/pRXEVWm3xM">
+                <img alt="Discord" src="/assets/Discord-Logo-White.svg" height="15px"/>
+            </a>
+            <a class="page-link" href="https://github.com/heutelbeck?tab=repositories">
+              <img alt="GitHub" src="/assets/GitHub-Mark-Light-32px.png" height="15px"/>
+            </a>
+          </div>
+        </nav></div>
+  </header><main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title"></h1>
+  </header>
+
+  <div class="post-content">
+    <p><center><h2>The Streaming Attribute Policy Language and Engine</h2></center></p>
+
+<div class="youtube-player" data-id="ZizNrdpygNM"></div>
+<p><center>Simple flexible and dynamic attribute based access-control (ABAC).</center></p>
+
+<p><center>The reactive open source engine to bring ABAC to you applications supporting steams of attributes for efficient interactive real-time access control.</center></p>
+
+<h2 id="streaming-attribute-policy-language-sapl">Streaming Attribute Policy Language (SAPL)</h2>
+
+<p>The Streaming Attribute Policy Language (SAPL) offers a compact easy to read and write syntax to express your access-control policies. Policies written in SAPL require little code and do not obfuscate the meaning of the policy in extensive structural boilerplate code, as found in the Xtensible Access Control Markup Language (XACML).</p>
+
+<p>SAPL supports a JSON oriented data model including rich JSON path-like querying of JSON objects.</p>
+
+<p>SAPL supports both traditional request-response-based policy decision making as well as publish-subscribe attribute stream driven decision making based on an reactive API.</p>
+
+<h2 id="spring-security-integration">Spring Security Integration</h2>
+
+<p>The SAPL Engine provides a deep integration into the Spring Security software stack offering easy integration of policy enforcement points into Spring applications.</p>
+
+<p>The SAPL libraries offer support for:</p>
+<ul>
+  <li>Embedded policy decision points.</li>
+  <li>Remote policy decison points.</li>
+  <li>Reactive API.</li>
+  <li>Declarative method security.</li>
+  <li>URL filtering.</li>
+  <li>Customizalble Spring Boot autoconfiguration of the Policy Engine components.</li>
+  <li>Easy APIs to define Spring Beans for handling the enforcement of policy driven obligations and advices.</li>
+</ul>
+
+<p>The SAPL libraries default to automatic authorization request generation, which is fully customizalble.</p>
+
+<h2 id="open-source">Open Source</h2>
+
+<p>The complete language and core policy engine is open-source licensed under the Apache 2.0 license, allowing for easy auditing of the software stack, extensibility, availability and low barriers for testing and adoption.</p>
+
+<h2 id="open-lightweigt-authorization-server">Open Lightweigt Authorization Server</h2>
+
+<p>A lightweigt SAPL-based authorization server, i.e., a policy decision point (PDP), implementation is available for centrally administrating policies providing request-response and subscription-based authorization as a service through a simple REST style API.</p>
+
+<h2 id="lightweigt-embedded-pdp">Lightweigt Embedded PDP</h2>
+
+<p>The SAPL policy engine includes an embedded Policy Decision Point (PDP) into Java applications for ease of development and performance.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data> 
+    <div class="wrapper">
+      <p>SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.</p>
+      <p>
+        <a href="/imprint">Imprint</a><br/>
+        <a href="/privacy">Privacy Policy</a>
+      </p>
+    </div>  
+</footer>
+<script>
+function addIframe(div) {
+  var iframe = document.createElement("iframe");
+  iframe.setAttribute(
+    "src",
+    "https://www.youtube-nocookie.com/embed/" + div.dataset.id + "?autoplay=1&rel=0"
+  );
+  iframe.setAttribute("frameborder", "0");
+  iframe.setAttribute("allowfullscreen", "1");
+  iframe.setAttribute(
+    "allow",
+    "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  );
+  div.parentNode.replaceChild(iframe, div);
+}
+
+function initYouTubeVideos() {
+  var playerElements = document.getElementsByClassName("youtube-player");
+  for (var n = 0; n < playerElements.length; n++) {
+    var videoId = playerElements[n].dataset.id;
+    var div = document.createElement("div");
+    div.setAttribute("data-id", videoId);
+    var thumbNode = document.createElement("img");
+    thumbNode.src = "https://i.ytimg.com/vi/ID/hqdefault.jpg".replace(
+      "ID",
+      videoId
+    );
+    div.appendChild(thumbNode);
+    var playButton = document.createElement("div");
+    playButton.setAttribute("class", "play");
+    div.appendChild(playButton);
+    div.onclick = function () {
+      addIframe(this);
+    };
+    playerElements[n].appendChild(div);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initYouTubeVideos);
+</script></body>
+
+</html>
