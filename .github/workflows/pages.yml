@@ -46,7 +46,7 @@ jobs:
         run: |
           ls -hal
           bundle exec jekyll build
-        working-directory: ./md-files/saplReference
+        working-directory: ./
 
       - name: Create Subfolder
         run: mkdir -p ./docs/3.0.0-SNAPSHOT-MD/saplReference/
