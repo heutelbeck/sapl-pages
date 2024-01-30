@@ -43,7 +43,9 @@ jobs:
         working-directory: ./md-files/saplReference
 
       - name: Build Jekyll Site
-        run: bundle exec jekyll build
+        run: |
+          ls -hal
+          bundle exec jekyll build
         working-directory: ./md-files/saplReference
 
       - name: Create Subfolder
@@ -62,6 +64,7 @@ jobs:
 
   build_sapl_website:
     name: Build SAPL-Website
+    needs: build_sapl_reference
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
