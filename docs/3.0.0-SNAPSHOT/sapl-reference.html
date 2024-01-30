@@ -482,6 +482,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#overview">Overview</a></li>
 <li><a href="#imports">Imports</a></li>
+<li><a href="#schemas-for-authorization-subscription-attributes">Schemas for Authorization Subscription Attributes</a></li>
 <li><a href="#sapl-policy">SAPL Policy</a></li>
 <li><a href="#sapl-policy-set">SAPL Policy Set</a></li>
 <li><a href="#language-elements">Language Elements</a></li>
@@ -1316,25 +1317,27 @@ A policy set contains an ordered set of connected policies.</p>
 <div class="sect3">
 <h4 id="policy-structure"><a class="anchor" href="#policy-structure"></a>Policy Structure</h4>
 <div class="paragraph">
-<p>A SAPL policy consists of optional <strong>imports</strong>,  a <strong>name</strong>, an <strong>entitlement</strong> specification, an optional <strong>target expression</strong>, an optional <strong>body</strong> with one or more statements, and optional sections for <strong>obligation</strong>, <strong>advice</strong>, and <strong>transformation</strong>. An example of a simple policy is:</p>
+<p>A SAPL policy consists of optional <strong>imports</strong>, optional <strong>schemas</strong> for authorization subscription elements,  a <strong>name</strong>, an <strong>entitlement</strong> specification, an optional <strong>target expression</strong>, an optional <strong>body</strong> with one or more statements, and optional sections for <strong>obligation</strong>, <strong>advice</strong>, and <strong>transformation</strong>. An example of a simple policy is:</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample SAPL Policy</div>
 <div class="content">
 <pre class="highlight"><code>import filter as filter <i class="conum" data-value="1"></i><b>(1)</b>
+subject schema aSubjectSchema <i class="conum" data-value="2"></i><b>(2)</b>
 
-policy "test_policy" <i class="conum" data-value="2"></i><b>(2)</b>
-permit <i class="conum" data-value="3"></i><b>(3)</b>
-    subject.id == "anId" | action == "anAction" <i class="conum" data-value="4"></i><b>(4)</b>
+policy "test_policy" <i class="conum" data-value="3"></i><b>(3)</b>
+permit <i class="conum" data-value="4"></i><b>(4)</b>
+    subject.id == "anId" | action == "anAction" <i class="conum" data-value="5"></i><b>(5)</b>
 where
     var variable = "anAttribute";
-    subject.attribute == variable; <i class="conum" data-value="5"></i><b>(5)</b>
+    subject.attribute == variable; <i class="conum" data-value="6"></i><b>(6)</b>
+    var foo = true schema {"type": "boolean"} <i class="conum" data-value="7"></i><b>(7)</b>
 obligation
-    "logging:log_access" <i class="conum" data-value="6"></i><b>(6)</b>
+    "logging:log_access" <i class="conum" data-value="8"></i><b>(8)</b>
 advice
-    "logging:inform_admin" <i class="conum" data-value="7"></i><b>(7)</b>
+    "logging:inform_admin" <i class="conum" data-value="9"></i><b>(9)</b>
 transform
-    resource.content |- filter.blacken <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+    resource.content |- filter.blacken <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1345,30 +1348,38 @@ transform
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Name</td>
+<td>Schemas (optional)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Entitlement</td>
+<td>Name</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Target Expression (optional)</td>
+<td>Entitlement</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Body (optional)</td>
+<td>Target Expression (optional)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Obligation (optional)</td>
+<td>Body (optional)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Advice (optional)</td>
+<td>Schemas (optional)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Obligation (optional)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Advice (optional)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td>Transformation (optional)</td>
 </tr>
 </table>
@@ -1471,6 +1482,12 @@ policy "sample"
 </div>
 </div>
 <div class="sect2">
+<h3 id="schemas-for-authorization-subscription-attributes"><a class="anchor" href="#schemas-for-authorization-subscription-attributes"></a>Schemas for Authorization Subscription Attributes</h3>
+<div class="paragraph">
+<p>SAPL offers the possibility to predefine the structure of an attribute of the authorization subscription using a JSON schema. The attribute name is followed by the keyword <code>schema</code> and the schema expression. The schema expression must evaluate to a valid JSON schema.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="sapl-policy"><a class="anchor" href="#sapl-policy"></a>SAPL Policy</h3>
 <div id="policy" class="paragraph">
 <p>This section describes the elements of a SAPL policy in more detail. A policy contains an entitlement (<code>permit</code> or <code>deny</code>) and can be evaluated against an authorization subscription. If the conditions in the target expression and in the body are fulfilled, the policy evaluates to its entitlement. Otherwise, it evaluates to <code>NOT_APPLICABLE</code> (if one of the conditions is not satisfied) or <code>INDETERMINATE</code> (if an error occurred).</p>
@@ -1562,7 +1579,7 @@ Since multiple policies can be applicable and the combining algorithm can be cho
 <div class="sect4">
 <h5 id="variable-assignment"><a class="anchor" href="#variable-assignment"></a>Variable Assignment</h5>
 <div id="value-assignment" class="paragraph">
-<p>A variable assignment starts with the keyword <code>var</code>, followed by an identifier under which the assigned value should be available, followed by <code>=</code> and an expression.</p>
+<p>A variable assignment starts with the keyword <code>var</code>, followed by an identifier under which the assigned value should be available, followed by <code>=</code> and an expression. The assignment can be followed by the optional keyword <code>schema</code> and one or more schema expressions separated by <code>,</code>. The schema expression(s) must evaluate to a valid JSON schema.</p>
 </div>
 <div class="paragraph">
 <p>After a variable assignment, the result of evaluating the expression can be used in later conditions within the same policy under the specified name. This is useful because it allows to execute time-consuming calculations or requests to external attribute stores only once, and the result can be used in multiple expressions. Additionally, it can make policies shorter and improve readability.</p>
@@ -3229,14 +3246,14 @@ Transformation uncertainty cannot occur using the <code>only-one-applicable</cod
 <p>If any policy document evaluates to <code>PERMIT</code> and there is no <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code> and at least one of them has a transformation statement), the decision is <code>PERMIT</code>.</p>
 </li>
 <li>
-<p>Otherwise (no policy document evaluates to <code>DENY</code>):</p>
+<p>Otherwise (no policy document evaluates to <code>PERMIT</code>):</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
 <p>If there is any <code>INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code>PERMIT</code>, and at least one of them has a transformation statement), the decision is <code>INDETERMINATE</code>.</p>
 </li>
 <li>
-<p>Otherwise (no policy document evaluates to <code>DENY</code>, no policy document evaluates to <code>INDETERMINATE</code>, no transform uncertainty):</p>
+<p>Otherwise (no policy document evaluates to <code>PERMIT</code>, no policy document evaluates to <code>INDETERMINATE</code>, no transform uncertainty):</p>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
 <li>
@@ -4001,7 +4018,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <div class="sect3">
 <h4 id="usage"><a class="anchor" href="#usage"></a>Usage</h4>
 <div class="paragraph">
-<p>The SAPL Maven Plugin can be added to the Maven project by adding the following configuration to the <code>pom.xml</code></p>
+<p>The SAPL Maven Plugin can be added to the Maven project by adding the following configuration to the <code>pom.xml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4036,7 +4053,7 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <div class="sect3">
 <h4 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h4>
 <div class="paragraph">
-<p>The plugin can be configured via the following parameters:</p>
+<p>You can specify the configuration of the SAPL Maven Plugin in the configuration section of the plugin in the <code>pom.xml</code>. The plugin can be configured via the following parameters:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4059,24 +4076,76 @@ AuthorizationDecision decision = new AuthorizationDecision(Decision.PERMIT).with
 <p><strong>policyConditionHitRatio</strong>: A value between 0 - 100 to define the ratio of condition results the tests should cover. If this ratio isn&#8217;t fulfilled, the SAPL Maven Plugin is going to stop the Maven lifecycle (defaultValue = 0).</p>
 </li>
 <li>
-<p><strong>enableSonarReport</strong>: When set to true, a coverage report with the <a href="https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/test-coverage/generic-test-data/">SonarQube/SonarCloud Generic Coverage Format</a> is generated. To use this coverage report in the SonarQube/SonarCloud analysis, a workaround currently needs to be applied, since SonarQube and SonarCloud do not import generic coverage data for languages unknown to them. Currently, there is also no SonarQube Language plugin for SAPL. The workaround consists of adding files with the .sapl file extension to a language known to SAPL and, at the same time, to ignore any issues raised in these files. To add the coverage report, add the following parameters to the SonarQube/SonarCloud analysis:</p>
-<div class="listingblock">
-<div class="content">
-<pre>sonar.sources=.
-sonar.inclusions=pom.xml,src/main/java/**,src/main/resources/**
-sonar.coverageReportPaths=target/sapl-coverage/sonar/sonar-generic-coverage.xml
-sonar.yaml.file.suffixes=.yaml,.yml,.sapl
-sonar.issue.ignore.multicriteria=e1
-sonar.issue.ignore.multicriteria.e1.ruleKey=*
-sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.sapl</pre>
-</div>
+<p><strong>enableSonarReport</strong>: When set to true, a coverage report with the <a href="https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/test-coverage/generic-test-data/">SonarQube/SonarCloud Generic Coverage Format</a> is generated. To use this coverage report in the SonarQube/SonarCloud analysis, a workaround currently needs to be applied, since SonarQube and SonarCloud do not import generic coverage data for languages unknown to them. Currently, there is also no SonarQube Language plugin for SAPL. The workaround consists of adding files with the .sapl file extension to a language known to SonarQube/SonarCloud and, at the same time, to ignore any issues raised in these files.</p>
+<div class="paragraph">
+<p>First add the Sonar Maven Plugin to your Maven project (see the documentation from <a href="https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scanners/sonarscanner-for-maven/">SonarQube</a> and <a href="https://docs.sonarsource.com/sonarcloud/advanced-setup/ci-based-analysis/sonarscanner-for-maven/">SonarCloud</a> for details).</p>
 </div>
 <div class="paragraph">
-<p>(defaultValue = false)</p>
+<p>To add the coverage report, add the following parameters when you call the Maven <code>sonar</code> goal on your project:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>By default, the Sonar Maven Plugin only collects files at the paths "pom.xml,src/main/java". To collect the SAPL policies in the src/main/resources directory you have to specify the following two parameters:</p>
+<div class="listingblock">
+<div class="content">
+<pre>-Dsonar.sources=. \
+-Dsonar.inclusions=pom.xml,src/main/java/**,src/main/resources/**</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To tell SonarQube or SonarCloud to collect the generic coverage report you have to set the following parameter:</p>
+<div class="listingblock">
+<div class="content">
+<pre>-Dsonar.coverageReportPaths=target/sapl-coverage/sonar/sonar-generic-coverage.xml</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To add files with the .sapl file extension to a language known to SonarQube/SonarCloud you could add it for example to the yaml language with the following parameter:</p>
+<div class="listingblock">
+<div class="content">
+<pre>-Dsonar.yaml.file.suffixes=.yaml,.yml,.sapl</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To ignore any issues raised in the .sapl files, add these last three parameters:</p>
+<div class="listingblock">
+<div class="content">
+<pre>-Dsonar.issue.ignore.multicriteria=e1 \
+-Dsonar.issue.ignore.multicriteria.e1.ruleKey=* \
+-Dsonar.issue.ignore.multicriteria.e1.resourceKey=**/*.sapl</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Complete example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>mvn clean verify sonar:sonar \
+    -Dsonar.sources=. \
+    -Dsonar.inclusions=pom.xml,src/main/java/**,src/main/resources/** \
+    -Dsonar.coverageReportPaths=target/sapl-coverage/sonar/sonar-generic-coverage.xml \
+    -Dsonar.yaml.file.suffixes=.yaml,.yml,.sapl \
+    -Dsonar.issue.ignore.multicriteria=e1 \
+    -Dsonar.issue.ignore.multicriteria.e1.ruleKey=* \
+    -Dsonar.issue.ignore.multicriteria.e1.resourceKey=**/*.sapl</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>These parameters could also be configured in your <code>pom.xml</code> or the global <code>settings.xml</code>. See the <a href="https://docs.sonarsource.com/sonarcloud/advanced-setup/ci-based-analysis/sonarscanner-for-maven/#configuration">Sonar Maven Plugin documentation</a> for details (defaultValue = false).</p>
 </div>
 </li>
 <li>
 <p><strong>enableHtmlReport</strong>: When set to true a HTML coverage report is created. This report is similar to JaCoCo reports showing colorized line coverage and the number of covered branches for conditions in a line. The path to the <code>index.html</code> on the filesystem is printed in the Maven log. Terminals like Powershell allow clicking on these paths and opening the report directly in the browser (defaultValue = true).</p>
+</li>
+<li>
+<p><strong>failOnDisabledTests</strong>: When set to true the Maven build will fail if the build has been run with <code>-DskipTests</code> or <code>-Dmaven.skip.tests=true</code>. When set to false coverage validation will be skipped if tests are skipped, but the build will not fail (defaultValue = true).</p>
 </li>
 </ul>
 </div>
@@ -4087,7 +4156,7 @@ sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.sapl</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-12-12 19:18:34 UTC
+Last updated 2024-01-30 14:58:52 UTC
 </div>
 </div>
 </body>
