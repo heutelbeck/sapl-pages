@@ -52,7 +52,7 @@ jobs:
         run: |
           ls -hal
           bundle exec jekyll build
-        working-directory: ./
+        working-directory: ./md-files/saplReference
 
       - name: Create Subfolder
         run: |
@@ -63,7 +63,7 @@ jobs:
       - name: Copy Generated SAPL-Reference Pages to Subfolder
         run: |
           ls -hal
-          cp -R ./_site/* ./docs/3.0.0-SNAPSHOT-MD/saplReference/
+          cp -R ./md-files/saplReference/_site/* ./docs/3.0.0-SNAPSHOT-MD/saplReference/
 
       - name: Commit and Push Changes
         run: |
