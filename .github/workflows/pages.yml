@@ -40,10 +40,11 @@ jobs:
           gem install bundler
           bundle install
         working-directory: ./md-files/saplReference
-
+      - name: List directory
+        run: ls -hal
       - name: Build Jekyll SAPL-Reference Site
         run: bundle exec jekyll build
-        working-directory: md-files/saplReference
+        working-directory: ./md-files/saplReference
 
       - name: Create SAPL-Reference Subfolder
         run: mkdir -p ./docs/3.0.0-SNAPSHOT-MD/saplReference/
