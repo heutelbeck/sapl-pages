@@ -45,6 +45,8 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
+      - run:  bundle exec jekyll build
+        working-directory: ./md-files/saplReference
 
 #      - name: Install Bundler and Jekyll
 #        run: |
@@ -53,11 +55,11 @@ jobs:
 #          bundle install
 #        working-directory: ./md-files/saplReference
   
-      - name: Build Jekyll Site
-        run: |
-          #ls -hal
-          bundle exec jekyll build
-        working-directory: ./md-files/saplReference
+#      - name: Build Jekyll Site
+#        run: |
+#          #ls -hal
+#          bundle exec jekyll build
+#        working-directory: ./md-files/saplReference
   
       - name: Create Subfolder
         run: |
