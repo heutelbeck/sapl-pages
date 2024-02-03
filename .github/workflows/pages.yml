@@ -21,92 +21,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      subfolder: ${{ steps.changes.outputs.subfolder }}
-      rootfolder: ${{ steps.changes.outputs.rootfolder }}
-    steps:
-    - uses: actions/checkout@v3
-    - uses: dorny/paths-filter@v2
-      id: changes
-      with:
-        filters: |
-          subfolder:
-            - 'md-files/**'
-          rootfolder:
-            - '*.*'
-            - '!md-files/**'
-
-  #Build jobs
-  build_sapl_reference:
-    name: Build SAPL-Reference
-    needs: changes
-    if: ${{ needs.changes.outputs.subfolder == 'true' }}
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-      pull-requests: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-#        with:
-#          sparse-checkout: md-files/saplReference
-  
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3' # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-          cache-version: 1 # Increment this number if you need to re-download cached gems
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v3
-      - run:  |
-          gem install bundler
-          bundle install
-          bundle exec jekyll build
-        working-directory: ./md-files/saplReference
-
-#      - name: Install Bundler and Jekyll
-#        run: |
-          #ls -hal
-#          gem install bundler
-#          bundle install
-#        working-directory: ./md-files/saplReference
-  
-#      - name: Build Jekyll Site
-#        run: |
-#          #ls -hal
-#          bundle exec jekyll build
-#        working-directory: ./md-files/saplReference
-  
-      - name: Create Subfolder
-        run: |
-          #ls -hal
-          rm -r docs/3.0.0-SNAPSHOT-MD
-          mkdir -p docs/3.0.0-SNAPSHOT-MD/saplReference/
-
-      - name: Copy Generated SAPL-Reference Pages to Subfolder
-        run: |
-          #ls -hal
-          cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/saplReference/
-  
-      - name: Commit and Push Changes
-        run: |
-          #ls -hal
-          git config --global user.email "ha247@t-online.de"
-          git config --global user.name "HAAL2023"
-          git add docs/3.0.0-SNAPSHOT-MD/saplReference/
-          git commit -m "Update generated SAPL-Reference pages"
-          git push --force
-
   build_sapl_website:
     name: Build SAPL-Website
-    needs: [ changes, build_sapl_reference ]
-    if: ${{ needs.changes.outputs.rootfolder == 'true' && needs.changes.outputs.subfolder != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -117,11 +33,6 @@ jobs:
           ruby-version: '3.1' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
-      - name: Create symlink
-        run: |
-          latest_doc=$(ls -1d docs/*/ | sort | tail -n 1)
-          #latest_doc=3.0.0-SNAPSHOT
-          ln -s $(basename $latest_doc) docs/latest
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v1
