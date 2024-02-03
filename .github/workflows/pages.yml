@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 #        with:
 #          sparse-checkout: md-files/saplReference
   
@@ -44,14 +44,14 @@ jobs:
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v3
 
-      - name: Install Bundler and Jekyll
-        run: |
+#      - name: Install Bundler and Jekyll
+#        run: |
           #ls -hal
-          gem install bundler
-          bundle install
-        working-directory: ./md-files/saplReference
+#          gem install bundler
+#          bundle install
+#        working-directory: ./md-files/saplReference
   
       - name: Build Jekyll Site
         run: |
