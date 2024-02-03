@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(2)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(6) > ul > li:nth-child(2) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(6) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(6) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>SAPL Authorization Decision | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="SAPL Authorization Decision" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/SAPL-Authorization-Decision/" />
+<meta property="og:url" content="/reference/SAPL-Authorization-Decision/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="SAPL Authorization Decision" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Authorization Decision","url":"/reference/SAPL-Authorization-Decision/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,83 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a></li>
+  <li class="breadcrumb-nav-list-item"><span>SAPL Authorization Decision</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="sapl-authorization-decision">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#sapl-authorization-decision" class="anchor-heading" aria-labelledby="sapl-authorization-decision"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Authorization Decision
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>The SAPL authorization decision contains the attributes <code class="language-plaintext highlighter-rouge">decision</code>, <code class="language-plaintext highlighter-rouge">resource</code>, <code class="language-plaintext highlighter-rouge">obligation</code>, and <code class="language-plaintext highlighter-rouge">advice</code>.</p>
+<h4 id="decision">
+  
+  
+    <a href="#decision" class="anchor-heading" aria-labelledby="decision"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Decision
+  
+  
+</h4>
+    
 
-
-          
-
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>The <code class="language-plaintext highlighter-rouge">decision</code> tells the PEP whether to grant or deny access. Access should be granted only if the decision is <code class="language-plaintext highlighter-rouge">"PERMIT"</code>. The <code class="language-plaintext highlighter-rouge">decision</code> attribute can be one of the following string values with the described meanings:</p>
 
 <ul>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
+  <li><code class="language-plaintext highlighter-rouge">"PERMIT"</code>: Access must be granted.</li>
+  <li><code class="language-plaintext highlighter-rouge">"DENY"</code>: Access must be denied.</li>
+  <li><code class="language-plaintext highlighter-rouge">"NOT_APPLICABLE"</code>: A decision could not be made because no policy is applicable to the authorization subscription. The PEP should deny access in this case.</li>
+  <li><code class="language-plaintext highlighter-rouge">"INDETERMINATE"</code>: A decision could not be made because an error occurred. The PEP should deny access in this case.</li>
 </ul>
+<h4 id="resource">
+  
+  
+    <a href="#resource" class="anchor-heading" aria-labelledby="resource"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resource
+  
+  
+</h4>
+    
+
+<p>The PEP knows for which resource it requested access. Thus, there usually is no need to return this resource in the authorization decision object. However, SAPL policies may contain a <code class="language-plaintext highlighter-rouge">transform</code> statement describing how the resource needs to be altered before it is returned to the subject seeking permission. This can be used to remove or blacken certain parts of the resource document (e.g., a policy could allow doctors to view patient data but remove any bank account details as they can only be accessed by the accounting department). If a policy that evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code> contains a <code class="language-plaintext highlighter-rouge">transform</code> statement, the authorization decision attribute <code class="language-plaintext highlighter-rouge">resource</code> contains the transformed resource. Otherwise, there will not be a <code class="language-plaintext highlighter-rouge">resource</code> attribute in the authorization decision object.</p>
+<h4 id="obligation">
+  
+  
+    <a href="#obligation" class="anchor-heading" aria-labelledby="obligation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Obligation
+  
+  
+</h4>
+    
+
+<p>The value of <code class="language-plaintext highlighter-rouge">obligation</code> contains assignments that the PEP must fulfill before granting or denying access. As there can be multiple policies applicable to the authorization subscription with different obligations, the <code class="language-plaintext highlighter-rouge">obligation</code> value in the authorization decision object is an array containing a list of tasks. If the PEP is not able to fulfill these tasks, access must not be granted. The array items can be any JSON value (e.g., a string or an object). Consequently, the PEP must know how to identify and process the obligations contained in the policies. An <code class="language-plaintext highlighter-rouge">obligation</code> attribute is only included in the authorization decision object if there is at least one obligation.</p>
+
+<p>An authorization decision could, for example, contain the obligation to create a log entry.</p>
+
+<p>In case the obligation is contained in a <code class="language-plaintext highlighter-rouge">DENY</code> decision, the access must still be denied. An obligation in a <code class="language-plaintext highlighter-rouge">DENY</code> decision acts like <code class="language-plaintext highlighter-rouge">advice</code> because the unsuccessful handling of the obligation cannot change the overall decision outcome.</p>
+<h4 id="advice">
+  
+  
+    <a href="#advice" class="anchor-heading" aria-labelledby="advice"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Advice
+  
+  
+</h4>
+    
+
+<p>The value of <code class="language-plaintext highlighter-rouge">advice</code> is an array with assignments for the PEP as well and works similar to obligations with one difference: The fulfillment of the tasks is no requirement for granting access. I.e., in case the <code class="language-plaintext highlighter-rouge">decision</code> is <code class="language-plaintext highlighter-rouge">PERMIT</code>, the PEP should also grant access if it can not fulfill the tasks contained in <code class="language-plaintext highlighter-rouge">advice</code>. An <code class="language-plaintext highlighter-rouge">advice</code> attribute is only included in the authorization decision object if there is at least one element within the <code class="language-plaintext highlighter-rouge">advice</code> array.</p>
+
+<p>In addition to the obligation to create a log entry, a policy could specify the advice to inform the system administrator via email about the access.</p>
+
+
+          
 
           
         </main>

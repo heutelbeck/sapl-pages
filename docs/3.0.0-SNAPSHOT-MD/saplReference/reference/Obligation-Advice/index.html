@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(6)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(10) > ul > li:nth-child(6) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(10) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(10) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Obligation / Advice | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Obligation / Advice" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/Obligation-Advice/" />
+<meta property="og:url" content="/reference/Obligation-Advice/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Obligation / Advice" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Obligation / Advice","url":"/reference/Obligation-Advice/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,43 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Obligation / Advice</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="obligation--advice">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#obligation--advice" class="anchor-heading" aria-labelledby="obligation--advice"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Obligation / Advice
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>Finally, obligation and advice might be added to the authorization decision. Both can be defined for each policy individually. If a final decision is <code class="language-plaintext highlighter-rouge">PERMIT</code>, there can be multiple policies and policy sets evaluating to <code class="language-plaintext highlighter-rouge">PERMIT</code>, each of them containing an obligation and/or advice statement - same goes for <code class="language-plaintext highlighter-rouge">DENY</code>. The final authorization decision with a certain decision must contain all obligations and advice of policy documents evaluating to this decision, but not the obligation and advice of those policy documents evaluating to a different decision.</p>
 
-
-          
-
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>On the two levels (PDP and policy set), collection of obligation and advice works as follows:</p>
 
 <ul>
-
   <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
+    <p><strong>Policy Set</strong>: If the policy set evaluates to a certain decision (<code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code>), the obligation and advice from all contained policies evaluating to this decision are bundled as the obligation and advice of the policy set.</p>
 
+    <p>(For the combining algorithm <code class="language-plaintext highlighter-rouge">first-applicable</code>, not all policies might be evaluated. A value <code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code> is only assigned to evaluated policies. Thus, the policy set’s obligation and advice do only contain obligations and advice from evaluated policies.)</p>
+  </li>
   <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
+    <p><strong>PDP</strong>: If the final decision is <code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code>, the obligation and advice from all top-level policy documents evaluating to this final decision are collected as the final decision’s obligation and advice.</p>
   </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
 </ul>
+
+
+          
 
           
         </main>

@@ -14,8 +14,8 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > a,
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(1)) > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
   background-image: none;
 }
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(1) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(1) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(1) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Introduction | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Introduction" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/docs/SAPL_Reference/1_1_Introduction/" />
+<meta property="og:url" content="/docs/SAPL_Reference/1_1_Introduction/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Introduction" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Introduction","url":"/docs/SAPL_Reference/1_1_Introduction/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,34 +363,52 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Introduction</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h1 id="sapl---streaming-attribute-policy-language">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#sapl---streaming-attribute-policy-language" class="anchor-heading" aria-labelledby="sapl---streaming-attribute-policy-language"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL - Streaming Attribute Policy Language
   
   
 </h1>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>Dominic Heutelbeck Version 3.0.0-SNAPSHOT</p>
+<h2 id="introduction">
+  
+  
+    <a href="#introduction" class="anchor-heading" aria-labelledby="introduction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Introduction
+  
+  
+</h2>
+    
+
+<p>SAPL (Streaming Attribute Policy Language) describes a <strong>domain-specific language (DSL)</strong> for expressing access control policies and a <strong>publish/subscribe protocol</strong> based on <a href="http://json.org/">JSON</a>. Policies expressed in SAPL describe conditions for access control in applications and distributed systems. The underlying policy engine implements a variant of Attribute-based Access control (ABAC) which enables processing of data streams and follows reactive programming patterns. Namely, the SAPL policy engine implements Attribute Stream-based Access Control (ASBAC).</p>
+
+<p>A typical scenario for the application of SAPL would be a subject (e.g., a user or system) attempting to take action (e.g., read or cancel an order) on a protected resource (e.g., a domain object of an application or a file). The subject makes a subscription request to the system (e.g., an application) to execute the action with the resource. The system implements a <strong>policy enforcement point (PEP)</strong> protecting its resources. The PEP collects information about the subject, action, resource, and potential other relevant data in an authorization subscription request and sends it to a policy decision point (PDP) that checks SAPL policies to decide if it grants access to the resource. This decision is packed in an authorization decision object and sent back to the PEP, which either grants access or denies access to the resource depending on the decision. The PDP subscribes to all data sources for the decision, and new decisions are sent to the PEP whenever indicated by the policies and data sources.</p>
+
+<p>There exist several proprietary platforms dependent or standardized languages, such as <a href="http://docs.oasis-open.org/xacml/3.0/xacml-3.0-core-spec-os-en.html">XACML</a>, for expressing policies. SAPL brings several advantages over these solutions:</p>
+
+<ul>
+  <li><strong>Universality</strong>. SAPL offers a standard, generic, platform-independent language for expressing policies.</li>
+  <li><strong>Separation of Concerns</strong>. Applying SAPL to a domain model is relieved from modeling many aspects of access control. SAPL favors configuration at runtime over implementation and re-deployment of applications.</li>
+  <li><strong>Modularity and Distribution</strong>. SAPL allows managing policies in a modular fashion allowing the distribution of authoring responsibilities across teams.</li>
+  <li><strong>Expressiveness</strong>. SAPL provides access control schemata beyond the capabilities of most other practical languages. It allows for attribute-based access control (ABAC), role-based access control (RBAC), forms of entity-based access control (EBAC), and parameterized attribute access and attribute streaming.</li>
+  <li><strong>Human Readability</strong>. The SAPL syntax is designed from the ground up to be easily readable by humans. Basic SAPL is easy to pick up for getting started but offers enough expressiveness to address complex access control scenarios.</li>
+  <li><strong>Transformation and Filtering</strong>. SAPL allows transforming resources and filtering data from resources (e.g., blacken the first digits of a credit card number or hiding birth dates by assigning individuals into age groups).</li>
+  <li>SAPL supports <strong>session and data stream-based applications</strong> and offers low-latency authorization for interactive applications and data streams.</li>
+  <li>SAPL supports <strong>JSON-driven APIs</strong> and integrates easily with modern JSON-based APIs. The core data model of SAPL is JSON offering straightforward reasoning over such data and simple access to external attributes from RESTful JSON APIs.</li>
+  <li>SAPL supports <strong>Multi-Subscriptions</strong>. SAPL allows bundling multiple authorization subscriptions into one multi-subscription, thus further reducing connection time and latency. The following sections will explain the basic concepts of SAPL policies and show how to integrate SAPL into a Java application easily. Afterward, this document explains the different parts of SAPL in more detail.</li>
+</ul>
 
 
           
@@ -400,71 +420,23 @@ jtd.addEvent(toggleDarkMode, 'click', function(){
 <ul>
 
   <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
+    <a href="/reference/Authorization-Subscriptions/">Authorization Subscriptions</a>
   </li>
 
   <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
+    <a href="/reference/Structure-of-a-SAPL-Policy/">Structure of a SAPL Policy</a>
   </li>
 
   <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
+    <a href="/reference/Authorization-Decisions/">Authorization Decisions</a>
   </li>
 
   <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
+    <a href="/reference/Accessing-Attributes/">Accessing Attributes</a>
   </li>
 
   <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
+    <a href="/reference/Getting-Started/">Getting Started</a>
   </li>
 
 </ul>

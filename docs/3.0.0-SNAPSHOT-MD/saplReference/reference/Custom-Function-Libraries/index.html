@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(1)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(12) > ul > li:nth-child(1) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(12) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(12) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Custom Function Libraries | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Custom Function Libraries" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/Custom-Function-Libraries/" />
+<meta property="og:url" content="/reference/Custom-Function-Libraries/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Custom Function Libraries" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Custom Function Libraries","url":"/reference/Custom-Function-Libraries/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,65 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Custom Function Libraries</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="custom-function-libraries">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#custom-function-libraries" class="anchor-heading" aria-labelledby="custom-function-libraries"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Custom Function Libraries
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>For a more in-depth look at the process of creating a custom function library, please refer to the demo project. It provides a walkthrough of the entire process and contains extensive examples: <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension">https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-extension</a> .</p>
 
+<p>The standard functions can be extended by custom functions. Function libraries available in SAPL documents are collected in the PDP’s function context. The embedded PDP provides an <code class="language-plaintext highlighter-rouge">AnnotationFunctionContext</code> where Java classes with annotations can be provided as function libraries:</p>
 
-          
-
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>SAPL functions must not perform any IO operations. Functions are to be used as “immediate” data transformation functions.</p>
 
 <ul>
-
   <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
+    <p>To be recognized as a function library, a class must be annotated with <code class="language-plaintext highlighter-rouge">@FunctionLibrary</code>. The optional annotation attribute <code class="language-plaintext highlighter-rouge">name</code> contains the library’s name as it will be available in SAPL policies. The attribute value must be a string consisting of one or more identifiers separated by periods. If the attribute is missing, the name of the Java class is used. The optional annotation attribute <code class="language-plaintext highlighter-rouge">description</code> contains a string describing the library for documentation purposes.</p>
 
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="nd">@FunctionLibrary</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"sample.functions"</span><span class="o">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"a sample library"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SampleFunctionLibrary</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
   <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
+    <p>The annotation <code class="language-plaintext highlighter-rouge">@Function</code> identifies a function in the library. An optional annotation attribute <code class="language-plaintext highlighter-rouge">name</code> can contain a function name. The attribute is a string containing an identifier. By default, the name of the Java function will be used. The annotation attribute <code class="language-plaintext highlighter-rouge">docs</code> can contain a string describing the function.</p>
 
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="nd">@Function</span><span class="o">(</span><span class="n">docs</span> <span class="o">=</span> <span class="s">"returns the length"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">Val</span> <span class="nf">length</span><span class="o">(</span><span class="nd">@Text</span> <span class="nc">Val</span> <span class="n">parameter</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
 
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
+    <p>Each parameter can be annotated with any number of <code class="language-plaintext highlighter-rouge">@Array</code>, <code class="language-plaintext highlighter-rouge">@Bool</code>, <code class="language-plaintext highlighter-rouge">@Int</code>, <code class="language-plaintext highlighter-rouge">@JsonObject</code>, <code class="language-plaintext highlighter-rouge">@Long</code>, <code class="language-plaintext highlighter-rouge">@Number</code>, and <code class="language-plaintext highlighter-rouge">@Text</code>. The annotations describe which types are allowed for the parameter (in the case of multiple annotations, each of these types is allowed).</p>
   </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
 </ul>
+
+
+          
 
           
         </main>

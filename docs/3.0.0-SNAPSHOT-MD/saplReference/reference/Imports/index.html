@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(4)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(4) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(9) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(9) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Imports | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Imports" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/Imports/" />
+<meta property="og:url" content="/reference/Imports/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Imports" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Imports","url":"/reference/Imports/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,58 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Imports</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="imports">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#imports" class="anchor-heading" aria-labelledby="imports"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Imports
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>SAPL provides access to functions or attribute finders stored in libraries. The names of those libraries usually consist of different parts separated by periods (e.g., <code class="language-plaintext highlighter-rouge">sapl.pip.http</code> - a library containing functions to obtain attributes through HTTP requests). In policy documents, the functions and finders can be accessed by their fully qualified name, i.e., the name of the library followed by a period (<code class="language-plaintext highlighter-rouge">.</code>) and the function or finder name, e.g., <code class="language-plaintext highlighter-rouge">sapl.pip.http.get</code>.</p>
 
+<p>For any SAPL top-level document (i.e., a policy set or a policy that is not part of a policy set), any number of imports can be specified. Imports allow using a shorter name instead of the fully qualified name for a function or an attribute finder within a SAPL document. Thus, imports can make policy sets and policies easier to read and write.</p>
 
-          
-
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>Each import statement starts with the keyword <code class="language-plaintext highlighter-rouge">import</code>.</p>
 
 <ul>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
+  <li><strong>Basic Import</strong>: A function or an attribute finder can be imported by providing its fully qualified name (e.g., <code class="language-plaintext highlighter-rouge">import sapl.pip.http.get</code>). It will be available under its simple name (in the example: <code class="language-plaintext highlighter-rouge">get</code>) in the whole SAPL document.</li>
+  <li><strong>Wildcard Import</strong>: All functions or attribute finders from a library can be imported by providing an asterisk instead of a function or finder name (e.g., <code class="language-plaintext highlighter-rouge">import sapl.pip.http.*</code>). All functions or finders from the library will be available under their simple names (in the example: <code class="language-plaintext highlighter-rouge">get</code>).</li>
+  <li><strong>Library Alias Import</strong>: All functions or attribute finders from a library can be imported by providing the library name followed by <code class="language-plaintext highlighter-rouge">as</code> and an alias, e.g., <code class="language-plaintext highlighter-rouge">import sapl.pip.http as rest</code>.</li>
 </ul>
+
+<p>The SAPL document can contain any number of imports, e.g.</p>
+
+<p>Sample Imports</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">sapl.pip.http.*</span>
+<span class="kn">import</span> <span class="nn">filter.blacken</span>
+<span class="kn">import</span> <span class="nn">simple.append</span>
+
+<span class="n">policy</span> <span class="s">"sample"</span>
+<span class="o">...</span>
+</pre></td></tr></tbody></table></div></code></pre></div></div>
+
+
+          
 
           
         </main>

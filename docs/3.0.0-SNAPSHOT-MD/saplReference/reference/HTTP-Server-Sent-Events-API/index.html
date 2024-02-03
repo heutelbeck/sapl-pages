@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(1)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(8) > ul > li:nth-child(1) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(8) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(8) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>HTTP Server-Sent Events API | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="HTTP Server-Sent Events API" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/HTTP-Server-Sent-Events-API/" />
+<meta property="og:url" content="/reference/HTTP-Server-Sent-Events-API/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="HTTP Server-Sent Events API" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"HTTP Server-Sent Events API","url":"/reference/HTTP-Server-Sent-Events-API/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,96 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a></li>
+  <li class="breadcrumb-nav-list-item"><span>HTTP Server-Sent Events API</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="http-server-sent-events-api">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#http-server-sent-events-api" class="anchor-heading" aria-labelledby="http-server-sent-events-api"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> HTTP Server-Sent Events API
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>A PDP to be used as a network service must implement some HTTP endpoints. All of them accept <code class="language-plaintext highlighter-rouge">POST</code> requests and <code class="language-plaintext highlighter-rouge">application/json</code>. They produce <code class="language-plaintext highlighter-rouge">application/x-ndjson</code> as <a href="https://www.w3.org/TR/eventsource/">Server-Sent Events (SSE)</a>. A PDP server must be accessed over encrypted TLS connections. All connections should be authenticated. The means of authentications are left open for the organization deploying the PDP to decide or to be defined by a specific server implementation. All endpoints should be located under a shared base URL, e.g., <code class="language-plaintext highlighter-rouge">[https://pdp.sapl.io/api/pdp/](https://pdp.sapl.io/api/pdp/)</code>.</p>
 
+<p>A PEP which is a client to the SSE PDP API encountering connectivity issues or errors, must interpret this as an INDETERMINATE decision and thus deny access during this time of uncertainty and take appropriate steps to reconnect with the PDP, using a matching back-off strategy to not overload the PDP.</p>
 
-          
+<p>A PEP must determine if it can enforce obligations before granting access. It must enforce obligation upon granting access at the point in time (e.g., before or after granting access) implied by the semantics of the obligation, and it should enforce any advice at their appropriate point in time when possible.</p>
 
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>Upon subscription, the PDP server will respond with an unbound stream of decisions. The client must close the connection to stop receiving decision events. A connection termination by the server is an error state and must be handled as discussed.</p>
+<h4 id="decide">
+  
+  
+    <a href="#decide" class="anchor-heading" aria-labelledby="decide"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Decide
+  
+  
+</h4>
+    
 
 <ul>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
+  <li>URL: <code class="language-plaintext highlighter-rouge">{baseURL}/decide</code></li>
+  <li>Method: <code class="language-plaintext highlighter-rouge">POST</code></li>
+  <li>Body: A valid JSON authorization subscription</li>
+  <li>Produces: A SSE stream of authorization decisions</li>
 </ul>
+<h4 id="multi-decide">
+  
+  
+    <a href="#multi-decide" class="anchor-heading" aria-labelledby="multi-decide"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Multi Decide
+  
+  
+</h4>
+    
+
+<ul>
+  <li>URL: <code class="language-plaintext highlighter-rouge">{baseURL}/multi-decide</code></li>
+  <li>Method: <code class="language-plaintext highlighter-rouge">POST</code></li>
+  <li>Body: A valid JSON multi subscription</li>
+  <li>Produces: A SSE stream of Single Authorization Decisions with Associated Subscription ID JSON Objects</li>
+</ul>
+<h4 id="multi-decide-all">
+  
+  
+    <a href="#multi-decide-all" class="anchor-heading" aria-labelledby="multi-decide-all"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Multi Decide All
+  
+  
+</h4>
+    
+
+<ul>
+  <li>URL: <code class="language-plaintext highlighter-rouge">{baseURL}/multi-decide-all</code></li>
+  <li>Method: <code class="language-plaintext highlighter-rouge">POST</code></li>
+  <li>Body: A valid JSON multi subscription</li>
+  <li>Produces: A SSE stream of Multi Decision JSON Objects</li>
+</ul>
+<h4 id="implementations">
+  
+  
+    <a href="#implementations" class="anchor-heading" aria-labelledby="implementations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Implementations
+  
+  
+</h4>
+    
+
+<p>The SAPL Policy engine comes with two implementations ready for deployment in an organization:</p>
+
+<ul>
+  <li>SAPL Server LT: This light (LT) PDP server implementation uses a configuration and policies stored on a file system. The server is available as a docker container. Documentation: <a href="https://github.com/heutelbeck/sapl-policy-engine/tree/master/sapl-server-lt">https://github.com/heutelbeck/sapl-policy-engine/tree/master/sapl-server-lt</a></li>
+  <li>SAPL Server CE: This community edition (CE) PDP server implementation uses a relational database (MariaDB) for persistence configuration and offers a convenient graphical Web interface to manage policies, configuration, and clients. The UI includes SAPL specific text editors with syntax highlighting and auto-completion features. The server is available as a docker container. Documentation: <a href="https://github.com/heutelbeck/sapl-server/tree/main/sapl-server-ce">https://github.com/heutelbeck/sapl-server/tree/main/sapl-server-ce</a></li>
+</ul>
+
+
+          
 
           
         </main>

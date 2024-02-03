@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(5)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(1) > ul > li:nth-child(5) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(1) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(1) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Getting Started | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Getting Started" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/Getting-Started/" />
+<meta property="og:url" content="/reference/Getting-Started/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Getting Started" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Getting Started","url":"/reference/Getting-Started/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,142 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Getting Started</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="getting-started">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#getting-started" class="anchor-heading" aria-labelledby="getting-started"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>To learn the SAPL policy language and check out some example policies, the <a href="https://playground.sapl.io/">SAPL-Playground</a> offers a tool for safe experimentation.</p>
 
-
-          
-
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>In addition, SAPL provides an embedded PDP, including an embedded PRP with a file system policy store that seamlessly integrates into Java applications. Besides this guide, the quickest way to start is to build upon the demo projects hosted on <a href="https://github.com/heutelbeck/sapl-demos">GitHub</a>. Some good demos to start with are the simple no-framework <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-embedded">Embedded PDP Demo</a> or the full-stack <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-mvc-app">Spring MVC Project</a> or the <a href="https://github.com/heutelbeck/sapl-demos/tree/master/sapl-demo-webflux">Fully reactive Webflux Application</a>.</p>
+<h4 id="maven-dependencies">
+  
+  
+    <a href="#maven-dependencies" class="anchor-heading" aria-labelledby="maven-dependencies"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Maven Dependencies
+  
+  
+</h4>
+    
 
 <ul>
-
   <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
+    <p>SAPL requires Java 11 or newer and is compatible with Java 17.</p>
 
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;properties&gt;</span> <span class="nt">&lt;java.version&gt;</span>11<span class="nt">&lt;/java.version&gt;</span> <span class="nt">&lt;maven.compiler.source&gt;</span>${java.version}<span class="nt">&lt;/maven.compiler.source&gt;</span> <span class="nt">&lt;maven.compiler.target&gt;</span>${java.version}<span class="nt">&lt;/maven.compiler.target&gt;</span> <span class="nt">&lt;/properties&gt;</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
   <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
+    <p>Add a SAPL dependency to the application. When using Maven one can add the following dependencies to the project’s <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
 
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span> <span class="nt">&lt;groupId&gt;</span>io.sapl<span class="nt">&lt;/groupId&gt;</span> <span class="nt">&lt;artifactId&gt;</span>sapl-pdp-embedded<span class="nt">&lt;/artifactId&gt;</span> <span class="nt">&lt;version&gt;</span>3.0.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span> <span class="nt">&lt;/dependency&gt;</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
   <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
+    <p>Add the Maven Central snapshot repository to the <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
 
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;repositories&gt;</span>
+    <span class="nt">&lt;repository&gt;</span>
+        <span class="nt">&lt;id&gt;</span>ossrh<span class="nt">&lt;/id&gt;</span>
+        <span class="nt">&lt;url&gt;</span>https://s01.oss.sonatype.org/content/repositories/snapshots<span class="nt">&lt;/url&gt;</span>
+        <span class="nt">&lt;snapshots&gt;</span>
+            <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+        <span class="nt">&lt;/snapshots&gt;</span>
+    <span class="nt">&lt;/repository&gt;</span>
+<span class="nt">&lt;/repositories&gt;</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
   <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
+    <p>If more SAPL dependencies are expected to be used, a useful bill of materials POM is offered, centralizing the dependency management for SAPL artifacts:</p>
 
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;dependencyManagement&gt;</span> <span class="nt">&lt;dependencies&gt;</span> <span class="nt">&lt;dependency&gt;</span> <span class="nt">&lt;groupId&gt;</span>io.sapl<span class="nt">&lt;/groupId&gt;</span> <span class="nt">&lt;artifactId&gt;</span>sapl-bom<span class="nt">&lt;/artifactId&gt;</span> <span class="nt">&lt;version&gt;</span>3.0.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span> <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span> <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span> <span class="nt">&lt;/dependency&gt;</span> <span class="nt">&lt;/dependencies&gt;</span> <span class="nt">&lt;/dependencyManagement&gt;</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
   </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
 </ul>
+<h4 id="coding">
+  
+  
+    <a href="#coding" class="anchor-heading" aria-labelledby="coding"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Coding
+  
+  
+</h4>
+    
+
+<ol>
+  <li>
+    <p>In the application, create a new <code class="language-plaintext highlighter-rouge">EmbeddedPolicyDecisionPoint</code>. The argument <code class="language-plaintext highlighter-rouge">"~/sapl"</code> specifies the directory that contains the configuration file <code class="language-plaintext highlighter-rouge">pdp.json</code> and all policies (i.e., files ending with <code class="language-plaintext highlighter-rouge">.sapl</code>).</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nc">EmbeddedPolicyDecisionPoint</span> <span class="n">pdp</span> <span class="o">=</span> <span class="nc">PolicyDecisionPointFactory</span><span class="o">.</span><span class="na">filesystemPolicyDecisionPoint</span><span class="o">(</span><span class="s">"~/sapl"</span><span class="o">);</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Add a <code class="language-plaintext highlighter-rouge">pdp.json</code> with the following content to the directory “~/sapl”:</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"algorithm"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DENY_UNLESS_PERMIT"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"variables"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Add some policy sets or policies to <code class="language-plaintext highlighter-rouge">"~/sapl"</code>. Both policy sets and policies are files with the extension <code class="language-plaintext highlighter-rouge">.sapl</code>. For example, add the following policy:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>policy "test_policy"
+permit subject == "admin"
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Obtain a decision using the PDP’s <code class="language-plaintext highlighter-rouge">decide</code> method.</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><div class="table-wrapper"><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="kt">var</span> <span class="n">authzSubscription</span> <span class="o">=</span> <span class="nc">AuthorizationSubscription</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"an_action"</span><span class="o">,</span> <span class="s">"a_resource"</span><span class="o">);</span>
+<span class="nc">Flux</span><span class="o">&lt;</span><span class="nc">AuthorizationDecision</span><span class="o">&gt;</span> <span class="n">authzDecisions</span> <span class="o">=</span> <span class="n">pdp</span><span class="o">.</span><span class="na">decide</span><span class="o">(</span><span class="n">authzSubscription</span><span class="o">);</span>
+<span class="n">authzDecisions</span><span class="o">.</span><span class="na">subscribe</span><span class="o">(</span><span class="n">authzDecision</span> <span class="o">-&gt;</span> <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">authzDecision</span><span class="o">.</span><span class="na">getDecision</span><span class="o">()));</span>
+</pre></td></tr></tbody></table></div></code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>The console output should be <code class="language-plaintext highlighter-rouge">PERMIT</code>. With subject set to <code class="language-plaintext highlighter-rouge">"alice"</code> instead of <code class="language-plaintext highlighter-rouge">"admin"</code>, the output should be <code class="language-plaintext highlighter-rouge">DENY</code>.</p>
+
+<p>Note at runtime the policies can be modified. Adding or removing polices can immediately trigger a change in the decisions.</p>
+
+
+          
 
           
         </main>

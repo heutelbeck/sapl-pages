@@ -14,8 +14,8 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > a,
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(15)) > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
   background-image: none;
 }
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(15) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(15) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(15) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Attribute Finders | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Attribute Finders" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/docs/SAPL_Reference/8_1_AttributeFinders/" />
+<meta property="og:url" content="/docs/SAPL_Reference/8_1_AttributeFinders/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Attribute Finders" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Attribute Finders","url":"/docs/SAPL_Reference/8_1_AttributeFinders/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,34 +363,38 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Attribute Finders</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h2 id="attribute-finders">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#attribute-finders" class="anchor-heading" aria-labelledby="attribute-finders"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Attribute Finders
   
   
-</h1>
+</h2>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
+<p>Attribute finders are used to receive attributes that are not included in the authorization subscription context from external PIPs. Just like in <code class="language-plaintext highlighter-rouge">subject.age</code>, the selection step <code class="language-plaintext highlighter-rouge">.age</code> selects the attribute <code class="language-plaintext highlighter-rouge">age</code>s value, <code class="language-plaintext highlighter-rouge">subject.&lt;user.age&gt;</code> could be used to fetch an <code class="language-plaintext highlighter-rouge">age</code> attribute which is not included in the <code class="language-plaintext highlighter-rouge">subject</code> but can be obtained from a PIP named <code class="language-plaintext highlighter-rouge">user</code>.</p>
+
+<p>Attribute finders are organized in libraries as well and follow the same naming conventions as functions, including the use of imports. An attribute finder library constitutes a PIP (e.g., <code class="language-plaintext highlighter-rouge">user</code>) and can contain any number of attributes (e.g., <code class="language-plaintext highlighter-rouge">age</code>). They are called by a selection step applied to any value, e.g., <code class="language-plaintext highlighter-rouge">subject.&lt;user.age&gt;</code>. The attribute finder step receives the previous selection result (in the example: <code class="language-plaintext highlighter-rouge">subject</code>) and returns the requested attribute.</p>
+
+<p>The concept of attribute finders can be used in a flexible manner: There may be finders that take an object (like in the example above, <code class="language-plaintext highlighter-rouge">subject.&lt;user.age&gt;</code>) as well as attribute finders which expect a primitive value (e.g., <code class="language-plaintext highlighter-rouge">subject.id.&lt;user.age&gt;</code> with <code class="language-plaintext highlighter-rouge">id</code> being a number). In addition, attribute finders may also return an object which can be traversed in subsequent selection steps (e.g., <code class="language-plaintext highlighter-rouge">subject.&lt;user.profile&gt;.age</code>). It is even possible to join multiple attribute finder steps in one expression (e.g., <code class="language-plaintext highlighter-rouge">subject.&lt;user.profile&gt;.supervisor.&lt;user.profile&gt;.age</code>).</p>
+
+<p>Optionally, an attribute finder may be supplied with a list of parameters: <code class="language-plaintext highlighter-rouge">x.&lt;finder.name(p1,p2,…​)&gt;</code>. Also, here nesting is possible. Thus <code class="language-plaintext highlighter-rouge">x.&lt;finder.name(p1.&lt;finder.name2&gt;,p2,…​)&gt;</code> is a working construct.</p>
+
+<p>Furthermore, attribute finders may be used without any leading value <code class="language-plaintext highlighter-rouge">&lt;finder.name(p1,p2,…​)&gt;</code>. These are called environment attributes.</p>
+
+<p>The way to read a statement with an attribute finder is as follows. For <code class="language-plaintext highlighter-rouge">subject.&lt;groups.membership("studygroup")&gt;</code> one would say “get the attribute <code class="language-plaintext highlighter-rouge">group.membership</code> with parameter <code class="language-plaintext highlighter-rouge">"studygroup"</code> of the subject”.</p>
+
+<p>Attribute finders often receive information from external data sources such as files, databases, or HTTP requests which may take a certain amount of time. Therefore, they must not be used in a target expression. Attribute finders can access environment variables.</p>
 
 
           
@@ -400,71 +406,7 @@ jtd.addEvent(toggleDarkMode, 'click', function(){
 <ul>
 
   <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
+    <a href="/reference/Custom-Attribute-Finders/">Custom Attribute Finders</a>
   </li>
 
 </ul>

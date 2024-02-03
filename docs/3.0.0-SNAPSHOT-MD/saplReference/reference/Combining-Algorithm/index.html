@@ -14,9 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-.site-nav > ul.nav-list:first-child > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > a,
 .site-nav > ul.nav-list:first-child > li > ul > li > a,
-.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(4)) > a {
   background-image: none;
 }
 
@@ -25,12 +25,14 @@
   background-image: none;
 }
 
-.site-nav > ul.nav-list:first-child > li:nth-child(1) > a {
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(10) > ul > li:nth-child(4) > a {
   font-weight: 600;
   text-decoration: none;
-}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg {
+}.site-nav > ul.nav-list:first-child > li:nth-child(1) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(1) > ul > li:nth-child(10) > button svg {
   transform: rotate(-90deg);
-}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list {
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(1) > ul.nav-list > li.nav-list-item:nth-child(10) > ul.nav-list {
   display: block;
 }
   </style>
@@ -52,20 +54,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>SAPL Reference | SAPL</title>
+<title>Combining Algorithm | SAPL</title>
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="SAPL Reference" />
+<meta property="og:title" content="Combining Algorithm" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
 <meta property="og:description" content="SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application." />
-<link rel="canonical" href="/" />
-<meta property="og:url" content="/" />
+<link rel="canonical" href="/reference/Combining-Algorithm/" />
+<meta property="og:url" content="/reference/Combining-Algorithm/" />
 <meta property="og:site_name" content="SAPL" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SAPL Reference" />
+<meta property="twitter:title" content="Combining Algorithm" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"SAPL Reference","name":"SAPL","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"SAPL is a powerful policy language and engine to implement Attribute-based access control (ABAC). It comes with developement tools for testing, authorization servers, authoring tools. Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.","headline":"Combining Algorithm","url":"/reference/Combining-Algorithm/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -361,113 +363,191 @@
 </div>
 
     <div class="main-content-wrap">
-      
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+  
+    <li class="breadcrumb-nav-list-item"><a href="/">SAPL Reference</a></li>
+    <li class="breadcrumb-nav-list-item"><a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a></li>
+  <li class="breadcrumb-nav-list-item"><span>Combining Algorithm</span></li>
+  </ol>
+</nav>
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="sapl-reference">
+            <h3 id="combining-algorithm">
   
   
-    <a href="#sapl-reference" class="anchor-heading" aria-labelledby="sapl-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SAPL Reference
+    <a href="#combining-algorithm" class="anchor-heading" aria-labelledby="combining-algorithm"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Combining Algorithm
   
   
-</h1>
+</h3>
     
-<!--
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
--->
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
-jtd.addEvent(toggleDarkMode, 'click', function(){
-  if (jtd.getTheme() === 'dark') {
-    jtd.setTheme('light');
-    toggleDarkMode.textContent = 'Preview dark color scheme';
-  } else {
-    jtd.setTheme('dark');
-    toggleDarkMode.textContent = 'Return to the light side';
-  }
-});
-</script>
-
-
-          
-
-          
-            <hr>
-<h2 class="text-delta">Table of contents</h2>
+<p>There are two layers with possibly multiple decisions that finally need to be consolidated into a single decision:</p>
 
 <ul>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_0_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/1_1_Introduction/">Introduction</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_0_ReferenceArchitecture/">Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/2_1_ReferenceArchitecture/">Reference Architecture</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_0_PublishSubscribeProtocol/">Publish/Subscribe</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/3_1_PublishSubscribeProtocol/">Publish/Subscribe Protocol</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_0_PDPAPIs/">APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/4_1_PDPAPIs/">PDP APIs</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/5_0_TheSAPLPolicyLanguage/">The SAPL Policy Language</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_0_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/6_1_AuthorizationSubscriptionEvaluation/">Authorization Subscription Evaluation</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_0_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/7_1_Functions/">Functions</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_0_AttributeFinders/">Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/8_1_AttributeFinders/">Attribute Finders</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_0_TestingSAPLpolicies/">Testing</a>
-  </li>
-
-  <li>
-    <a href="/docs/SAPL_Reference/9_1_TestingSAPLpolicies/">Testing SAPL policies</a>
-  </li>
-
+  <li>A policy set might contain multiple policies evaluating to different decisions. There must be a final decision for the policy set (<em>Policy Combination</em>).</li>
+  <li>The PDP might know multiple policy sets and policies which may evaluate to different decisions. In the end, the PDP must include a final decision in the SAPL authorization decision (<em>Document Combination</em>).</li>
 </ul>
+
+<p>A combining algorithm describes how to come to the final decision. Both the PDP itself and each policy set must be configured with a combining algorithm.</p>
+
+<p>Some complexity is added to the algorithms if transformation statements in policies are used: There is no possibility to combine multiple transformation statements. Hence the combining algorithms have to deal with the situation that multiple policies evaluate to <code class="language-plaintext highlighter-rouge">PERMIT</code>, and at least one of them contains a transformation part. In case of such <em>transformation uncertainty</em>, the decision must not be <code class="language-plaintext highlighter-rouge">PERMIT</code>.</p>
+
+<p>SAPL provides the following combining algorithms:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">deny-unless-permit</code></li>
+  <li><code class="language-plaintext highlighter-rouge">permit-unless-deny</code></li>
+  <li><code class="language-plaintext highlighter-rouge">only-one-applicable</code></li>
+  <li><code class="language-plaintext highlighter-rouge">deny-overrides</code></li>
+  <li><code class="language-plaintext highlighter-rouge">permit-overrides</code></li>
+  <li><code class="language-plaintext highlighter-rouge">first-applicable</code> (not allowed on PDP level for document combination)</li>
+</ul>
+
+<p>The algorithms work similarly on the PDP and on the policy set level. Thus the following section describes their function in general, using the term <em>policy document</em> for a policy and a policy set. If the algorithm is used on the PDP level, a <em>policy document</em> could be either a (top-level) policy or a policy set. On the policy set level, a <em>policy document</em> is always a policy.</p>
+<h4 id="deny-unless-permit">
+  
+  
+    <a href="#deny-unless-permit" class="anchor-heading" aria-labelledby="deny-unless-permit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">deny-unless-permit</code>
+  
+  
+</h4>
+    
+
+<p>This strict algorithm is used if the decision should be <code class="language-plaintext highlighter-rouge">DENY</code> except for there is a <code class="language-plaintext highlighter-rouge">PERMIT</code>. It ensures that any decision is either <code class="language-plaintext highlighter-rouge">DENY</code> or <code class="language-plaintext highlighter-rouge">PERMIT</code>.</p>
+
+<p>It works as follows:</p>
+
+<ol>
+  <li>If any policy document evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code> and there is no <em>transformation uncertainty</em> (multiple policies evaluate to <code class="language-plaintext highlighter-rouge">PERMIT</code> and at least one of them has a transformation statement), the decision is <code class="language-plaintext highlighter-rouge">PERMIT</code>.</li>
+  <li>Otherwise, the decision is <code class="language-plaintext highlighter-rouge">DENY</code>.</li>
+</ol>
+<h4 id="permit-unless-deny">
+  
+  
+    <a href="#permit-unless-deny" class="anchor-heading" aria-labelledby="permit-unless-deny"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">permit-unless-deny</code>
+  
+  
+</h4>
+    
+
+<p>This generous algorithm is used if the decision should be <code class="language-plaintext highlighter-rouge">PERMIT</code> except for there is a <code class="language-plaintext highlighter-rouge">DENY</code>. It ensures that any decision is either <code class="language-plaintext highlighter-rouge">DENY</code> or <code class="language-plaintext highlighter-rouge">PERMIT</code>.</p>
+
+<p>It works as follows:</p>
+
+<ol>
+  <li>If any policy document evaluates to <code class="language-plaintext highlighter-rouge">DENY</code> or if there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code class="language-plaintext highlighter-rouge">PERMIT</code> and at least one of them has a transformation statement), the decision is <code class="language-plaintext highlighter-rouge">DENY</code>.</li>
+  <li>Otherwise, the decision is <code class="language-plaintext highlighter-rouge">PERMIT</code>.</li>
+</ol>
+<h4 id="only-one-applicable">
+  
+  
+    <a href="#only-one-applicable" class="anchor-heading" aria-labelledby="only-one-applicable"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">only-one-applicable</code>
+  
+  
+</h4>
+    
+
+<p>This algorithm is used if policy sets, and policies are constructed in a way that multiple policy documents with a matching target are considered an error. A <code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code> decision will only be returned if there is exactly one policy set or policy with matching target expression and if this policy document evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code>.</p>
+
+<p>It works as follows:</p>
+
+<ol>
+  <li>If any target evaluation results in an error (<code class="language-plaintext highlighter-rouge">INDETERMINATE</code>) or if more than one policy documents have a matching target, the decision is <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>.</li>
+  <li>Otherwise (i.e., only one policy document with matching target, no errors):
+    <ol>
+      <li>If there is no matching policy document, the decision is <code class="language-plaintext highlighter-rouge">NOT_APPLICABLE</code>.</li>
+      <li>Otherwise (i.e., there is exactly one matching policy document), the decision is the result of evaluating this policy document.</li>
+    </ol>
+  </li>
+</ol>
+
+<blockquote class="note">
+  <p>Transformation uncertainty cannot occur using the <code class="language-plaintext highlighter-rouge">only-one-applicable</code> combining algorithm.</p>
+</blockquote>
+<h4 id="deny-overrides">
+  
+  
+    <a href="#deny-overrides" class="anchor-heading" aria-labelledby="deny-overrides"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">deny-overrides</code>
+  
+  
+</h4>
+    
+
+<p>This algorithm is used if a <code class="language-plaintext highlighter-rouge">DENY</code> decision should prevail a <code class="language-plaintext highlighter-rouge">PERMIT</code> without setting a default decision.</p>
+
+<p>It works as follows:</p>
+
+<ol>
+  <li>If any policy document evaluates to <code class="language-plaintext highlighter-rouge">DENY</code>, the decision is <code class="language-plaintext highlighter-rouge">DENY</code>.</li>
+  <li>Otherwise (no policy document evaluates to <code class="language-plaintext highlighter-rouge">DENY</code>):
+    <ol>
+      <li>If there is any <code class="language-plaintext highlighter-rouge">INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code class="language-plaintext highlighter-rouge">PERMIT</code>, and at least one of them has a transformation statement), the decision is <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>.</li>
+      <li>Otherwise (no policy document evaluates to <code class="language-plaintext highlighter-rouge">DENY</code>, no policy document evaluates to <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>, no transform uncertainty):
+        <ol>
+          <li>If there is at least one <code class="language-plaintext highlighter-rouge">PERMIT</code>, the decision is <code class="language-plaintext highlighter-rouge">PERMIT</code>.</li>
+          <li>Otherwise, the decision is <code class="language-plaintext highlighter-rouge">NOT_APPLICABLE</code>.</li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+</ol>
+<h4 id="permit-overrides">
+  
+  
+    <a href="#permit-overrides" class="anchor-heading" aria-labelledby="permit-overrides"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">permit-overrides</code>
+  
+  
+</h4>
+    
+
+<p>This algorithm is used if a <code class="language-plaintext highlighter-rouge">PERMIT</code> decision should prevail any <code class="language-plaintext highlighter-rouge">DENY</code> without setting a default decision.</p>
+
+<p>It works as follows:</p>
+
+<ol>
+  <li>If any policy document evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code> and there is no <em>transformation uncertainty</em> (multiple policies evaluate to <code class="language-plaintext highlighter-rouge">PERMIT</code> and at least one of them has a transformation statement), the decision is <code class="language-plaintext highlighter-rouge">PERMIT</code>.</li>
+  <li>Otherwise (no policy document evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code>):
+    <ol>
+      <li>If there is any <code class="language-plaintext highlighter-rouge">INDETERMINATE</code> or there is a <em>transformation uncertainty</em> (multiple policies evaluate to <code class="language-plaintext highlighter-rouge">PERMIT</code>, and at least one of them has a transformation statement), the decision is <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>.</li>
+      <li>Otherwise (no policy document evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code>, no policy document evaluates to <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>, no transform uncertainty):
+        <ol>
+          <li>If there is any <code class="language-plaintext highlighter-rouge">DENY</code>, the decision is <code class="language-plaintext highlighter-rouge">DENY</code>.</li>
+          <li>Otherwise, the decision is <code class="language-plaintext highlighter-rouge">NOT_APPLICABLE</code>.</li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+</ol>
+<h4 id="first-applicable">
+  
+  
+    <a href="#first-applicable" class="anchor-heading" aria-labelledby="first-applicable"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">first-applicable</code>
+  
+  
+</h4>
+    
+
+<p>This algorithm is used if the policy administrator manages the policy’s priority by their order in a policy set. As soon as the first policy returns <code class="language-plaintext highlighter-rouge">PERMIT</code>, <code class="language-plaintext highlighter-rouge">DENY</code>, or <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>, its result is the final decision. Thus a “default” can be specified by creating a last policy without any conditions. If a decision is found, errors that might occur in later policies are ignored.</p>
+
+<p>Since there is no order in the policy documents known to the PDP, the PDP cannot be configured with this algorithm. <code class="language-plaintext highlighter-rouge">first-applicable</code> might only be used for policy combination inside a policy set.</p>
+
+<p>It works as follows:</p>
+
+<ol>
+  <li>Each policy is evaluated in the order specified in the policy set.
+    <ol>
+      <li>If it evaluates to <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>, the decision is <code class="language-plaintext highlighter-rouge">INDETERMINATE</code>.</li>
+      <li>If it evaluates to <code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code>, the decision is <code class="language-plaintext highlighter-rouge">PERMIT</code> or <code class="language-plaintext highlighter-rouge">DENY</code></li>
+      <li>If it evaluates to <code class="language-plaintext highlighter-rouge">NOT_APPLICABLE</code>, the next policy is evaluated.</li>
+    </ol>
+  </li>
+  <li>If no policy with a decision different from <code class="language-plaintext highlighter-rouge">NOT_APPLICABLE</code> has been found, the decision of the policy set is <code class="language-plaintext highlighter-rouge">NOT_APPLICABLE</code>.</li>
+</ol>
+
+
+          
 
           
         </main>
