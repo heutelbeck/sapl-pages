@@ -45,7 +45,10 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
-      - run:  bundle exec jekyll build
+      - run:  |
+          gem install bundler
+          bundle install
+          bundle exec jekyll build
         working-directory: ./md-files/saplReference
 
 #      - name: Install Bundler and Jekyll
