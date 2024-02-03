@@ -64,37 +64,31 @@ jobs:
         id: pages
         uses: actions/configure-pages@v3
       - run:  |
-          if: ${{ needs.changes.outputs.subfolder == 'true' }}
           gem install bundler
           bundle install
           bundle exec jekyll build
         working-directory: ./md-files/saplReference
-        
+
       - name: Create Subfolder
         run: |
-          if: ${{ needs.changes.outputs.subfolder == 'true' }}
           #ls -hal
           rm -r docs/3.0.0-SNAPSHOT-MD
           mkdir -p docs/3.0.0-SNAPSHOT-MD/saplReference/
-          
 
       - name: Copy Generated SAPL-Reference Pages to Subfolder
         run: |
-          if: ${{ needs.changes.outputs.subfolder == 'true' }}
           #ls -hal
           cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/saplReference/
-          
   
       - name: Commit and Push Changes
+        if: ${{ needs.changes.outputs.subfolder == 'true' }}
         run: |
-          if: ${{ needs.changes.outputs.subfolder == 'true' }}
           #ls -hal
           git config --global user.email "ha247@t-online.de"
           git config --global user.name "HAAL2023"
           git add docs/3.0.0-SNAPSHOT-MD/saplReference/
           git commit -m "Update generated SAPL-Reference pages"
           git push --force
-          
 
 #
   build_sapl_website:
