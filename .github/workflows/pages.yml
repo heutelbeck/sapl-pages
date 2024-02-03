@@ -105,8 +105,8 @@ jobs:
 
   build_sapl_website:
     name: Build SAPL-Website
-    needs: changes
-    if: ${{ needs.changes.outputs.rootfolder == 'true' || needs.changes.outputs.subfolder != 'true' }}
+    needs: [ changes, build_sapl_reference ]
+    if: ${{ needs.changes.outputs.rootfolder == 'true' && needs.changes.outputs.subfolder != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
