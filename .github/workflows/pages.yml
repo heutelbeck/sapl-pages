@@ -82,7 +82,7 @@ jobs:
           git config --global user.name "HAAL2023"
           git add docs/3.0.0-SNAPSHOT-MD/saplReference/
           git commit -m "Update generated SAPL-Reference pages"
-          git push
+          git push --force
 
   build_sapl_website:
     name: Build SAPL-Website
