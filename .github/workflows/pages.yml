@@ -21,9 +21,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      subfolder: ${{ steps.changes.outputs.subfolder }}
+      rootfolder: ${{ steps.changes.outputs.rootfolder }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          subfolder:
+            - 'md-files/**'
+          rootfolder:
+            - '*.*'
+            - '!md-files/**'
+
   #Build jobs
   build_sapl_reference:
     name: Build SAPL-Reference
+    needs: changes
+    if: ${{ needs.changes.outputs.subfolder == 'true' }}
     permissions:
       contents: write
       pages: write
@@ -86,7 +105,8 @@ jobs:
 
   build_sapl_website:
     name: Build SAPL-Website
-    needs: build_sapl_reference
+    needs: changes
+    if: ${{ needs.changes.outputs.rootfolder == 'true' && needs.changes.outputs.subfolder != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
