@@ -32,7 +32,7 @@ permalink: pretty
 favicon_ico: /assets/sapl_reference_images/favicon.png # Path to custom favicon
 returnTitle: return to SAPL.io # Linktext in Nav-Bar to return back to sapl.io main-page
 content:
-  redirectBackToLink: https://haal2023.github.io/mySaplReference/ #Return-URL to sapl.io main-page
+  redirectBackToLink: https://sapl.io/ #Return-URL to sapl.io main-page
 ################################
 
 #exclude:
