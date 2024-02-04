@@ -70,21 +70,25 @@ jobs:
           bundle exec jekyll build
         working-directory: ./md-files/saplReference
 
-      - name: Create Subfolder
+#      - name: Create Subfolder
+#        run: |
+#          #ls -hal
+#          if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
+#          mkdir -p docs/3.0.0-SNAPSHOT-MD/
+#          else
+#          rm -r docs/3.0.0-SNAPSHOT-MD/*
+#          git config --global user.email "ha247@t-online.de"
+#          git config --global user.name "HAAL2023"
+#          git commit -m "Update generated SAPL-Reference pages"
+#          fi
+
+      - name: Copy Generated SAPL-Reference Pages to Subfolder
         run: |
-          #ls -hal
           if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
           mkdir -p docs/3.0.0-SNAPSHOT-MD/
           else
           rm -r docs/3.0.0-SNAPSHOT-MD/*
-          git config --global user.email "ha247@t-online.de"
-          git config --global user.name "HAAL2023"
-          git commit -m "Update generated SAPL-Reference pages"
           fi
-
-      - name: Copy Generated SAPL-Reference Pages to Subfolder
-        run: |
-          #ls -hal
           cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/
   
       - name: Commit and Push Changes
