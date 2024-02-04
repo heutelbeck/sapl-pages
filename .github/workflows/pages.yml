@@ -48,7 +48,6 @@ jobs:
       id-token: write
       pull-requests: write
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.subfolder == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
