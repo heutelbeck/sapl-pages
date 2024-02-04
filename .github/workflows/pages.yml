@@ -48,6 +48,7 @@ jobs:
       id-token: write
       pull-requests: write
     runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.subfolder == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -72,8 +73,8 @@ jobs:
       - name: Create Subfolder
         run: |
           #ls -hal
-          rm -r docs/3.0.0-SNAPSHOT-MD
-          mkdir -p docs/3.0.0-SNAPSHOT-MD/saplReference/
+          rm -r docs/3.0.0-SNAPSHOT-MD/saplReference
+          mkdir -p docs/3.0.0-SNAPSHOT-MD/saplReference
 
       - name: Copy Generated SAPL-Reference Pages to Subfolder
         run: |
@@ -81,7 +82,6 @@ jobs:
           cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/saplReference/
   
       - name: Commit and Push Changes
-        if: ${{ needs.changes.outputs.subfolder == 'true' }}
         run: |
           #ls -hal
           git config --global user.email "ha247@t-online.de"
