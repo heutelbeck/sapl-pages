@@ -4,7 +4,10 @@ name: Deploy Jekyll site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
+    #branches: ["master"]
+    paths:
+      - '*.*'
+      - '!md-files/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -33,10 +36,6 @@ jobs:
           ruby-version: '3.1' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
-      - name: Create symlink
-        run: |
-          latest_doc=$(ls -1d docs/*/ | sort | tail -n 1)
-          ln -s $(basename $latest_doc) docs/latest
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v1
