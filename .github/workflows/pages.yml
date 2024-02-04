@@ -42,6 +42,7 @@ jobs:
   build_sapl_reference:
     name: Build SAPL-Reference
     needs: changes
+    if: ${{ needs.changes.outputs.subfolder == 'true' }}
     permissions:
       contents: write
       pages: write
@@ -76,7 +77,7 @@ jobs:
           mkdir -p docs/3.0.0-SNAPSHOT-MD/saplReference
           else
           rm -r docs/3.0.0-SNAPSHOT-MD/saplReference/*
-          git commit -m "Update generated SAPL-Reference pages"S
+          git commit -m "Update generated SAPL-Reference pages"
           fi
 
       - name: Copy Generated SAPL-Reference Pages to Subfolder
@@ -85,7 +86,6 @@ jobs:
           cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/saplReference/
   
       - name: Commit and Push Changes
-        if: ${{ needs.changes.outputs.subfolder == 'true' }}
         run: |
           #ls -hal
           git config --global user.email "ha247@t-online.de"

@@ -1,10 +1,10 @@
 ---
 layout: default
-title: The Policy Language
-permalink: /reference/The-SAPL-Policy-Language/
-parent: The SAPL Policy Language
-grand_parent: SAPL Reference
-nav_order: 1
+title: The SAPL Policy Language
+#permalink: /reference/The-SAPL-Policy-Language/
+has_children: true
+parent: SAPL Reference
+nav_order: 5
 ---
 
 ## The SAPL Policy Language
