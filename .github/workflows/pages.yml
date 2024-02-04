@@ -1,4 +1,3 @@
-
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
 name: Deploy Jekyll site to Pages
 
@@ -6,9 +5,6 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["master"]
-    paths:
-      - '*.*'
-      - '!md-files/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -30,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -43,8 +39,8 @@ jobs:
           ln -s $(basename $latest_doc) docs/latest
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v2
-      - run: bundle exec jekyll build # defaults output to '/_site'
+        uses: actions/configure-pages@v1
+      - run: bundle exec jekyll build --baseurl ${{ steps.pages.outputs.base_path }} # defaults output to '/_site'
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1 # This will automatically upload an artifact from the '/_site' directory
 
