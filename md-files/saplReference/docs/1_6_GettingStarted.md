@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Getting Started
-permalink: /docs/3.0.0-SNAPSHOT-MD/Getting-Started/
+permalink: /Getting-Started/
 parent: Introduction
 grand_parent: SAPL Reference
 nav_order: 6

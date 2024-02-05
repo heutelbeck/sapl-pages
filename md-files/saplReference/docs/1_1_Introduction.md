@@ -5,7 +5,7 @@ has_children: true
 parent: SAPL Reference
 nav_order: 1
 #grand_parent: UI Components
-permalink: /docs/3.0.0-SNAPSHOT-MD/Introduction/
+permalink: /Introduction/
 ---
 
 # SAPL - Streaming Attribute Policy Language

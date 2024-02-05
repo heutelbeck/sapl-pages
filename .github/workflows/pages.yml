@@ -53,26 +53,28 @@ jobs:
           cd ./md-files/saplReference
           gem install bundler
           bundle install
-          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
-          #bundle exec jekyll build
+          bundle exec jekyll build
         #working-directory: ./md-files/saplReference
         env:
           JEKYLL_ENV: production
-      - name: Commit and Push Changes
-        run: |
-          if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
-            mkdir -p docs/3.0.0-SNAPSHOT-MD/
-          fi
-          cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/
-          git config --global user.email "ha247@t-online.de"
-          git config --global user.name "HAAL2023"
-          if [[ `git status --porcelain` ]]; then
-            git add .
-            git commit -m "Update generated SAPL-Reference pages"
-            git push
-          else
-            echo "No changes in SAPL-Reference repository."
-          fi
+      #- name: Commit and Push Changes
+      #  run: |
+      #    if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
+      #      mkdir -p docs/3.0.0-SNAPSHOT-MD/
+      #    fi
+      #    cp -R md-files/saplReference/_site/* docs/3.0.0-SNAPSHOT-MD/
+      #    git config --global user.email "ha247@t-online.de"
+      #    git config --global user.name "HAAL2023"
+      #    if [[ `git status --porcelain` ]]; then
+      #      git add .
+      #      git commit -m "Update generated SAPL-Reference pages"
+      #      git push
+      #    else
+      #      echo "No changes in SAPL-Reference repository."
+      #    fi
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v3
 
 
   build_webpage:
