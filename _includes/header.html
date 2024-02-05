@@ -17,7 +17,7 @@
           </label>
   
           <div class="trigger">
-            {%- for path in page_paths -%}
+            {%- for path in default_paths -%}
               {%- assign page = site.pages | where: "path", path | first -%}
               {%- if page.title -%}
                 {% unless page.exclude %}
