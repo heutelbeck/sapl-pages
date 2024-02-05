@@ -8,4 +8,4 @@ permalink: /documentation
 
 ## [Latest Snapshot 3.0.0-SNAPSHOT](/docs/3.0.0-SNAPSHOT/sapl-reference.html)
 
-## [Latest Snapshot 3.0.0-SNAPSHOT-MD](/sapl-pages)
+## [Latest Snapshot 3.0.0-SNAPSHOT-MD](/sapl-reference)
