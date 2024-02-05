@@ -23,8 +23,8 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "/sapl-reference"
 #baseurl: "/" # the subpath of your site, e.g. /blog
 #url: "https://haal2023.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-#url: "https://heutelbeck.github.io"
-url: ""
+url: "https://heutelbeck.github.io"
+#url: ""
 repository: heutelbeck/sapl-policy-engine # for github-metadata
 
 permalink: pretty
