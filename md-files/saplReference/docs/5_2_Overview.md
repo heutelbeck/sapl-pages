@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Overview
-permalink: /Overview/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Overview/
 parent: The SAPL Policy Language
 grand_parent: SAPL Reference
 nav_order: 2

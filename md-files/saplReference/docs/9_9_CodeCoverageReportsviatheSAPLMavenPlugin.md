@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Code Coverage Reports via the SAPL Maven Plugin
-permalink: /Code-Coverage-Reports-via-the-SAPL-Maven-Plugin/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Code-Coverage-Reports-via-the-SAPL-Maven-Plugin/
 parent: Testing SAPL policies
 grand_parent: SAPL Reference
 nav_order: 9

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SAPL Authorization Decision
-permalink: /SAPL-Authorization-Decision/
+permalink: /docs/3.0.0-SNAPSHOT-MD/SAPL-Authorization-Decision/
 parent: Publish/Subscribe Protocol
 grand_parent: SAPL Reference
 nav_order: 3

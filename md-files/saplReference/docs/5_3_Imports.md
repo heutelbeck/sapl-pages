@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Imports
-permalink: /Imports/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Imports/
 parent: The SAPL Policy Language
 grand_parent: SAPL Reference
 nav_order: 3

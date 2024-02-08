@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SAPL Policy Set
-permalink: /SAPL-Policy-Set/
+permalink: /docs/3.0.0-SNAPSHOT-MD/SAPL-Policy-Set/
 parent: The SAPL Policy Language
 grand_parent: SAPL Reference
 nav_order: 6

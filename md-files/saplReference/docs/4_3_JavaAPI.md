@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Java API
-permalink: /Java-API/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Java-API/
 parent: PDP APIs
 grand_parent: SAPL Reference
 nav_order: 3

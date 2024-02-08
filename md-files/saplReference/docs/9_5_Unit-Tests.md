@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Unit-Tests
-permalink: /Unit-Tests/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Unit-Tests/
 parent: Testing SAPL policies
 grand_parent: SAPL Reference
 nav_order: 5

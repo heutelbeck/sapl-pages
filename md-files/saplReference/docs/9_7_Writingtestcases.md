@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Writing test cases
-permalink: /Writing-test-cases/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Writing-test-cases/
 parent: Testing SAPL policies
 grand_parent: SAPL Reference
 nav_order: 7
@@ -27,46 +27,50 @@ Starting with constructTestCaseWithMocks() or constructTestCase() called on the 
 **Mocking of functions**:
 
 - the `givenFunction` methods can be used to mock a function returning a `Val` specified in the method parameters for every call. 
-  - a single value can be specified
+  a single value can be specified
 
-    ```java
-    .givenFunction("time.dayOfWeek", Val.of("SATURDAY"))
-    ```
-  - a single value only returned when the parameters of the function call match some expectations
+  ```java
+  .givenFunction("time.dayOfWeek", Val.of("SATURDAY"))
+  ```
 
-    ```java
-    .givenFunction("corp.subjectConverter",
-        whenFunctionParams(is(Val.of("USER")), is(Val.of("nikolai"))), Val.of("ROLE_ADMIN"))
-    ```
-  - or a Lambda-Expression evaluating the parameters of the function call
+  a single value only returned when the parameters of the function call match some expectations
 
-    ```java
-    .givenFunction("company.complexFunction", (FunctionCall call) -> {
-    
-        //probably one should check for number and type of parameters first
-        Double param0 = call.getArgument(0).get().asDouble();
-        Double param1 = call.getArgument(1).get().asDouble();
-    
-        return param0 % param1 == 0 ? Val.of(true) : Val.of(false);
-    })
-    ```
-  - and verify the number of calls to this mock
+  ```java
+  .givenFunction("corp.subjectConverter",
+      whenFunctionParams(is(Val.of("USER")), is(Val.of("nikolai"))), Val.of("ROLE_ADMIN"))
+  ```
 
-    ```java
-    .givenFunction("time.dayOfWeek", Val.of("SATURDAY"), times(1))
-    ```
+  or a Lambda-Expression evaluating the parameters of the function call
+  ```java
+  .givenFunction("company.complexFunction", (FunctionCall call) -> {
+  
+      //probably one should check for number and type of parameters first
+      Double param0 = call.getArgument(0).get().asDouble();
+      Double param1 = call.getArgument(1).get().asDouble();
+  
+      return param0 % param1 == 0 ? Val.of(true) : Val.of(false);
+  })
+  ```
+
+  and verify the number of calls to this mock
+
+  ```java
+  .givenFunction("time.dayOfWeek", Val.of("SATURDAY"), times(1))
+  ```
+
 - `givenFunctionOnce` can specify a `Val` or multiple `Val`\-Objects which are emitted once (in a sequence) when this mocked function is called 
-  - a single value
+  a single value
 
-    ```java
-    .givenFunctionOnce("time.secondOf", Val.of(4))
-    .givenFunctionOnce("time.secondOf", Val.of(5))
-    ```
-  - or a sequence of values
+  ```java
+  .givenFunctionOnce("time.secondOf", Val.of(4))
+  .givenFunctionOnce("time.secondOf", Val.of(5))
+  ```
+  
+  or a sequence of values
 
-    ```java
-    .givenFunctionOnce("time.secondOf", Val.of(3), Val.of(4), Val.of(5))
-    ```
+  ```java
+  .givenFunctionOnce("time.secondOf", Val.of(3), Val.of(4), Val.of(5))
+  ```
 
 **Mocking of attributes**:
 

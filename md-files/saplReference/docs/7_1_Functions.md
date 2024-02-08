@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Functions
-permalink: /Functions/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Functions/
 has_children: true
 parent: SAPL Reference
 nav_order: 7
+has_toc: false
 ---
 
 ## Functions

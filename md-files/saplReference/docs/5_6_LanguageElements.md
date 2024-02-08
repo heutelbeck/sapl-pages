@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Language Elements
-permalink: /Language-Elements/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Language-Elements/
 parent: The SAPL Policy Language
 grand_parent: SAPL Reference
 nav_order: 7

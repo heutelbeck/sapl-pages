@@ -1,7 +1,7 @@
 ---
 layout: default
 title: PEP
-permalink: /pep/
+permalink: /docs/3.0.0-SNAPSHOT-MD/PEP/
 parent: Reference Architecture
 grand_parent: SAPL Reference
 nav_order: 2

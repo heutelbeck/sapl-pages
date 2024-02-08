@@ -1,10 +1,11 @@
 ---
 layout: default
 title: PDP APIs
-permalink: /PDP-APIs/
+permalink: /docs/3.0.0-SNAPSHOT-MD/PDP-APIs/
 has_children: true
 parent: SAPL Reference
 nav_order: 4
+has_toc: false
 ---
 
 ## PDP APIs

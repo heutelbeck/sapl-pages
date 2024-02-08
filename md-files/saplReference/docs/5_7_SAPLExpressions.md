@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SAPL Expressions
-permalink: /SAPL-Expressions/
+permalink: /docs/3.0.0-SNAPSHOT-MD/SAPL-Expressions/
 parent: The SAPL Policy Language
 grand_parent: SAPL Reference
 nav_order: 8

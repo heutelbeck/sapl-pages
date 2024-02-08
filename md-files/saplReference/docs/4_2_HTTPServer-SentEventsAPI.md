@@ -1,7 +1,7 @@
 ---
 layout: default
 title: HTTP Server-Sent Events API
-permalink: /HTTP-Server-Sent-Events-API/
+permalink: /docs/3.0.0-SNAPSHOT-MD/HTTP-Server-Sent-Events-API/
 parent: PDP APIs
 grand_parent: SAPL Reference
 nav_order: 2

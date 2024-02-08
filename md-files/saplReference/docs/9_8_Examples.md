@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Examples
-permalink: /Examples/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Examples/
 parent: TestTesting SAPL policiesing
 grand_parent: SAPL Reference
 nav_order: 8

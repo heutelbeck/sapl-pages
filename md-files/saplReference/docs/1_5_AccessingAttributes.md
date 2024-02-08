@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Accessing Attributes
-permalink: /Accessing-Attributes/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Accessing-Attributes/
 parent: Introduction
 grand_parent: SAPL Reference
 nav_order: 5

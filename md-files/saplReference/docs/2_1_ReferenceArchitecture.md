@@ -4,7 +4,8 @@ title: Reference Architecture
 has_children: true
 parent: SAPL Reference
 nav_order: 2
-permalink: /Reference-Architecture
+permalink: /docs/3.0.0-SNAPSHOT-MD/Reference-Architecture
+has_toc: false
 ---
 
 ## Reference Architecture

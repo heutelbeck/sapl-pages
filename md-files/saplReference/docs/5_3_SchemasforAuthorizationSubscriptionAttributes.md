@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Schemas
-permalink: /Schemas/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Schemas/
 parent: The SAPL Policy Language
 grand_parent: SAPL Reference
 nav_order: 4

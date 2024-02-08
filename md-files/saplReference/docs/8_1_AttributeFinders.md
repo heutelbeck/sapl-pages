@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Attribute Finders
-permalink: /Attribute-Finders/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Attribute-Finders/
 has_children: true
 parent: SAPL Reference
 nav_order: 8
+has_toc: false
 ---
 
 ## Attribute Finders

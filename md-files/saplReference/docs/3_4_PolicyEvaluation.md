@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Policy Evaluation
-permalink: /Policy-Evaluation/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Policy-Evaluation/
 parent: Publish/Subscribe Protocol
 grand_parent: SAPL Reference
 nav_order: 4

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SAPL Server
-permalink: /SAPL-Server/
+permalink: /docs/3.0.0-SNAPSHOT-MD/SAPL-Server/
 parent: Testing SAPL policies
 grand_parent: SAPL Reference
 nav_order: 4

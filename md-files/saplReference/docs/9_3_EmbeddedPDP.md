@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Embedded PDP
-permalink: /Embedded-PDP/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Embedded-PDP/
 parent: Testing SAPL policies
 grand_parent: SAPL Reference
 nav_order: 3

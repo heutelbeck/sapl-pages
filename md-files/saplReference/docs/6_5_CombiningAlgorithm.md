@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Combining Algorithm
-permalink: /Combining-Algorithm/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Combining-Algorithm/
 parent: Authorization Subscription Evaluation
 grand_parent: SAPL Reference
 nav_order: 5

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: PAP
-permalink: /pap/
+permalink: /docs/3.0.0-SNAPSHOT-MD/PAP/
 parent: Reference Architecture
 grand_parent: SAPL Reference
 nav_order: 4

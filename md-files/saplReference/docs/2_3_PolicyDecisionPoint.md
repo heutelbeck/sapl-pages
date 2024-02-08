@@ -1,7 +1,7 @@
 ---
 layout: default
 title: PDP
-permalink: /pdp/
+permalink: /docs/3.0.0-SNAPSHOT-MD/PDP/
 parent: Reference Architecture
 grand_parent: SAPL Reference
 nav_order: 3

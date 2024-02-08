@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Structure of a SAPL Policy
-permalink: /Structure-of-a-SAPL-Policy/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Structure-of-a-SAPL-Policy/
 parent: Introduction
 grand_parent: SAPL Reference
 nav_order: 3

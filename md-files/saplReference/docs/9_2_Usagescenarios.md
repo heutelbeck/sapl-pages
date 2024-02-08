@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Usage scenarios
-permalink: /Usage-scenarios/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Usage-scenarios/
 parent: Testing SAPL policies
 grand_parent: SAPL Reference
 nav_order: 2

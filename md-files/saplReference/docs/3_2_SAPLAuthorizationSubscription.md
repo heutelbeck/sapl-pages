@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SAPL Authorization Subscription
-permalink: /SAPL-Authorization-Subscription/
+permalink: /docs/3.0.0-SNAPSHOT-MD/SAPL-Authorization-Subscription/
 parent: Publish/Subscribe Protocol
 grand_parent: SAPL Reference
 nav_order: 2

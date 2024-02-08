@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Transformation
-permalink: /Transformation/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Transformation/
 parent: Authorization Subscription Evaluation
 grand_parent: SAPL Reference
 nav_order: 6

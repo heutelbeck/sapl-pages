@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Publish/Subscribe Protocol
-permalink: /Publish-Subscribe-Protocol/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Publish-Subscribe-Protocol/
 has_children: true
 parent: SAPL Reference
 nav_order: 3
+has_toc: false
 ---
 
 ## Publish / Subscribe Protocol

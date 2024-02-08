@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Authorization Subscription Evaluation
-#permalink: /reference/Authorization-Subscription-Evaluation/
+permalink: /docs/3.0.0-SNAPSHOT-MD/Authorization-Subscription-Evaluation/
 has_children: true
 parent: SAPL Reference
 nav_order: 6
+has_toc: false
 ---
 
 ## Authorization Subscription Evaluation
