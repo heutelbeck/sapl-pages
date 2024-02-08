@@ -19,6 +19,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  pull-requests: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -61,6 +62,15 @@ jobs:
           bundle install
           bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT-MD" --config ./_config.yml
           cp -r ./_site/docs/3.0.0-SNAPSHOT-MD/* ../../docs/3.0.0-SNAPSHOT-MD
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.email "ha247@t-online.de"
+          git config --global user.name "HAAL2023"
+          if [[ `git status --porcelain` ]]; then
+            git add docs/3.0.0-SNAPSHOT-MD/*.*
+            git commit -m "Update generated SAPL-Reference pages"
+            git push
+          fi
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
