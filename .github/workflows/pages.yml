@@ -60,7 +60,7 @@ jobs:
           gem install bundler
           bundle install
           bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT-MD" --config ./_config.yml
-          cp -r ./_site/docs/3.0.0-SNAPSHOT-MD/* ../../docs/3.0.0-SNAPSHOT-MD
+          cp -r ./_site/docs/3.0.0-SNAPSHOT-MD/* ../../../docs/3.0.0-SNAPSHOT-MD
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
