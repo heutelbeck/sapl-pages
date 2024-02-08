@@ -46,6 +46,7 @@ minima:
 #
 exclude:
   - md-files/
+  - docs/3.0.0-SNAPSHOT-MD/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
