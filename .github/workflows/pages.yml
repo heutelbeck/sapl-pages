@@ -64,6 +64,7 @@ jobs:
           #gem install bundler
           bundle install
           bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}" --config ./_config.yml
+          #mv ./_site/SAPL_Reference 
           cp -r ./_site/* ../../_site/docs/3.0.0-SNAPSHOT-MD/
         env:
           JEKYLL_ENV: production

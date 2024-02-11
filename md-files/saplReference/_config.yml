@@ -20,7 +20,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   It comes with developement tools for testing, authorization servers, authoring tools.
   Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.
 #baseurl: "/mySaplReference" # the subpath of your site, e.g. /blog
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/docs/3.0.0-SNAPSHOT-MD" # the subpath of your site, e.g. /blog
 #url: "https://haal2023.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 url: ""
 repository: heutelbeck/sapl-policy-engine # for github-metadata
@@ -32,11 +32,12 @@ permalink: pretty
 favicon_ico: /assets/sapl_reference_images/favicon.png # Path to custom favicon
 returnTitle: SAPL.io # Linktext in Nav-Bar to return back to sapl.io main-page
 content:
-  redirectBackToLink: https://haal2023.github.io/mySaplReference/ #Return-URL to sapl.io main-page
+  redirectBackToLink: https://sapl.io/ #Return-URL to sapl.io main-page
 ################################
 
 exclude:
  # from https://github.com/jekyll/jekyll/blob/master/lib/site_template/_config.yml:
+   - docs/
    - .sass-cache/
    - .jekyll-cache/
    - gemfiles/
