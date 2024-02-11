@@ -2,16 +2,16 @@
 .selectbox {
 	cursor: pointer;
 	outline:0;
-	color: #333333;
+	color: #FFFFFFFF;
 	font-size: 12px;
 	padding: 3px 10px;
 	min-width: 128px;
 	border-radius: 3px;
-	border: 1px solid #d6d6d6;
-	background-color: #ffffff;
+	border: 1px solid #D1D1D1FF;
+	background-color: #000000FF;
 }
 .selectbox:hover, .selectbox:focus {
-	background-color: #ffffff;
-	color: #000000;
-	border: 1px solid #969696;
+	background-color: #000000FF;
+	color: #FFFFFFFF;
+	border: 1px solid #FFFFFFFF;
 }
