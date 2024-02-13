@@ -24,7 +24,6 @@ SAPL is based on the **JavaScript Object Notation** or **JSON**, an [ECMA Standa
   - **null**: Marks an empty value, `null`.
 - Structured Types 
   - **Object**: An unordered set of name/value pairs. The name is a string. The value must be one of the available data types. It can also be an object itself. The name/value pair is also called an attribute of the object. E.g.
-
 ```
 { 
     "firstAttribute" : "first value", 
@@ -197,7 +196,8 @@ The operator `+` concatenates two strings, e.g., `"Hello" + " World!"` evaluates
 
 String concatenation is applied if the left operand is an expression evaluating to a string. If the right expression evaluates to a string as well, the two strings are concatenated. Otherwise, an error is thrown.
 
-#### Selection Steps
+
+## Selection Steps
 
 SAPL provides an easy way of accessing attributes of an object (or items of an array). The **basic access** mechanism has a similar syntax to programming languages like JavaScript or Java (e.g., `object.attribute`, `user.address.street` or `array[10]`). Beyond that, SAPL offers **extended possibilities** for expressing more sophisticated queries against JSON structures (e.g., `persons[?(@.age >= 50)]`).
 
@@ -209,7 +209,7 @@ Given that the following object is stored in the variable `object`:
 
 Structure of `object`
 
-```JSON
+```json
 {
     "key" : "value1",
     "array1" : [
@@ -268,7 +268,7 @@ An expression step returns the value of an attribute with a key or an array item
 A wildcard step can be applied to an object or an array. When applied to an object, it returns an array containing all attribute values. As attributes of an object have no order, the sorting of the result is not defined. When applied to an array, the step just leaves the array untouched.
 
 {: .note }
-> Applied to an object `{"key1":"value1", "key2":"value2"}`, the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
+> Applied to an object {"key1":"value1", "key2":"value2"}, the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
 
 
 #### Recursive Descent Step `..key`, `..["key"]`, `..[1]`, `..*` or `..[*]`
@@ -280,12 +280,12 @@ As attributes of an object are not sorted, the order of items in the result arra
 {: .note }
 > Applied to an `object`
 >
-> {
-> "key" : "value1",
-> "anotherkey" : {
-> "key" : "value2"
-> }
-> }
+>> {
+>>   "key" : "value1",
+>>   "anotherkey" : {
+>>   "key" : "value2"
+>>   }
+>> }
 > 
 > The selection step `object..key` returns the following array: `["value1", "value2"]` (any attribute value with key `key`, the items may be in a different order).
 > 
