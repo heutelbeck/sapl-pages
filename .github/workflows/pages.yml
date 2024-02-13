@@ -88,19 +88,24 @@ jobs:
             # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
             cp -r "${template_path}/." "${subfolder}"
           done
-          
+          ls ${subfolder}
           # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
-          echo "${subfolder}"
-          folder_name=$(basename "$subfolder")
-          echo $folder_name
-          if [ ! -d "../../_site/docs/$folder_name" ]; then
-            mkdir -p "../../_site/docs/$folder_name"
-          fi
-          cd "${subfolder}"
-          bundle install
-          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/$folder_name/" --config ./_config.yml
-          cp -r ./_site/* ../../_site/docs/$folder_name/
+            echo "${subfolder}"
+            folder_name=$(basename "$subfolder")
+            echo $folder_name
+            if [ ! -d "../../_site/docs/$folder_name" ]; then
+              mkdir -p "../../_site/docs/$folder_name"
+              ls ../../_site/docs/
+            fi
+            cd "${subfolder}"
+            bundle install
+            bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/$folder_name/" --config ./_config.yml
+            ls
+            ls ../
+            ls ../../
+            ls ../../_site
+            cp -r ./_site/* ../../_site/docs/$folder_name/
           done
         env:
           JEKYLL_ENV: production
