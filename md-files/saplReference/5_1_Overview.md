@@ -18,7 +18,7 @@ An example of a simple policy is:
 
 Sample SAPL Policy
 
-```java
+```
 import filter as filter (1)
 subject schema aSubjectSchema (2)
 
@@ -64,7 +64,7 @@ A SAPL policy set contains optional **imports**, a **name**, a **combining algor
 
 Sample SAPL Policy Set
 
-```java
+```
 import filter.* (1)
 
 set "test_policy_set" (2)

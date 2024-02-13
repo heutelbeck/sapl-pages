@@ -25,10 +25,21 @@ SAPL is based on the **JavaScript Object Notation** or **JSON**, an [ECMA Standa
 - Structured Types 
   - **Object**: An unordered set of name/value pairs. The name is a string. The value must be one of the available data types. It can also be an object itself. The name/value pair is also called an attribute of the object. E.g.
 
-    { "firstAttribute" : "first value", "secondAttribute" : 123 }
-  - **Array**: An ordered sequence of zero or more values of any JSON data type. E.g.
+```
+{ 
+    "firstAttribute" : "first value", 
+    "secondAttribute" : 123 
+}
+```
 
-    \[ "A value", 123, {"attribute" : "value"} \]
+  - **Array**: An ordered sequence of zero or more values of any JSON data type. E.g.
+```
+[ 
+    "A value", 
+    123, 
+    {"attribute" : "value"} 
+]
+```
 
 ### Expression Types
 

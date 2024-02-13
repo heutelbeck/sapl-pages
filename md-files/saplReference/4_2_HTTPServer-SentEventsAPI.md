@@ -9,7 +9,7 @@ nav_order: 2
 
 ## HTTP Server-Sent Events API
 
-A PDP to be used as a network service must implement some HTTP endpoints. All of them accept `POST` requests and `application/json`. They produce `application/x-ndjson` as [Server-Sent Events (SSE)](https://www.w3.org/TR/eventsource/). A PDP server must be accessed over encrypted TLS connections. All connections should be authenticated. The means of authentications are left open for the organization deploying the PDP to decide or to be defined by a specific server implementation. All endpoints should be located under a shared base URL, e.g., `[https://pdp.sapl.io/api/pdp/](https://pdp.sapl.io/api/pdp/)`.
+A PDP to be used as a network service must implement some HTTP endpoints. All of them accept `POST` requests and `application/json`. They produce `application/x-ndjson` as [Server-Sent Events (SSE)](https://www.w3.org/TR/eventsource/). A PDP server must be accessed over encrypted TLS connections. All connections should be authenticated. The means of authentications are left open for the organization deploying the PDP to decide or to be defined by a specific server implementation. All endpoints should be located under a shared base URL, e.g., [https://pdp.sapl.io/api/pdp/](https://pdp.sapl.io/api/pdp/).
 
 A PEP which is a client to the SSE PDP API encountering connectivity issues or errors, must interpret this as an INDETERMINATE decision and thus deny access during this time of uncertainty and take appropriate steps to reconnect with the PDP, using a matching back-off strategy to not overload the PDP.
 

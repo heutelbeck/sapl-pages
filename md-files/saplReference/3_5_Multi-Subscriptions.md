@@ -40,9 +40,9 @@ Single Authorization Decision with Associated Subscription ID - JSON Structure
 {
 "authorizationSubscriptionId" : "id-1",
 "authorizationDecision"       : {
-                "decision" : "PERMIT",
-                "resource" : { ... }
-        }
+                                  "decision" : "PERMIT",
+                                  "resource" : { ... }
+                                }
 }
 
 ```
@@ -52,14 +52,14 @@ Multi-Decision - JSON Structure
 ```json
 {
 "authorizationDecisions" : {
-"id-1" : {
-            "decision" : "PERMIT",
-            "resource" : { ... }
-            },
-            "id-2" : {
-                      "decision" : "DENY"
-            }
-      }
+                            "id-1" : {
+                                      "decision" : "PERMIT",
+                                      "resource" : { ... }
+                                      },
+                            "id-2" : {
+                                      "decision" : "DENY"
+                                      }
+                            }
 }
 
 ```
