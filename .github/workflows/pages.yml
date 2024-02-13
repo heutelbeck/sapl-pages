@@ -55,19 +55,55 @@ jobs:
           bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}" --config "_config.yml"
         env:
           JEKYLL_ENV: production
-      #- name: Build Reference
-      #  run: |
-      #    if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
-      #      mkdir -p docs/3.0.0-SNAPSHOT-MD/
-      #    fi
-      #    cd ./md-files/saplReference
-      #    #gem install bundler
-      #    bundle install
-      #    bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT-MD/" --config ./_config.yml
-      #    #mv ./_site/SAPL_Reference 
-      #    cp -r ./_site/* ../../_site/docs/3.0.0-SNAPSHOT-MD/
-      #  env:
-      #    JEKYLL_ENV: production
+      - name: Build Reference
+        run: |
+          echo 
+          #if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
+          #  mkdir -p docs/3.0.0-SNAPSHOT-MD/
+          #fi
+          #cd ./md-files/saplReference
+          ##gem install bundler
+          #bundle install
+          #bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT-MD/" --config ./_config.yml
+          ##mv ./_site/SAPL_Reference 
+          #cp -r ./_site/* ../../_site/docs/3.0.0-SNAPSHOT-MD/
+          template_path="./referenceTemplate"
+          build_path="./buildReference"
+          md_folder_path="./documentation-md"
+          #folder_names=$(find "$md_folder_path" -mindepth  1 -type d)
+          
+          #Build Verzeichnis erstellen, bzw. erst loeschen und dann neu erstellen
+          if [ ! -d "$build_path" ]; then
+            mkdir -p $build_path
+          else
+            rm -r $build_path
+            mkdir -p $build_path
+          fi
+          
+          # Ordner mit Referenz-Dateien in Build-Ordner kopieren
+          cp -r "$md_folder_path/"* "$build_path"
+          
+          # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner kopieren
+          find "$build_path" -mindepth  1 -type d | while read -r subfolder; do
+            # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
+            cp -r "${template_path}/." "${subfolder}"
+          done
+          
+          # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
+          find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
+          echo "${subfolder}"
+          folder_name=$(basename "$subfolder")
+          echo $folder_name
+          if [ ! -d "../../_site/docs/$folder_name" ]; then
+            mkdir -p "../../_site/docs/$folder_name"
+          fi
+          cd "${subfolder}"
+          bundle install
+          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/$folder_name/" --config ./_config.yml
+          cp -r ./_site/* ../../_site/docs/$folder_name/
+          done
+        env:
+          JEKYLL_ENV: production
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
