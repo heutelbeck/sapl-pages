@@ -82,13 +82,15 @@ jobs:
           
           # Ordner mit Referenz-Dateien in Build-Ordner kopieren
           cp -r "$md_folder_path/"* "$build_path"
-          
+          echo "ls build_path"
+          ls -hal $build_path
+
           # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner kopieren
           find "$build_path" -mindepth  1 -type d | while read -r subfolder; do
             # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
             cp -r "${template_path}/." "${subfolder}"
           done
-          ls ${subfolder}
+          
           # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             echo "${subfolder}"
@@ -101,10 +103,10 @@ jobs:
             cd "${subfolder}"
             bundle install
             bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/$folder_name/" --config ./_config.yml
-            ls
-            ls ../
-            ls ../../
-            ls ../../_site
+            ls -hal
+            ls -hal ../
+            ls -hal ../../
+            ls -hal ../../_site
             cp -r ./_site/* ../../_site/docs/$folder_name/
           done
         env:
