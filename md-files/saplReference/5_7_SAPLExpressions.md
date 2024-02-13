@@ -280,12 +280,14 @@ As attributes of an object are not sorted, the order of items in the result arra
 {: .note }
 > Applied to an `object`
 >
->> {
->>   "key" : "value1",
->>   "anotherkey" : {
->>   "key" : "value2"
->>   }
->> }
+> ```
+> {
+>   "key" : "value1",
+>   "anotherkey" : {
+>   "key" : "value2"
+>   }
+> }
+> ```
 > 
 > The selection step `object..key` returns the following array: `["value1", "value2"]` (any attribute value with key `key`, the items may be in a different order).
 > 
@@ -335,12 +337,14 @@ Although arrays do not have attributes (they have items), a key step can be appl
 {: .note }
 > Applied to an object
 >
+> ```
 > {
-> "array":\[
-> {"key":"value1"},
-> {"key":"value2"}
-> \]
+>   "array": [
+>       {"key":"value1"},
+>       {"key":"value2"}
+>   ]
 > }
+> ```
 >
 > `array.key` returns the following array: `["value1", "value2"]` (the value of the `key` attribute of each item of `array`).
 
@@ -368,7 +372,9 @@ In some scenarios, it may not be the right thing to subscribe to attributes, but
 {: .note }
 > Assuming a doctor should only be allowed to access patient data from patients on her unit. The following expression retrieves the unit (attribute finder `pip.hospital_units.by_patientid`) by the requested patient id (`action.patientid`) and selects the id of the supervising doctor (`.doctorid`):
 >
+> ```
 > action.patientid.<pip.hospital_units.by_patientid>.doctorid
+> ```
 
 
 Attribute finders are described in greater detail [below](#attribute-finders).
@@ -408,7 +414,6 @@ Example
 We take the following object:
 
 Object Structure
-
 {
     "value" : "aValue",
     "id" : 5
