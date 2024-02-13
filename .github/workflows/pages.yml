@@ -96,10 +96,7 @@ jobs:
             echo "${subfolder}"
             folder_name=$(basename "$subfolder")
             echo $folder_name
-            if [ ! -d "../../_site/docs/$folder_name" ]; then
-              mkdir -p "../../_site/docs/$folder_name"
-              ls ../../_site/docs/
-            fi
+            
             cd "${subfolder}"
             bundle install
             bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/$folder_name/" --config ./_config.yml
@@ -107,6 +104,10 @@ jobs:
             ls -hal ../
             ls -hal ../../
             ls -hal ../../_site
+            if [ ! -d "../../_site/docs/$folder_name" ]; then
+              mkdir -p "../../_site/docs/$folder_name"
+            fi
+            ls -hal ../../_site/docs
             cp -r ./_site/* ../../_site/docs/$folder_name/
           done
         env:
