@@ -99,7 +99,7 @@ jobs:
             
             cd "${subfolder}"
             bundle install
-            bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/$folder_name/" --config ./_config.yml
+            bundle exec jekyll build --config ./_config.yml
             ls -hal
             ls -hal ../
             ls -hal ../../
