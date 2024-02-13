@@ -45,7 +45,7 @@ A statement within the body can either be a variable assignment which makes a va
 
 Sample Variable Assignment
 
-```java
+```
 var a_name = expression;
 ```
 
@@ -53,7 +53,7 @@ or a condition, i.e., an expression that evaluates to `true` or `false`.
 
 Sample Condition
 
-```java
+```
 a_name == "a_string";
 ```
 
@@ -107,7 +107,13 @@ The original resource is accessible via the identifier `resource` and can be fil
 
 Transformation Example
 
-transform resource |- { @.someValue : remove, @.anotherValue : filter.blacken }
+```
+transform 
+    resource |- { 
+        @.someValue : remove, 
+        @.anotherValue : filter.blacken 
+    }
+```
 
 The example would remove the attribute `someValue` and blacken the value of the attribute `anotherValue`. The filtering functions are described in more detail [below](#filtering).
 

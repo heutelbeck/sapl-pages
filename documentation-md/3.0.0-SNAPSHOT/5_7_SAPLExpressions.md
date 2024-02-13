@@ -24,11 +24,21 @@ SAPL is based on the **JavaScript Object Notation** or **JSON**, an [ECMA Standa
   - **null**: Marks an empty value, `null`.
 - Structured Types 
   - **Object**: An unordered set of name/value pairs. The name is a string. The value must be one of the available data types. It can also be an object itself. The name/value pair is also called an attribute of the object. E.g.
+```
+{ 
+    "firstAttribute" : "first value", 
+    "secondAttribute" : 123 
+}
+```
 
-    { "firstAttribute" : "first value", "secondAttribute" : 123 }
   - **Array**: An ordered sequence of zero or more values of any JSON data type. E.g.
-
-    \[ "A value", 123, {"attribute" : "value"} \]
+```
+[ 
+    "A value", 
+    123, 
+    {"attribute" : "value"} 
+]
+```
 
 ### Expression Types
 
@@ -186,7 +196,8 @@ The operator `+` concatenates two strings, e.g., `"Hello" + " World!"` evaluates
 
 String concatenation is applied if the left operand is an expression evaluating to a string. If the right expression evaluates to a string as well, the two strings are concatenated. Otherwise, an error is thrown.
 
-#### Selection Steps
+
+## Selection Steps
 
 SAPL provides an easy way of accessing attributes of an object (or items of an array). The **basic access** mechanism has a similar syntax to programming languages like JavaScript or Java (e.g., `object.attribute`, `user.address.street` or `array[10]`). Beyond that, SAPL offers **extended possibilities** for expressing more sophisticated queries against JSON structures (e.g., `persons[?(@.age >= 50)]`).
 
@@ -198,7 +209,7 @@ Given that the following object is stored in the variable `object`:
 
 Structure of `object`
 
-```JSON
+```json
 {
     "key" : "value1",
     "array1" : [
@@ -257,7 +268,7 @@ An expression step returns the value of an attribute with a key or an array item
 A wildcard step can be applied to an object or an array. When applied to an object, it returns an array containing all attribute values. As attributes of an object have no order, the sorting of the result is not defined. When applied to an array, the step just leaves the array untouched.
 
 {: .note }
-> Applied to an object `{"key1":"value1", "key2":"value2"}`, the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
+> Applied to an object {"key1":"value1", "key2":"value2"}, the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
 
 
 #### Recursive Descent Step `..key`, `..["key"]`, `..[1]`, `..*` or `..[*]`
@@ -269,12 +280,14 @@ As attributes of an object are not sorted, the order of items in the result arra
 {: .note }
 > Applied to an `object`
 >
+> ```
 > {
-> "key" : "value1",
-> "anotherkey" : {
-> "key" : "value2"
+>   "key" : "value1",
+>   "anotherkey" : {
+>   "key" : "value2"
+>   }
 > }
-> }
+> ```
 > 
 > The selection step `object..key` returns the following array: `["value1", "value2"]` (any attribute value with key `key`, the items may be in a different order).
 > 
@@ -324,12 +337,14 @@ Although arrays do not have attributes (they have items), a key step can be appl
 {: .note }
 > Applied to an object
 >
+> ```
 > {
-> "array":\[
-> {"key":"value1"},
-> {"key":"value2"}
-> \]
+>   "array": [
+>       {"key":"value1"},
+>       {"key":"value2"}
+>   ]
 > }
+> ```
 >
 > `array.key` returns the following array: `["value1", "value2"]` (the value of the `key` attribute of each item of `array`).
 
@@ -357,7 +372,9 @@ In some scenarios, it may not be the right thing to subscribe to attributes, but
 {: .note }
 > Assuming a doctor should only be allowed to access patient data from patients on her unit. The following expression retrieves the unit (attribute finder `pip.hospital_units.by_patientid`) by the requested patient id (`action.patientid`) and selects the id of the supervising doctor (`.doctorid`):
 >
+> ```
 > action.patientid.<pip.hospital_units.by_patientid>.doctorid
+> ```
 
 
 Attribute finders are described in greater detail [below](#attribute-finders).
@@ -397,7 +414,6 @@ Example
 We take the following object:
 
 Object Structure
-
 {
     "value" : "aValue",
     "id" : 5

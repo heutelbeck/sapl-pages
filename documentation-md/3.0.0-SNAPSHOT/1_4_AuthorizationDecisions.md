@@ -15,7 +15,7 @@ The SAPL authorization decision to the authorization subscription is a JSON obje
 
 *Introduction - Sample Authorization Decision*
 
-```json
+```
 {
   "decision"   : "PERMIT"
 }
