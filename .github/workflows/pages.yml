@@ -91,7 +91,7 @@ jobs:
             folder_name=$(basename "$subfolder")
             cd "${subfolder}"
             bundle install
-            bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT/ --config ./_config.yml
+            bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/${subfolder}/" --config "./_config.yml"
             if [ ! -d "../../_site/docs/$folder_name" ]; then
               mkdir -p "../../_site/docs/$folder_name"
             fi

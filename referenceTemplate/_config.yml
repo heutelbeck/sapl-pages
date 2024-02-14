@@ -20,7 +20,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   It comes with developement tools for testing, authorization servers, authoring tools.
   Framework integrations are available for Spring, Axon, and Vaadin to provide flexible policy enforcement points (PEPs) in your application.
 #baseurl: "/mySaplReference" # the subpath of your site, e.g. /blog
-baseurl: "/docs/3.0.0-SNAPSHOT" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 #url: "https://haal2023.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 url: ""
 repository: heutelbeck/sapl-policy-engine # for github-metadata
