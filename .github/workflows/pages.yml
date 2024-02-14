@@ -70,16 +70,17 @@ jobs:
             cp -r "${template_path}/." "${subfolder}"
           done
           ls -hal
-          echo "---" > ./_site/documentation.md
-          echo " layout: page" >> ./_site/documentation.md
-          echo "  title: Docs" >> ./_site/documentation.md
-          echo "  permalink: /documentation" >> ./_site/documentation.md
-          echo "  ---" >> ./_site/documentation.md
-          echo "" >> ./_site/documentation.md
-          echo "  ## [Latest Release 2.0.1](/docs/2.0.1/sapl-reference.html)" >> ./_site/documentation.md
+          echo "---" > ./documentation.md
+          echo " layout: page" >> ./documentation.md
+          echo "  title: Docs" >> ./documentation.md
+          echo "  permalink: /documentation" >> ./documentation.md
+          echo "  ---" >> ./documentation.md
+          echo "" >> ./documentation.md
+          echo "  ## [Latest Release 2.0.1](/docs/2.0.1/sapl-reference.html)" >> ./documentation.md
+          echo ""
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
-            echo "  ## [Latest Release $folder_name](/docs/$folder_name)" >> ../../_site/documentation.md
+            echo "  ## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
           done
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
