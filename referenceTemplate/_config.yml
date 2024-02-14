@@ -29,7 +29,7 @@ permalink: pretty
 
 ################################
 # Custom parameter
-favicon_ico: /assets/sapl_reference_images/favicon.png # Path to custom favicon
+favicon_ico: /docs/3.0.0-SNAPSHOT/assets/sapl_reference_images/favicon.png # Path to custom favicon
 returnTitle: SAPL.io # Linktext in Nav-Bar to return back to sapl.io main-page
 content:
   redirectBackToLink: https://sapl.io/ #Return-URL to sapl.io main-page

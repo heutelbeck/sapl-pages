@@ -57,20 +57,9 @@ jobs:
           JEKYLL_ENV: production
       - name: Build Reference
         run: |
-          echo 
-          #if [ ! -d "docs/3.0.0-SNAPSHOT-MD" ]; then
-          #  mkdir -p docs/3.0.0-SNAPSHOT-MD/
-          #fi
-          #cd ./md-files/saplReference
-          ##gem install bundler
-          #bundle install
-          #bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT-MD/" --config ./_config.yml
-          ##mv ./_site/SAPL_Reference 
-          #cp -r ./_site/* ../../_site/docs/3.0.0-SNAPSHOT-MD/
           template_path="./referenceTemplate"
           build_path="./buildReference"
           md_folder_path="./documentation-md"
-          #folder_names=$(find "$md_folder_path" -mindepth  1 -type d)
           
           #Build Verzeichnis erstellen, bzw. erst loeschen und dann neu erstellen
           if [ ! -d "$build_path" ]; then
@@ -102,7 +91,7 @@ jobs:
             folder_name=$(basename "$subfolder")
             cd "${subfolder}"
             bundle install
-            bundle exec jekyll build --config ./_config.yml
+            bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT/ --config ./_config.yml
             if [ ! -d "../../_site/docs/$folder_name" ]; then
               mkdir -p "../../_site/docs/$folder_name"
             fi
