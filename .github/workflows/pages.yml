@@ -90,7 +90,6 @@ jobs:
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
             cd "${subfolder}"
-            echo "${subfolder}"
             bundle install
             bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/3.0.0-SNAPSHOT/" --config "./_config.yml"
             if [ ! -d "../../_site/docs/$folder_name" ]; then
