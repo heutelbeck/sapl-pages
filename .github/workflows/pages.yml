@@ -47,15 +47,7 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
-      - name: Build with Jekyll
-        # Outputs to the './_site' directory by default
-        run: |
-          #gem install bundler
-          #bundle install
-          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}" --config "_config.yml"
-        env:
-          JEKYLL_ENV: production
-      - name: Build Reference
+      - name: Configure referenceTemplate
         run: |
           template_path="./referenceTemplate"
           build_path="./buildReference"
@@ -85,7 +77,24 @@ jobs:
           echo "  ---" >> ./_site/documentation.md
           echo "" >> ./_site/documentation.md
           echo "  ## [Latest Release 2.0.1](/docs/2.0.1/sapl-reference.html)" >> ./_site/documentation.md
-          
+          find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
+            folder_name=$(basename "$subfolder")
+            echo "  ## [Latest Release $folder_name](/docs/$folder_name)" >> ../../_site/documentation.md
+          done
+      - name: Build with Jekyll
+        # Outputs to the './_site' directory by default
+        run: |
+          #gem install bundler
+          #bundle install
+          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}" --config "_config.yml"
+        env:
+          JEKYLL_ENV: production
+      - name: Build Reference
+        run: |
+          template_path="./referenceTemplate"
+          build_path="./buildReference"
+          md_folder_path="./documentation-md"
+
           # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
@@ -96,9 +105,7 @@ jobs:
               mkdir -p "../../_site/docs/$folder_name"
             fi
             cp -r ./_site/* ../../_site/docs/$folder_name/
-            echo "  ## [Latest Release $folder_name](/docs/$folder_name)" >> ../../_site/documentation.md
           done
-          
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
