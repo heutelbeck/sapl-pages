@@ -46,6 +46,7 @@ minima:
 #
 exclude:
   - referenceTemplate/
+  - buildReference/
   - documentation-md/
 #   - .sass-cache/
 #   - .jekyll-cache/
