@@ -69,7 +69,9 @@ jobs:
           find "$build_path" -mindepth  1 -type d | while read -r subfolder; do
             # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
             cp -r "${template_path}/." "${subfolder}"
+            ls ${subfolder}
             mv "${subfolder}/images/"* "${subfolder}/assets/sapl_reference_images/"
+            ls ${subfolder}
             rm -rf "${subfolder}/images"
           done
           
