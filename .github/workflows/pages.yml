@@ -95,7 +95,7 @@ jobs:
             EOL
             #Fuege der Selectbox pro Version ein Option-Element hinzu
             find "$build_path" -mindepth  1 -maxdepth 1 -type d | sort -r | while read -r subfolder; do
-              echo "<option value="https://sapl.io/docs/$folder_name" selected>$folder_name</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+              echo "<option value=\"https://sapl.io/docs/$folder_name\" selected>$folder_name</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
             done
             echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
           done
