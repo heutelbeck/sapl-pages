@@ -71,7 +71,7 @@ jobs:
             cp -r "${template_path}/." "${subfolder}"
             echo "first" && ls -hal "${subfolder}/images/"
             echo "next" && ls -hal "${subfolder}/assets/sapl_reference_images"
-            mv "${subfolder}/images/*" "${subfolder}/assets/sapl_reference_images/"
+            cp -r "${subfolder}/images/." "${subfolder}/assets/sapl_reference_images/"
             echo "second" && ls -hal "${subfolder}/images/"
             rm -rf "${subfolder}/images"
           done
