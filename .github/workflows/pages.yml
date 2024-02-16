@@ -79,7 +79,6 @@ jobs:
           title: Docs
           permalink: /documentation
           ---
-          
           EOL
           
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | sort -r | while read -r subfolder; do
