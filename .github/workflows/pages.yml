@@ -66,24 +66,13 @@ jobs:
           
           # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner kopieren und Dateien aus dem Image-Ordner in den \assets\sapl_reference_images Ordner verschieben und
           # den Image-ordner loeschen
-          echo "find" && find "$build_path" -mindepth 1 -maxdepth 1 -type d
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
             cp -r "${template_path}/." "${subfolder}"
-            echo "first" && ls -hal "${subfolder}/images/"
-            echo "next" && ls -hal "${subfolder}/assets/sapl_reference_images"
             cp -r "${subfolder}/images/." "${subfolder}/assets/sapl_reference_images/"
-            echo "second" && ls -hal "${subfolder}/images/"
             rm -rf "${subfolder}/images"
           done
           
-          #echo '---' > ./documentation.md
-          #echo " layout: page" >> ./documentation.md
-          #echo "  title: Docs" >> ./documentation.md
-          #echo "  permalink: /documentation" >> ./documentation.md
-          #echo '---' >> ./documentation.md
-          #echo "" >> ./documentation.md
-          #echo "  ## [Latest Release 2.0.1](/docs/2.0.1/sapl-reference.html)" >> ./documentation.md
           cat >./documentation.md <<EOL
           ---
           layout: page
@@ -91,12 +80,24 @@ jobs:
           permalink: /documentation
           ---
           
-          ## [Latest Release 2.0.1](/docs/2.0.1/sapl-reference.html)
           EOL
           
-          find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
+          find "$build_path" -mindepth  1 -maxdepth 1 -type d | sort -r | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
-            echo "  ## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
+            echo "## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
+            
+            #Erstellt SAPL-spezifischen Back-Button und Selectbox aller Versionen
+            cat >${subfolder}/_includes/components/sapl_site_nav.html <<EOL
+            <a href="{{ site.content.redirectBackToLink }}" class="site-title fs-3">
+            <img src="/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon.svg" title="back to {% include title.html %}">
+            </a>
+            <select class="selectbox" id="saplversion" name="saplversion" style="width: 150px;" onchange="document.location.href=this.value">
+            EOL
+            #Fuege der Selectbox pro Version ein Option-Element hinzu
+            find "$build_path" -mindepth  1 -maxdepth 1 -type d | sort -r | while read -r subfolder; do
+              echo "<option value="https://sapl.io/docs/$folder_name" selected>$folder_name</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+            done
+            echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
           done
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
@@ -115,13 +116,19 @@ jobs:
           # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
-            cd "${subfolder}"
-            bundle install
-            bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/${folder_name}/" --config "./_config.yml"
-            if [ ! -d "../../_site/docs/$folder_name" ]; then
-              mkdir -p "../../_site/docs/$folder_name"
+            #Die Version 2.0.1 basiert nicht auf MD-Dateien, daher Ausnahme
+            if [ "${folder_name}" != "2.0.1" ]
+            then
+              cd "${subfolder}"
+              bundle install
+              bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/${folder_name}/" --config "./_config.yml"
+              if [ ! -d "../../_site/docs/$folder_name" ]; then
+                mkdir -p "../../_site/docs/$folder_name"
+              fi
+              cp -r ./_site/* ../../_site/docs/$folder_name/
+            else
+              cp -r $subfolder ./_site/docs/
             fi
-            cp -r ./_site/* ../../_site/docs/$folder_name/
           done
         env:
           JEKYLL_ENV: production
