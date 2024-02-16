@@ -66,8 +66,8 @@ jobs:
           
           # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner kopieren und Dateien aus dem Image-Ordner in den \assets\sapl_reference_images Ordner verschieben und
           # den Image-ordner loeschen
-          echo "find" && find "$build_path" -mindepth  1 -type d
-          find "$build_path" -mindepth  1 -maxdepth 1  1 -type d | while read -r subfolder; do
+          echo "find" && find "$build_path" -mindepth 1 -maxdepth 1 -type d
+          find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
             cp -r "${template_path}/." "${subfolder}"
             echo "first" && ls -hal "${subfolder}/images/"
