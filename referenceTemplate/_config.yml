@@ -119,7 +119,7 @@ heading_anchors: true
 
 # Aux links for the upper right navigation
 aux_links:
-  "SAPL-Version: 3.0.0-Snapshot":
+  "SAPL-Version: XXXSAPLVERSIONXXX":
     - "https://github.com/heutelbeck/sapl-policy-engine"
 
 # Makes Aux links open in a new tab. Default is false

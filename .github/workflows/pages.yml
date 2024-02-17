@@ -94,6 +94,8 @@ jobs:
               echo "<option value=\"https://sapl.io/docs/$folder_name2\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
             done
             echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+
+            sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/_config.yml
           done
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
