@@ -133,6 +133,7 @@ jobs:
                 mkdir -p "../../_site/docs/$folder_name"
               fi
               cp -r ./_site/* ../../_site/docs/$folder_name/
+              cd ../../
             else
               echo "THIRD" && ls -hal $build_path
               #cp -r $subfolder ./_site/docs/
