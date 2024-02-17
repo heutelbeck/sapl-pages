@@ -45,7 +45,7 @@ A statement within the body can either be a variable assignment which makes a va
 
 Sample Variable Assignment
 
-```
+```java
 var a_name = expression;
 ```
 
@@ -53,7 +53,7 @@ or a condition, i.e., an expression that evaluates to `true` or `false`.
 
 Sample Condition
 
-```
+```java
 a_name == "a_string";
 ```
 
@@ -65,7 +65,7 @@ If the body is missing (or does not contain any condition statement), the policy
 
 #### Variable Assignment
 
-A variable assignment starts with the keyword `var`, followed by an identifier under which the assigned value should be available, followed by `=` and an expression. The assignment can be followed by the optional keyword `schema` and one or more schema expressions separated by `,`. The schema expression(s) must evaluate to a valid JSON schema.
+A variable assignment starts with the keyword `var`, followed by an identifier under which the assigned value should be available, followed by `=` and an expression. The assignment can be followed by the optional keyword `schema` and one or more schema expressions separated by `,`. The schema expression(s) must evaluate to a valid JSON schema. The schema will only be used by the code completion while editing polices with a dedicated editor.
 
 After a variable assignment, the result of evaluating the expression can be used in later conditions within the same policy under the specified name. This is useful because it allows to execute time-consuming calculations or requests to external attribute stores only once, and the result can be used in multiple expressions. Additionally, it can make policies shorter and improve readability.
 
@@ -107,13 +107,7 @@ The original resource is accessible via the identifier `resource` and can be fil
 
 Transformation Example
 
-```
-transform 
-    resource |- { 
-        @.someValue : remove, 
-        @.anotherValue : filter.blacken 
-    }
-```
+transform resource |- { @.someValue : remove, @.anotherValue : filter.blacken }
 
 The example would remove the attribute `someValue` and blacken the value of the attribute `anotherValue`. The filtering functions are described in more detail [below](#filtering).
 
