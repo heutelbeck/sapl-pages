@@ -108,7 +108,7 @@ jobs:
               echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
 
               # Da die SAPL-Version an mehreren stellen eingesetzt werden muss, werden alle Dateien gesucht, die den zu ersetzenden String enthalten
-              grep -rl "XXXSAPLVERSIONXXX" "${build_path}" | while read -r file; do
+              grep -rl "XXXSAPLVERSIONXXX" "${subfolder}" | while read -r file; do
                 #sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/_config.yml
                 #sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/2_1_ReferenceArchitecture.md
                 sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${file}
