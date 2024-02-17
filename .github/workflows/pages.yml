@@ -117,15 +117,16 @@ jobs:
           template_path="./referenceTemplate"
           build_path="./buildReference"
           md_folder_path="./documentation-md"
-          echo "FIRST" && ls -hal
           # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
+            echo "build_path" && ls -hal $build_path
+            echo "subfolder" && ls -hal $subfolder
+            echo "folder_name: $folder_name" 
             #Die Version 2.0.1 basiert nicht auf MD-Dateien, daher Ausnahme
             if [ "${folder_name}" != "2.0.1" ]
             then
               cd "${subfolder}"
-              echo "SECOND" && ls -hal
               bundle install
               bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}/docs/${folder_name}/" --config "./_config.yml"
               if [ ! -d "../../_site/docs/$folder_name" ]; then
