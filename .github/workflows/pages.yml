@@ -67,10 +67,14 @@ jobs:
           # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner kopieren und Dateien aus dem Image-Ordner in den \assets\sapl_reference_images Ordner verschieben und
           # den Image-ordner loeschen
           find "$build_path" -mindepth  1 -maxdepth  1 -type d | while read -r subfolder; do
-            # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
-            cp -r "${template_path}/." "${subfolder}"
-            cp -r "${subfolder}/images/." "${subfolder}/assets/sapl_reference_images/"
-            rm -rf "${subfolder}/images"
+            folder_name=$(basename "$subfolder")
+            if [ "${folder_name}" != "2.0.1" ]
+            then
+              # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
+              cp -r "${template_path}/." "${subfolder}"
+              cp -r "${subfolder}/images/." "${subfolder}/assets/sapl_reference_images/"
+              rm -rf "${subfolder}/images"
+            fi
           done
           
           cat >./documentation.md <<EOL
@@ -85,17 +89,20 @@ jobs:
             folder_name=$(basename "$subfolder")
             echo "## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
           
-            # Erstellt SAPL-spezifischen Back-Button und Selectbox aller Versionen
-            echo "<a href=\"{{ site.content.redirectBackToLink }}\" class=\"site-title fs-3\"><img src=\"/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon_transparent.svg\" title=\"back to {% include title.html %}\"></a>" >> ${subfolder}/_includes/components/sapl_site_nav.html
-            echo "<select class=\"selectbox\" id=\"saplversion\" name=\"saplversion\" style=\"width:  150px;\" onchange=\"document.location.href=this.value\">" >> ${subfolder}/_includes/components/sapl_site_nav.html
-            # Fuege der Selectbox pro Version ein Option-Element hinzu
-            find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder2; do
-              folder_name2=$(basename "$subfolder2")
-              echo "<option value=\"https://sapl.io/docs/$folder_name2\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
-            done
-            echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+            if [ "${folder_name}" != "2.0.1" ]
+            then
+              # Erstellt SAPL-spezifischen Back-Button und Selectbox aller Versionen
+              echo "<a href=\"{{ site.content.redirectBackToLink }}\" class=\"site-title fs-3\"><img src=\"/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon_transparent.svg\" title=\"back to {% include title.html %}\"></a>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+              echo "<select class=\"selectbox\" id=\"saplversion\" name=\"saplversion\" style=\"width:  150px;\" onchange=\"document.location.href=this.value\">" >> ${subfolder}/_includes/components/sapl_site_nav.html
+              # Fuege der Selectbox pro Version ein Option-Element hinzu
+              find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder2; do
+                folder_name2=$(basename "$subfolder2")
+                echo "<option value=\"https://sapl.io/docs/$folder_name2\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+              done
+              echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
 
-            sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/_config.yml
+              sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/_config.yml
+            fi
           done
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
