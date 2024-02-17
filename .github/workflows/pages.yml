@@ -86,7 +86,7 @@ jobs:
             echo "## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
           
             # Erstellt SAPL-spezifischen Back-Button und Selectbox aller Versionen
-            echo "<a href=\"{{ site.content.redirectBackToLink }}\" class=\"site-title fs-3\"><img src=\"/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon.svg\" title=\"back to {% include title.html %}\"></a>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+            echo "<a href=\"{{ site.content.redirectBackToLink }}\" class=\"site-title fs-3\"><img src=\"/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon_transparent.svg\" title=\"back to {% include title.html %}\"></a>" >> ${subfolder}/_includes/components/sapl_site_nav.html
             echo "<select class=\"selectbox\" id=\"saplversion\" name=\"saplversion\" style=\"width:  150px;\" onchange=\"document.location.href=this.value\">" >> ${subfolder}/_includes/components/sapl_site_nav.html
             # Fuege der Selectbox pro Version ein Option-Element hinzu
             find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder2; do
