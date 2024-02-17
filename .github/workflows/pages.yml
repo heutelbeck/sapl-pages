@@ -97,7 +97,13 @@ jobs:
               # Fuege der Selectbox pro Version ein Option-Element hinzu
               find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder2; do
                 folder_name2=$(basename "$subfolder2")
-                echo "<option value=\"https://sapl.io/docs/$folder_name2\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                # Abfrage, um in Selectbox die richtige Referenzversion anzuzeigen
+                if [ $folder_name == $folder_name2 ]
+                then
+                  echo "<option value=\"https://sapl.io/docs/$folder_name2\" selected>$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                else
+                  echo "<option value=\"https://sapl.io/docs/$folder_name2\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                fi
               done
               echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
 
@@ -120,9 +126,6 @@ jobs:
           # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
-            echo "build_path" && ls -hal $build_path
-            echo "subfolder" && ls -hal $subfolder
-            echo "folder_name: $folder_name" 
             #Die Version 2.0.1 basiert nicht auf MD-Dateien, daher Ausnahme
             if [ "${folder_name}" != "2.0.1" ]
             then
@@ -136,7 +139,7 @@ jobs:
               cd ../../
             else
               echo "THIRD" && ls -hal $build_path
-              #cp -r $subfolder ./_site/docs/
+              cp -r $subfolder ./_site/docs/
               ls -hal ./_site/docs/
             fi
           done
