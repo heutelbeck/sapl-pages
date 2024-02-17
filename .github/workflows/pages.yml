@@ -112,6 +112,7 @@ jobs:
                 echo "BUILD-PATH" && ls -hal $build_path
                 echo "SUBFOLDER" && ls -hal $subfolder
                 echo "FILE: $file"
+                cat  $subfolder/index.md
                 #sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/_config.yml
                 #sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/2_1_ReferenceArchitecture.md
                 sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${file}
