@@ -133,8 +133,8 @@ jobs:
               fi
               cp -r ./_site/* ../../_site/docs/$folder_name/
             else
-              echo "THIRD" && ls -hal $subfolder
-              cp -r $subfolder ./_site/docs/
+              echo "THIRD" && ls -hal $build_path
+              #cp -r $subfolder ./_site/docs/
               ls -hal ./_site/docs/
             fi
           done
