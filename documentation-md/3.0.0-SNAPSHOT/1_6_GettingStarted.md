@@ -18,21 +18,13 @@ In addition, SAPL provides an embedded PDP, including an embedded PRP with a fil
 - SAPL requires Java 11 or newer and is compatible with Java 17.
 
   ```xml
-  <properties> 
-    <java.version>11</java.version> 
-    <maven.compiler.source>${java.version}</maven.compiler.source> 
-    <maven.compiler.target>${java.version}</maven.compiler.target> 
-  </properties>
+  <properties> <java.version>11</java.version> <maven.compiler.source>${java.version}</maven.compiler.source> <maven.compiler.target>${java.version}</maven.compiler.target> </properties>
   ```
 
 - Add a SAPL dependency to the application. When using Maven one can add the following dependencies to the project’s `pom.xml`:
 
   ```xml
-  <dependency> 
-    <groupId>io.sapl</groupId> 
-    <artifactId>sapl-pdp-embedded</artifactId> 
-    <version>3.0.0-SNAPSHOT</version> 
-  </dependency>
+  <dependency> <groupId>io.sapl</groupId> <artifactId>sapl-pdp-embedded</artifactId> <version>3.0.0-SNAPSHOT</version> </dependency>
   ```
 
 - Add the Maven Central snapshot repository to the `pom.xml`:
