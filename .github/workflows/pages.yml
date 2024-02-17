@@ -61,22 +61,22 @@ jobs:
             mkdir -p $build_path
           fi
           
-          # Ordner mit Referenz-Dateien in Build-Ordner kopieren
+          # Ordner der einzelnen Referenz-Versionen in Build-Ordner kopieren
           cp -r "$md_folder_path/"* "$build_path"
           
-          # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner kopieren und Dateien aus dem Image-Ordner in den \assets\sapl_reference_images Ordner verschieben und
+          # Inhalt des Referenz-Template-Ordners in jeden Build-Unterordner(=Referenzversionen) kopieren und Dateien aus dem Images-Ordner in den \assets\sapl_reference_images Ordner verschieben und
           # den Image-ordner loeschen
           find "$build_path" -mindepth  1 -maxdepth  1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
             if [ "${folder_name}" != "2.0.1" ]
             then
-              # Kopiere den Inhalt des ReferenzTemplate-Ordners in jeden gefundenen Unterordner
               cp -r "${template_path}/." "${subfolder}"
               cp -r "${subfolder}/images/." "${subfolder}/assets/sapl_reference_images/"
               rm -rf "${subfolder}/images"
             fi
           done
           
+          # Aufbau einer neuen Documentation-Seite, in der zu den Referenzen-Seiten verlinkt wird, zuerst nur Front-Matter
           cat >./documentation.md <<EOL
           ---
           layout: page
@@ -87,17 +87,18 @@ jobs:
           
           find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
+            # Erstellen der Links
             echo "## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
           
             if [ "${folder_name}" != "2.0.1" ]
             then
-              # Erstellt SAPL-spezifischen Back-Button und Selectbox aller Versionen
+              # Erstellt fuer jede zu bauende Referenz-Seite einen SAPL-spezifischen Back-Button und eine Selectbox die alle Referenz-Versionen enthaelt
               echo "<a href=\"{{ site.content.redirectBackToLink }}\" class=\"site-title fs-3\"><img src=\"/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon_transparent.svg\" title=\"back to {% include title.html %}\"></a>" >> ${subfolder}/_includes/components/sapl_site_nav.html
               echo "<select class=\"selectbox\" id=\"saplversion\" name=\"saplversion\" style=\"width:  150px;\" onchange=\"document.location.href=this.value\">" >> ${subfolder}/_includes/components/sapl_site_nav.html
-              # Fuege der Selectbox pro Version ein Option-Element hinzu
+              # Fuege der Selectbox fuer Referenz-Version ein Option-Element hinzu
               find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder2; do
                 folder_name2=$(basename "$subfolder2")
-                # Abfrage, um in Selectbox die richtige Referenzversion anzuzeigen
+                # Hiermit wird sichergestellt, dass in der Selectbox die passende Version als Standard gesetzt und angezeigt wird
                 if [ $folder_name == $folder_name2 ]
                 then
                   echo "<option value=\"https://sapl.io/docs/$folder_name2\" selected>$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
@@ -107,10 +108,9 @@ jobs:
               done
               echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
 
-              # Da die SAPL-Version an mehreren stellen eingesetzt werden muss, werden alle Dateien gesucht, die den zu ersetzenden String enthalten
+              # Innerhalb einer Referenz-Seite wird die SAPL-Version an mehreren Stellen benoetigt. An diesen Stellen wurde der Platzhalter "XXXSAPLVERSIONXXX" hinterleget.
+              # Hier wird innerhalb eines Referenz-Ordners nach diesen Stellen gesucht und durch den Namen des Referenz-Ordners(=SAPL-Referenzversion) ersetzt.
               grep -rl "XXXSAPLVERSIONXXX" "${subfolder}" | while read -r file; do
-                #sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/_config.yml
-                #sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${subfolder}/2_1_ReferenceArchitecture.md
                 sed -i "s/XXXSAPLVERSIONXXX/$folder_name/g" ${file}
               done
             fi
@@ -128,7 +128,8 @@ jobs:
           template_path="./referenceTemplate"
           build_path="./buildReference"
           md_folder_path="./documentation-md"
-          # Wechsel in die Build-Unterordner und mit Jekyl die Seite erstellen
+
+          # Wechsel in die Build-Unterordner, um mit Jekyl die Referenzseiten zu erstellen
           find "$build_path" -mindepth  1 -maxdepth 1 -type d | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
             #Die Version 2.0.1 basiert nicht auf MD-Dateien, daher Ausnahme
@@ -143,9 +144,7 @@ jobs:
               cp -r ./_site/* ../../_site/docs/$folder_name/
               cd ../../
             else
-              echo "THIRD" && ls -hal $build_path
               cp -r $subfolder ./_site/docs/
-              ls -hal ./_site/docs/
             fi
           done
         env:
