@@ -42,8 +42,8 @@ jobs:
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Create symlink
         run: |
-          latest_doc=$(ls -1d docs/*/ | sort | tail -n 1)
-          ln -s $(basename $latest_doc) docs/latest
+          latest_doc=$(ls -1d documentation-md/*/ | sort | tail -n 1)
+          ln -s $(basename $latest_doc) documentation-md/latest
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
