@@ -54,7 +54,7 @@ A basic value expression is the simplest type. The value is denoted in the corre
 
 For denoting objects, the keys need to be strings, and the values can be any expression, e.g.
 
-```cs
+```json
 {
     "id" : (3+5),
     "name" : functions.generate_name()
@@ -63,7 +63,7 @@ For denoting objects, the keys need to be strings, and the values can be any exp
 
 For arrays, the items can be any expression, e.g.
 
-```cs
+```json
 [
     (3+5),
     subject.name
@@ -518,7 +518,7 @@ Array :: Expression
 
 This `Expression` represents the replacement template. In this expression, basic relative expressions (starting with `@`) can be used to access the attributes of the current array item. `@` references the array item, which is currently being replaced. `Array` must evaluate to an array. For each item of `Array`, `Expression` is evaluated, and the item is replaced by the result.
 
-```bash
+```
 Example
 Given the variable array contains the following array:
 
