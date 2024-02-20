@@ -81,7 +81,7 @@ jobs:
           cat >./documentation.md <<EOL
           ---
           layout: page
-          title: Docs
+          title: Documentation
           permalink: /documentation
           ---
           EOL
