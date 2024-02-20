@@ -8,7 +8,7 @@ has_children: true
 has_toc: false
 ---
 
-# SAPL Reference Version XXXSAPLVERSIONXXX
+# SAPL Reference Version 3.0.0-SNAPSHOT
 <!--
 <button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
 -->
