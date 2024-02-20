@@ -518,7 +518,7 @@ Array :: Expression
 
 This `Expression` represents the replacement template. In this expression, basic relative expressions (starting with `@`) can be used to access the attributes of the current array item. `@` references the array item, which is currently being replaced. `Array` must evaluate to an array. For each item of `Array`, `Expression` is evaluated, and the item is replaced by the result.
 
-```cs
+```bash
 Example
 Given the variable array contains the following array:
 
