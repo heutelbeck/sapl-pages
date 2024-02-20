@@ -21,7 +21,7 @@
               {%- assign page = site.pages | where: "path", path | first -%}
               {%- if page.title -%}
                 {% unless page.exclude %}
-                  {% if page.title == "docs" %}
+                  {% if page.title == "Documentation" %}
                     <a class="page-link" href="{{ page.url | relative_url }}">Documentation</a>
                   {% else %}
                     <a class="page-link" href="{{ page.url | relative_url }}">{{ page.title | escape }}</a>
