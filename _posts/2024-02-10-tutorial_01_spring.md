@@ -69,7 +69,7 @@ Name your project template as you like. SAPL is compatible with Java 11 and high
 
  Your Initializr settings should now look something like this:
 
-![Spring Initializr.png](.attachments.594717/Spring%20Initializr%20%282%29.png)
+![Spring Initializr.png](/assets/tutorial_01/spring_initializr.png)
 
 Now click "GENERATE." Your browser will download the project template as a ".zip" file.
 
