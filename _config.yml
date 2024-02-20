@@ -48,6 +48,7 @@ exclude:
   - referenceTemplate/
   - buildReference/
   - documentation-md/
+  - docs/latest/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
