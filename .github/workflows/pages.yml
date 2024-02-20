@@ -43,7 +43,7 @@ jobs:
       - name: Create symlink
         run: |
           latest_doc=$(ls -1d documentation-md/*/ | sort | tail -n 1)
-          ln -s $(basename $latest_doc) documentation-md/latest
+          ln -s $(basename $latest_doc) docs/latest
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
