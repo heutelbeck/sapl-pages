@@ -54,7 +54,7 @@ A basic value expression is the simplest type. The value is denoted in the corre
 
 For denoting objects, the keys need to be strings, and the values can be any expression, e.g.
 
-```json
+```python
 {
     "id" : (3+5),
     "name" : functions.generate_name()
@@ -63,7 +63,7 @@ For denoting objects, the keys need to be strings, and the values can be any exp
 
 For arrays, the items can be any expression, e.g.
 
-```json
+```python
 [
     (3+5),
     subject.name
@@ -392,7 +392,7 @@ Replaces each char of an attribute or item (which must be a string) by `replacem
 > `filter.replace` and `filter.blacken` are part of the library `filter`. Importing this library through `import filter` makes the functions available under their simple names.
 
 
-```
+```python
 Example
 We take the following object:
 
@@ -414,7 +414,7 @@ If the function filter.blacken is applied to value without specifying any argume
 
 A simple filter component applies a **filter function** to the preceding value. The syntax is:
 
-```
+```python
 BasicExpression |- Function
 ```
 
@@ -422,11 +422,11 @@ BasicExpression |- Function
 
 In case `BasicExpression` evaluates to an array, the whole array is passed to the filter function. The **keyword** `each` before `Function` can be used to apply the function to each array item instead:
 
-```
+```python
 Expression |- each Function
 ```
 
-```
+```python
 Example
 
 Let’s assume our resource contains an array of credit card numbers:
@@ -456,7 +456,7 @@ Extended filtering can be used to state more precisely how a value should be alt
 
 E.g., the expression
 
-```
+```python
 resource |- { @.credit_card : blacken }
 ```
 
@@ -464,7 +464,7 @@ would return the original resource except for the value of the attribute `credit
 
 Extended filtering components consist of one or more **filter statements**. Each filter statement has a target expression and specifies a filter function that shall be applied to the attribute value (or to each of its items if the keyword `each` is used). The basic syntax is:
 
-```
+```python
 Expression |- { 
 				FilterStatement, 
 				FilterStatement, 
@@ -474,7 +474,7 @@ Expression |- {
 
 The syntax of a filter statement is:
 
-```
+```python
 each TargetRelativeExpression : Function
 ```
 
@@ -504,7 +504,7 @@ It is possible to define a subtemplate for an array to replace each item of the 
 
 E.g., the basic expression:
 
-```
+```python
 resource.patients :: { "name" : @.name }
 ```
 
@@ -512,13 +512,13 @@ This expression would return the `patients` array from the resource but with eac
 
 The subtemplate is denoted after a double colon:
 
-```
+```python
 Array :: Expression
 ```
 
 This `Expression` represents the replacement template. In this expression, basic relative expressions (starting with `@`) can be used to access the attributes of the current array item. `@` references the array item, which is currently being replaced. `Array` must evaluate to an array. For each item of `Array`, `Expression` is evaluated, and the item is replaced by the result.
 
-```
+```python
 Example
 Given the variable array contains the following array:
 
