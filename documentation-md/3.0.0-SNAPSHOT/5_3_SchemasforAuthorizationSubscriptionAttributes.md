@@ -25,7 +25,7 @@ A SAPL document defines a schema by stating the keyword of the subscription elem
 
 Example schema definition:
 
-```
+```python
 subject enforced schema 
        {
             "$id": "https://example.com/person.schema.json",

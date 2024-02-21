@@ -16,8 +16,8 @@ Extending the example above, in a real-world application, there will be multiple
 ---
 
 *Introduction - Sample Policy 2*
-{: info }
-> ```asciidoc
+{: .note }
+> ```python
 > policy "doctors_get_patient"
 > permit
 >   action == "HTTP:GET" &
