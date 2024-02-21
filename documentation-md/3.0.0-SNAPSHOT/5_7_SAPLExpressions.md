@@ -476,10 +476,10 @@ would return the original resource except for the value of the attribute `credit
 Extended filtering components consist of one or more **filter statements**. Each filter statement has a target expression and specifies a filter function that shall be applied to the attribute value (or to each of its items if the keyword `each` is used). The basic syntax is:
 
 ```python
-Expression |- { 
-				FilterStatement, 
-				FilterStatement, 
-				... 
+Expression |- {
+            FilterStatement,
+            FilterStatement,
+            ...
 }
 ```
 
