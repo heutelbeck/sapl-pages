@@ -1178,7 +1178,7 @@ The concept is the same as with the `findById` method. The parameter `subject = 
 
 To see all accessible books write a policy as follows:
 
-```
+```python
 import time.*
 policy "filter content in collection"
 permit action == "list books"
