@@ -260,8 +260,8 @@ A wildcard step can be applied to an object or an array. When applied to an obje
 > Applied to an object
 >```python
 > {
->      "key1":"value1",
->      "key2":"value2"
+>   "key1":"value1",
+>   "key2":"value2"
 > }
 >```
 > the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
@@ -275,18 +275,18 @@ As attributes of an object are not sorted, the order of items in the result arra
 
 {: .note }
 > Applied to an `object`
-> 
+>
 >```python
 > {
->      "key" : "value1",
->      "anotherkey" : {
->          "key" : "value2"
->      }
+>   "key" : "value1",
+>   "anotherkey" : {
+>       "key" : "value2"
+>   }
 > }
 >```
 >
 > The selection step `object..key` returns the following array: `["value1", "value2"]` (any attribute value with key `key`, the items may be in a different order).
-> 
+>
 > The wildcard selection step `object..` **or** `object..[]` returns `["value1", {"key":"value2"}, "value2"]` (recursively each attribute value and array item in the whole structure `object`, the sorting may be different).
 
 
@@ -335,10 +335,10 @@ Although arrays do not have attributes (they have items), a key step can be appl
 >
 >```python
 > {
-> "array":\[
-> {"key":"value1"},
-> {"key":"value2"}
-> \]
+>   "array":[
+>       {"key":"value1"},
+>       {"key":"value2"}
+>   ]
 > }
 >```
 >
