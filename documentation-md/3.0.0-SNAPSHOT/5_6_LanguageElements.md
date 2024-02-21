@@ -19,7 +19,7 @@ An identifier only consists of alphanumeric characters, `_` and `$`, and must no
 
 Valid Identifiers
 
-```bash
+```
 a_long_name
 aLongName
 $name
@@ -29,7 +29,7 @@ name123
 
 Invalid Identifiers
 
-```bash
+```
 a#name
 1name
 ```
@@ -48,7 +48,7 @@ SAPL supports single-line and multi-line comments. A single-line comment starts 
 
 Sample Single-Line Comment
 
-```bash
+```
 policy "test" // a policy for testing
 ```
 
@@ -56,7 +56,7 @@ Multi-line comments start with `/*` and end with `*/`. Everything in between is 
 
 Sample Multi-Line Comment
 
-```bash
+```
 policy "test"
 /* A policy for testing.
 Remove before deployment! */
