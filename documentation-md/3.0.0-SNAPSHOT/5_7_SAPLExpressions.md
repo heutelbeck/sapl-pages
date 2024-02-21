@@ -198,7 +198,7 @@ Given that the following object is stored in the variable `object`:
 
 Structure of `object`
 
-```JSON
+```json
 {
     "key" : "value1",
     "array1" : [
