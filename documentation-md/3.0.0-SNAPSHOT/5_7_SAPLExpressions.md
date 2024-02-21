@@ -429,7 +429,7 @@ Expression |- each Function
 ```python
 Example
 
-Let’s assume our resource contains an array of credit card numbers:
+Let us assume our resource contains an array of credit card numbers:
 
 {
     "numbers": [
