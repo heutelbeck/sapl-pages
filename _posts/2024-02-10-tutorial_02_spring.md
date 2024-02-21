@@ -1183,16 +1183,16 @@ import time.*
 policy "filter content in collection"
 permit action == "list books"
 obligation
-	{
-		"type" : "jsonContentFilterPredicate",
-		"conditions" : [
-						{
-							"path" : "$.ageRating",
-							"type" : "<=",
-							"value" : timeBetween(subject.birthday, dateOf(|<now>), "years")
-						}
-					   ]
-	}
+{
+  "type" : "jsonContentFilterPredicate",
+  "conditions" : [
+                 {
+                   "path" : "$.ageRating",
+                   "type" : "<=",
+                   "value" : timeBetween(subject.birthday, dateOf(|<now>), "years")
+                 }
+                 ]
+}
 ```
 
 We use the `ContentFilterPredicateProvider` class that is already provided in the SAPL engine. This class can be used to filter a JSON object and extract nodes that match the specified conditions.
