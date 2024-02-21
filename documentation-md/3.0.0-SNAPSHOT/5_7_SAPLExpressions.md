@@ -257,7 +257,14 @@ An expression step returns the value of an attribute with a key or an array item
 A wildcard step can be applied to an object or an array. When applied to an object, it returns an array containing all attribute values. As attributes of an object have no order, the sorting of the result is not defined. When applied to an array, the step just leaves the array untouched.
 
 {: .note }
-> Applied to an object `{"key1":"value1", "key2":"value2"}`, the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
+> Applied to an object
+>>
+>> {
+>>      "key1":"value1",
+>>      "key2":"value2"
+>> }
+>>
+> the selection step `.*` or `[*]` returns the following array: `["value1", "value2"]` (possibly with a different sorting of the items). Applied to an array `[1, 2, 3]`, the selection step `.` **or** `[]` returns the original array `[1, 2, 3]`.
 
 
 #### Recursive Descent Step `..key`, `..["key"]`, `..[1]`, `..*` or `..[*]`
@@ -268,14 +275,14 @@ As attributes of an object are not sorted, the order of items in the result arra
 
 {: .note }
 > Applied to an `object`
->
-> {
-> "key" : "value1",
-> "anotherkey" : {
-> "key" : "value2"
-> }
-> }
-> 
+>>
+>> {
+>>      "key" : "value1",
+>>      "anotherkey" : {
+>>          "key" : "value2"
+>>      }
+>> }
+>>
 > The selection step `object..key` returns the following array: `["value1", "value2"]` (any attribute value with key `key`, the items may be in a different order).
 > 
 > The wildcard selection step `object..` **or** `object..[]` returns `["value1", {"key":"value2"}, "value2"]` (recursively each attribute value and array item in the whole structure `object`, the sorting may be different).
