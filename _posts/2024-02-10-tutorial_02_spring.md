@@ -743,17 +743,17 @@ Now go to <http://localhost:8080/logout> and log out. Then log in as Zoe and try
 The application denies access, and the log looks like this:
 
 ```
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-21T20:20:50.669216100Z
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["only bob may see individual book entries"]
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Name        : "only bob may see individual book entries"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: { ... }
+.ReportingDecisionInterceptor     : Timestamp   : 2024-01-21T20:20:50.669216100Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["only bob may see individual book entries"]
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "only bob may see individual book entries"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : false
 ```
 
 As you can see, there are several differences in the decision-making process of the PDP. First, let us examine what leads to the fact that there are no applicable (matching) documents when accessing `/api/books` or after a successful login.
@@ -881,45 +881,45 @@ Finally, the `age` is compared with the `ageRating` and the policy returns `true
 For example, if you log in as Zoe and access the first book, the logs will look similar to this:
 
 ```
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] birthday     :  "2007-01-04"
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] today        :  "2024-01-24"
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age          :  17
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age rating   :  0
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] is older     :  true
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2007-01-04"},"action":"read book","resource":{"id":1,"name":"Clifford: It's Pool Time!","ageRating":0},"environment":null}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T09:49:35.745099400Z
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age"]
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+functions.LoggingFunctionLibrary  : [SAPL] birthday     :  "2007-01-04"
+functions.LoggingFunctionLibrary  : [SAPL] today        :  "2024-01-24"
+functions.LoggingFunctionLibrary  : [SAPL] age          :  17
+functions.LoggingFunctionLibrary  : [SAPL] age rating   :  0
+functions.LoggingFunctionLibrary  : [SAPL] is older     :  true
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2007-01-04"},"action":"read book","resource":{"id":1,"name":"Clifford: It's Pool Time!","ageRating":0},"environment":null}
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
+.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T09:49:35.745099400Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["check age"]
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "check age"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : true
 ```
 
 However, if Alice attempts to access book four, access will be denied because the policy is not applicable, i.e., not all rules evaluate to `true`:
 
 ```
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] birthday     :  "2021-01-03"
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] today        :  "2024-01-23"
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age          :  3
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age rating   :  14
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] is older     :  false
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-03"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14},"environment":null}
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T09:54:43.202487200Z
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age"]
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age"
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
+functions.LoggingFunctionLibrary  : [SAPL] birthday     :  "2021-01-03"
+functions.LoggingFunctionLibrary  : [SAPL] today        :  "2024-01-23"
+functions.LoggingFunctionLibrary  : [SAPL] age          :  3
+functions.LoggingFunctionLibrary  : [SAPL] age rating   :  14
+functions.LoggingFunctionLibrary  : [SAPL] is older     :  false
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-03"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14},"environment":null}
+.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
+.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T09:54:43.202487200Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["check age"]
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "check age"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : false
 ```
 
 The policy can be written more compactly without logging and using an `import` statement:
@@ -1028,24 +1028,24 @@ But of course, because Alice is only three years old, the content of the age-ina
 The logs for this access attempt look like this:
 
 ```
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T10:36:21.144698500Z
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age compact","check age transform"]
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age compact"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age transform"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
+.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T10:36:21.144698500Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["check age compact","check age transform"]
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "check age compact"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : false
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "check age transform"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : true
 ```
 
 The PRP discovered both policies to be matching the subscription. The PDP starts to evaluate both and the `check age compact` policy evaluates to `NOT_APPLICABLE`, because Alice is not old enough to read "The Three-Body Problem". At the same time, the `check age transform` policy evaluates to `permit`. As a result, the authorization decision also contains a resource object, namely the transformed one. The PEP has, therefore, replaced the changed resource object.
@@ -1081,24 +1081,24 @@ Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
 Access will be denied, and the logs look as follows:
 
 ```
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Gotta catch 'em all!"},"environment":null}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T13:37:19.333683900Z
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age compact","check age transform"]
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age compact"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age transform"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Gotta catch 'em all!"},"environment":null}
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
+.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T13:37:19.333683900Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["check age compact","check age transform"]
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "check age compact"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : false
+.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     : Name        : "check age transform"
+.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     : Where       : true
 ```
 
 Despite the PDP's decision to permit access, it was still denied due to the obligation to log the access in the authorization decision. This is because SAPL expresses obligations and advice as arbitrary JSON objects and does not know which of them might be relevant in an application domain or how policies decide to describe them. Thus, the PEP was unable to understand and enforce the logging obligation, resulting in the denial of access.
@@ -1143,7 +1143,7 @@ This interface requires three methods:
 When logging in as Alice and attempting to access <http://localhost:8080/api/books/2> access will be granted, and the logs now contain the following line:
 
 ```
-[nio-8080-exec-9] i.s.s.s.LoggingConstraintHandlerProvider : Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'.
+.LoggingConstraintHandlerProvider : Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'.
 ```
 
 Let's try another example of an obligation.
@@ -1307,33 +1307,33 @@ Now, log in as Bob and access <http://localhost:8080/api/books/3>.
 Your logs look as follows:
 
 ```
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":3,"name":"Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight","ageRating":9,"content":"Some fantasy story."},"environment":null}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-02-09T08:14:37.063506800Z
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age set"]
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Policy Set Evaluation Result ===============
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age set"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "FIRST_APPLICABLE"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Name        : "check age transform set"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Target      : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Where       : false
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Information Point Data:
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Name        : "check age compact set"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Target      : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Where       : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Information Point Data:
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":3,"name":"Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight","ageRating":9,"content":"Some fantasy story."},"environment":null}
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
+.ReportingDecisionInterceptor     : Timestamp   : 2024-02-09T08:14:37.063506800Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["check age set"]
+.ReportingDecisionInterceptor     : Policy Set Evaluation Result ===============
+.ReportingDecisionInterceptor     : Name        : "check age set"
+.ReportingDecisionInterceptor     : Algorithm   : "FIRST_APPLICABLE"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     :    |Name        : "check age transform set"
+.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     :    |Decision    : {"decision":"NOT_APPLICABLE"}
+.ReportingDecisionInterceptor     :    |Target      : true
+.ReportingDecisionInterceptor     :    |Where       : false
+.ReportingDecisionInterceptor     :    |Policy Information Point Data:
+.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
+.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     :    |Name        : "check age compact set"
+.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     :    |Decision    : {"decision":"PERMIT"}
+.ReportingDecisionInterceptor     :    |Target      : true
+.ReportingDecisionInterceptor     :    |Where       : true
+.ReportingDecisionInterceptor     :    |Policy Information Point Data:
+.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
 ```
 
 The policies of the set are indented to distinguish them from the rest of the policies. They are ordered directly after the result of the *target expression*. Unlike top-level policies, the policies of a set explicitly follow the order specified in the set or are evaluated in this order. Combining a logical evaluation sequence with a `FIRST_APPLICABLE` algorithm can save time or avoid work for the PEP. In the case of book three, both policies are still evaluated.
@@ -1341,26 +1341,26 @@ The policies of the set are indented to distinguish them from the rest of the po
 Now access <http://localhost:8080/api/books/4>, you will get:
 
 ```
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-02-09T08:19:12.474766200Z
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age set"]
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Policy Set Evaluation Result ===============
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age set"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "FIRST_APPLICABLE"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Name        : "check age transform set"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Target      : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Where       : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Information Point Data:
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:19:12.4707663Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:19:12.470766300Z"}}
-[nio-8080-exec-7] i.s.s.s.LoggingConstraintHandlerProvider : Attention, bob accessed the book 'The Three-Body Problem'.
+.ReportingDecisionInterceptor     : --- The PDP made a decision ---
+.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
+.ReportingDecisionInterceptor     : Timestamp   : 2024-02-09T08:19:12.474766200Z
+.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
+.ReportingDecisionInterceptor     : Matches     : ["check age set"]
+.ReportingDecisionInterceptor     : Policy Set Evaluation Result ===============
+.ReportingDecisionInterceptor     : Name        : "check age set"
+.ReportingDecisionInterceptor     : Algorithm   : "FIRST_APPLICABLE"
+.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
+.ReportingDecisionInterceptor     : Target      : true
+.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
+.ReportingDecisionInterceptor     :    |Name        : "check age transform set"
+.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
+.ReportingDecisionInterceptor     :    |Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
+.ReportingDecisionInterceptor     :    |Target      : true
+.ReportingDecisionInterceptor     :    |Where       : true
+.ReportingDecisionInterceptor     :    |Policy Information Point Data:
+.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:19:12.4707663Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:19:12.470766300Z"}}
+.LoggingConstraintHandlerProvider : Attention, bob accessed the book 'The Three-Body Problem'.
 ```
 
 As you can see, the second policy in the set was not evaluated because the first policy was already applicable.
