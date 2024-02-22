@@ -26,7 +26,6 @@ Extending the example above, in a real-world application, there will be multiple
    subject.username.<user.profile>.function == "doctor";
 ```
 
-
 In *line 4* a regular expression is used for identifying a request to any patient’s data (operator `=~`). The authorization subscription resource must match this pattern for the policy to apply.
 
 The policy assumes that the user’s function is not provided in the authorization subscription but stored in the user’s profile. Accordingly, *line 6* accesses the attribute `user.profile` (using an attribute finder step `.<finder.name>`) to retrieve the profile of the user with the username provided in `subject.username`. The fetched profile is a JSON object with a property named `function`. The expression compares it to `"doctor"`.
