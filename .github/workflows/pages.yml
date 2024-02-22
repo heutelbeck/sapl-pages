@@ -44,7 +44,7 @@ jobs:
         run: |
           latest_doc=$(ls -1d documentation-md/*/ | sort | tail -n 1)
           echo $latest_doc
-          ln -s ../$latest_doc docs/latest
+          ln -s ../$latest_doc documentation/latest
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
