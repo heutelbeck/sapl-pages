@@ -147,9 +147,9 @@ jobs:
           JEKYLL_ENV: production
       - name: Create symlink
         run: |
-          latest_doc=$(ls -1d docs/*/ | sort | tail -n 1)
+          latest_doc=$(ls -1d ./_site/docs/*/ | sort | tail -n 1)
           echo $latest_doc
-          ln -s $(basename $latest_doc) docs/latest
+          ln -s $(basename $latest_doc) ./_site/docs/latest
           ls -hal docs/
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
