@@ -129,10 +129,10 @@ To use the Argon2 Password Encoder, add the following dependency:
 
 ```xml
     <dependency>
-		<groupId>org.bouncycastle</groupId>
-		<artifactId>bcpkix-jdk15on</artifactId>
-		<version>1.70</version>
-	</dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk15on</artifactId>
+        <version>1.70</version>
+    </dependency>
 ```
 
 Finally, create a new folder in the resources folder `src/main/resources` called `policies` and create a file called `pdp.json`:
@@ -166,8 +166,7 @@ First, define a book entity that contains an ID, a name, and a suitable age rati
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
-    
-	@Id
+    @Id
     Long id;
     String name;
     Integer ageRating;
@@ -178,11 +177,8 @@ Now, define a matching repository interface. For now, only include a `findAll`, 
 
 ```java
 public interface BookRepository {
-
     Iterable<Book> findAll();
-
     Optional<Book> findById(Long id);
-
     Book save(Book entity);
 }
 ```
@@ -314,11 +310,11 @@ public class DemoData implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // @formatter:off
-		bookRepository.save(new Book(1L, "Clifford: It's Pool Time!",                                  0));
-		bookRepository.save(new Book(2L, "The Rescue Mission: (Pokemon: Kalos Reader #1)",             4));
-		bookRepository.save(new Book(3L, "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight",  9));
-		bookRepository.save(new Book(4L, "The Three-Body Problem",                                    14));
-		// @formatter:on
+        bookRepository.save(new Book(1L, "Clifford: It's Pool Time!",                                  0));
+        bookRepository.save(new Book(2L, "The Rescue Mission: (Pokemon: Kalos Reader #1)",             4));
+        bookRepository.save(new Book(3L, "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight",  9));
+        bookRepository.save(new Book(4L, "The Three-Body Problem",                                    14));
+        // @formatter:on
     }
 
     private static LocalDate birthdayForAgeInYears(int age) {
@@ -389,7 +385,6 @@ The SAPL Spring Boot integration uses annotations to add PEPs to methods and cla
 
 ```java
 public interface BookRepository {
-
     Iterable<Book> findAll();
 
     @PreEnforce
@@ -410,13 +405,13 @@ Restart the application, log in, and navigate to <http://localhost:8080/api/book
 Inspect the console, and you will find out what happened behind the scenes. The logs should contain some statements similar to the following:
 
 ```
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"authorities":[],"details":{"remoteAddress":"0:0:0:0:0:0:0:1","sessionId":"EF114D1F3433826A178E7A97F6DFA7D2"},"authenticated":true,"principal":{"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2006-12-26"},"name":"zoe"},"action":{"http":{"characterEncoding":"UTF-8","protocol":"HTTP/1.1","scheme":"http","serverName":"localhost","serverPort":8080,"remoteAddress":"0:0:0:0:0:0:0:1","remoteHost":"0:0:0:0:0:0:0:1","remotePort":55905,"isSecure":false,"localName":"0:0:0:0:0:0:0:1","localAddress":"0:0:0:0:0:0:0:1","localPort":8080,"method":"GET","contextPath":"","requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661","requestedURI":"/api/books/1","requestURL":"http://localhost:8080/api/books/1","servletPath":"/api/books/1","headers":{"host":["localhost:8080"],"connection":["keep-alive"],"sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"dnt":["1"],"upgrade-insecure-requests":["1"],"user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],"sec-purpose":["prefetch;prerender"],"purpose":["prefetch"],"accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],"sec-fetch-site":["none"],"sec-fetch-mode":["navigate"],"sec-fetch-user":["?1"],"sec-fetch-dest":["document"],"accept-encoding":["gzip, deflate, br"],"accept-language":["de-DE,de;q=0.9"]},"cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],"locale":"de_DE","locales":["de_DE","de"]},"java":{"name":"findById","declaringTypeName":"io.sapl.springtutorial.domain.BookRepository","modifiers":["public"],"instanceof":[{"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},{"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},{"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},{"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},{"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},{"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},{"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},{"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},{"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},{"name":"java.io.Serializable","simpleName":"Serializable"},{"name":"java.lang.Object","simpleName":"Object"}],"arguments":[1]}},"resource":{"http":{"characterEncoding":"UTF-8","protocol":"HTTP/1.1","scheme":"http","serverName":"localhost","serverPort":8080,"remoteAddress":"0:0:0:0:0:0:0:1","remoteHost":"0:0:0:0:0:0:0:1","remotePort":55905,"isSecure":false,"localName":"0:0:0:0:0:0:0:1","localAddress":"0:0:0:0:0:0:0:1","localPort":8080,"method":"GET","contextPath":"","requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661","requestedURI":"/api/books/1","requestURL":"http://localhost:8080/api/books/1","servletPath":"/api/books/1","headers":{"host":["localhost:8080"],"connection":["keep-alive"],"sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"dnt":["1"],"upgrade-insecure-requests":["1"],"user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],"sec-purpose":["prefetch;prerender"],"purpose":["prefetch"],"accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],"sec-fetch-site":["none"],"sec-fetch-mode":["navigate"],"sec-fetch-user":["?1"],"sec-fetch-dest":["document"],"accept-encoding":["gzip, deflate, br"],"accept-language":["de-DE,de;q=0.9"]},"cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],"locale":"de_DE","locales":["de_DE","de"]},"java":{"name":"findById","declaringTypeName":"io.sapl.springtutorial.domain.BookRepository","modifiers":["public"],"instanceof":[{"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},{"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},{"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},{"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},{"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},{"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},{"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},{"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},{"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},{"name":"java.io.Serializable","simpleName":"Serializable"},{"name":"java.lang.Object","simpleName":"Object"}]}},"environment":null}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"DENY"}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-15T19:02:09.643312400Z
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_UNLESS_PERMIT"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Matches     : NONE (i.e.,no policies/policy sets were set, or all target expressions evaluated to false or error.)
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : No policy or policy sets have been evaluated
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"authorities":[],"details":{"remoteAddress":"0:0:0:0:0:0:0:1","sessionId":"EF114D1F3433826A178E7A97F6DFA7D2"},"authenticated":true,"principal":{"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2006-12-26"},"name":"zoe"},"action":{"http":{"characterEncoding":"UTF-8","protocol":"HTTP/1.1","scheme":"http","serverName":"localhost","serverPort":8080,"remoteAddress":"0:0:0:0:0:0:0:1","remoteHost":"0:0:0:0:0:0:0:1","remotePort":55905,"isSecure":false,"localName":"0:0:0:0:0:0:0:1","localAddress":"0:0:0:0:0:0:0:1","localPort":8080,"method":"GET","contextPath":"","requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661","requestedURI":"/api/books/1","requestURL":"http://localhost:8080/api/books/1","servletPath":"/api/books/1","headers":{"host":["localhost:8080"],"connection":["keep-alive"],"sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"dnt":["1"],"upgrade-insecure-requests":["1"],"user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],"sec-purpose":["prefetch;prerender"],"purpose":["prefetch"],"accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],"sec-fetch-site":["none"],"sec-fetch-mode":["navigate"],"sec-fetch-user":["?1"],"sec-fetch-dest":["document"],"accept-encoding":["gzip, deflate, br"],"accept-language":["de-DE,de;q=0.9"]},"cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],"locale":"de_DE","locales":["de_DE","de"]},"java":{"name":"findById","declaringTypeName":"io.sapl.springtutorial.domain.BookRepository","modifiers":["public"],"instanceof":[{"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},{"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},{"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},{"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},{"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},{"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},{"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},{"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},{"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},{"name":"java.io.Serializable","simpleName":"Serializable"},{"name":"java.lang.Object","simpleName":"Object"}],"arguments":[1]}},"resource":{"http":{"characterEncoding":"UTF-8","protocol":"HTTP/1.1","scheme":"http","serverName":"localhost","serverPort":8080,"remoteAddress":"0:0:0:0:0:0:0:1","remoteHost":"0:0:0:0:0:0:0:1","remotePort":55905,"isSecure":false,"localName":"0:0:0:0:0:0:0:1","localAddress":"0:0:0:0:0:0:0:1","localPort":8080,"method":"GET","contextPath":"","requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661","requestedURI":"/api/books/1","requestURL":"http://localhost:8080/api/books/1","servletPath":"/api/books/1","headers":{"host":["localhost:8080"],"connection":["keep-alive"],"sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"dnt":["1"],"upgrade-insecure-requests":["1"],"user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],"sec-purpose":["prefetch;prerender"],"purpose":["prefetch"],"accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],"sec-fetch-site":["none"],"sec-fetch-mode":["navigate"],"sec-fetch-user":["?1"],"sec-fetch-dest":["document"],"accept-encoding":["gzip, deflate, br"],"accept-language":["de-DE,de;q=0.9"]},"cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],"locale":"de_DE","locales":["de_DE","de"]},"java":{"name":"findById","declaringTypeName":"io.sapl.springtutorial.domain.BookRepository","modifiers":["public"],"instanceof":[{"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},{"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},{"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},{"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},{"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},{"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},{"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},{"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},{"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},{"name":"java.io.Serializable","simpleName":"Serializable"},{"name":"java.lang.Object","simpleName":"Object"}]}},"environment":null}
+[...] : Decision    : {"decision":"DENY"}
+[...] : Timestamp   : 2024-01-15T19:02:09.643312400Z
+[...] : Algorithm   : "DENY_UNLESS_PERMIT"
+[...] : Matches     : NONE (i.e.,no policies/policy sets were set, or all target expressions evaluated to false or error.)
+[...] : No policy or policy sets have been evaluated
 ```
 
 The first log entry contains the authorization subscription for which a decision is made. The second log entry contains the decision made by the PDP, followed by a timestamp and the algorithm used to resolve conflicting results.
@@ -598,18 +593,18 @@ Now you should get the data for book 1:
 And your log should look like this:
 
 ```
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-18T14:41:39.298519100Z
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_UNLESS_PERMIT"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["permit all"]
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Name        : "permit all"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: { ... }
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Timestamp   : 2024-01-18T14:41:39.298519100Z
+[...] : Algorithm   : "DENY_UNLESS_PERMIT"
+[...] : Matches     : ["permit all"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "permit all"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 In this log, you can see on the sixth line that the PRP has identified exactly one matching policy document for the authorization subscription. Let's take a look at the evaluation result for the policy document with the name `"permit all"`.
@@ -629,24 +624,24 @@ Now restart the application, authenticate with any user and access <http://local
 The PDP will grant access, and the log will look similar to this:
 
 ```
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-18T18:55:20.363441300Z
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_UNLESS_PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["permit all","deny all"]
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "permit all"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "deny all"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "DENY"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"DENY"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: { ... }
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Timestamp   : 2024-01-18T18:55:20.363441300Z
+[...] : Algorithm   : "DENY_UNLESS_PERMIT"
+[...] : Matches     : ["permit all","deny all"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "permit all"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Target      : true
+[...] : Where       : true
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "deny all"
+[...] : Entitlement : "DENY"
+[...] : Decision    : {"decision":"DENY"}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 Note that your system's ordering of the log entries may be slightly different. The log indicates that both policies matched the subscription and that the PDP evaluated them. Then, the combining algorithm resolved the two decisions, i.e., one `permit` and one `deny`, to `permit`.
@@ -658,24 +653,24 @@ Now restart the application, authenticate with any user and access <http://local
 The application should `deny` access and the log will look similar to this (remember, the line order may vary):
 
 ```
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"DENY"}
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-20T14:45:49.524911400Z
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["permit all","deny all"]
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Name        : "permit all"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Name        : "deny all"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "DENY"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"DENY"}
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: { ... }
+[...] : Decision    : {"decision":"DENY"}
+[...] : Timestamp   : 2024-01-20T14:45:49.524911400Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["permit all","deny all"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "permit all"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Target      : true
+[...] : Where       : true
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "deny all"
+[...] : Entitlement : "DENY"
+[...] : Decision    : {"decision":"DENY"}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 As expected, the combining algorithm gave precedence to the `deny` decision.
@@ -709,19 +704,19 @@ Let's write a policy that says, "Only Bob can see individual book entries". Writ
 policy "only bob may see individual book entries"
 permit action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$"
 where
-    subject.name == "bob";
+   subject.name == "bob";
 ```
 
 Now restart and log in as Bob. You should see the same error page, including the statement: `There was an unexpected error (type=Forbidden, status=403).` Like at the beginning of the tutorial. Your log should look as follows:
 
 ```
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-21T19:22:53.850109800Z
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Matches     : NONE (i.e.,no policies/policy sets were set, or all target expressions evaluated to false or error.)
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : No policy or policy sets have been evaluated
+[...] : --- The PDP made a decision ---
+[...] : Subscription: { ... }
+[...] : Decision    : {"decision":"NOT_APPLICABLE"}
+[...] : Timestamp   : 2024-01-21T19:22:53.850109800Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : NONE (i.e.,no policies/policy sets were set, or all target expressions evaluated to false or error.)
+[...] : No policy or policy sets have been evaluated
 ```
 
 This happens because we have implemented in our `SecurityConfiguration` class, that we are automatically redirected to `/api/books` after a successful login, which results in the `findAll` method being called. However, we have not created a corresponding policy for accessing this method, which is monitored by a PEP.
@@ -729,18 +724,18 @@ This happens because we have implemented in our `SecurityConfiguration` class, t
 Now access an individual book, <http://localhost:8080/api/books/1>. Access will be granted, and the log looks like this:
 
 ```
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-21T19:23:00.783253700Z
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["only bob may see individual book entries"]
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "only bob may see individual book entries"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: { ... }
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Timestamp   : 2024-01-21T19:23:00.783253700Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["only bob may see individual book entries"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "only bob may see individual book entries"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 Now go to <http://localhost:8080/logout> and log out. Then log in as Zoe and try to access <http://localhost:8080/api/books/1>.
@@ -748,17 +743,17 @@ Now go to <http://localhost:8080/logout> and log out. Then log in as Zoe and try
 The application denies access, and the log looks like this:
 
 ```
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Subscription: { ... }
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-21T20:20:50.669216100Z
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["only bob may see individual book entries"]
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Name        : "only bob may see individual book entries"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-1] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
+[...] : --- The PDP made a decision ---
+[...] : Subscription: { ... }
+[...] : Timestamp   : 2024-01-21T20:20:50.669216100Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["only bob may see individual book entries"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "only bob may see individual book entries"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"NOT_APPLICABLE"}
+[...] : Target      : true
+[...] : Where       : false
 ```
 
 As you can see, there are several differences in the decision-making process of the PDP. First, let us examine what leads to the fact that there are no applicable (matching) documents when accessing `/api/books` or after a successful login.
@@ -862,11 +857,11 @@ Create a policy document `check_age_logging.sapl` as follows:
 policy "check age" 
 permit action == "read book"
 where 
-    var birthday    = log.infoSpy("birthday     : ", subject.birthday);
-    var today       = log.infoSpy("today        : ", time.dateOf(|<time.now>));
-    var age         = log.infoSpy("age          : ", time.timeBetween(birthday, today, "years"));
-    var ageRating   = log.infoSpy("age rating   : ", resource.ageRating);
-                      log.infoSpy("is older     : ", age >= ageRating );
+   var birthday    = log.infoSpy("birthday     : ", subject.birthday);
+   var today       = log.infoSpy("today        : ", time.dateOf(|<time.now>));
+   var age         = log.infoSpy("age          : ", time.timeBetween(birthday, today, "years"));
+   var ageRating   = log.infoSpy("age rating   : ", resource.ageRating);
+                     log.infoSpy("is older     : ", age >= ageRating );
 ```
 
 In its *target expression*, the policy `check age` scopes its applicability to all authorization subscriptions with the action `read book`.
@@ -886,45 +881,45 @@ Finally, the `age` is compared with the `ageRating` and the policy returns `true
 For example, if you log in as Zoe and access the first book, the logs will look similar to this:
 
 ```
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] birthday     :  "2007-01-04"
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] today        :  "2024-01-24"
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age          :  17
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age rating   :  0
-[nio-8080-exec-8] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] is older     :  true
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2007-01-04"},"action":"read book","resource":{"id":1,"name":"Clifford: It's Pool Time!","ageRating":0},"environment":null}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T09:49:35.745099400Z
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age"]
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-8] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : [SAPL] birthday     :  "2007-01-04"
+[...] : [SAPL] today        :  "2024-01-24"
+[...] : [SAPL] age          :  17
+[...] : [SAPL] age rating   :  0
+[...] : [SAPL] is older     :  true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"password":null,"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2007-01-04"},"action":"read book","resource":{"id":1,"name":"Clifford: It's Pool Time!","ageRating":0},"environment":null}
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Timestamp   : 2024-01-24T09:49:35.745099400Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["check age"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "check age"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 However, if Alice attempts to access book four, access will be denied because the policy is not applicable, i.e., not all rules evaluate to `true`:
 
 ```
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] birthday     :  "2021-01-03"
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] today        :  "2024-01-23"
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age          :  3
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] age rating   :  14
-[nio-8080-exec-3] i.sapl.functions.LoggingFunctionLibrary  : [SAPL] is older     :  false
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-03"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14},"environment":null}
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T09:54:43.202487200Z
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age"]
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age"
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-3] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
+[...] : [SAPL] birthday     :  "2021-01-03"
+[...] : [SAPL] today        :  "2024-01-23"
+[...] : [SAPL] age          :  3
+[...] : [SAPL] age rating   :  14
+[...] : [SAPL] is older     :  false
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-03"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14},"environment":null}
+[...] : Decision    : {"decision":"NOT_APPLICABLE"}
+[...] : Timestamp   : 2024-01-24T09:54:43.202487200Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["check age"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "check age"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"NOT_APPLICABLE"}
+[...] : Target      : true
+[...] : Where       : false
 ```
 
 The policy can be written more compactly without logging and using an `import` statement:
@@ -934,8 +929,8 @@ import time.*
 policy "check age compact" 
 permit action == "read book"
 where 
-    var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
-    age >= resource.ageRating;
+   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
+   age >= resource.ageRating;
 ```
 
 Imports allow the use of a shorter name instead of the fully qualified name of functions or attribute finders stored in libraries within a SAPL policy document.
@@ -968,7 +963,6 @@ To have some more data to work with, extend the domain model by adding some cont
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
-
     @Id
     Long id;
     String name;
@@ -993,12 +987,12 @@ import time.*
 policy "check age transform" 
 permit action == "read book"
 where 
-    var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
-    age < resource.ageRating;
+   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
+   age < resource.ageRating;
 transform
-    resource |- {
-        @.content : filter.blacken(3,0,"\u2588")
-    }
+   resource |- {
+      @.content : filter.blacken(3,0,"\u2588")
+   }
 ```
 
 This policy introduces the `transform` expression for the *transformations*.
@@ -1034,24 +1028,24 @@ But of course, because Alice is only three years old, the content of the age-ina
 The logs for this access attempt look like this:
 
 ```
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T10:36:21.144698500Z
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age compact","check age transform"]
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age compact"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age transform"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[io-8080-exec-10] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
+[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
+[...] : Timestamp   : 2024-01-24T10:36:21.144698500Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["check age compact","check age transform"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "check age compact"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"NOT_APPLICABLE"}
+[...] : Target      : true
+[...] : Where       : false
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "check age transform"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 The PRP discovered both policies to be matching the subscription. The PDP starts to evaluate both and the `check age compact` policy evaluates to `NOT_APPLICABLE`, because Alice is not old enough to read "The Three-Body Problem". At the same time, the `check age transform` policy evaluates to `permit`. As a result, the authorization decision also contains a resource object, namely the transformed one. The PEP has, therefore, replaced the changed resource object.
@@ -1069,17 +1063,17 @@ import time.*
 policy "check age transform" 
 permit action == "read book"
 where 
-    var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
-    age < resource.ageRating;
+   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
+   age < resource.ageRating;
 obligation 
-    {
-	    "type": "logAccess",
-		"message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
-    }
+   {
+      "type": "logAccess",
+      "message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
+   }
 transform
-    resource |- {
-        @.content : filter.blacken(3,0,"\u2588")
-    }
+   resource |- {
+   @.content : filter.blacken(3,0,"\u2588")
+   }
 ```
 
 Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
@@ -1087,24 +1081,24 @@ Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
 Access will be denied, and the logs look as follows:
 
 ```
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Gotta catch 'em all!"},"environment":null}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-01-24T13:37:19.333683900Z
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age compact","check age transform"]
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age compact"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Where       : false
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Policy Evaluation Result ===================
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age transform"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Entitlement : "PERMIT"
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-9] i.s.p.i.ReportingDecisionInterceptor     : Where       : true
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Gotta catch 'em all!"},"environment":null}
+[...] : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
+[...] : Timestamp   : 2024-01-24T13:37:19.333683900Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["check age compact","check age transform"]
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "check age compact"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"NOT_APPLICABLE"}
+[...] : Target      : true
+[...] : Where       : false
+[...] : Policy Evaluation Result ===================
+[...] : Name        : "check age transform"
+[...] : Entitlement : "PERMIT"
+[...] : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
+[...] : Target      : true
+[...] : Where       : true
 ```
 
 Despite the PDP's decision to permit access, it was still denied due to the obligation to log the access in the authorization decision. This is because SAPL expresses obligations and advice as arbitrary JSON objects and does not know which of them might be relevant in an application domain or how policies decide to describe them. Thus, the PEP was unable to understand and enforce the logging obligation, resulting in the denial of access.
@@ -1116,21 +1110,21 @@ To support the logging obligation, implement a so-called *constraint handler pro
 @Service
 public class LoggingConstraintHandlerProvider implements RunnableConstraintHandlerProvider {
 
-	@Override
-	public Signal getSignal() {
-		return Signal.ON_DECISION;
-	}
+    @Override
+    public Signal getSignal() {
+        return Signal.ON_DECISION;
+    }
 
-	@Override
-	public boolean isResponsible(JsonNode constraint) {
-		return constraint != null && constraint.has("type")
-			   && "logAccess".equals(constraint.findValue("type").asText());
-	}
+    @Override
+    public boolean isResponsible(JsonNode constraint) {
+        return constraint != null && constraint.has("type")
+               && "logAccess".equals(constraint.findValue("type").asText());
+    }
 
-	@Override
-	public Runnable getHandler(JsonNode constraint) {
-		return () -> log.info(constraint.findValue("message").asText());
-	}
+    @Override
+    public Runnable getHandler(JsonNode constraint) {
+        return () -> log.info(constraint.findValue("message").asText());
+    }
 }
 ```
 
@@ -1149,7 +1143,7 @@ This interface requires three methods:
 When logging in as Alice and attempting to access <http://localhost:8080/api/books/2> access will be granted, and the logs now contain the following line:
 
 ```
-[nio-8080-exec-9] i.s.s.s.LoggingConstraintHandlerProvider : Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'.
+[...] : Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'.
 ```
 
 Let's try another example of an obligation.
@@ -1162,7 +1156,7 @@ First, complete the `@PreEnforce` on `findAll` in the `BookRepository` as follow
 public interface BookRepository {
     
     @PreEnforce(subject = "authentication.getPrincipal()",
-		        action="'list books'")
+                action="'list books'")
     Iterable<Book> findAll();
 
     @PostEnforce(subject  = "authentication.getPrincipal()", 
@@ -1178,20 +1172,20 @@ The concept is the same as with the `findById` method. The parameter `subject = 
 
 To see all accessible books write a policy as follows:
 
-```python
+```
 import time.*
 policy "filter content in collection"
 permit action == "list books"
 obligation
-{
-  "type" : "jsonContentFilterPredicate",
-  "conditions" : [
-                 {
-                   "path" : "$.ageRating",
-                   "type" : "<=",
-                   "value" : timeBetween(subject.birthday, dateOf(|<now>), "years")
-                 }
-                 ]
+   {
+      "type" : "jsonContentFilterPredicate",
+      "conditions" : [
+         {
+            "path" : "$.ageRating",
+            "type" : "<=",
+            "value" : timeBetween(subject.birthday, dateOf(|<now>), "years")
+         }
+      ]
 }
 ```
 
@@ -1208,8 +1202,8 @@ public class FilterByAgeProvider implements FilterPredicateConstraintHandlerProv
     @Override
     public boolean isResponsible(JsonNode constraint) {
         return constraint != null && constraint.has("type")
-               && "filterBooksByAge".equals(constraint.findValue("type").asText()) && constraint.has("age")
-               && constraint.get("age").isInt();
+               && "filterBooksByAge".equals(constraint.findValue("type").asText())
+               && constraint.has("age") && constraint.get("age").isInt();
     }
 
     @Override
@@ -1285,24 +1279,24 @@ for action == "read book"
 var birthday    = subject.birthday;
 var today       = dateOf(|<now>);
 var age         = timeBetween(birthday, today, "years");
-	
-	policy "check age transform set"
-	permit
-	where
-		age < resource.ageRating;
-    obligation 
-		{
-			"type": "logAccess",
-			"message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
-        }
-	transform
-    	resource |- {
-        	@.content : blacken(3,0,"\u2588")
-        }
 
-	policy "check age compact set"
-	permit
-		age >= resource.ageRating
+   policy "check age transform set"
+   permit
+   where
+      age < resource.ageRating;
+   obligation 
+      {
+         "type": "logAccess",
+         "message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
+      }
+   transform
+      resource |- {
+         @.content : blacken(3,0,"\u2588")
+   }
+
+   policy "check age compact set"
+   permit
+      age >= resource.ageRating
 ```
 
 The rules for policies of a set are the same as for top-level policies. So the `where` keyword is optional, as you can see in the second policy of the set. If you use the optional keyword, the line must also end with a `;` as usual.
@@ -1313,33 +1307,33 @@ Now, log in as Bob and access <http://localhost:8080/api/books/3>.
 Your logs look as follows:
 
 ```
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":3,"name":"Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight","ageRating":9,"content":"Some fantasy story."},"environment":null}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-02-09T08:14:37.063506800Z
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age set"]
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Policy Set Evaluation Result ===============
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age set"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "FIRST_APPLICABLE"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Name        : "check age transform set"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Decision    : {"decision":"NOT_APPLICABLE"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Target      : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Where       : false
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Information Point Data:
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Name        : "check age compact set"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Decision    : {"decision":"PERMIT"}
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Target      : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Where       : true
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Information Point Data:
-[nio-8080-exec-5] i.s.p.i.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":3,"name":"Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight","ageRating":9,"content":"Some fantasy story."},"environment":null}
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Timestamp   : 2024-02-09T08:14:37.063506800Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["check age set"]
+[...] : Policy Set Evaluation Result ===============
+[...] : Name        : "check age set"
+[...] : Algorithm   : "FIRST_APPLICABLE"
+[...] : Decision    : {"decision":"PERMIT"}
+[...] : Target      : true
+[...] :    |Policy Evaluation Result ===================
+[...] :    |Name        : "check age transform set"
+[...] :    |Entitlement : "PERMIT"
+[...] :    |Decision    : {"decision":"NOT_APPLICABLE"}
+[...] :    |Target      : true
+[...] :    |Where       : false
+[...] :    |Policy Information Point Data:
+[...] :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
+[...] :    |Policy Evaluation Result ===================
+[...] :    |Name        : "check age compact set"
+[...] :    |Entitlement : "PERMIT"
+[...] :    |Decision    : {"decision":"PERMIT"}
+[...] :    |Target      : true
+[...] :    |Where       : true
+[...] :    |Policy Information Point Data:
+[...] :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
 ```
 
 The policies of the set are indented to distinguish them from the rest of the policies. They are ordered directly after the result of the *target expression*. Unlike top-level policies, the policies of a set explicitly follow the order specified in the set or are evaluated in this order. Combining a logical evaluation sequence with a `FIRST_APPLICABLE` algorithm can save time or avoid work for the PEP. In the case of book three, both policies are still evaluated.
@@ -1347,26 +1341,26 @@ The policies of the set are indented to distinguish them from the rest of the po
 Now access <http://localhost:8080/api/books/4>, you will get:
 
 ```
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : --- The PDP made a decision ---
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Timestamp   : 2024-02-09T08:19:12.474766200Z
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "DENY_OVERRIDES"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Matches     : ["check age set"]
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Policy Set Evaluation Result ===============
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Name        : "check age set"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Algorithm   : "FIRST_APPLICABLE"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     : Target      : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Evaluation Result ===================
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Name        : "check age transform set"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Entitlement : "PERMIT"
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Target      : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Where       : true
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    |Policy Information Point Data:
-[nio-8080-exec-7] i.s.p.i.ReportingDecisionInterceptor     :    | - {"value":"2024-02-09T08:19:12.4707663Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:19:12.470766300Z"}}
-[nio-8080-exec-7] i.s.s.s.LoggingConstraintHandlerProvider : Attention, bob accessed the book 'The Three-Body Problem'.
+[...] : --- The PDP made a decision ---
+[...] : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
+[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
+[...] : Timestamp   : 2024-02-09T08:19:12.474766200Z
+[...] : Algorithm   : "DENY_OVERRIDES"
+[...] : Matches     : ["check age set"]
+[...] : Policy Set Evaluation Result ===============
+[...] : Name        : "check age set"
+[...] : Algorithm   : "FIRST_APPLICABLE"
+[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
+[...] : Target      : true
+[...] :    |Policy Evaluation Result ===================
+[...] :    |Name        : "check age transform set"
+[...] :    |Entitlement : "PERMIT"
+[...] :    |Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
+[...] :    |Target      : true
+[...] :    |Where       : true
+[...] :    |Policy Information Point Data:
+[...] :    | - {"value":"2024-02-09T08:19:12.4707663Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:19:12.470766300Z"}}
+[...] : Attention, bob accessed the book 'The Three-Body Problem'.
 ```
 
 As you can see, the second policy in the set was not evaluated because the first policy was already applicable.
