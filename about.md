@@ -55,7 +55,7 @@ state as streaming attribute sources for authorization decision making.
 
 ## Development
 
-Based on the experiences in the Smart Vortex project, Prof. Dr. Dominic Heutelbeck initiated the development of SAPL as a side activity together with FTK staff and computer science students of the [Universsity of Hagen](https://www.fernuni-hagen.de/english/) in practical group courses and thesis work. 
+Based on the experiences in the Smart Vortex project, Prof. Dr. Dominic Heutelbeck initiated the development of SAPL as a side activity together with FTK staff and computer science students of the [University of Hagen](https://www.fernuni-hagen.de/english/) in practical group courses and thesis work. 
 
 The SAPL development process enforces openness, usability, correctness, clean code, rigorous testing, and static 
 code-analysis for the core components of the engine. 
