@@ -20,13 +20,13 @@ ABAC decides whether to grant access by checking the attributes of the subject, 
 
 The subject may be a user, a machine, another application, or a service requesting access to a resource. Attributes may include information such as the user's department in an organisation, a security clearance level, schedules, location, or qualifications in the form of certifications.
 
-The action is how the subject attempts to access the resource. An action may be one of the typical CRUD operations or something more domain-specific, such as "assign new operator," and attributes may include parameters of the operation.
+The action is how the subject attempts to access the resource. An action may be one of the typical CRUD operations or something more domain-specific, such as "assign new operator," and attributes may include the operation's parameters.
 
-Resources are the entities that the subject directs the action to. Resource attributes may include owners, security classifications, categories, or other arbitrary domain-specific data.
+Resources are the entities to which the subject directs the action. Resource attributes may include owners, security classifications, categories, or other arbitrary domain-specific data.
 
 In some cases, it is also helpful to consider the authorization environment. Environment attributes include data like the system and infrastructure context or time.
 
-An application performing authorizing of an action formulates an authorization question by collecting attributes of the subject, action, resource, and environment as required by the domain and poses it to a decision component, which then makes a decision based on domain-specific rules which the application then has to enforce.
+An application performing authorizing of an action formulates an authorization question by collecting attributes of the subject, action, resource, and environment as required by the domain. It poses it to a decision component, which then makes a decision based on domain-specific rules which the application then has to enforce.
 
 ABAC allows the implementation of fine-grained access control rules and flexible access control models, such as Role-based access control (RBAC), Mandatory Access Control (MAC), Bell-LaPadula, Clark-Wilson, Biba, Brewer-Nash, or very domain-specific models for an application.
 
@@ -45,13 +45,13 @@ A *Policy Enforcement Point (PEP)* is the logic in your application that:
 * Delegates the decision on the authorization question to the *Policy Decision Point (PDP)* by subscribing to it using the authorization subscription.
 * Enforces any decisions made by the PDP.
 
-This tutorial will not examine the subscription nature of SAPL authorization.  Instead, it will only look at PEPs that require a single decision. Later tutorials will teach you how to use authorization subscriptions to handle reactive data types, such as `Flux<>`, Axon subscription queries, or interactive web applications using Vaadin.
+This tutorial will not examine the subscription nature of SAPL authorization.  Instead, it will only look at PEPs that require a single decision. 
 
 In SAPL, decisions can include additional requirements for the PEP to enforce beyond simply granting or denying access. SAPL decisions can include constraints, which are additional actions the PEP must perform to grant access. If a constraint is optional, it is called an *advice*. If the constraint is mandatory, it is called an *obligation*.
 
-SAPL also denotes a policy language that is used to express the rules that describe the overall policies governing access control in the organisation. For each authorization subscription, the PDP monitors the *Policy Retrieval Point (PRP)* for policies that are responsible, i.e., *applicable*, to the subscription. Individual policies may refer to attributes that are not stored within the authorization subscription. The PDP can subscribe to these attributes using domain-specific *Policy Information Points (PIPs)*. The PDP continuously evaluates the policies as the PIP attributes change and the policy documents are updated. It notifies the PEP when the implicit *authorization decision* changes.
+SAPL also denotes a policy language used to express the rules that describe the overall policies governing access control in the organisation. For each authorization subscription, the PDP monitors the *Policy Retrieval Point (PRP)* for responsible policies, i.e., *applicable*, to the subscription. Individual policies may refer to attributes not stored within the authorization subscription. The PDP can subscribe to these attributes using domain-specific *Policy Information Points (PIPs)*. The PDP continuously evaluates the policies as the PIP attributes change and the policy documents are updated. It notifies the PEP when the implicit *authorization decision* changes.
 
-When developing an application using SAPL or ABAC in general, the PDP and the systems used by the PDP are usually well-developed and only require the integration of domain-specific PIPs. A significant part of the effort in adopting the ABAC pattern lies in the implementation of the PEPs. Developing a PEP capable of flexibly handling of decisions with constraints can become very complex. SAPL provides several libraries that make this process as unobtrusive as possible and integrate deeply into the supported frameworks. This tutorial will show you how to implement PEPs in a Spring Boot application, using a JPA repository as an example.
+When developing an application using SAPL or ABAC in general, the PDP and the systems used by the PDP are usually well-developed and only require the integration of domain-specific PIPs. A significant part of the effort in adopting the ABAC pattern lies in implementing the PEPs. Developing a PEP capable of flexibly handling decisions with constraints can become very complex. SAPL provides several libraries that make this process as unobtrusive as possible and integrate deeply into the supported frameworks. This tutorial will show you how to implement PEPs in a Spring Boot application, using a JPA repository as an example.
 
 ## Project Setup
 
@@ -63,9 +63,9 @@ First, you will implement a simple Spring Boot application. Go to [Spring Initia
 * **Lombok** (to eliminate some boilerplate code)
 * **Spring Boot DevTools** (to improve the development process)
 
-For this tutorial, we will use Maven as our build tool and Java as our language.
+We will use Maven as our build tool and Java as our language for this tutorial.
 
-Name your project template as you like. SAPL is compatible with Java 11 and higher. So feel free to choose your preferred version. Depending on your operating system, there are different downloads for Java. This must be followed according to the [instructions](https://www.java.com/de/download/manual.jsp).
+Name your project template as you like. SAPL is compatible with Java 17 and higher. So you can choose your preferred version. Depending on your operating system, there are different downloads for Java. This must be followed according to the [instructions](https://www.java.com/de/download/manual.jsp).
 
  Your Initializr settings should now look something like this:
 
