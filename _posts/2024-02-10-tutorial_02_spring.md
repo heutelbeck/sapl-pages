@@ -154,7 +154,7 @@ This file completes the basic setup of the Maven project. Now, we can start impl
 
 ## The Project Domain
 
-This tutorial will be applied to a library where books can only be viewed and checked out if the user meets the minimum age specified for the book. If you are already familiar with Spring, JPA, and Spring Security basics, you can skip this section and go directly to  [Securing a Service Method with SAPL](#securing-a-service-method-with-sapl).
+This tutorial will be applied to a library where books can only be viewed and checked out if the user meets the minimum age specified for the book. If you are already familiar with Spring, JPA, and Spring Security basics, you can skip this section and go directly to  [Securing a Service Method with SAPL](#Method-Security).
 
 ### Define the Book Entity and Repository
 
@@ -366,7 +366,7 @@ So far, this tutorial has not used any features of SAPL, and you just created a 
 
 ## Securing Repository Methods with SAPL
 
-### Setting Up Method Security
+### <a name="Method-Security"></a> Setting Up Method Security
 
 SAPL extends the Spring Security framework's method security features. To activate SAPL's method security for single decisions, add the `@EnableSaplMethodSecurity` Lombok annotation to your `SecurityConfiguration` class.
 
