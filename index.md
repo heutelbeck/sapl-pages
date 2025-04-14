@@ -36,10 +36,10 @@ The SAPL libraries default to automatic authorization request generation, which 
 
 The complete language and core policy engine is open-source licensed under the Apache 2.0 license, allowing for easy auditing of the software stack, extensibility, availability and low barriers for testing and adoption.
 
-## Open Lightweigt Authorization Server
+## Open Lightweight Authorization Server
 
-A lightweigt SAPL-based authorization server, i.e., a policy decision point (PDP), implementation is available for centrally administrating policies providing request-response and subscription-based authorization as a service through a simple REST style API.
+A lightweight SAPL-based authorization server, i.e., a policy decision point (PDP), implementation is available for centrally administrating policies providing request-response and subscription-based authorization as a service through a simple REST style API.
 
-## Lightweigt Embedded PDP
+## Lightweight Embedded PDP
 
 The SAPL policy engine includes an embedded Policy Decision Point (PDP) into Java applications for ease of development and performance.
