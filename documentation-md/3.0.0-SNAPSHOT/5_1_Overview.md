@@ -13,7 +13,7 @@ SAPL knows two types of documents: Policy sets and policies. The decisions of th
 
 ### Policy Structure
 
-A SAPL policy consists of optional **imports**, optional **schemas** for authorization subscription elements, a **name**, an **entitlement** specification, an optional **target expression**, an optional **body** with one or more statements, and optional sections for **obligation**, **advice**, and **transformation**.
+A SAPL policy consists of optional **imports**, optional **schemas** for authorization subscription elements, a **name**, an **entitlement** specification, an optional **target expression**, an optional **body** with one or more statements, and optional sections for one or more **obligations** and **advice**, and an optional **transformation**.
 An example of a simple policy is:
 
 Sample SAPL Policy
@@ -51,7 +51,7 @@ transform
 
 **7.** Schemas (optional)
 
-**8.** Obligation (optional)
+**8.** Obligations (optional)
 
 **9.** Advice (optional)
 
