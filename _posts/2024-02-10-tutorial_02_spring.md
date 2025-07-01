@@ -81,14 +81,18 @@ This tutorial uses the `3.0.0-SNAPSHOT` version of SAPL. To enable Maven to down
 
 ```xml
     <repositories>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+      <repository>
+        <name>Central Portal Snapshots</name>
+        <id>central-portal-snapshots</id>
+        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 ```
 
 SAPL provides a bill of materials module to help you to use compatible versions of SAPL modules. By adding the following to your `pom.xml`, you do not need to declare the `<version>` of each SAPL dependency:
