@@ -15,3 +15,19 @@
 	color: #FFFFFFFF;
 	border: 1px solid #FFFFFFFF;
 }
+// Mermaid diagram background
+.language-mermaid svg {
+  background-color: #31343f !important;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+pre:has(.language-mermaid) {
+  background-color: #31343f !important;
+  padding: 0;
+}
+
+code.language-mermaid {
+  background-color: #31343f !important;
+  display: block;
+}
