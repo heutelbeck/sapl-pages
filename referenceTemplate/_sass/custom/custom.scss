@@ -31,40 +31,6 @@ code.language-mermaid {
   background-color: #31343f !important;
   display: block;
 }
-.selectbox {
-	cursor: pointer;
-	outline:0;
-	color: #FFFFFFFF;
-	font-size: 12px;
-	padding: 3px 10px;
-	min-width: 128px;
-	border-radius: 3px;
-	border: 1px solid #D1D1D1FF;
-	background-color: #000000FF;
-}
-.selectbox:hover, .selectbox:focus {
-	background-color: #000000FF;
-	color: #FFFFFFFF;
-	border: 1px solid #FFFFFFFF;
-}
-
-// Mermaid diagram background
-.language-mermaid svg {
-  background-color: #31343f !important;
-  padding: 1rem;
-  border-radius: 4px;
-}
-
-pre:has(.language-mermaid) {
-  background-color: #31343f !important;
-  padding: 0;
-}
-
-code.language-mermaid {
-  background-color: #31343f !important;
-  display: block;
-}
-
 .language-mermaid .edgeLabel text,
 .language-mermaid .edgeLabel span {
   text-shadow: 
@@ -75,12 +41,9 @@ code.language-mermaid {
   font-weight: 500;
 }
 
-// Remove ALL boxes around edge labels
-.language-mermaid .labelBkg,
-.language-mermaid .edgeLabel rect,
-.language-mermaid .label-container rect {
+// Remove background box only
+.language-mermaid .labelBkg {
   fill: transparent !important;
   stroke: none !important;
-  opacity: 0 !important;
-  display: none !important;
+  background-color: rgba(0, 0, 0, 0) !important;
 }
