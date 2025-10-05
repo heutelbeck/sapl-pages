@@ -24,4 +24,7 @@ gem "wdm", "~> 0.2.0", :platforms => [:mingw, :x64_mingw, :mswin]
 # do not have a Java counterpart.
 gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 
-gem "nokogiri", ">= 1.18.4"
+gem "nokogiri", ">= 1.18.9"
+
+# Security fix: Update rexml to address CVE-2024-41123, CVE-2024-49761, CVE-2024-41946
+gem "rexml", ">= 3.3.9"  #
