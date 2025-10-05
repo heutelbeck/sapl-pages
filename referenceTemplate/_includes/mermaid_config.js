@@ -13,13 +13,13 @@
     tertiaryBorderColor: "#5a5f6b",
     lineColor: "#7d8590",
     textColor: "#e6edf3",
-    background: "#31343f",
+    background: "transparent",
     mainBkg: "#42464f",
     nodeBorder: "#5a5f6b",
     nodeTextColor: "#e6edf3",
     clusterBkg: "#31343f",
     clusterBorder: "#5a5f6b",
-    edgeLabelBackground: "#3a3d45",
+    edgeLabelBackground: "#252830",
     noteBorderColor: "#5b8fc7",
     noteBkgColor: "#42464f",
     noteTextColor: "#e6edf3",
@@ -55,5 +55,9 @@
     gitBranchLabel7: "#e6edf3",
     commitLabelColor: "#e6edf3",
     commitLabelBackground: "#42464f"
+  },
+  flowchart: {
+    htmlLabels: true,
+    curve: "basis"
   }
 }
