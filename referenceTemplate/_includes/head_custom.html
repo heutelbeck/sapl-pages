@@ -21,6 +21,8 @@
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   
+  console.log('[SAPL Mermaid] Starting initialization...');
+  
   // Detect current theme (Just the Docs)
   function getCurrentTheme() {
     if (typeof jtd !== 'undefined' && jtd.getTheme) {
@@ -32,125 +34,78 @@
   // Initialize Mermaid with theme
   function initMermaid() {
     const isDark = getCurrentTheme() === 'dark';
+    console.log('[SAPL Mermaid] Current theme:', isDark ? 'DARK' : 'LIGHT');
     
-    mermaid.initialize({ 
+    const config = {
       startOnLoad: true,
-      theme: isDark ? 'dark' : 'base',
+      theme: 'dark', // Force dark theme
       securityLevel: 'loose',
-      themeVariables: isDark ? {
-        // Dark mode - match code block aesthetic
+      logLevel: 'debug',
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis'
+      },
+      themeVariables: {
+        // EXTREME colors for testing - you'll definitely see if this works
         darkMode: true,
-        background: '#1e1e1e',
         
-        // Primary elements (boxes/nodes)
-        primaryColor: '#2d333b',           // Dark gray boxes
-        primaryTextColor: '#e6edf3',       // Light text
-        primaryBorderColor: '#7253ed',     // Purple border (SAPL brand color)
+        // Primary nodes - BRIGHT CYAN for visibility test
+        primaryColor: '#006d7a',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#00ffff',
         
-        // Secondary elements
-        secondaryColor: '#373e47',         // Slightly lighter gray
-        secondaryTextColor: '#e6edf3',
-        secondaryBorderColor: '#58a6ff',   // Blue accent
+        // Secondary - BRIGHT PURPLE
+        secondaryColor: '#5e41d0',
+        secondaryTextColor: '#ffffff',
+        secondaryBorderColor: '#ff00ff',
         
-        // Tertiary elements
-        tertiaryColor: '#444c56',
-        tertiaryTextColor: '#e6edf3',
-        tertiaryBorderColor: '#8b949e',
+        // Tertiary
+        tertiaryColor: '#2d333b',
+        tertiaryTextColor: '#ffffff',
+        tertiaryBorderColor: '#ffff00',
         
-        // Lines and arrows
-        lineColor: '#7d8590',              // Visible gray
-        textColor: '#e6edf3',
+        // Lines - BRIGHT GREEN
+        lineColor: '#00ff00',
         
-        // Main/default colors
-        mainBkg: '#2d333b',
-        nodeBorder: '#7253ed',
-        clusterBkg: '#1c2128',
-        clusterBorder: '#444c56',
+        // Text - WHITE
+        textColor: '#ffffff',
         
-        // Special elements
-        edgeLabelBackground: '#1c2128',
+        // Background
+        background: '#1a1a1a',
+        mainBkg: '#006d7a',
         
-        // Flowchart specific
-        nodeTextColor: '#e6edf3',
+        // Borders
+        nodeBorder: '#00ffff',
         
-        // Sequence diagram specific
-        actorBkg: '#2d333b',
-        actorBorder: '#7253ed',
-        actorTextColor: '#e6edf3',
-        actorLineColor: '#7d8590',
-        signalColor: '#7d8590',
-        signalTextColor: '#e6edf3',
-        labelBoxBkgColor: '#2d333b',
-        labelBoxBorderColor: '#7253ed',
-        labelTextColor: '#e6edf3',
-        loopTextColor: '#e6edf3',
-        noteBorderColor: '#7253ed',
-        noteBkgColor: '#373e47',
-        noteTextColor: '#e6edf3',
+        // More specifics
+        clusterBkg: '#2d333b',
+        clusterBorder: '#00ffff',
+        edgeLabelBackground: '#1a1a1a',
+        nodeTextColor: '#ffffff',
         
-        // Grid and background
-        gridColor: '#444c56',
-        
-        // Font
-        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
-      } : {
-        // Light mode - clean and professional
-        darkMode: false,
-        background: '#ffffff',
-        
-        // Primary elements
-        primaryColor: '#eeebff',           // Light purple
-        primaryTextColor: '#27262b',       // Dark text
-        primaryBorderColor: '#5e41d0',     // Purple border
-        
-        // Secondary elements
-        secondaryColor: '#f9f9fb',
-        secondaryTextColor: '#27262b',
-        secondaryBorderColor: '#7253ed',
-        
-        // Tertiary elements
-        tertiaryColor: '#fff',
-        tertiaryTextColor: '#27262b',
-        tertiaryBorderColor: '#8b949e',
-        
-        // Lines and arrows
-        lineColor: '#5e41d0',
-        textColor: '#27262b',
-        
-        // Main/default colors
-        mainBkg: '#eeebff',
-        nodeBorder: '#5e41d0',
-        clusterBkg: '#f9f9fb',
-        clusterBorder: '#d0d7de',
-        
-        // Special elements
-        edgeLabelBackground: '#ffffff',
-        
-        // Flowchart specific
-        nodeTextColor: '#27262b',
-        
-        // Sequence diagram specific
-        actorBkg: '#eeebff',
-        actorBorder: '#5e41d0',
-        actorTextColor: '#27262b',
-        actorLineColor: '#5e41d0',
-        signalColor: '#5e41d0',
-        signalTextColor: '#27262b',
-        labelBoxBkgColor: '#eeebff',
-        labelBoxBorderColor: '#5e41d0',
-        labelTextColor: '#27262b',
-        loopTextColor: '#27262b',
-        noteBorderColor: '#5e41d0',
-        noteBkgColor: '#f9f9fb',
-        noteTextColor: '#27262b',
-        
-        // Grid and background
-        gridColor: '#d0d7de',
-        
-        // Font
-        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
+        // Sequence diagram
+        actorBkg: '#006d7a',
+        actorBorder: '#00ffff',
+        actorTextColor: '#ffffff',
+        actorLineColor: '#00ff00',
+        signalColor: '#00ff00',
+        signalTextColor: '#ffffff',
+        labelBoxBkgColor: '#006d7a',
+        labelBoxBorderColor: '#00ffff',
+        labelTextColor: '#ffffff',
+        loopTextColor: '#ffffff',
+        noteBorderColor: '#00ffff',
+        noteBkgColor: '#2d333b',
+        noteTextColor: '#ffffff',
+        activationBorderColor: '#00ffff',
+        activationBkgColor: '#2d333b'
       }
-    });
+    };
+    
+    console.log('[SAPL Mermaid] Config:', JSON.stringify(config, null, 2));
+    mermaid.initialize(config);
+    
+    console.log('[SAPL Mermaid] Initialized! Found diagrams:', document.querySelectorAll('.mermaid').length);
   }
   
   // Initialize on load
@@ -159,6 +114,7 @@
   // Re-render on theme change
   if (typeof jtd !== 'undefined') {
     const observer = new MutationObserver(() => {
+      console.log('[SAPL Mermaid] Theme changed, re-initializing...');
       initMermaid();
       // Re-render all diagrams
       document.querySelectorAll('.mermaid').forEach(el => {
@@ -187,19 +143,5 @@
   .mermaid svg {
     max-width: 100%;
     height: auto;
-  }
-  
-  /* Ensure diagram is visible on dark backgrounds */
-  [data-color-mode="dark"] .mermaid svg {
-    filter: none;
-  }
-  
-  /* Additional styling for better readability */
-  .mermaid .nodeLabel {
-    color: inherit;
-  }
-  
-  .mermaid .edgeLabel {
-    background-color: transparent;
   }
 </style>
