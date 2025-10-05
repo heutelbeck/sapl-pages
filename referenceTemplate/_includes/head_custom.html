@@ -1,5 +1,7 @@
+<!-- Favicon -->
 <link rel="icon" href="/assets/sapl_reference_images/favicon.png" type="image/png">
-<!-- Matomo -->
+
+<!-- Matomo Analytics -->
 <script type="text/javascript">
     var _paq = window._paq || [];    
     _paq.push(["disableCookies"]);
@@ -14,3 +16,78 @@
     })();
 </script>
 <!-- End Matomo Code -->
+
+<!-- Mermaid Diagram Support -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  
+  // Detect current theme (Just the Docs)
+  function getCurrentTheme() {
+    if (typeof jtd !== 'undefined' && jtd.getTheme) {
+      return jtd.getTheme();
+    }
+    return document.documentElement.getAttribute('data-color-mode') === 'dark' ? 'dark' : 'light';
+  }
+  
+  // Initialize Mermaid with theme
+  function initMermaid() {
+    const isDark = getCurrentTheme() === 'dark';
+    
+    mermaid.initialize({ 
+      startOnLoad: true,
+      theme: isDark ? 'dark' : 'default',
+      securityLevel: 'loose',
+      themeVariables: isDark ? {
+        primaryColor: '#5e41d0',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#7253ed',
+        lineColor: '#eeebff',
+        secondaryColor: '#27262b',
+        tertiaryColor: '#2d2d2d'
+      } : {
+        primaryColor: '#7253ed',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#5e41d0',
+        lineColor: '#27262b',
+        secondaryColor: '#eeebff',
+        tertiaryColor: '#f9f9fb'
+      }
+    });
+  }
+  
+  // Initialize on load
+  initMermaid();
+  
+  // Re-render on theme change
+  if (typeof jtd !== 'undefined') {
+    const observer = new MutationObserver(() => {
+      initMermaid();
+      // Re-render all diagrams
+      document.querySelectorAll('.mermaid').forEach(el => {
+        const graphDefinition = el.textContent;
+        el.removeAttribute('data-processed');
+        el.innerHTML = graphDefinition;
+      });
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-color-mode', 'data-theme']
+    });
+  }
+</script>
+
+<!-- Mermaid Styling -->
+<style>
+  .mermaid {
+    text-align: center;
+    margin: 2em 0;
+    background: transparent;
+  }
+  
+  .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
