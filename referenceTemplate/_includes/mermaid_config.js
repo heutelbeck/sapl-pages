@@ -13,7 +13,7 @@
     tertiaryBorderColor: "#5a5f6b",
     lineColor: "#7d8590",
     textColor: "#e6edf3",
-    background: "transparent",
+    background: "#31343f",
     mainBkg: "#42464f",
     nodeBorder: "#5a5f6b",
     nodeTextColor: "#e6edf3",
