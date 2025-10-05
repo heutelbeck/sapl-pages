@@ -19,7 +19,7 @@
     nodeTextColor: "#e6edf3",
     clusterBkg: "#31343f",
     clusterBorder: "#5a5f6b",
-    edgeLabelBackground: "#252830",
+    edgeLabelBackground: "transparent",
     noteBorderColor: "#5b8fc7",
     noteBkgColor: "#42464f",
     noteTextColor: "#e6edf3",
