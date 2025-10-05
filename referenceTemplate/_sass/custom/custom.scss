@@ -31,10 +31,19 @@ code.language-mermaid {
   background-color: #31343f !important;
   display: block;
 }
-.language-mermaid .edgeLabel text {
+// Mermaid arrow label shadows for readability
+.language-mermaid .edgeLabel text,
+.language-mermaid .edgeLabel span {
   text-shadow: 
     1px 1px 2px rgba(0, 0, 0, 0.9),
     -1px -1px 2px rgba(0, 0, 0, 0.9),
     1px -1px 2px rgba(0, 0, 0, 0.9),
-    -1px 1px 2px rgba(0, 0, 0, 0.9);
+    -1px 1px 2px rgba(0, 0, 0, 0.9) !important;
+  font-weight: 500;
+}
+
+// Remove any remaining borders on edge labels
+.language-mermaid .edgeLabel rect {
+  fill: transparent !important;
+  stroke: none !important;
 }
