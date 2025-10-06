@@ -81,4 +81,4 @@ module Rouge
   end
 end
 
-Rouge::Lexer.send(:register, Rouge::Lexers::SAPL)
+Rouge::Lexer.send(:register, 'sapl', Rouge::Lexers::SAPL)
