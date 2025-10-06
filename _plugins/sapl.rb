@@ -80,3 +80,5 @@ module Rouge
     end
   end
 end
+
+Rouge::Lexer.register(Rouge::Lexers::SAPL)

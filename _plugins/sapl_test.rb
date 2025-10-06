@@ -44,3 +44,5 @@ module Rouge
     end
   end
 end
+
+Rouge::Lexer.register(Rouge::Lexers::SAPLTest)
