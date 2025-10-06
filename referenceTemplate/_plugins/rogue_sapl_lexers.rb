@@ -13,7 +13,7 @@ module Rouge
 
       state :root do
         rule %r/\s+/, Text
-        rule %r(//.*$), Comment::Single
+        rule %r(//[^\n]*), Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
@@ -82,7 +82,7 @@ module Rouge
 
       state :root do
         rule %r/\s+/, Text
-        rule %r(//.*$), Comment::Single
+        rule %r(//[^\n]*), Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
