@@ -80,9 +80,3 @@ module Rouge
     end
   end
 end
-
-# Force Rouge to recognize this lexer
-Jekyll::Hooks.register :site, :pre_render do |site|
-  require 'rouge'
-  Rouge::Lexer.send(:register, 'sapl', Rouge::Lexers::SAPL) unless Rouge::Lexer.find('sapl')
-end
