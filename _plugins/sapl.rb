@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rouge'
+
 module Rouge
   module Lexers
     class SAPL < RegexLexer
