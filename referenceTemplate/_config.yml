@@ -191,6 +191,7 @@ plugins:
 # Syntax highlighting configuration
 markdown: kramdown
 highlighter: rouge
+
 kramdown:
   input: GFM
   syntax_highlighter: rouge
@@ -198,8 +199,6 @@ kramdown:
     block:
       line_numbers: true
       css_class: 'highlight'
-    default_lang: text
-  enable_coderay: false
 
 compress_html:
   clippings: all
