@@ -1,4 +1,7 @@
-# frozen_string_literal: true
+rule %r/\.\./, Operator
+        rule %r/\|-/, Operator
+        rule %r/::/, Operator
+        rule %r/[|^&<>+\-*\/%!]/, Operator# frozen_string_literal: true
 
 require 'rouge'
 
@@ -12,10 +15,9 @@ module Rouge
       mimetypes 'text/x-sapl'
 
       state :root do
-        rule %r{//}, Comment::Single, :single_line_comment
-        rule %r(/\*), Comment::Multiline, :multiline_comment
-        
         rule %r/\s+/, Text
+        rule %r/\/\/.*$/, Comment::Single
+        rule %r/\/\*/, Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
         rule %r/\b(?:deny-overrides|permit-overrides|first-applicable|only-one-applicable|deny-unless-permit|permit-unless-deny)\b/, Name::Constant
@@ -41,11 +43,6 @@ module Rouge
         rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\()/, Name::Function
         rule %r/\^?[a-zA-Z_$][a-zA-Z0-9_$]*/, Name
         rule %r/[{}()\[\]:;,.]/, Punctuation
-      end
-
-      state :single_line_comment do
-        rule %r/\n/, Text, :pop!
-        rule %r/[^\n]+/, Comment::Single
       end
 
       state :string do
@@ -88,10 +85,9 @@ module Rouge
       mimetypes 'text/x-sapl-test'
 
       state :root do
-        rule %r{//}, Comment::Single, :single_line_comment
-        rule %r(/\*), Comment::Multiline, :multiline_comment
-        
         rule %r/\s+/, Text
+        rule %r/\/\/.*$/, Comment::Single
+        rule %r/\/\*/, Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
         rule %r/\b(?:deny-overrides|permit-overrides|only-one-applicable|deny-unless-permit|permit-unless-deny)\b/, Name::Constant
@@ -104,11 +100,6 @@ module Rouge
         rule %r/\b(?:true|false|null|undefined)\b/, Keyword::Constant
         rule %r/[a-zA-Z_$][a-zA-Z0-9_$-]*/, Name
         rule %r/[{}()\[\]:;,.<>-]/, Punctuation
-      end
-
-      state :single_line_comment do
-        rule %r/\n/, Text, :pop!
-        rule %r/[^\n]+/, Comment::Single
       end
 
       state :string do
