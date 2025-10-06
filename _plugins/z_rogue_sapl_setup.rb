@@ -1,6 +1,6 @@
 require 'rouge'
-require_relative 'sapl'
-require_relative 'sapl_test'
+require_relative 'y_sapl'
+require_relative 'y_sapl_test'
 
 # Monkey-patch IMMEDIATELY at load time, not in a hook
 module Rouge
