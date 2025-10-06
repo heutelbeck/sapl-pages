@@ -45,4 +45,4 @@ module Rouge
   end
 end
 
-Rouge::Lexer.register(Rouge::Lexers::SAPLTest)
+Rouge::Lexer.send(:register, Rouge::Lexers::SAPLTest)
