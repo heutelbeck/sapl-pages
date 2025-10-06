@@ -1,7 +1,4 @@
-rule %r/\.\./, Operator
-        rule %r/\|-/, Operator
-        rule %r/::/, Operator
-        rule %r/[|^&<>+\-*\/%!]/, Operator# frozen_string_literal: true
+# frozen_string_literal: true
 
 require 'rouge'
 
@@ -36,8 +33,7 @@ module Rouge
         rule %r/\.\./, Operator
         rule %r/\|-/, Operator
         rule %r/::/, Operator
-        rule %r/\//, Operator
-        rule %r/[|^&<>+\-*%!]/, Operator
+        rule %r/[|^&<>+\-*\/%!]/, Operator
         rule %r/@/, Name::Variable::Instance
         rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)+(?=\()/, Name::Function
         rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\()/, Name::Function
@@ -115,4 +111,3 @@ module Rouge
       end
     end
   end
-end
