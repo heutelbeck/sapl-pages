@@ -6,7 +6,7 @@ module Rouge
   module Lexers
     class SAPL < RegexLexer
       title "SAPL"
-      desc "Streaming Attribute Policy Language for Attribute-Based Access Control"
+      desc "Streaming Attribute Policy Language"
       tag 'sapl'
       filenames '*.sapl'
       mimetypes 'text/x-sapl'
@@ -81,4 +81,8 @@ module Rouge
   end
 end
 
-Rouge::Lexer.send(:register, 'sapl', Rouge::Lexers::SAPL)
+# Force Rouge to recognize this lexer
+Jekyll::Hooks.register :site, :pre_render do |site|
+  require 'rouge'
+  Rouge::Lexer.send(:register, 'sapl', Rouge::Lexers::SAPL) unless Rouge::Lexer.find('sapl')
+end

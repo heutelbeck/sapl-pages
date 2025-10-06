@@ -45,4 +45,9 @@ module Rouge
   end
 end
 
-Rouge::Lexer.send(:register, 'sapl-test', Rouge::Lexers::SAPLTest)
+# Force Rouge to recognize this lexer
+Jekyll::Hooks.register :site, :pre_render do |site|
+  require 'rouge'
+  Rouge::Lexer.send(:register, 'sapl-test', Rouge::Lexers::SAPLTest) unless Rouge::Lexer.find('sapl-test')
+  Rouge::Lexer.send(:register, 'sapltest', Rouge::Lexers::SAPLTest) unless Rouge::Lexer.find('sapltest')
+end
