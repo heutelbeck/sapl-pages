@@ -84,7 +84,7 @@ module Rouge
       state :root do
         rule %r/\s+/, Text
         rule %r(/\*), Comment::Multiline, :multiline_comment
-        rule %r{(?://)(?:[^\n]*)}, Comment::Single
+        rule %r{//[^\n]*}, Keyword::Reserved
         rule %r/"/, Str::Double, :string
         rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
         rule %r/\b(?:deny-overrides|permit-overrides|only-one-applicable|deny-unless-permit|permit-unless-deny)\b/, Name::Constant
