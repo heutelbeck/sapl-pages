@@ -2,8 +2,6 @@
 
 require 'rouge'
 
-puts "Loading SAPL lexers..."
-
 module Rouge
   module Lexers
     class SAPL < RegexLexer
@@ -12,13 +10,6 @@ module Rouge
       tag 'sapl'
       filenames '*.sapl'
       mimetypes 'text/x-sapl'
-
-      def self.keywords
-        @keywords ||= Set.new %w(
-          policy set permit deny where var import as schema enforced
-          obligation advice transform for each true false null undefined
-        )
-      end
 
       state :root do
         rule %r/\s+/, Text
@@ -120,15 +111,4 @@ module Rouge
       end
     end
   end
-end
-
-puts "SAPL lexer class defined: #{defined?(Rouge::Lexers::SAPL)}"
-
-# Try to verify immediately
-begin
-  lexer = Rouge::Lexer.find('sapl')
-  puts "SAPL lexer findable at load time: #{lexer ? 'YES' : 'NO'}"
-  puts "Lexer class: #{lexer.class}" if lexer
-rescue => e
-  puts "Error finding SAPL lexer: #{e.message}"
 end
