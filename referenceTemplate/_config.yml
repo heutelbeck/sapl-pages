@@ -197,7 +197,9 @@ kramdown:
   syntax_highlighter_opts:
     block:
       line_numbers: true
-
+    default_lang: text
+    guess_lang: true
+    css_class: 'highlight'
 
 compress_html:
   clippings: all
