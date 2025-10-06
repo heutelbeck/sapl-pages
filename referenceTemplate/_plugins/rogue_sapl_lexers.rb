@@ -13,7 +13,7 @@ module Rouge
 
       state :root do
         rule %r/\s+/, Text
-        rule %r/\/\/.*$/, Comment::Single
+        rule %r/\/\/.*?$/, Comment::Single
         rule %r/\/\*/, Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
@@ -30,10 +30,11 @@ module Rouge
         rule %r/<=/, Operator
         rule %r/>=/, Operator
         rule %r/\bin\b/, Operator::Word
-        rule %r/[|^&<>+\-*\/%!]/, Operator
         rule %r/\.\./, Operator
         rule %r/\|-/, Operator
         rule %r/::/, Operator
+        rule %r/\//, Operator
+        rule %r/[|^&<>+\-*%!]/, Operator
         rule %r/@/, Name::Variable::Instance
         rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)+(?=\()/, Name::Function
         rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\()/, Name::Function
@@ -82,7 +83,7 @@ module Rouge
 
       state :root do
         rule %r/\s+/, Text
-        rule %r/\/\/.*$/, Comment::Single
+        rule %r/\/\/.*?$/, Comment::Single
         rule %r/\/\*/, Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
