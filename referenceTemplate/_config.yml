@@ -188,10 +188,16 @@ plugins:
   - jekyll-github-metadata
   - jekyll-include-cache
 
+# Syntax highlighting configuration
+markdown: kramdown
+highlighter: rouge
 kramdown:
+  input: GFM
+  syntax_highlighter: rouge
   syntax_highlighter_opts:
     block:
       line_numbers: true
+
 
 compress_html:
   clippings: all
