@@ -1,34 +1,39 @@
 require 'rouge'
-
-# Load the lexers
 require_relative 'sapl'
 require_relative 'sapl_test'
 
-# Force Rouge to recognize them by monkey-patching the registry
+# Monkey-patch IMMEDIATELY at load time, not in a hook
 module Rouge
-  module Lexers
-    # Ensure SAPL lexers are in the registry
-    Lexer.class_eval do
-      class << self
-        alias_method :original_find, :find
-        
-        def find(name)
-          case name.to_s.downcase
-          when 'sapl'
-            Rouge::Lexers::SAPL
-          when 'sapl-test', 'sapltest'
-            Rouge::Lexers::SAPLTest
-          else
-            original_find(name)
-          end
+  class Lexer
+    class << self
+      unless method_defined?(:find_without_sapl)
+        alias_method :find_without_sapl, :find
+      end
+      
+      def find(name)
+        case name.to_s.downcase
+        when 'sapl'
+          Rouge::Lexers::SAPL
+        when 'sapl-test', 'sapltest'
+          Rouge::Lexers::SAPLTest
+        else
+          find_without_sapl(name)
         end
       end
     end
   end
 end
 
-# Verify it works
-Jekyll::Hooks.register :site, :after_init do |site|
-  puts "SAPL lexer check: #{Rouge::Lexer.find('sapl') ? 'FOUND' : 'NOT FOUND'}"
-  puts "SAPL-Test lexer check: #{Rouge::Lexer.find('sapl-test') ? 'FOUND' : 'NOT FOUND'}"
+# Test that lexer actually WORKS, not just that it's found
+test_code = 'policy "test" permit'
+begin
+  lexer = Rouge::Lexer.find('sapl')
+  tokens = lexer.lex(test_code).to_a
+  if tokens.any?
+    puts "✓ SAPL lexer working: generated #{tokens.length} tokens"
+  else
+    puts "✗ SAPL lexer found but generated NO tokens!"
+  end
+rescue => e
+  puts "✗ SAPL lexer error: #{e.message}"
 end
