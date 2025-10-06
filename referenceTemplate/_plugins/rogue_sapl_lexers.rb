@@ -111,3 +111,4 @@ module Rouge
       end
     end
   end
+end
