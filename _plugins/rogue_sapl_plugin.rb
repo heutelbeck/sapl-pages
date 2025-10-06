@@ -120,11 +120,20 @@ module Rouge
   end
 end
 
-# Hook into Jekyll's initialization
+# Verify lexers are discoverable
 Jekyll::Hooks.register :site, :after_init do |site|
-  Rouge::Lexer.register(Rouge::Lexers::SAPL)
-  Rouge::Lexer.register(Rouge::Lexers::SAPLTest)
+  sapl_lexer = Rouge::Lexer.find('sapl')
+  test_lexer = Rouge::Lexer.find('sapl-test')
   
-  puts "✓ SAPL lexers registered with Rouge during Jekyll initialization"
-  puts "  Available: #{Rouge::Lexer.all.map(&:tag).include?('sapl')}"
+  if sapl_lexer
+    puts "✓ SAPL lexer discovered: #{sapl_lexer.title}"
+  else
+    puts "✗ SAPL lexer NOT found"
+  end
+  
+  if test_lexer
+    puts "✓ SAPL-Test lexer discovered: #{test_lexer.title}"
+  else
+    puts "✗ SAPL-Test lexer NOT found"
+  end
 end
