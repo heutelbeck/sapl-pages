@@ -21,7 +21,7 @@ module Rouge
         rule %r/\b(?:policy|set|permit|deny|where|var|import|as|schema|enforced|obligation|advice|transform|for|each)\b/, Keyword
         rule %r/\b(?:true|false|null|undefined)\b/, Keyword::Constant
         rule %r/\b(?:subject|action|resource|environment)\b/, Name::Builtin
-        rule %r/\|?</, Operator, :attribute_finder
+        rule %r/\|?<(?=[a-zA-Z_$])/, Operator, :attribute_finder
         rule %r/\|\|/, Operator
         rule %r/&&/, Operator
         rule %r/==/, Operator
