@@ -1,6 +1,6 @@
 ---
 title: math
-parent: Function Libraries
+parent: Functions
 nav_order: 117
 ---
 # math

@@ -1,6 +1,6 @@
 ---
 title: signature
-parent: Function Libraries
+parent: Functions
 nav_order: 127
 ---
 # signature

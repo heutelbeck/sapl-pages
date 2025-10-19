@@ -1,6 +1,6 @@
 ---
 title: filter
-parent: Function Libraries
+parent: Functions
 nav_order: 107
 ---
 # filter

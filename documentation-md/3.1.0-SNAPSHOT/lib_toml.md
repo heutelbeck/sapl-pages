@@ -1,6 +1,6 @@
 ---
 title: toml
-parent: Function Libraries
+parent: Functions
 nav_order: 131
 ---
 # toml

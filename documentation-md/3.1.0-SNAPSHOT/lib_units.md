@@ -1,6 +1,6 @@
 ---
 title: units
-parent: Function Libraries
+parent: Functions
 nav_order: 133
 ---
 # units

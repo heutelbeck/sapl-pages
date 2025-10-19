@@ -1,6 +1,6 @@
 ---
 title: array
-parent: Function Libraries
+parent: Functions
 nav_order: 101
 ---
 # array

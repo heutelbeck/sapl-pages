@@ -1,6 +1,6 @@
 ---
 title: geo
-parent: Function Libraries
+parent: Functions
 nav_order: 108
 ---
 # geo

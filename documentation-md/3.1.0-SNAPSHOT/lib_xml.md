@@ -1,6 +1,6 @@
 ---
 title: xml
-parent: Function Libraries
+parent: Functions
 nav_order: 136
 ---
 # xml

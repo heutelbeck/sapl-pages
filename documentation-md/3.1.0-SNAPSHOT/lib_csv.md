@@ -1,6 +1,6 @@
 ---
 title: csv
-parent: Function Libraries
+parent: Functions
 nav_order: 104
 ---
 # csv

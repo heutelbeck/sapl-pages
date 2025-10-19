@@ -1,6 +1,6 @@
 ---
 title: uuid
-parent: Function Libraries
+parent: Functions
 nav_order: 134
 ---
 # uuid

@@ -1,6 +1,6 @@
 ---
 title: traccar
-parent: Function Libraries
+parent: Functions
 nav_order: 132
 ---
 # traccar

@@ -1,6 +1,6 @@
 ---
 title: time
-parent: Policy Information Points
+parent: Attribute Finders
 nav_order: 204
 ---
 # time

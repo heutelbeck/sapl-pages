@@ -1,6 +1,6 @@
 ---
 title: x509
-parent: Function Libraries
+parent: Functions
 nav_order: 135
 ---
 # x509

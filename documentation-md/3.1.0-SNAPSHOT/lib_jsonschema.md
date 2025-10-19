@@ -1,6 +1,6 @@
 ---
 title: jsonschema
-parent: Function Libraries
+parent: Functions
 nav_order: 112
 ---
 # jsonschema

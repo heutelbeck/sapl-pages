@@ -1,6 +1,6 @@
 ---
 title: keys
-parent: Function Libraries
+parent: Functions
 nav_order: 114
 ---
 # keys

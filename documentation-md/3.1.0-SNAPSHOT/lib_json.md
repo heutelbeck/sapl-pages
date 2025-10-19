@@ -1,6 +1,6 @@
 ---
 title: json
-parent: Function Libraries
+parent: Functions
 nav_order: 111
 ---
 # json

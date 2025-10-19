@@ -1,6 +1,6 @@
 ---
 title: time
-parent: Function Libraries
+parent: Functions
 nav_order: 130
 ---
 # time

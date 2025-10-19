@@ -1,6 +1,6 @@
 ---
 title: graph
-parent: Function Libraries
+parent: Functions
 nav_order: 109
 ---
 # graph

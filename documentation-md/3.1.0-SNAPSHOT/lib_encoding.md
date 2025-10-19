@@ -1,6 +1,6 @@
 ---
 title: encoding
-parent: Function Libraries
+parent: Functions
 nav_order: 106
 ---
 # encoding
@@ -132,6 +132,25 @@ where
 
 ---
 
+## encoding.base64Encode(Text data)
+
+```base64Encode(TEXT data)```: Encodes text data to Base64 standard format.
+
+Uses the standard Base64 alphabet with '+' and '/' characters. Includes padding
+with '=' characters to ensure the output length is a multiple of 4.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+where
+  encoding.base64Encode("hello") == "aGVsbG8=";
+  encoding.base64Encode("hello world") == "aGVsbG8gd29ybGQ=";
+```
+
+
+---
+
 ## encoding.hexDecode(Text data)
 
 ```hexDecode(TEXT data)```: Decodes hexadecimal representation to text.
@@ -148,25 +167,6 @@ where
   encoding.hexDecode("68656c6c6f") == "hello";
   encoding.hexDecode("68656C6C6F") == "hello";  // uppercase works
   encoding.hexDecode("68_65_6c_6c_6f") == "hello";  // underscores allowed
-```
-
-
----
-
-## encoding.base64Encode(Text data)
-
-```base64Encode(TEXT data)```: Encodes text data to Base64 standard format.
-
-Uses the standard Base64 alphabet with '+' and '/' characters. Includes padding
-with '=' characters to ensure the output length is a multiple of 4.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-where
-  encoding.base64Encode("hello") == "aGVsbG8=";
-  encoding.base64Encode("hello world") == "aGVsbG8gd29ybGQ=";
 ```
 
 

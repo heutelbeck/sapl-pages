@@ -1,6 +1,6 @@
 ---
 title: object
-parent: Function Libraries
+parent: Functions
 nav_order: 120
 ---
 # object

@@ -1,6 +1,6 @@
 ---
 title: jwt
-parent: Function Libraries
+parent: Functions
 nav_order: 113
 ---
 # jwt

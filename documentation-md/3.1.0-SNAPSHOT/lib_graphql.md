@@ -1,6 +1,6 @@
 ---
 title: graphql
-parent: Function Libraries
+parent: Functions
 nav_order: 110
 ---
 # graphql

@@ -1,6 +1,6 @@
 ---
 title: jwt
-parent: Policy Information Points
+parent: Attribute Finders
 nav_order: 202
 ---
 # jwt

@@ -1,29 +1,12 @@
 ---
 title: standard
-parent: Function Libraries
+parent: Functions
 nav_order: 128
 ---
 # standard
 
 This the standard function library for SAPL.
 
-
-
----
-
-## standard.toString(value)
-
-```toString(value)```: Converts any ```value``` to a string representation.
-
-
-**Example:**
-```
-import standard.*
-policy "example"
-permit
-where
-  toString([1,2,3]) == "[1,2,3]";
-```
 
 
 ---
@@ -40,6 +23,23 @@ policy "example"
 permit
 where
   onErrorMap(1/0,999) == 999;
+```
+
+
+---
+
+## standard.toString(value)
+
+```toString(value)```: Converts any ```value``` to a string representation.
+
+
+**Example:**
+```
+import standard.*
+policy "example"
+permit
+where
+  toString([1,2,3]) == "[1,2,3]";
 ```
 
 

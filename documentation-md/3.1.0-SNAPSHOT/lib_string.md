@@ -1,6 +1,6 @@
 ---
 title: string
-parent: Function Libraries
+parent: Functions
 nav_order: 129
 ---
 # string

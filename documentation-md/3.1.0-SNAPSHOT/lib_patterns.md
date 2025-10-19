@@ -1,6 +1,6 @@
 ---
 title: patterns
-parent: Function Libraries
+parent: Functions
 nav_order: 121
 ---
 # patterns

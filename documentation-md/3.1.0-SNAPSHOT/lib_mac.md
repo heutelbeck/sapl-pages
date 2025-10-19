@@ -1,6 +1,6 @@
 ---
 title: mac
-parent: Function Libraries
+parent: Functions
 nav_order: 116
 ---
 # mac

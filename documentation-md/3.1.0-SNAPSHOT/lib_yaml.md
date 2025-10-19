@@ -1,6 +1,6 @@
 ---
 title: yaml
-parent: Function Libraries
+parent: Functions
 nav_order: 137
 ---
 # yaml

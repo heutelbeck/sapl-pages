@@ -1,6 +1,6 @@
 ---
 title: sanitize
-parent: Function Libraries
+parent: Functions
 nav_order: 124
 ---
 # sanitize

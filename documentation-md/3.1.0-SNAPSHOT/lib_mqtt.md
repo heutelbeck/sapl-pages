@@ -1,6 +1,6 @@
 ---
 title: mqtt
-parent: Function Libraries
+parent: Functions
 nav_order: 118
 ---
 # mqtt

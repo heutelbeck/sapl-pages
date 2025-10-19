@@ -1,6 +1,6 @@
 ---
 title: numeral
-parent: Function Libraries
+parent: Functions
 nav_order: 119
 ---
 # numeral

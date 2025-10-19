@@ -1,6 +1,6 @@
 ---
 title: permissions
-parent: Function Libraries
+parent: Functions
 nav_order: 122
 ---
 # permissions

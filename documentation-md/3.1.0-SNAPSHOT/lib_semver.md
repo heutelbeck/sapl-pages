@@ -1,6 +1,6 @@
 ---
 title: semver
-parent: Function Libraries
+parent: Functions
 nav_order: 126
 ---
 # semver

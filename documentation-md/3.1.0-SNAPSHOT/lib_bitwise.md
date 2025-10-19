@@ -1,6 +1,6 @@
 ---
 title: bitwise
-parent: Function Libraries
+parent: Functions
 nav_order: 102
 ---
 # bitwise

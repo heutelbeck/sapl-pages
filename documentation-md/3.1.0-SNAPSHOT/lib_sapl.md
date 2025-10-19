@@ -1,6 +1,6 @@
 ---
 title: sapl
-parent: Function Libraries
+parent: Functions
 nav_order: 125
 ---
 # sapl

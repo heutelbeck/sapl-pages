@@ -1,6 +1,6 @@
 ---
 title: digest
-parent: Function Libraries
+parent: Functions
 nav_order: 105
 ---
 # digest

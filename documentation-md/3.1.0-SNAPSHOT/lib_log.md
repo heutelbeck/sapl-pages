@@ -1,6 +1,6 @@
 ---
 title: log
-parent: Function Libraries
+parent: Functions
 nav_order: 115
 ---
 # log
