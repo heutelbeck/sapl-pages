@@ -1,4 +1,5 @@
 ---
+layout: default
 title: jsonschema
 parent: Functions
 nav_order: 112

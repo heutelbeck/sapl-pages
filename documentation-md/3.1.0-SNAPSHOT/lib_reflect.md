@@ -1,4 +1,5 @@
 ---
+layout: default
 title: reflect
 parent: Functions
 nav_order: 123

@@ -1,4 +1,5 @@
 ---
+layout: default
 title: sanitize
 parent: Functions
 nav_order: 124

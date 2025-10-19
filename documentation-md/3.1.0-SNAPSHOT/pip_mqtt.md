@@ -1,4 +1,5 @@
 ---
+layout: default
 title: mqtt
 parent: Attribute Finders
 nav_order: 203

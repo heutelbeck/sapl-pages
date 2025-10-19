@@ -1,4 +1,5 @@
 ---
+layout: default
 title: geo
 parent: Functions
 nav_order: 108

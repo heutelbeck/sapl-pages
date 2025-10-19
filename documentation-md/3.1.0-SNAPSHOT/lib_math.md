@@ -1,4 +1,5 @@
 ---
+layout: default
 title: math
 parent: Functions
 nav_order: 117

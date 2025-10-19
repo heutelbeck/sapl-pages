@@ -1,4 +1,5 @@
 ---
+layout: default
 title: digest
 parent: Functions
 nav_order: 105

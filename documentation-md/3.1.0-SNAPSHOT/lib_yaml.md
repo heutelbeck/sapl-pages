@@ -1,4 +1,5 @@
 ---
+layout: default
 title: yaml
 parent: Functions
 nav_order: 137

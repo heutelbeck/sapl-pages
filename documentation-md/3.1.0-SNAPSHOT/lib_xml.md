@@ -1,4 +1,5 @@
 ---
+layout: default
 title: xml
 parent: Functions
 nav_order: 136

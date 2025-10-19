@@ -1,4 +1,5 @@
 ---
+layout: default
 title: jwt
 parent: Attribute Finders
 nav_order: 202

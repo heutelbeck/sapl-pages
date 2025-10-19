@@ -1,4 +1,5 @@
 ---
+layout: default
 title: uuid
 parent: Functions
 nav_order: 134

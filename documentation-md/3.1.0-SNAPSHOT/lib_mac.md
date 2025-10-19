@@ -1,4 +1,5 @@
 ---
+layout: default
 title: mac
 parent: Functions
 nav_order: 116

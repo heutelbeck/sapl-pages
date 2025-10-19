@@ -1,4 +1,5 @@
 ---
+layout: default
 title: string
 parent: Functions
 nav_order: 129

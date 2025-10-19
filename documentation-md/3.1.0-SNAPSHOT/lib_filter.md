@@ -1,4 +1,5 @@
 ---
+layout: default
 title: filter
 parent: Functions
 nav_order: 107

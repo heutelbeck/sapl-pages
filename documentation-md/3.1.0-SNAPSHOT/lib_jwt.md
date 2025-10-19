@@ -1,4 +1,5 @@
 ---
+layout: default
 title: jwt
 parent: Functions
 nav_order: 113

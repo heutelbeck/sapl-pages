@@ -1,4 +1,5 @@
 ---
+layout: default
 title: log
 parent: Functions
 nav_order: 115

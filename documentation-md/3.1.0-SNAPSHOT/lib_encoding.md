@@ -1,4 +1,5 @@
 ---
+layout: default
 title: encoding
 parent: Functions
 nav_order: 106

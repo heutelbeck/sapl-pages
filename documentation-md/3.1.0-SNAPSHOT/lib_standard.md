@@ -1,4 +1,5 @@
 ---
+layout: default
 title: standard
 parent: Functions
 nav_order: 128
@@ -7,23 +8,6 @@ nav_order: 128
 
 This the standard function library for SAPL.
 
-
-
----
-
-## standard.onErrorMap(guardedExpression, fallback)
-
-```onErrorMap(guardedExpression, fallbackExpression)```: If evaluation of ```guardedExpression``` results in an error,
-the ```fallback``` is returned instead. Otherwise the result of ```guardedExpression``` is returned.
-
-**Example:**
-```
-import standard.*
-policy "example"
-permit
-where
-  onErrorMap(1/0,999) == 999;
-```
 
 
 ---
@@ -40,6 +24,23 @@ policy "example"
 permit
 where
   toString([1,2,3]) == "[1,2,3]";
+```
+
+
+---
+
+## standard.onErrorMap(guardedExpression, fallback)
+
+```onErrorMap(guardedExpression, fallbackExpression)```: If evaluation of ```guardedExpression``` results in an error,
+the ```fallback``` is returned instead. Otherwise the result of ```guardedExpression``` is returned.
+
+**Example:**
+```
+import standard.*
+policy "example"
+permit
+where
+  onErrorMap(1/0,999) == 999;
 ```
 
 

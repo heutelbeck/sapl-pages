@@ -1,4 +1,5 @@
 ---
+layout: default
 title: time
 parent: Attribute Finders
 nav_order: 204

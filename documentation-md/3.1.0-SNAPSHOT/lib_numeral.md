@@ -1,4 +1,5 @@
 ---
+layout: default
 title: numeral
 parent: Functions
 nav_order: 119

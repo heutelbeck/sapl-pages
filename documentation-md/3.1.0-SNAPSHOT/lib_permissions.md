@@ -1,4 +1,5 @@
 ---
+layout: default
 title: permissions
 parent: Functions
 nav_order: 122

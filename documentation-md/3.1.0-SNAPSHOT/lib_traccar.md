@@ -1,4 +1,5 @@
 ---
+layout: default
 title: traccar
 parent: Functions
 nav_order: 132

@@ -1,4 +1,5 @@
 ---
+layout: default
 title: graph
 parent: Functions
 nav_order: 109

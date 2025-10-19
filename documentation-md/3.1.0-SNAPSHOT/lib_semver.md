@@ -1,4 +1,5 @@
 ---
+layout: default
 title: semver
 parent: Functions
 nav_order: 126

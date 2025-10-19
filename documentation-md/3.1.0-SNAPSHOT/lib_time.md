@@ -1,4 +1,5 @@
 ---
+layout: default
 title: time
 parent: Functions
 nav_order: 130

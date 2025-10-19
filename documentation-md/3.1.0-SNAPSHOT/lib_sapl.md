@@ -1,4 +1,5 @@
 ---
+layout: default
 title: sapl
 parent: Functions
 nav_order: 125

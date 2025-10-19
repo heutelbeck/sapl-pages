@@ -1,4 +1,5 @@
 ---
+layout: default
 title: patterns
 parent: Functions
 nav_order: 121

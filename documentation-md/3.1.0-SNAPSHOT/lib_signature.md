@@ -1,4 +1,5 @@
 ---
+layout: default
 title: signature
 parent: Functions
 nav_order: 127

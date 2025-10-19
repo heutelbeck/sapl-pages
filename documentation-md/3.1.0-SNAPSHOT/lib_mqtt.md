@@ -1,4 +1,5 @@
 ---
+layout: default
 title: mqtt
 parent: Functions
 nav_order: 118

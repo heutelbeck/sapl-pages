@@ -1,4 +1,5 @@
 ---
+layout: default
 title: traccar
 parent: Attribute Finders
 nav_order: 205
