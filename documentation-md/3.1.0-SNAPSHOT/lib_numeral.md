@@ -2,6 +2,7 @@
 layout: default
 title: numeral
 parent: Functions
+grand_parent: SAPL Reference
 nav_order: 119
 ---
 # numeral

@@ -2,6 +2,7 @@
 layout: default
 title: log
 parent: Functions
+grand_parent: SAPL Reference
 nav_order: 115
 ---
 # log

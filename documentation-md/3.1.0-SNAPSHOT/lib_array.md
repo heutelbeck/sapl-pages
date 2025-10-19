@@ -2,6 +2,7 @@
 layout: default
 title: array
 parent: Functions
+grand_parent: SAPL Reference
 nav_order: 101
 ---
 # array

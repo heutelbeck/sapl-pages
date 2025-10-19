@@ -2,6 +2,7 @@
 layout: default
 title: mqtt
 parent: Functions
+grand_parent: SAPL Reference
 nav_order: 118
 ---
 # mqtt

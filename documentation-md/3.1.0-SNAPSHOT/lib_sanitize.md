@@ -2,6 +2,7 @@
 layout: default
 title: sanitize
 parent: Functions
+grand_parent: SAPL Reference
 nav_order: 124
 ---
 # sanitize
