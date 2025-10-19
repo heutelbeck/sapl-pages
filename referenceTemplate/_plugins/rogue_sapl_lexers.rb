@@ -33,6 +33,7 @@ module Rouge
         rule %r/\.\./, Operator
         rule %r/\|-/, Operator
         rule %r/::/, Operator
+        rule %r/=/, Operator
         rule %r/[|^&<>+\-*\/%!]/, Operator
         rule %r/@/, Name::Variable::Instance
         rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)+(?=\()/, Name::Function
