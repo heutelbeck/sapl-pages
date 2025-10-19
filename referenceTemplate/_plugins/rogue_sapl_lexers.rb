@@ -46,6 +46,7 @@ module Rouge
         rule %r/"/, Str::Double, :pop!
         rule %r/\\["\\\/bfnrt]/, Str::Escape
         rule %r/\\u[0-9a-fA-F]{4}/, Str::Escape
+        rule %r/\\./, Str::Double
         rule %r/[^"\\]+/, Str::Double
       end
 
@@ -102,6 +103,7 @@ module Rouge
       state :string do
         rule %r/"/, Str::Double, :pop!
         rule %r/\\["\\\/bfnrt]/, Str::Escape
+        rule %r/\\./, Str::Double
         rule %r/[^"\\]+/, Str::Double
       end
 
