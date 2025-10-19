@@ -328,6 +328,21 @@ where
 
 ---
 
+## semver.isHigherOrEqual(Text version1, Text version2)
+
+```isHigherOrEqual(TEXT version1, TEXT version2)```: Tests if version1 >= version2.
+
+```sapl
+policy "feature_gate"
+permit
+where
+  action.name == "advancedFeature";
+  semver.isHigherOrEqual(request.version, "2.5.0");
+```
+
+
+---
+
 ## semver.coerce(Text value)
 
 ```coerce(TEXT value)```: Coerces string to valid semantic version.
@@ -341,21 +356,6 @@ permit
 where
   var normalized = semver.coerce(request.version);
   semver.isAtLeast(normalized, "2.0.0");
-```
-
-
----
-
-## semver.isHigherOrEqual(Text version1, Text version2)
-
-```isHigherOrEqual(TEXT version1, TEXT version2)```: Tests if version1 >= version2.
-
-```sapl
-policy "feature_gate"
-permit
-where
-  action.name == "advancedFeature";
-  semver.isHigherOrEqual(request.version, "2.5.0");
 ```
 
 
