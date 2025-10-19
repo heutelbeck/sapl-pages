@@ -64,15 +64,12 @@ For more details, refer to individual function documentation.
 - Returns a GeoJSON object representing the converted GML 3 data.
 
 **Example:**
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var gmlData = "<gml:Point><gml:coordinates>10,20</gml:coordinates></gml:Point>";
-    gml3ToGeoJSON(gmlData) == { "type": "Point", "coordinates": [10, 20] };
+    geo.gml3ToGeoJSON(gmlData) == { "type": "Point", "coordinates": [10, 20] };
 ```
 
 **Notes:**
@@ -98,15 +95,12 @@ Tests whether a geometry is simple, meaning it has no self-intersections or anom
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var line = { "type": "LineString", "coordinates": [[0,0], [1,1], [1,0], [0,0]] };
-    isSimple(line) == false;
+    geo.isSimple(line) == false;
 ```
 
 **Notes:**
@@ -133,16 +127,13 @@ Tests whether two geometries overlap, meaning they share some but not all interi
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    overlaps(polygon1, polygon2) == true;
+    geo.overlaps(polygon1, polygon2) == true;
 ```
 
 **Notes:**
@@ -167,16 +158,13 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    symDifference(polygon1, polygon2) == { "type": "MultiPolygon", "coordinates": [[[[0,0], [0,10], [10,10], [10,0], [0,0]]], [[[5,5], [5,15], [15,15], [15,5], [5,5]]]] };
+    geo.symDifference(polygon1, polygon2) == { "type": "MultiPolygon", "coordinates": [[[[0,0], [0,10], [10,10], [10,0], [0,0]]], [[[5,5], [5,15], [15,15], [15,5], [5,5]]]] };
 ```
 
 **Notes:**
@@ -201,15 +189,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var gmlData = "<gml:Point><gml:coordinates>10,20</gml:coordinates></gml:Point>";
-    gml2ToGeoJSON(gmlData) == { "type": "Point", "coordinates": [10, 20] };
+    geo.gml2ToGeoJSON(gmlData) == { "type": "Point", "coordinates": [10, 20] };
 ```
 
 **Notes:**
@@ -233,15 +218,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    centroid(polygon) == { "type": "Point", "coordinates": [5, 5] };
+    geo.centroid(polygon) == { "type": "Point", "coordinates": [5, 5] };
 ```
 
 **Notes:**
@@ -270,16 +252,13 @@ Tests whether the distance between two geometries is within a specified value.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [3, 4] };
-    isWithinDistance(point1, point2, 5.0) == true;
+    geo.isWithinDistance(point1, point2, 5.0) == true;
 ```
 
 **Notes:**
@@ -303,15 +282,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var line = { "type": "LineString", "coordinates": [[0,0], [0,10], [10,10], [10,0], [0,0]] };
-    length(line) == 40.0;
+    geo.length(line) == 40.0;
 ```
 
 **Notes:**
@@ -336,16 +312,13 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    intersection(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[5,5], [5,10], [10,10], [10,5], [5,5]]] };
+    geo.intersection(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[5,5], [5,10], [10,10], [10,5], [5,5]]] };
 ```
 
 **Notes:**
@@ -370,18 +343,15 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var geometries = [
         { "type": "Point", "coordinates": [0, 0] },
         { "type": "Point", "coordinates": [1, 1] }
     ];
-    flattenGeometryBag(geometries) == { "type": "GeometryCollection", "geometries": [
+    geo.flattenGeometryBag(geometries) == { "type": "GeometryCollection", "geometries": [
         { "type": "Point", "coordinates": [0, 0] },
         { "type": "Point", "coordinates": [1, 1] }
     ] };
@@ -411,16 +381,13 @@ Tests whether two geometries intersect, meaning they share at least one point.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var line1 = { "type": "LineString", "coordinates": [[0,0], [10,10]] };
     var line2 = { "type": "LineString", "coordinates": [[0,10], [10,0]] };
-    intersects(line1, line2) == true;
+    geo.intersects(line1, line2) == true;
 ```
 
 **Notes:**
@@ -447,14 +414,13 @@ Tests whether two geometries are disjoint, meaning they do not intersect.
 
 **Example:**
 
-```
-import geo.*
+```sapl
 policy "example"
 permit
 where
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var point = { "type": "Point", "coordinates": [20.0, 20.0] };
-    disjoint(polygon, point) == true;
+    geo.disjoint(polygon, point) == true;
 ```
 
 **Notes:**
@@ -482,14 +448,13 @@ Tests whether two geometries are exactly equal in terms of their structure and v
 
 **Example:**
 
-```
-import geo.*
+```sapl
 policy "example"
 permit
 where
     var point1 = { "type": "Point", "coordinates": [10.0, 20.0] };
     var point2 = { "type": "Point", "coordinates": [10.0, 20.0] };
-    equalsExact(point1, point2) == true;
+    geo.equalsExact(point1, point2) == true;
 ```
 
 **Notes:**
@@ -514,16 +479,13 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [1, 1] };
-    geometryBag(point1, point2) == { "type": "GeometryCollection", "geometries": [
+    geo.geometryBag(point1, point2) == { "type": "GeometryCollection", "geometries": [
         { "type": "Point", "coordinates": [0, 0] },
         { "type": "Point", "coordinates": [1, 1] }
     ] };
@@ -551,16 +513,13 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    difference(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
+    geo.difference(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
 ```
 
 **Notes:**
@@ -586,15 +545,12 @@ Tests whether a geometry is valid based on topological rules.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    isValid(polygon) == true;
+    geo.isValid(polygon) == true;
 ```
 
 **Notes:**
@@ -621,14 +577,13 @@ Tests whether two geometries touch at their boundaries but do not overlap.
 
 **Example:**
 
-```
-import geo.*
+```sapl
 policy "example"
 permit
 where
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[10,0], [10,10], [20,10], [20,0], [10,0]]] };
-    touches(polygon1, polygon2) == true;
+    geo.touches(polygon1, polygon2) == true;
 ```
 
 **Notes:**
@@ -655,16 +610,13 @@ Tests whether two geometries cross each other, meaning they intersect and share 
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var line1 = { "type": "LineString", "coordinates": [[0,0], [10,10]] };
     var line2 = { "type": "LineString", "coordinates": [[0,10], [10,0]] };
-    crosses(line1, line2) == true;
+    geo.crosses(line1, line2) == true;
 ```
 
 **Notes:**
@@ -688,18 +640,15 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var collection = { "type": "GeometryCollection", "geometries": [
         { "type": "Point", "coordinates": [0, 0] },
         { "type": "Point", "coordinates": [1, 1] }
     ] };
-    bagSize(collection) == 2;
+    geo.bagSize(collection) == 2;
 ```
 
 **Notes:**
@@ -723,14 +672,11 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
-    milesToMeter(1.0) == 1609.34;
+    geo.milesToMeter(1.0) == 1609.34;
 ```
 
 **Notes:**
@@ -754,15 +700,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var wktData = "POINT(10 20)";
-    wktToGeoJSON(wktData) == { "type": "Point", "coordinates": [10, 20] };
+    geo.wktToGeoJSON(wktData) == { "type": "Point", "coordinates": [10, 20] };
 ```
 
 **Notes:**
@@ -789,11 +732,8 @@ Checks if one geometry collection is a subset of another.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var collection1 = { "type": "GeometryCollection", "geometries": [
@@ -803,7 +743,7 @@ where
         { "type": "Point", "coordinates": [0, 0] },
         { "type": "Point", "coordinates": [1, 1] }
     ] };
-    subset(collection1, collection2) == true;
+    geo.subset(collection1, collection2) == true;
 ```
 
 **Notes:**
@@ -828,16 +768,13 @@ geometries in meters. This method uses WGS84 as its reference coordinate system.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    geoDistance(point1, point2) <= 157.25;
+    geo.geoDistance(point1, point2) <= 157.25;
 ```
 
 **Notes:**
@@ -862,15 +799,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    boundary(polygon) == { "type": "LineString", "coordinates": [[0,0], [0,10], [10,10], [10,0], [0,0]] };
+    geo.boundary(polygon) == { "type": "LineString", "coordinates": [[0,0], [0,10], [10,10], [10,0], [0,0]] };
 ```
 
 **Notes:**
@@ -896,17 +830,14 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var collection = { "type": "GeometryCollection", "geometries": [
         { "type": "Point", "coordinates": [0, 0] }
     ] };
-    oneAndOnly(collection) == { "type": "Point", "coordinates": [0, 0] };
+    geo.oneAndOnly(collection) == { "type": "Point", "coordinates": [0, 0] };
 ```
 
 **Notes:**
@@ -933,15 +864,12 @@ Tests whether a geometry like a LineString is closed, meaning it starts and ends
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var ring = { "type": "LineString", "coordinates": [[0,0], [0,10], [10,10], [10,0], [0,0]] };
-    isClosed(ring) == true;
+    geo.isClosed(ring) == true;
 ```
 
 **Notes:**
@@ -970,15 +898,12 @@ Tests whether one geometry is completely within another geometry.
 **Example:**
 
 ```
-import geo.*
-
 policy "example"
-
 permit
 where
     var point = { "type": "Point", "coordinates": [5, 5] };
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    within(point, polygon) == true;
+    geo.within(point, polygon) == true;
 ```
 
 **Notes:**
@@ -1004,18 +929,15 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point = { "type": "Point", "coordinates": [0, 0] };
     var collection = { "type": "GeometryCollection", "geometries": [
         { "type": "Point", "coordinates": [0, 0] }
     ] };
-    geometryIsIn(point, collection) == true;
+    geo.geometryIsIn(point, collection) == true;
 ```
 
 **Notes:**
@@ -1043,16 +965,13 @@ Returns the shortest geodesic distance between two geometries in meters.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    geoDistance(point1, point2, "EPSG:4326") <= 157.25;
+    geo.geoDistance(point1, point2, "EPSG:4326") <= 157.25;
 ```
 
 **Notes:**
@@ -1081,15 +1000,12 @@ Tests whether one geometry completely contains another geometry.
 **Example:**
 
 ```
-import geo.*
-
 policy "example"
-
 permit
 where
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var point = { "type": "Point", "coordinates": [5, 5] };
-    contains(polygon, point) == true;
+    geo.contains(polygon, point) == true;
 ```
 
 **Notes:**
@@ -1115,11 +1031,8 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var collection1 = { "type": "GeometryCollection", "geometries": [
@@ -1129,7 +1042,7 @@ where
         { "type": "Point", "coordinates": [1, 1] },
         { "type": "Point", "coordinates": [0, 0] }
     ] };
-    atLeastOneMemberOf(collection1, collection2) == true;
+    geo.atLeastOneMemberOf(collection1, collection2) == true;
 ```
 
 **Notes:**
@@ -1153,15 +1066,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var points = { "type": "MultiPoint", "coordinates": [[0,0], [0,10], [10,10], [10,0]] };
-    convexHull(points) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
+    geo.convexHull(points) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
 ```
 
 **Notes:**
@@ -1188,16 +1098,13 @@ two geometries.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [3, 4] };
-    distance(point1, point2) == 5.0;
+    geo.distance(point1, point2) == 5.0;
 ```
 
 **Notes:**
@@ -1222,16 +1129,13 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    union(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [5,10], [5,15], [15,15], [15,5], [10,5], [10,0], [0,0]]] };
+    geo.union(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [5,10], [5,15], [15,15], [15,5], [10,5], [10,0], [0,0]]] };
 ```
 
 **Notes:**
@@ -1260,16 +1164,13 @@ Tests whether two geometries are within a specified geodesic (earth surface) dis
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    isWithinGeoDistance(point1, point2, 150) == true;
+    geo.isWithinGeoDistance(point1, point2, 150) == true;
 ```
 
 **Notes:**
@@ -1293,15 +1194,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    area(polygon) == 100.0;
+    geo.area(polygon) == 100.0;
 ```
 
 **Notes:**
@@ -1326,14 +1224,11 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
-    yardToMeter(1.0) == 0.9144;
+    geo.yardToMeter(1.0) == 0.9144;
 ```
 
 **Notes:**
@@ -1357,14 +1252,11 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
-    degreeToMeter(1.0) == 111319.9;
+    geo.degreeToMeter(1.0) == 111319.9;
 ```
 
 **Notes:**
@@ -1388,15 +1280,12 @@ where
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var kmlData = "<kml><Placemark><Point><coordinates>10,20</coordinates></Point></Placemark></kml>";
-    kmlToGeoJSON(kmlData) == { "type": "Point", "coordinates": [10, 20] };
+    geo.kmlToGeoJSON(kmlData) == { "type": "Point", "coordinates": [10, 20] };
 ```
 
 **Notes:**
@@ -1422,15 +1311,12 @@ the new geometry.
 
 **Example:**
 
-```
-import geo.*
-
+```sapl
 policy "example"
-
 permit
 where
     var point = { "type": "Point", "coordinates": [0, 0] };
-    buffer(point, 10.0) == { "type": "Polygon", "coordinates": [[[10,0], [0,10], [-10,0], [0,-10], [10,0]]] };
+    geo.buffer(point, 10.0) == { "type": "Polygon", "coordinates": [[[10,0], [0,10], [-10,0], [0,-10], [10,0]]] };
 ```
 
 **Notes:**

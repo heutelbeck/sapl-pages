@@ -19,13 +19,12 @@ Function library for TOML marshalling and unmarshalling operations.
 value representing the content of the TOML document.
 
 **Example:**
-```
-import toml.*
+```sapl
 policy "example"
 permit
 where
    var tomlText = "[flower]\nname = \"Poppy\"\ncolor = \"RED\"\npetals = 9";
-   tomlToVal(tomlText) == {"flower":{"name":"Poppy","color":"RED","petals":9}};
+   toml.tomlToVal(tomlText) == {"flower":{"name":"Poppy","color":"RED","petals":9}};
 ```
 
 
@@ -36,14 +35,13 @@ where
 ```valToToml(value)```: Converts a SAPL ```value``` into a TOML string representation.
 
 **Example:**
-```
-import toml.*
+```sapl
 policy "example"
 permit
 where
    var object = {"flower":{"name":"Poppy","color":"RED","petals":9}};
    var expected = "[flower]\nname = \"Poppy\"\ncolor = \"RED\"\npetals = 9\n";
-   valToToml(object) == expected;
+   toml.valToToml(object) == expected;
 ```
 
 

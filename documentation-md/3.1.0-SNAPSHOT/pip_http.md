@@ -7,7 +7,9 @@ nav_order: 201
 ---
 # http
 
-This Policy Information Point provided basic means to source attribute data by consuming
+This Policy Information Point to get and monitor HTTP based information.
+
+This Policy Information Point provides basic means to source attribute data by consuming
 HTTP-based APIs and Websockets.
 
 The Attributes are named according to the HTTP verb, i.e., get, put, delete, post, and patch.
@@ -36,7 +38,7 @@ If the accepted media type is ```application/json```, the PIP will attempt to pa
 the response body to a SAPL value. Else, the response body is returned as a text value.
 
 Example:
-```
+```json
 {
   "baseUrl": "https://example.com",
   "path": "/api/owners",
@@ -57,8 +59,6 @@ Example:
 ```
 
 
-
-
 ---
 
 ## patch
@@ -72,7 +72,7 @@ This attribute takes a ```requestSettings``` object as a parameter and performs 
 polls it according the the settings.
 
 Example:
-```
+```sapl
 policy "http example"
 permit
 where
@@ -98,7 +98,7 @@ This attribute takes a ```requestSettings``` object as a parameter and performs 
 polls it according the the settings.
 
 Example:
-```
+```sapl
 policy "http example"
 permit
 where
@@ -124,7 +124,7 @@ This attribute takes a ```requestSettings``` object as a parameter and connects 
 as sent by the server. Upon connection, the ```body``` of the settings is sent to the server.
 
 Example:
-```
+```sapl
 policy "http example"
 permit
 where
@@ -152,7 +152,7 @@ This attribute takes a ```requestSettings``` object as a parameter and performs 
 request and polls it according the the settings.
 
 Example:
-```
+```sapl
 policy "http example"
 permit
 where
@@ -175,7 +175,7 @@ This attribute takes a ```requestSettings``` object as a parameter and performs 
 request and polls it according the the settings.
 
 Example:
-```
+```sapl
 policy "http example"
 permit
 where
@@ -198,7 +198,7 @@ This attribute takes a ```requestSettings``` object as a parameter and performs 
 request and polls it according the the settings.
 
 Example:
-```
+```sapl
 policy "http example"
 permit
 where

@@ -23,7 +23,7 @@ As the function always returns ```true```, the rest of the policy evaluation is 
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -42,7 +42,7 @@ The function behaves like the identity funtion, returning ```value``` unchanged.
 This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -62,7 +62,7 @@ As the function always returns ```true```, the rest of the policy evaluation is 
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -83,7 +83,7 @@ As the function always returns ```true```, the rest of the policy evaluation is 
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -104,7 +104,7 @@ As the function always returns ```true```, the rest of the policy evaluation is 
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -123,7 +123,7 @@ The function behaves like the identity funtion, returning ```value``` unchanged.
 This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -143,7 +143,7 @@ As the function always returns ```true```, the rest of the policy evaluation is 
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -162,7 +162,7 @@ The function behaves like the identity funtion, returning ```value``` unchanged.
 This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -180,7 +180,7 @@ The function behaves like the identity funtion, returning ```value``` unchanged.
 This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where
@@ -198,7 +198,7 @@ The function behaves like the identity funtion, returning ```value``` unchanged.
 This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
-```
+```sapl
 policy "logging"
 permit
 where

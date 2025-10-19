@@ -16,8 +16,8 @@ This library contains the functions for testing the compliance of a value with a
 ## jsonschema.isCompliant(validationSubject, JsonObject jsonSchema)
 
 ```isCompliantWithSchema(validationSubject, OBJECT schema)```:
-This function tests the ```validationSubject``` for compliance with the with the provided JSON schema
-```schema```.
+This function tests the `validationSubject` for compliance with the with the provided JSON schema `schema`.
+
 The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
 If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
 else it returns ```false```.
@@ -25,7 +25,7 @@ else it returns ```false```.
 *Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
 
 **Example:**
-```
+```sapl
 policy "example"
 permit
 where
@@ -42,8 +42,9 @@ where
 ## jsonschema.isCompliantWithExternalSchemas(validationSubject, JsonObject jsonSchema, externalSchemas)
 
 ```isCompliantWithSchema(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
-This function tests the ```validationSubject``` for compliance with the with the provided JSON schema
-```schema```.
+This function tests the ```validationSubject``` for compliance with the with the provided JSON
+schema `schema`.
+
 The schema itself cannot be validated and improper schema definitions may lead to unexcpected results.
 If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
 else it returns ```false```.
@@ -54,7 +55,7 @@ If no $id field is provided, the schema will not be detectable.
 *Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
 
 **Example:**
-```
+```sapl
 policy "example"
 permit
 where

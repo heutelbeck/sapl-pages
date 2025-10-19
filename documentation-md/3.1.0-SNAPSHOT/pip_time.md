@@ -31,7 +31,7 @@ This *attribute is not polling the clock* and should be used instead of doing ma
 ```<time.now>```, which would poll the clock regularly.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "work"
 where
@@ -60,7 +60,7 @@ This *attribute is not polling the clock* and should be used instead of  ```time
 which would poll the clock regularly.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "work"
 where
@@ -89,7 +89,7 @@ This *attribute is not polling the clock* and should be used instead of  ```time
 which would poll the clock regularly.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "work"
 where
@@ -119,7 +119,7 @@ This *attribute is not polling the clock* and should be used instead of  manuall
 to ```<time.now>```.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "work"
 where
@@ -141,7 +141,7 @@ The first time is emitted instantly.
 After that the time is emitted once every ```updateIntervalInMillis`` milliseconds.
 
 Example:
-```
+```sapl
 policy "time example"
 permit
 where
@@ -170,7 +170,7 @@ If the time of the first parameter is after the time of the second parameter, th
 one between the to times, crossing the midnight border of the days.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "work"
 where
@@ -197,7 +197,7 @@ Note, that the cycle will completely reset if the durations are updated.
 The attribute will forget its state in this case.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "read"
 where
@@ -241,7 +241,7 @@ This *attribute is not polling the clock* and should be used instead of doing ma
 ```<time.now>```, which would poll the clock regularly.
 
 Example:
-```
+```sapl
 policy "time example"
 permit action == "work"
 where

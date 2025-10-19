@@ -23,7 +23,7 @@ results are returned as an object with properties for direct access.
 
 ### Basic Usage
 
-```
+```sapl
 var gql = graphql.parse(resource.query, resource."schema");
 
 // Access properties directly
@@ -41,7 +41,7 @@ gql.ast                     // object - complete raw AST
 
 A typical authorization subscription for GraphQL authorization may look like this:
 
-```
+```json
 {
   "subject": {
     "username": "alice",
@@ -207,7 +207,7 @@ security concerns.
 
 Restricting access to specific fields based on user attributes.
 
-```
+```sapl
 policy "protect-sensitive-fields"
 deny action == "execute"
 where
@@ -219,7 +219,7 @@ where
 
 Preventing resource-intensive queries from overloading the system.
 
-```
+```sapl
 policy "limit-query-complexity"
 deny action == "execute"
 where
@@ -231,7 +231,7 @@ where
 
 Assigning different costs to fields based on their resource requirements.
 
-```
+```sapl
 policy "weighted-complexity"
 deny action == "execute"
 where
@@ -244,7 +244,7 @@ where
 
 Applying different rules based on whether the operation reads or writes data.
 
-```
+```sapl
 policy "restrict-mutations"
 deny action == "execute"
 where
@@ -256,7 +256,7 @@ where
 
 Restricting access to specific GraphQL types.
 
-```
+```sapl
 policy "restrict-internal-types"
 deny action == "execute"
 where
@@ -268,7 +268,7 @@ where
 
 Blocking queries that use specific custom directives.
 
-```
+```sapl
 policy "restrict-admin-directive"
 deny action == "execute"
 where
@@ -280,7 +280,7 @@ where
 
 Checking fields within specific fragments.
 
-```
+```sapl
 policy "validate-fragment-content"
 deny action == "execute"
 where
@@ -312,7 +312,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "sensitive-fields"
 deny action == "execute"
 where
@@ -345,7 +345,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "prevent-deep-queries"
 deny action == "execute"
 where
@@ -373,7 +373,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "restrict-introspection"
 deny action == "execute"
 where
@@ -396,7 +396,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "detect-batching"
 deny action == "execute"
 where
@@ -420,7 +420,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "limit-pagination"
 deny action == "execute"
 where
@@ -446,7 +446,7 @@ query { user(id: "1") { ...UserInfo } }
 ```
 
 **Policy**:
-```
+```sapl
 policy "reject-circular-fragments"
 deny action == "execute"
 where
@@ -471,7 +471,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "limit-directives"
 deny action == "execute"
 where
@@ -493,7 +493,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "validate-arguments"
 deny action == "execute"
 where
@@ -515,7 +515,7 @@ mutation {
 ```
 
 **Policy**:
-```
+```sapl
 policy "restrict-mutations"
 deny action == "execute"
 where
@@ -539,7 +539,7 @@ subscription {
 ```
 
 **Policy**:
-```
+```sapl
 policy "limit-subscriptions"
 deny action == "execute"
 where
@@ -570,7 +570,7 @@ query {
 ```
 
 **Policy**:
-```
+```sapl
 policy "comprehensive-security"
 permit action == "execute"
 where
@@ -591,7 +591,7 @@ where
 **Scenario**: Different user tiers may have different resource allocation limits.
 
 **Policy**:
-```
+```sapl
 policy "tiered-limits"
 permit action == "execute"
 where

@@ -19,13 +19,12 @@ Function library for XML marshalling and unmarshalling operations.
 value representing the content of the XML document.
 
 **Example:**
-```
-import xml.*
+```sapl
 policy "example"
 permit
 where
    var xmlText = "<Flower><name>Poppy</name><color>RED</color><petals>9</petals></Flower>";
-   xmlToVal(xmlText) == {"n":"Poppy","color":"RED","petals":"9"};
+   xml.xmlToVal(xmlText) == {"n":"Poppy","color":"RED","petals":"9"};
 ```
 
 
@@ -36,14 +35,13 @@ where
 ```valToXml(value)```: Converts a SAPL ```value``` into an XML string representation.
 
 **Example:**
-```
-import xml.*
+```sapl
 policy "example"
 permit
 where
    var object = {"name":"Poppy","color":"RED","petals":9};
    var expected = "<LinkedHashMap><name>Poppy</name><color>RED</color><petals>9</petals></LinkedHashMap>";
-   valToXml(object) == expected;
+   xml.valToXml(object) == expected;
 ```
 
 

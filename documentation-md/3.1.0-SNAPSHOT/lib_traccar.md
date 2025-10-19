@@ -24,8 +24,7 @@ The output GeoJSON will also include the WGS84 CRS (Coordinate Reference System)
 
 **Example:**
 
-```
-import traccar.*
+```sapl
 policy "example"
 permit
 where
@@ -48,7 +47,7 @@ where
           "motion": false
           }
     };
-    traccarPositionToGeoJSON(position) == '{"type":"Point","coordinates":[-122.4194,37.7749,100.0],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}';
+    traccar.traccarPositionToGeoJSON(position) == '{"type":"Point","coordinates":[-122.4194,37.7749,100.0],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}';
 ```
 
 
@@ -65,8 +64,7 @@ The output GeoJSON will also include the WGS84 CRS (Coordinate Reference System)
 
 **Example:**
 
-```
-import traccar.*
+```sapl
 policy "example"
 permit
 where
@@ -80,7 +78,7 @@ where
               "type": "polygon"
           }
        };
-     traccarGeofenceToGeoJson(geofence) == '{"type":"Polygon","coordinates":[[[10.0,30.0],[40.0,40.0],[40.0,20.0],[20.0,10.0],[10.0,30.0]]],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}';
+     traccar.traccarGeofenceToGeoJson(geofence) == '{"type":"Polygon","coordinates":[[[10.0,30.0],[40.0,40.0],[40.0,20.0],[20.0,10.0],[10.0,30.0]]],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}';
 ```
 
 

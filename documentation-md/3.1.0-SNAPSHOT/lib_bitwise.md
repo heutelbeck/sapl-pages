@@ -394,32 +394,6 @@ where
 
 ---
 
-## bitwise.unsignedRightShift(Long value, Long positions)
-
-```bitwise.unsignedRightShift(LONG value, LONG positions)```
-
-Shifts bits to the right by the specified number of positions using logical shift
-(zero-fill). Zeros are always shifted in from the left, regardless of the sign bit.
-Treats the value as an unsigned 64-bit integer for the purpose of shifting.
-
-Parameters:
-- value: Value to shift
-- positions: Number of positions to shift (0 to 63)
-
-Returns: Right-shifted value with zero-fill
-
-Example:
-```sapl
-policy "example"
-permit
-where
-    bitwise.unsignedRightShift(16, 2) == 4;
-    bitwise.unsignedRightShift(-1, 1) == 9223372036854775807;
-```
-
-
----
-
 ## bitwise.leadingZeros(Long value)
 
 ```bitwise.leadingZeros(LONG value)```
@@ -442,6 +416,32 @@ where
     bitwise.leadingZeros(0) == 64;
     bitwise.leadingZeros(1) == 63;
     bitwise.leadingZeros(8) == 60;
+```
+
+
+---
+
+## bitwise.unsignedRightShift(Long value, Long positions)
+
+```bitwise.unsignedRightShift(LONG value, LONG positions)```
+
+Shifts bits to the right by the specified number of positions using logical shift
+(zero-fill). Zeros are always shifted in from the left, regardless of the sign bit.
+Treats the value as an unsigned 64-bit integer for the purpose of shifting.
+
+Parameters:
+- value: Value to shift
+- positions: Number of positions to shift (0 to 63)
+
+Returns: Right-shifted value with zero-fill
+
+Example:
+```sapl
+policy "example"
+permit
+where
+    bitwise.unsignedRightShift(16, 2) == 4;
+    bitwise.unsignedRightShift(-1, 1) == 9223372036854775807;
 ```
 
 

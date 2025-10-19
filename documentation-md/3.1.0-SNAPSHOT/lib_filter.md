@@ -23,7 +23,7 @@ If the original value is ```undefined``` it will be replaced with the ```replace
 **Example:**
 
 Given a subscription:
-```
+```json
 {
   "resource" : {
                  "array" : [ null, true ],
@@ -33,7 +33,7 @@ Given a subscription:
 ```
 
 And the policy:
-```
+```sapl
 policy "test"
 permit
 transform resource |- {
@@ -43,7 +43,7 @@ transform resource |- {
 ```
 
 The decision will contain a ```resource``` as follows:
-```
+```json
 {
   "array" : [ null, "***" ],
   "key1"  : null
@@ -75,7 +75,7 @@ The function returns the modified ```original```.
 **Example:**
 
 Given a subscription:
-```
+```json
 {
   "resource" : {
                  "array" : [ null, true ],
@@ -85,7 +85,7 @@ Given a subscription:
 ```
 
 And the policy:
-```
+```sapl
 policy "test"
 permit
 transform resource |- {
@@ -94,7 +94,7 @@ transform resource |- {
 ```
 
 The decision will contain a ```resource``` as follows:
-```
+```json
 {
   "array" : [ null, true ],
   "key1"  : "aXXXX"
@@ -114,7 +114,7 @@ In filters, ```undefined``` elements of arrays and objects will be silently remo
 The expression ```[ 0, 1, 2, 3, 4, 5 ] |- { @[-2:] : filter.remove }``` results in ```[0, 1, 2, 3]```.
 
 Given a subscription:
-```
+```json
 {
   "resource" : {
                  "array" : [ null, true ],
@@ -124,7 +124,7 @@ Given a subscription:
 ```
 
 And the policy:
-```
+```sapl
 policy "test"
 permit
 transform resource |- {
@@ -133,7 +133,7 @@ transform resource |- {
 ```
 
 The decision will contain a ```resource``` as follows:
-```
+```json
 {
   "array" : [ null, true ]
 }
