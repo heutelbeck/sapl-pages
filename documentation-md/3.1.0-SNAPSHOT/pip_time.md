@@ -113,9 +113,9 @@ Name: endTime [TEXT]
 arguments.
 ```<nowIsBetween(startTime, endTime)>``` ```true```, if the current date time is after the ```startTime``` and
 before the ```endTime``` (both ISO 8601 String at UTC) and ```false```otherwise.
-The attribute immediately emits the comparison result between the current time and the provided time intervall.
-A new result will be emitted, if the current time corsses any of the intervall boundaries.
-This *attribute is not polling the clock* and should be used instead of  manually comparing the intervall
+The attribute immediately emits the comparison result between the current time and the provided time interval.
+A new result will be emitted, if the current time crosses any of the interval boundaries.
+This *attribute is not polling the clock* and should be used instead of  manually comparing the interval
 to ```<time.now>```.
 
 Example:
@@ -162,9 +162,9 @@ Name: endTime [TEXT]
 arguments.
 ```<localTimeIsBetween(startTime, endTime)>``` ```true```, if the current time at UTC between the ```startTime```
 and the ```endTime``` (both ISO 8601 String at UTC) and ```false```otherwise.
-The attribute immediately emits the comparison result between the current time and the provided time intervall.
-A new result will be emitted, if the current time corsses any of the intervall boundaries.
-This *attribute is not polling the clock* and should be used instead of  manually comparing the intervall
+The attribute immediately emits the comparison result between the current time and the provided time interval.
+A new result will be emitted, if the current time crosses any of the interval boundaries.
+This *attribute is not polling the clock* and should be used instead of  manually comparing the interval
 to ```<time.now>```.
 If the time of the first parameter is after the time of the second parameter, the interval ist considered to be the
 one between the to times, crossing the midnight border of the days.
