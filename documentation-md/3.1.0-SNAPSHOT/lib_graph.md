@@ -7,147 +7,112 @@ nav_order: 109
 ---
 # graph
 
-Graph functions: reachability, shortest paths, and graph walking.
+Graph functions: reachability and shortest paths.
 
 # Graph Function Library (name: graph)
 
-This library contains small functions for working with graphs and
-with nested JSON values. The goal is to keep policy code simple and
-readable when a decision depends on reachability or on the shape of
-a JSON document.
+This library provides functions for working with graphs represented as JSON objects.
+Use these functions when authorization decisions depend on reachability or path analysis
+in hierarchical structures.
 
 ## Design rationale
 
-Graphs are plain JSON objects, so policies can pass them without
-adapters. Missing nodes are treated like leaves. Unknown roots
-still produce a result. Traversal uses breadth first search with
-a visited set, so cycles do not cause loops.
+Graphs are plain JSON objects, so policies can pass them without adapters. Missing nodes
+are treated like leaves. Unknown roots still produce a result. Traversal uses breadth-first
+search with a visited set, so cycles do not cause loops.
 
 ## Graph object format
 
-A graph is a JSON object. Each key is a node id. Each value is an
-array of neighbor ids. The neighbors are the outgoing edges of the
-node.
+A graph is a JSON object where each key is a node identifier and each value is an array
+of neighbor identifiers. The neighbors represent the outgoing edges of the node.
+
+Example using forbidden knowledge progression (each tome references other texts):
 
 ```json
-    {
-      "cso": ["security-architect", "risk-manager", "compliance-officer"],
-      "security-architect": ["secops-lead", "platform-admin"],
-      "secops-lead": ["security-analyst"],
-      "platform-admin": ["site-reliability-engineer"],
-      "risk-manager": ["risk-analyst"],
-      "compliance-officer": ["auditor-internal"],
-
-      "head-of-payments": ["payments-lead"],
-      "payments-lead": ["payments-engineer"]
-    }
+{
+  "necronomicon" : [ "pnakotic-manuscripts", "book-of-eibon", "de-vermis-mysteriis" ],
+  "pnakotic-manuscripts" : [ "rlyeh-text", "yithian-records" ],
+  "book-of-eibon" : [ "testaments-of-carnamagos" ],
+  "de-vermis-mysteriis" : [ "cultes-des-goules", "prinn-notes" ],
+  "rlyeh-text" : [ "deep-one-inscriptions" ],
+  "yithian-records" : [],
+  "testaments-of-carnamagos" : [],
+  "cultes-des-goules" : [],
+  "prinn-notes" : [ "von-junzt-fragments" ],
+  "deep-one-inscriptions" : [],
+  "von-junzt-fragments" : []
+}
 ```
 
 ## Notes on encoding
 
 Edges are directed: neighbors are outgoing edges.
-A node is a leaf if it is missing or mapped to [].
-Use strings for node ids if possible to avoid confusion.
-Only arrays are treated as adjacency lists; any other value is
-ignored for expansion.
+A node is a leaf if it is missing or mapped to an empty array.
+Use strings for node ids to avoid confusion.
+Only arrays are treated as adjacency lists; any other value is ignored for expansion.
 Initial roots can be a single id or an array of ids.
 
-## Examples (policy snippets)
+## Example (reachable)
 
-SAPL example using reachable:
+Check what forbidden knowledge becomes accessible if a researcher gains access to the Necronomicon:
 
 ```sapl
-    policy "org-reachable-from-cso"
-    permit
-    where
-      var nodes = graph.reachable(rolesHierarchy, subject.roles);
-      "security-analyst" in nodes
-      & !("payments-engineer" in nodes);
+policy "library-accessible-from-necronomicon"
+permit
+where
+  var accessibleTomes = graph.reachable(forbiddenLibrary, ["necronomicon"]);
+  "deep-one-inscriptions" in accessibleTomes;
 ```
 
-SAPL example using reachable_paths:
+## Example (reachable_paths)
+
+Verify the research path from Necronomicon to specific dangerous knowledge:
 
 ```sapl
-    policy "org-paths-from-security-architect"
-    permit
-    where
-      var paths = graph.reachable_paths(org_roles_graph, ["security-architect"]);
-      ["security-architect","platform-admin","site-reliability-engineer"] in paths;
-```
-SAPL example using walk:
-
-```sapl
-    policy "walk-checks"
-    permit
-    where
-      var pairs = graph.walk({ "a": { "b": 1 }, "c": [2,3] });
-      any e in pairs : e[0] == ["a","b"] & e[1] == 1;
+policy "verify-research-chain"
+permit
+where
+  var paths = graph.reachable_paths(forbiddenLibrary, ["necronomicon"]);
+  ["necronomicon","pnakotic-manuscripts","rlyeh-text","deep-one-inscriptions"] in paths;
 ```
 
 
 ---
 
-## graph.walk(input)
+## graph.reachable_paths(JsonObject graph, Array initial)
 
-```graph.walk(OBJECT x)```
+```graph.reachable_paths(OBJECT graph, STRING|ARRAY initial)```: Builds one shortest path per
+discovered node by performing breadth-first traversal from the given roots.
 
-Recursively enumerates all leaf values contained in `x`, returning pairs
-`[path, value]` where `path` is an array of keys and indices leading to the leaf.
-
-## Parameters
-
-- graph: any JSON value (object, array, or primitive).
-
-## Returns
-
-- Array of pairs. Each pair is represented as a two-element array: `[path, value]`.
-
-## Example (policy)
-
-```sapl
-policy "walk-checks"
-permit
-where
-  var pairs = graph.walk({ "a": { "b": 1 }, "c": [2, 3] });
-  any e in pairs : e[0] == ["a","b"] & e[1] == 1;
-  any e in pairs : e[0] == ["c",0]  & e[1] == 2;
-  any e in pairs : e[0] == ["c",1]  & e[1] == 3;
-```
-
-
----
-
-## graph.reachable_paths(JsonObject graph, initial)
-
-```graph.reachable_paths(graph, initial)```: Builds one shortest path per discovered node by performing
-a breadth-first traversal from the given roots. A root contributes the path `[root]`.
-Each reachable node yields exactly one path (the first encountered by BFS).
+Each root contributes a single-element path containing just the root. Each reachable node
+yields exactly one path (the first encountered by BFS).
 
 ## Parameters
 
-- graph: JSON object mapping node identifiers to arrays of neighbor identifiers.
-- initial: a single node identifier or an array of identifiers.
+- graph: JSON object mapping node identifiers to arrays of neighbor identifiers
+- initial: a single node identifier or an array of identifiers
 
 ## Returns
 
-- Array of paths. Each path is an array of node identifiers from a root to a reachable node.
+- Array of paths where each path is an array of node identifiers from a root to a reachable node
 
-## Behavior and Robustness
+## Behavior
 
-- Missing nodes are treated as leaves (no expansion).
-- Cycles are handled via a visited set; the first discovered path is kept.
-- Unknown roots produce a single-node path.
+- Missing nodes are treated as leaves (no expansion)
+- Cycles are handled via visited set; the first discovered path is kept
+- Unknown roots produce a single-node path
 
-## Example (policy)
+## Example
+
+Using the forbiddenLibrary graph from library documentation, verify the research chain that led
+to dangerous knowledge:
 
 ```sapl
-policy "org-paths-from-security-architect"
+policy "audit-knowledge-chain"
 permit
 where
-  var paths = graph.reachable_paths(org_roles_graph, ["security-architect"]);
-  ["security-architect","secops-lead","security-analyst"] in paths
-  &
-  ["security-architect","platform-admin","site-reliability-engineer"] in paths;
+  var paths = graph.reachable_paths(forbiddenLibrary, subject.initialAccess);
+  ["necronomicon","de-vermis-mysteriis","prinn-notes","von-junzt-fragments"] in paths;
 ```
 
 
@@ -155,63 +120,41 @@ where
 
 ## graph.reachable(JsonObject graph, Array initial)
 
-```graph.reachable(OBJECT graph,STRING|ARRAY initial)```: Computes the reachable nodes in a directed
-graph when starting at the given list of nodes or a single node identifier.
+```graph.reachable(OBJECT graph, STRING|ARRAY initial)```: Computes the reachable nodes in a
+directed graph when starting at the given list of nodes or a single node identifier.
 
-Computes the set of nodes that can be discovered by traversing directed edges
-in `graph` starting from `initial`. The graph is represented as a JSON object
-that maps node identifiers to arrays of neighbor identifiers.
+Performs breadth-first search to discover all nodes that can be reached by following
+directed edges in the graph.
 
 ## Parameters
 
-- graph: JSON object where each key is a node identifier and each value is an array
-  of neighbor identifiers. Example structure:
-
-  ```json
-  {
-    "org_roles_graph": {
-      "cso": ["security-architect", "risk-manager", "compliance-officer"],
-      "security-architect": ["secops-lead", "platform-admin"],
-      "secops-lead": ["security-analyst"],
-      "platform-admin": ["site-reliability-engineer"],
-      "risk-manager": ["risk-analyst"],
-      "compliance-officer": ["auditor-internal"],
-
-      "head-of-payments": ["payments-lead"],
-      "payments-lead": ["payments-engineer"],
-
-      "security-analyst": [],
-      "site-reliability-engineer": [],
-      "risk-analyst": [],
-      "auditor-internal": [],
-      "payments-engineer": []
-    }
-  }
-  ```
-
-- initial: a single node identifier (string or number) or an array of identifiers.
+- graph: JSON object where each key is a node identifier and each value is an array of
+  neighbor identifiers (see library documentation for structure)
+- initial: a single node identifier or an array of identifiers
 
 ## Returns
 
-- Array of unique node identifiers in the order they were discovered by a breadth-first traversal.
+- Array of unique node identifiers in the order they were discovered by breadth-first traversal
 
-## Behavior and Robustness
+## Behavior
 
-- Missing nodes (no key present in `graph`) are treated as leaves and do not expand further.
-- Unknown roots are returned as reachable; they simply yield single-node results if no adjacency exists.
-- Non-array adjacency values are ignored safely.
-- Time complexity is `O(V + E)` with `V` nodes and `E` edges.
+- Missing nodes are treated as leaves and do not expand further
+- Unknown roots are returned as reachable; they yield single-node results if no adjacency exists
+- Non-array adjacency values are ignored
+- Cycles are handled via visited set
+- Time complexity is O(V + E) with V nodes and E edges
 
-## Example (policy)
+## Example
 
-Given variables containing `org_roles_graph`:
+Using the forbiddenLibrary graph from library documentation, check if a researcher's initial access
+leads to dangerous knowledge:
 
 ```sapl
-policy "org-reachable-from-cso"
-permit
+policy "restrict-deep-knowledge-access"
+deny
 where
-  var r = graph.reachable(org_roles_graph, ["cso"]);
-  ("security-analyst" in r) && ("site-reliability-engineer" in r) && !("payments-engineer" in r);
+  var accessibleTomes = graph.reachable(forbiddenLibrary, subject.grantedTomes);
+  "deep-one-inscriptions" in accessibleTomes;
 ```
 
 

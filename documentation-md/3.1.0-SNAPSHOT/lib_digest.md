@@ -57,7 +57,7 @@ where
 
 ```sha1(TEXT data)```: Computes the SHA-1 hash of the input data.
 
-**⚠ WARNING: SHA-1 is cryptographically weak and should not be used for security
+**WARNING: SHA-1 is cryptographically weak and should not be used for security
 purposes.** It is vulnerable to collision attacks. Only use SHA-1 for compatibility
 with legacy systems or when required by existing protocols.
 
@@ -78,7 +78,7 @@ where
 
 ```md5(TEXT data)```: Computes the MD5 hash of the input data.
 
-**⚠ WARNING: MD5 is cryptographically broken and should not be used for security
+**WARNING: MD5 is cryptographically broken and should not be used for security
 purposes.** It is vulnerable to collision attacks. Only use MD5 for compatibility
 with legacy systems or non-security applications like checksums.
 

@@ -7,7 +7,7 @@ nav_order: 101
 ---
 # array
 
-Array manipulation functions for authorization policies.
+Array manipulation functions.
 
 # Array Functions
 
@@ -45,8 +45,8 @@ permit
 where
     var direct = subject.directPermissions;
     var inherited = subject.groupPermissions;
-    var all = array.union(direct, inherited);
-    array.containsAll(all, ["read", "write"]);
+    var allOfSubjectsPermissions = array.union(direct, inherited);
+    array.containsAll(allOfSubjectsPermissions, ["read", "write"]);
 ```
 
 Find common capabilities between user privileges and resource requirements to
@@ -74,21 +74,6 @@ permit action == "finalize_transaction"
 where
     var required = ["manager", "director", "cfo"];
     array.containsAllInOrder(resource.approvals, required);
-```
-
-Filter sensitive attributes before releasing data. Remove fields that exceed the
-user's clearance level.
-
-```sapl
-policy "filter_classified"
-permit action == "read_document"
-where
-    subject.clearance >= resource.classification;
-transform
-    var allowed = subject.viewableFields;
-    var actual = resource.fieldNames;
-    var permitted = array.intersect(allowed, actual);
-    resource |- { @.fields : permitted }
 ```
 
 Calculate aggregate metrics for rate limiting or quota enforcement. Sum request
@@ -369,6 +354,7 @@ where
     var actions = ["read", "write"];
     var resources = ["doc1", "doc2"];
     var combinations = array.crossProduct(actions, resources);
+    combinations == [ ["read" , "doc1"], ["read" , "doc2"], ["write" , "doc1"], ["write" , "doc2"]];
 ```
 
 
@@ -453,7 +439,7 @@ where
 Returns a new array with elements sorted in ascending order. The function determines
 the sort order based on the type of the first element. Numeric arrays are sorted
 numerically, string arrays are sorted lexicographically. All elements must be of the
-same type. Returns an error for empty arrays, mixed types, or unsupported types.
+same type. Returns an error for mixed types, or unsupported types.
 
 Numeric sorting uses floating-point comparison for performance, which is appropriate
 for SAPL's authorization policy use cases. Very large integers beyond 2^53 may lose
@@ -507,22 +493,24 @@ where
 
 ```array.intersect(ARRAY...arrays)```
 
-Creates a new array containing only elements present in all parameter arrays.
-Removes duplicates from the result.
+        Creates a new array containing only elements present in all parameter arrays.
+        Removes duplicates from the result, preserving order from the first array.
 
-Parameters:
-- arrays: Arrays to intersect
+        Parameters:
+        - arrays: Arrays to intersect
 
-Returns: New array with common elements
+        Returns: New array with common elements
 
-Example - find permissions shared across all roles:
+        Example - find shared permissions:
 ```sapl
 policy "example"
 permit
 where
-    var rolePerms = subject.roles.map(role -> role.permissions);
-    var common = array.intersect(rolePerms);
-    array.containsAll(common, resource.minimumPermissions);
+    var adminPerms = ["read", "write", "delete"];
+    var editorPerms = ["read", "write"];
+    var viewerPerms = ["read"];
+    var common = array.intersect(adminPerms, editorPerms, viewerPerms);
+    common == ["read"];
 ```
 
 

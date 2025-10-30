@@ -80,8 +80,11 @@ where
 ```base64UrlDecode(TEXT data)```: Decodes Base64 URL-safe format to text (lenient).
 
 Decodes data encoded with the URL-safe Base64 alphabet. This function is lenient
-and accepts both padded and unpadded input. For strict validation that requires
-proper padding, use base64UrlDecodeStrict.
+and accepts input with or without proper padding. For strict RFC-compliant
+validation that requires proper padding, use base64UrlDecodeStrict.
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
 
 **Examples:**
 ```sapl
@@ -89,7 +92,7 @@ policy "example"
 permit
 where
   encoding.base64UrlDecode("aGVsbG8=") == "hello";
-  encoding.base64UrlDecode("aGVsbG8") == "hello";  // lenient: unpadded accepted
+  encoding.base64UrlDecode("aGVsbG8") == "hello";  // lenient: missing padding accepted
 ```
 
 
@@ -122,6 +125,9 @@ Decodes data encoded with the standard Base64 alphabet. This function is lenient
 and accepts input with or without proper padding. For strict RFC-compliant
 validation that requires proper padding, use base64DecodeStrict.
 
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
+
 **Examples:**
 ```sapl
 policy "example"
@@ -129,27 +135,6 @@ permit
 where
   encoding.base64Decode("aGVsbG8=") == "hello";
   encoding.base64Decode("aGVsbG8") == "hello";  // lenient: missing padding accepted
-```
-
-
----
-
-## encoding.hexDecode(Text data)
-
-```hexDecode(TEXT data)```: Decodes hexadecimal representation to text.
-
-Converts pairs of hexadecimal digits back to bytes and interprets as UTF-8 text.
-Accepts both uppercase and lowercase letters. Underscores are allowed as separators.
-The input must have an even number of hex characters (excluding underscores).
-
-**Examples:**
-```sapl
-policy "example"
-permit
-where
-  encoding.hexDecode("68656c6c6f") == "hello";
-  encoding.hexDecode("68656C6C6F") == "hello";  // uppercase works
-  encoding.hexDecode("68_65_6c_6c_6f") == "hello";  // underscores allowed
 ```
 
 
@@ -174,6 +159,30 @@ where
 
 ---
 
+## encoding.hexDecode(Text data)
+
+```hexDecode(TEXT data)```: Decodes hexadecimal representation to text.
+
+Converts pairs of hexadecimal digits back to bytes and interprets as UTF-8 text.
+Accepts both uppercase and lowercase letters. Underscores are allowed as separators.
+The input must have an even number of hex characters (excluding underscores).
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+where
+  encoding.hexDecode("68656c6c6f") == "hello";
+  encoding.hexDecode("68656C6C6F") == "hello";  // uppercase works
+  encoding.hexDecode("68_65_6c_6c_6f") == "hello";  // underscores allowed
+```
+
+
+---
+
 ## encoding.base64DecodeStrict(Text data)
 
 ```base64DecodeStrict(TEXT data)```: Decodes Base64 standard format to text (strict).
@@ -181,6 +190,9 @@ where
 Decodes data encoded with the standard Base64 alphabet with strict validation.
 Requires proper padding with '=' characters and input length to be a multiple of 4.
 Rejects improperly formatted input that would be accepted by the lenient decoder.
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
 
 **Examples:**
 ```sapl
@@ -201,6 +213,9 @@ where
 Decodes data encoded with the URL-safe Base64 alphabet with strict validation.
 Requires proper padding with '=' characters and input length to be a multiple of 4.
 Rejects improperly formatted input that would be accepted by the lenient decoder.
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
 
 **Examples:**
 ```sapl

@@ -11,17 +11,9 @@ GraphQL query parsing and analysis for authorization policies.
 
 # GraphQL Function Library for SAPL
 
-This library provides GraphQL query parsing and analysis capabilities for use in
-authorization policies. It enables inspection of GraphQL queries to make informed
-authorization decisions based on query structure, complexity, and content.
+Parses GraphQL queries and extracts security metrics for authorization policy decisions.
 
-## Overview
-
-The library parses GraphQL queries and extracts security-relevant metrics for use in
-policy decisions. All analysis is performed in a single pass during parsing, and
-results are returned as an object with properties for direct access.
-
-### Basic Usage
+## Basic Usage
 
 ```sapl
 var gql = graphql.parse(resource.query, resource."schema");
@@ -30,16 +22,15 @@ var gql = graphql.parse(resource.query, resource."schema");
 gql.valid                   // boolean - query validity
 gql.fields                  // array - all field names
 gql.depth                   // integer - maximum nesting depth
-gql.operation               // string - operation type
-gql.types                   // array - GraphQL types accessed
-gql.directives              // array - directive details
-gql.fragments               // object - fragment definitions
-gql.ast                     // object - complete raw AST
+gql.operation               // string - operation type (query/mutation/subscription)
+gql.complexity              // integer - complexity score
+gql.aliasCount              // integer - aliased field count
+gql.maxPaginationLimit      // integer - highest pagination limit
 ```
 
-### Authorization Subscription Structure
+## Authorization Subscription
 
-A typical authorization subscription for GraphQL authorization may look like this:
+Typical subscription structure for GraphQL authorization:
 
 ```json
 {
@@ -49,377 +40,224 @@ A typical authorization subscription for GraphQL authorization may look like thi
   },
   "action": "execute",
   "resource": {
-    "query": "query { user(id: \"123\") { ssn } }",
-    "schema": "type Query { user(id: ID!): User ... }"
+    "query": "query { user(id: \"123\") { name email ssn } }",
+    "schema": "type Query { user(id: ID!): User } type User { name: String! email: String! ssn: String! }"
   }
 }
 ```
 
-The GraphQL query is the resource being accessed, and the action is typically "execute".
-The following documentation assumes a subscription in this format. But of course, this is
-only an example and can be combined with other approaches based on the application domain.
+Policy examples below assume this structure with `resource.query` and `resource."schema"`.
 
-### Design Approach
+## Properties
 
-The library follows an "attributes first" design where all metrics are available as
-properties rather than requiring separate function calls. All analysis happens in a
-single parsing pass for efficiency, and the result object provides natural property
-access that works well with IDE autocomplete. The structure remains consistent
-regardless of query validity, making it straightforward to combine multiple checks
-in a single policy expression.
+### Query Validation
 
-## Available Properties
-
-The parsed query object exposes all metrics as properties for convenient access in
-policy expressions. Each property is pre-calculated during parsing and provides
-specific information about the query structure, validation status, or potential
-security concerns.
-
-### Basic Query Information
-
-- `valid` (boolean) - Indicates whether the query is syntactically correct and valid
-  against the provided schema. Calculated by running the GraphQL validator. Use this
-  to ensure queries are well-formed before making authorization decisions based on
-  other metrics.
-
-- `operation` (string) - The GraphQL operation type. Returns "query", "mutation",
-  "subscription", or "unknown". Extracted from the operation definition. Essential for
-  applying different authorization rules to read versus write operations.
-
-- `operationName` (string) - The name specified in the operation definition, or an
-  empty string if the operation is anonymous. Extracted directly from the parsed AST.
-  Useful for logging and audit trails.
-
-- `errors` (array of strings) - Validation error messages describing why a query is
-  invalid. Only present when `valid` is false. Contains human-readable descriptions of
-  schema violations to help diagnose rejected queries.
+- `valid` (boolean) - Query is syntactically correct and valid against schema.
+- `errors` (array) - Validation error messages if invalid.
+- `operation` (string) - Operation type: "query", "mutation", "subscription", or "unknown".
+- `operationName` (string) - Operation name or empty string if anonymous.
 
 ### Field Analysis
 
-- `fields` (array of strings) - A flat list of all field names requested anywhere in
-  the query, including nested fields. Extracted by recursively traversing the selection
-  set. Used for field-level access control to deny access to sensitive fields like
-  personally identifiable information.
+- `fields` (array) - All field names in the query including nested fields.
+- `fieldCount` (integer) - Total number of fields requested.
+- `depth` (integer) - Maximum nesting depth (capped at 100).
+- `isIntrospection` (boolean) - Query uses introspection fields (prefix `__`).
 
-- `fieldCount` (integer) - The total number of fields requested in the query. Counted
-  during field extraction. A high field count may indicate an overly broad query that
-  could impact performance.
+### Type and Fragment Information
 
-- `depth` (integer) - The maximum nesting depth of field selections in the query.
-  Calculated by recursively measuring selection set depth, capped at 100. Deep queries
-  can lead to performance issues and are often used in denial-of-service attacks.
+- `types` (array) - GraphQL type names accessed via inline fragments and fragment spreads.
+- `fragments` (object) - Fragment definitions with `typeName` and `fields` properties.
+- `fragmentCount` (integer) - Number of fragment definitions.
+- `hasCircularFragments` (boolean) - Fragments contain circular references.
 
-- `isIntrospection` (boolean) - Indicates whether the query requests schema metadata
-  through introspection fields (those starting with `__`). Detected by checking for
-  the introspection prefix in field names. Introspection queries can reveal API
-  structure to attackers.
+### Directives
 
-### Type Information
+- `directives` (array) - Directive usages with `name` and `arguments` properties.
+- `directiveCount` (integer) - Total directive usage count.
+- `directivesPerField` (number) - Average directives per field.
 
-- `types` (array of strings) - GraphQL type names that are explicitly accessed in the
-  query through inline fragments and fragment spreads. Extracted from type conditions.
-  Use this for type-based access control to restrict access to sensitive types.
+### Complexity and Security Metrics
 
-### Directive Information
+- `complexity` (integer) - Basic score: `fieldCount + (depth × 2)`.
+- `aliasCount` (integer) - Number of aliased fields.
+- `rootFieldCount` (integer) - Fields at root level.
+- `batchingScore` (integer) - Calculated as `(aliasCount × 5) + rootFieldCount`.
+- `maxPaginationLimit` (integer) - Highest pagination argument value across first, last, limit, offset, skip, take.
 
-- `directives` (array of objects) - All directives used in the query with their
-  arguments. Each object contains `name` (string) and `arguments` (object). Extracted
-  by traversing all fields and selections. Use this to restrict specific custom
-  directives or validate directive arguments.
+### Arguments and Variables
 
-### Fragment Information
+- `arguments` (object) - Field arguments mapped by field name.
+- `variables` (object) - Variable definitions with default values.
 
-- `fragments` (object) - Fragment definitions mapping fragment names to their content.
-  Each key is a fragment name, and the value is an object containing `typeName` (the
-  type condition) and `fields` (array of field names in the fragment). Use this to
-  analyze fragment content for security concerns.
+## Functions
 
-### Complexity Metrics
+### parse
 
-- `complexity` (integer) - A basic complexity score calculated as `fieldCount + (depth × 2)`.
-  Provides a simple heuristic for query cost. Higher scores indicate queries that may
-  consume more resources. This metric treats all fields equally.
+```
+graphql.parse(TEXT query, TEXT schema) -> OBJECT
+```
 
-- `graphql.complexity(parsed, weights)` (function returning integer) - Calculates
-  weighted complexity by assigning custom costs to specific fields. Pass a weights
-  object mapping field names to integer costs. Fields not in the weights object default
-  to cost 1. Use this when different fields have significantly different resource costs
-  (e.g., database joins, external API calls).
+Parses and validates a GraphQL query against a schema. Returns object with all security metrics.
 
-### Security Analysis
+**Parameters:**
+- `query` - GraphQL query string
+- `schema` - GraphQL schema definition (SDL)
 
-- `aliasCount` (integer) - The number of fields using aliases at the root level.
-  Counted by checking for alias definitions in root selections. High alias counts can
-  indicate query batching attacks where multiple requests are bundled into one to
-  bypass rate limits.
+**Returns:** Object with all properties listed above.
 
-- `rootFieldCount` (integer) - The number of fields at the root level of the query.
-  Counted directly from the operation's selection set. Combined with alias count to
-  detect batching patterns.
+**Example:**
+```sapl
+policy "validate-graphql-query"
+permit action == "execute"
+where
+  var gql = graphql.parse(resource.query, resource."schema");
+  gql.valid && gql.depth <= 5 && !("ssn" in gql.fields);
+```
 
-- `batchingScore` (integer) - A heuristic score for detecting batching attacks,
-  calculated as `(aliasCount × 5) + rootFieldCount`. Higher scores suggest potential
-  abuse. The multiplier weights aliases more heavily as they are the primary batching
-  mechanism.
+### parseQuery
 
-- `maxPaginationLimit` (integer) - The largest value found in pagination arguments
-  (`first`, `last`, `limit`, `offset`, `skip`, `take`). Extracted by scanning all
-  field arguments. Large pagination limits can cause servers to return excessive
-  amounts of data.
+```
+graphql.parseQuery(TEXT query) -> OBJECT
+```
 
-- `fragmentCount` (integer) - The number of fragment definitions in the query. Counted
-  by examining document definitions. While fragments are useful for query organization,
-  excessive fragments may indicate unnecessarily complex queries.
+Parses a GraphQL query without schema validation. Returns same metrics as `parse()` but `valid` only checks syntax.
 
-- `hasCircularFragments` (boolean) - Indicates whether any fragments reference each
-  other in a cycle. Detected using depth-first search with cycle detection. Circular
-  fragments can create infinite loops during query execution.
+**Parameters:**
+- `query` - GraphQL query string
 
-- `directiveCount` (integer) - The total number of directives used across all fields.
-  Counted by traversing the query and summing directive usage. Excessive directives can
-  increase processing overhead.
+**Example:**
+```sapl
+policy "check-query-structure"
+permit action == "execute"
+where
+  var gql = graphql.parseQuery(resource.query);
+  gql.depth <= 5 && gql.aliasCount <= 10;
+```
 
-- `directivesPerField` (number) - The average number of directives per field,
-  calculated as `directiveCount / fieldCount`. Returns 0 if there are no fields.
-  A high ratio suggests potential directive abuse.
+### complexity
 
-### Detailed Information
+```
+graphql.complexity(OBJECT parsed, OBJECT fieldWeights) -> NUMBER
+```
 
-- `arguments` (object) - Field arguments organized by field name. Each key is a field
-  name mapping to an object of argument name-value pairs. Extracted during field
-  traversal. Use this to validate specific argument values or ranges.
+Calculates weighted complexity using custom field weights. Unweighted fields default to 1.
 
-- `variables` (object) - Query variable definitions with their default values. Only
-  includes variables that have default values specified. Extracted from variable
-  definitions in the operation. Useful for validating query parameterization.
+**Parameters:**
+- `parsed` - Parsed query object from `parse()` or `parseQuery()`
+- `fieldWeights` - Object mapping field names to numeric weights
 
-- `selectionSet` (array) - The complete AST structure of the query represented as
-  nested JSON objects. Each object contains `Name`, `Alias`, `Args`, and `SelectionSet`
-  properties. Provides low-level access to the query structure for advanced analysis.
+**Example:**
+```sapl
+policy "enforce-complexity-limit"
+permit action == "execute"
+where
+  var gql = graphql.parse(resource.query, resource."schema");
+  var weights = {"posts": 5, "comments": 3, "user": 1};
+  graphql.complexity(gql, weights) <= 200;
+```
 
-- `ast` (object) - The complete raw Abstract Syntax Tree representation of the parsed
-  GraphQL document. This provides full access to all AST nodes and their properties
-  for advanced custom analysis not covered by the pre-calculated metrics.
+### parseSchema
 
-## Common Authorization Patterns
+```
+graphql.parseSchema(TEXT schema) -> OBJECT
+```
 
-### Pattern 1: Field-Level Access Control
+Parses and validates a GraphQL schema definition.
 
-Restricting access to specific fields based on user attributes.
+**Parameters:**
+- `schema` - GraphQL schema definition (SDL)
+
+**Returns:** Object with `valid` (boolean), `ast` (object), and `errors` (array) properties.
+
+**Example:**
+```sapl
+policy "require-valid-schema"
+permit action == "configure"
+where
+  var schemaResult = graphql.parseSchema(resource."schema");
+  schemaResult.valid;
+```
+
+## Use Cases
+
+### Field-Level Access Control
+
+Deny access to sensitive PII fields:
 
 ```sapl
-policy "protect-sensitive-fields"
+policy "restrict-pii-fields"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  "ssn" in gql.fields && subject.role != "admin";
+  var piiFields = ["ssn", "creditCard", "taxId", "passport"];
+  array.containsAny(gql.fields, piiFields);
 ```
 
-### Pattern 2: Query Complexity Limits
+### Depth Limiting
 
-Preventing resource-intensive queries from overloading the system.
+Prevent deeply nested queries:
 
 ```sapl
-policy "limit-query-complexity"
+policy "limit-query-depth"
+permit action == "execute"
+where
+  var gql = graphql.parse(resource.query, resource."schema");
+  gql.valid && gql.depth <= 5;
+```
+
+### Operation Type Control
+
+Restrict mutations to admins:
+
+```sapl
+policy "mutations-require-admin"
+permit action == "execute"
+where
+  var gql = graphql.parse(resource.query, resource."schema");
+  gql.operation != "mutation" || subject.role == "admin";
+```
+
+### Introspection Blocking
+
+Block schema introspection in production:
+
+```sapl
+policy "block-introspection-in-production"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  gql.depth > 5 || gql.fieldCount > 100;
+  environment.stage == "production" && gql.isIntrospection;
 ```
 
-### Pattern 3: Weighted Complexity
+### Complexity Limiting
 
-Assigning different costs to fields based on their resource requirements.
+Enforce complexity limits:
 
 ```sapl
-policy "weighted-complexity"
-deny action == "execute"
+policy "complexity-limits"
+permit action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  var weights = {"posts": 5, "comments": 3, "users": 2};
-  graphql.complexity(gql, weights) > 200;
+  gql.valid && gql.complexity <= 100;
 ```
 
-### Pattern 4: Operation Type Restrictions
+### Batching Attack Prevention
 
-Applying different rules based on whether the operation reads or writes data.
+Detect and block alias-based batching:
 
 ```sapl
-policy "restrict-mutations"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  gql.operation == "mutation" && !(subject.role in ["editor", "admin"]);
-```
-
-### Pattern 5: Type-Based Access Control
-
-Restricting access to specific GraphQL types.
-
-```sapl
-policy "restrict-internal-types"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  "InternalUser" in gql.types && subject.clearanceLevel < 3;
-```
-
-### Pattern 6: Custom Directive Restrictions
-
-Blocking queries that use specific custom directives.
-
-```sapl
-policy "restrict-admin-directive"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  gql.directives.[*].name contains "@admin" && subject.role != "admin";
-```
-
-### Pattern 7: Fragment Content Validation
-
-Checking fields within specific fragments.
-
-```sapl
-policy "validate-fragment-content"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  "ssn" in gql.fragments.UserDetails.fields && subject.role != "admin";
-```
-
-## Security Use Cases
-
-The following examples demonstrate how the library can be used to address common
-GraphQL security concerns. Each example shows a potential attack pattern and how
-to construct policies to mitigate it.
-
-### Use Case 1: Sensitive Field Protection
-
-**Scenario**: Preventing unauthorized access to fields containing personally identifiable
-information or other sensitive data.
-
-**Example Query**:
-```graphql
-query {
-  user(id: "123") {
-    name
-    email
-    ssn
-    creditCard
-  }
-}
-```
-
-**Policy**:
-```sapl
-policy "sensitive-fields"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  ("ssn" in gql.fields || "creditCard" in gql.fields) && subject.clearanceLevel < 3;
-```
-
-### Use Case 2: Resource Exhaustion Prevention
-
-**Scenario**: Queries with excessive depth or field counts can cause database overload
-and slow response times.
-
-**Example Query**:
-```graphql
-query {
-  users {
-    posts {
-      comments {
-        author {
-          posts {
-            comments {
-              author { ... }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-**Policy**:
-```sapl
-policy "prevent-deep-queries"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  gql.depth > 5 || gql.fieldCount > 100;
-```
-
-### Use Case 3: Schema Introspection Control
-
-**Scenario**: Introspection queries reveal API structure which can aid attackers in
-discovering vulnerabilities.
-
-**Example Query**:
-```graphql
-query {
-  __schema {
-    types {
-      name
-      fields {
-        name
-      }
-    }
-  }
-}
-```
-
-**Policy**:
-```sapl
-policy "restrict-introspection"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  gql.isIntrospection && environment.stage == "production";
-```
-
-### Use Case 4: Batching Attack Detection
-
-**Scenario**: Using aliases to send many queries in a single request can bypass rate
-limits and enable data enumeration.
-
-**Example Query**:
-```graphql
-query {
-  user1: user(id: "1") { ssn }
-  user2: user(id: "2") { ssn }
-  user3: user(id: "3") { ssn }
-}
-```
-
-**Policy**:
-```sapl
-policy "detect-batching"
+policy "prevent-batching-attacks"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
   gql.aliasCount > 10 || gql.batchingScore > 50;
 ```
 
-### Use Case 5: Pagination Limit Enforcement
+### Pagination Limit Enforcement
 
-**Scenario**: Large pagination arguments can cause the server to return excessive data.
+Prevent excessive pagination:
 
-**Example Query**:
-```graphql
-query {
-  users(first: 999999) {
-    posts(first: 999999) {
-      id
-    }
-  }
-}
-```
-
-**Policy**:
 ```sapl
 policy "limit-pagination"
 deny action == "execute"
@@ -428,148 +266,60 @@ where
   gql.maxPaginationLimit > 100;
 ```
 
-### Use Case 6: Circular Fragment Detection
+### Fragment Security
 
-**Scenario**: Fragments that reference each other can create infinite loops.
+All fragment fields are included in `gql.fields`, so check that array:
 
-**Example Query**:
-```graphql
-fragment UserInfo on User {
-  posts { ...PostInfo }
-}
-
-fragment PostInfo on Post {
-  author { ...UserInfo }
-}
-
-query { user(id: "1") { ...UserInfo } }
-```
-
-**Policy**:
 ```sapl
-policy "reject-circular-fragments"
+policy "check-sensitive-fields"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  gql.hasCircularFragments;
+  var sensitiveFields = ["ssn", "password"];
+  array.containsAny(gql.fields, sensitiveFields);
 ```
 
-### Use Case 7: Directive Abuse Prevention
+To check specific fragments (note: `fragments` is an object, not array):
 
-**Scenario**: Excessive directive usage can increase processing overhead.
-
-**Example Query**:
-```graphql
-query {
-  user(id: "1")
-    @include(if: true)
-    @include(if: true)
-  {
-    name
-  }
-}
-```
-
-**Policy**:
 ```sapl
-policy "limit-directives"
+policy "check-fragment-by-name"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  gql.directiveCount > 50 || gql.directivesPerField > 5;
+  var sensitiveFields = ["ssn", "password"];
+  array.containsAny(gql.fragments.SensitiveFragment.fields, sensitiveFields);
 ```
 
-### Use Case 8: Argument Validation
+### Type-Based Access Control
 
-**Scenario**: Field arguments may contain invalid or malicious values.
+Restrict access to admin-only types:
 
-**Example Query**:
-```graphql
-query {
-  users(limit: -1, filter: "admin=true OR 1=1") {
-    id
-  }
-}
-```
-
-**Policy**:
 ```sapl
-policy "validate-arguments"
+policy "admin-only-types"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  gql.arguments.users.limit != null && gql.arguments.users.limit < 0;
+  var adminTypes = ["AdminUser", "SystemConfig"];
+  subject.role != "admin" && array.containsAny(gql.types, adminTypes);
 ```
 
-### Use Case 9: Operation Type-Based Authorization
+### Directive Whitelisting
 
-**Scenario**: Mutations modify data and typically require higher privileges than queries.
+Only allow specific directives:
 
-**Example Query**:
-```graphql
-mutation {
-  deleteUser(id: "123") {
-    id
-  }
-}
-```
-
-**Policy**:
 ```sapl
-policy "restrict-mutations"
+policy "whitelist-directives"
 deny action == "execute"
 where
   var gql = graphql.parse(resource.query, resource."schema");
-  gql.operation == "mutation" && !(subject.role in ["editor", "admin"]);
+  var allowed = ["include", "skip", "deprecated"];
+  gql.directives |- var directive : !(directive.name in allowed);
 ```
 
-### Use Case 10: Subscription Control
+### Comprehensive Security
 
-**Scenario**: Real-time subscriptions consume server resources and may have different
-authorization requirements.
+Combine multiple security checks:
 
-**Example Query**:
-```graphql
-subscription {
-  messageAdded {
-    id
-    content
-  }
-}
-```
-
-**Policy**:
-```sapl
-policy "limit-subscriptions"
-deny action == "execute"
-where
-  var gql = graphql.parse(resource.query, resource."schema");
-  gql.operation == "subscription" && subject.tier != "premium";
-```
-
-### Use Case 11: Multi-Constraint Policies
-
-**Scenario**: Combining multiple security checks in a comprehensive policy.
-
-**Example Query**:
-```graphql
-query {
-  user1: user(id: "1") {
-    posts(first: 9999) {
-      comments {
-        author {
-          posts {
-            ssn
-          }
-        }
-      }
-    }
-  }
-  user2: user(id: "2") { ... }
-}
-```
-
-**Policy**:
 ```sapl
 policy "comprehensive-security"
 permit action == "execute"
@@ -581,16 +331,14 @@ where
   gql.aliasCount <= 10 &&
   gql.maxPaginationLimit <= 100 &&
   !gql.hasCircularFragments &&
-  gql.directiveCount <= 50 &&
   !gql.isIntrospection &&
   !("ssn" in gql.fields);
 ```
 
-### Use Case 12: Tier-Based Complexity Budgets
+### Tier-Based Complexity Budgets
 
-**Scenario**: Different user tiers may have different resource allocation limits.
+Apply complexity limits by user tier:
 
-**Policy**:
 ```sapl
 policy "tiered-limits"
 permit action == "execute"
@@ -604,25 +352,13 @@ where
   (subject.tier == "free" && cost <= 50);
 ```
 
-## Additional Notes
+## Notes
 
-### Performance Considerations
+**Performance:** Single-pass analysis. Parse once and reuse result object. Schema caching enabled (max 100 schemas).
 
-The library performs all analysis during the initial parse operation. For optimal
-performance, parse the query once and reuse the result object throughout the policy
-evaluation rather than calling `parse()` multiple times.
+**Error Handling:** Invalid queries set `valid` to false with errors in `errors` array. Check `valid` before using other metrics.
 
-### Error Handling
-
-When a query cannot be parsed or validated, the library returns an error Val or sets
-`valid` to false with error details in the `errors` array. Policies should check the
-`valid` property before relying on other metrics.
-
-### Schema Requirements
-
-The parse function requires a GraphQL schema definition. This should be the same schema
-that the GraphQL server uses to execute queries. Schema validation ensures that field
-names, types, and structure are checked against the API contract.
+**Schema Validation:** `parse()` requires schema definition. Use `parseQuery()` for syntax-only validation.
 
 
 ---
@@ -633,13 +369,18 @@ names, types, and structure are checked against the API contract.
 graphql.parse(TEXT query, TEXT schema) -> OBJECT
 ```
 
-Parses a GraphQL query and validates it against a schema, returning
-comprehensive security analysis.
+Parses and validates a GraphQL query against a schema.
 
-All security metrics are pre-calculated and available as properties:
+Returns comprehensive security analysis including validation, field extraction,
+complexity metrics, and potential security concerns.
 
-Basic Properties:
-- `gql.valid`, `gql.operation`, `gql.fields`, `gql.depth`, `gql.fieldCount`,
+**Access all metrics via properties:**
+
+Basic Information:
+- `gql.valid`, `gql.operation`, `gql.operationName`, `gql.errors`
+
+Field Analysis:
+- `gql.fields`, `gql.fieldCount`, `gql.depth`, `gql.isIntrospection`,
   `gql.complexity`, `gql.isIntrospection`
 
 Type and Directive Information:
@@ -649,9 +390,6 @@ Advanced Security:
 - `gql.aliasCount`, `gql.rootFieldCount`, `gql.batchingScore`,
   `gql.maxPaginationLimit`, `gql.arguments`, `gql.fragmentCount`,
   `gql.hasCircularFragments`, `gql.directiveCount`, `gql.directivesPerField`
-
-Raw AST Access:
-- `gql.ast`
 
 **Example:**
 ```sapl
@@ -690,14 +428,18 @@ schemaResult.valid
 graphql.parseQuery(TEXT query) -> OBJECT
 ```
 
-Parses a GraphQL query without schema validation, returning comprehensive
-security analysis based on syntax only.
+Parses a GraphQL query without schema validation.
 
-The valid property indicates syntactic correctness only, not schema compliance.
-All other security metrics are pre-calculated and available as properties.
+Returns the same comprehensive metrics as `parse()` except for validation.
+Use when you need query analysis but don't have the schema available.
 
-Basic Properties:
-- `gql.valid`, `gql.operation`, `gql.fields`, `gql.depth`, `gql.fieldCount`,
+**Access all metrics via properties:**
+
+Basic Information:
+- `gql.valid`, `gql.operation`, `gql.operationName`
+
+Field Analysis:
+- `gql.fields`, `gql.fieldCount`, `gql.depth`,
   `gql.complexity`, `gql.isIntrospection`
 
 Type and Directive Information:
@@ -707,9 +449,6 @@ Advanced Security:
 - `gql.aliasCount`, `gql.rootFieldCount`, `gql.batchingScore`,
   `gql.maxPaginationLimit`, `gql.arguments`, `gql.fragmentCount`,
   `gql.hasCircularFragments`, `gql.directiveCount`, `gql.directivesPerField`
-
-Raw AST Access:
-- `gql.ast`
 
 **Example:**
 ```sapl
