@@ -9,6 +9,54 @@ nav_order: 116
 
 Message Authentication Code functions for verifying message integrity and authenticity using HMAC algorithms.
 
+# Message Authentication Code Library
+
+Verify message integrity and authenticity using HMAC algorithms with secret keys.
+Use MACs when authorization decisions depend on cryptographic verification of
+external data like webhook signatures, API tokens, or signed messages.
+
+## When to Use
+
+Verify webhook signatures from external services:
+```sapl
+policy "verify-github-webhook"
+permit action == "process_webhook"
+where
+  var payload = resource.body;
+  var receivedSignature = resource.headers["X-Hub-Signature-256"];
+  var secret = environment.webhookSecret;
+  mac.isValidHmac(payload, receivedSignature, secret, "HmacSHA256");
+```
+
+Generate and verify signatures for API authentication:
+```sapl
+policy "verify-api-request"
+permit action == "api_call"
+where
+  var requestData = resource.method + resource.path + resource.body;
+  var expectedMac = mac.hmacSha256(requestData, subject.apiSecret);
+  var receivedMac = resource.headers["X-Signature"];
+  mac.timingSafeEquals(receivedMac, expectedMac);
+```
+
+Validate signed resource identifiers to ensure integrity:
+```sapl
+policy "verify-signed-resource-id"
+permit action == "access_resource"
+where
+  var resourceData = resource.id + "|" + resource.permissions;
+  var expectedMac = mac.hmacSha256(resourceData, environment.signingKey);
+  mac.timingSafeEquals(resource.signature, expectedMac);
+```
+
+## Security Considerations
+
+Always use timing-safe comparison when verifying MACs. The timingSafeEquals
+and isValidHmac functions use constant-time comparison to prevent timing attacks
+where an attacker could determine the correct MAC by measuring comparison time.
+
+Never use string equality or standard comparison operators to verify MACs in
+authorization decisions.
 
 
 ---
@@ -59,52 +107,6 @@ where
 
 ---
 
-## mac.verifyTimingSafe(Text mac1, Text mac2)
-
-```verifyTimingSafe(TEXT mac1, TEXT mac2)```: Compares two MACs using constant-time comparison.
-
-Performs a timing-safe comparison of two hexadecimal MAC strings. This prevents
-timing attacks where an attacker could determine the correct MAC by measuring
-comparison time. Always use this function when verifying MACs.
-
-The comparison is case-insensitive for hexadecimal strings.
-
-**Examples:**
-```sapl
-policy "verify webhook"
-permit
-where
-  var receivedMac = "abc123";
-  var computedMac = "abc123";
-  mac.verifyTimingSafe(receivedMac, computedMac) == true;
-```
-
-
----
-
-## mac.verifyHmac(Text message, Text expectedMac, Text key, Text algorithm)
-
-```verifyHmac(TEXT message, TEXT expectedMac, TEXT key, TEXT algorithm)```: Verifies an HMAC signature.
-
-Computes the HMAC of the message using the provided key and algorithm, then
-performs a timing-safe comparison with the expected MAC. Returns true if they match.
-
-Supported algorithms: "HmacSHA256", "HmacSHA384", "HmacSHA512"
-
-**Examples:**
-```sapl
-policy "verify webhook signature"
-permit
-where
-  var payload = "webhook payload";
-  var signature = "expected_signature_from_header";
-  var secret = "webhook_secret";
-  mac.verifyHmac(payload, signature, secret, "HmacSHA256");
-```
-
-
----
-
 ## mac.hmacSha512(Text message, Text key)
 
 ```hmacSha512(TEXT message, TEXT key)```: Computes HMAC-SHA512 authentication code.
@@ -122,6 +124,52 @@ where
   var key = "secret";
   var mac = mac.hmacSha512(message, key);
   mac == "fef74d78b1e0d9180258835c7e855f0c9aa53d07d2a84088d62cef0218df0a3de20e69936a13b9ba0d36fb208aef0c6df6e00bf3a28f936f48faad8e6e8e2e39";
+```
+
+
+---
+
+## mac.isValidHmac(Text message, Text expectedMac, Text key, Text algorithm)
+
+```isValidHmac(TEXT message, TEXT expectedMac, TEXT key, TEXT algorithm)```: Verifies an HMAC signature.
+
+Computes the HMAC of the message using the provided key and algorithm, then
+performs a timing-safe comparison with the expected MAC. Returns true if they match.
+
+Supported algorithms: "HmacSHA256", "HmacSHA384", "HmacSHA512"
+
+**Examples:**
+```sapl
+policy "verify webhook signature"
+permit
+where
+  var payload = "webhook payload";
+  var signature = "expected_signature_from_header";
+  var secret = "webhook_secret";
+  mac.isValidHmac(payload, signature, secret, "HmacSHA256");
+```
+
+
+---
+
+## mac.timingSafeEquals(Text mac1, Text mac2)
+
+```timingSafeEquals(TEXT mac1, TEXT mac2)```: Compares two MACs using constant-time comparison.
+
+Performs a timing-safe comparison of two hexadecimal MAC strings. This prevents
+timing attacks where an attacker could determine the correct MAC by measuring
+comparison time. Always use this function when verifying MACs.
+
+The comparison is case-insensitive for hexadecimal strings.
+
+**Examples:**
+```sapl
+policy "verify webhook"
+permit
+where
+  var receivedMac = "abc123";
+  var computedMac = "abc123";
+  mac.timingSafeEquals(receivedMac, computedMac);
 ```
 
 

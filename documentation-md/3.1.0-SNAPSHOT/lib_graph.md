@@ -13,7 +13,7 @@ Graph functions: reachability and shortest paths.
 
 This library provides functions for working with graphs represented as JSON objects.
 Use these functions when authorization decisions depend on reachability or path analysis
-in hierarchical structures.
+in hierarchical structures such as role hierarchies, organizational charts, or resource trees.
 
 ## Design rationale
 
@@ -26,21 +26,23 @@ search with a visited set, so cycles do not cause loops.
 A graph is a JSON object where each key is a node identifier and each value is an array
 of neighbor identifiers. The neighbors represent the outgoing edges of the node.
 
-Example using forbidden knowledge progression (each tome references other texts):
+Example using hierarchical role inheritance (each role grants permissions of subordinate roles):
 
 ```json
 {
-  "necronomicon" : [ "pnakotic-manuscripts", "book-of-eibon", "de-vermis-mysteriis" ],
-  "pnakotic-manuscripts" : [ "rlyeh-text", "yithian-records" ],
-  "book-of-eibon" : [ "testaments-of-carnamagos" ],
-  "de-vermis-mysteriis" : [ "cultes-des-goules", "prinn-notes" ],
-  "rlyeh-text" : [ "deep-one-inscriptions" ],
-  "yithian-records" : [],
-  "testaments-of-carnamagos" : [],
-  "cultes-des-goules" : [],
-  "prinn-notes" : [ "von-junzt-fragments" ],
-  "deep-one-inscriptions" : [],
-  "von-junzt-fragments" : []
+  "system-admin" : [ "db-admin", "security-admin", "app-admin" ],
+  "db-admin" : [ "db-operator", "backup-operator" ],
+  "security-admin" : [ "security-analyst", "audit-viewer" ],
+  "app-admin" : [ "app-operator", "app-viewer" ],
+  "db-operator" : [ "db-viewer" ],
+  "backup-operator" : [ "backup-viewer" ],
+  "security-analyst" : [ "log-viewer" ],
+  "audit-viewer" : [],
+  "app-operator" : [ "app-viewer" ],
+  "app-viewer" : [],
+  "db-viewer" : [],
+  "backup-viewer" : [],
+  "log-viewer" : []
 }
 ```
 
@@ -54,26 +56,26 @@ Initial roots can be a single id or an array of ids.
 
 ## Example (reachable)
 
-Check what forbidden knowledge becomes accessible if a researcher gains access to the Necronomicon:
+Check which roles are effectively granted when a user has the system-admin role:
 
 ```sapl
-policy "library-accessible-from-necronomicon"
+policy "evaluate-effective-permissions"
 permit
 where
-  var accessibleTomes = graph.reachable(forbiddenLibrary, ["necronomicon"]);
-  "deep-one-inscriptions" in accessibleTomes;
+  var effectiveRoles = graph.reachable(roleHierarchy, subject.assignedRoles);
+  "db-viewer" in effectiveRoles;
 ```
 
 ## Example (reachable_paths)
 
-Verify the research path from Necronomicon to specific dangerous knowledge:
+Audit the delegation chain from a high-privilege role to a specific permission:
 
 ```sapl
-policy "verify-research-chain"
+policy "audit-permission-delegation"
 permit
 where
-  var paths = graph.reachable_paths(forbiddenLibrary, ["necronomicon"]);
-  ["necronomicon","pnakotic-manuscripts","rlyeh-text","deep-one-inscriptions"] in paths;
+  var delegationPaths = graph.reachable_paths(roleHierarchy, ["system-admin"]);
+  ["system-admin","db-admin","db-operator","db-viewer"] in delegationPaths;
 ```
 
 
@@ -104,15 +106,15 @@ yields exactly one path (the first encountered by BFS).
 
 ## Example
 
-Using the forbiddenLibrary graph from library documentation, verify the research chain that led
-to dangerous knowledge:
+Using the roleHierarchy graph from library documentation, verify the delegation chain
+for audit purposes:
 
 ```sapl
-policy "audit-knowledge-chain"
+policy "audit-role-delegation-path"
 permit
 where
-  var paths = graph.reachable_paths(forbiddenLibrary, subject.initialAccess);
-  ["necronomicon","de-vermis-mysteriis","prinn-notes","von-junzt-fragments"] in paths;
+  var delegationPaths = graph.reachable_paths(roleHierarchy, subject.primaryRole);
+  ["db-admin","db-operator","db-viewer"] in delegationPaths;
 ```
 
 
@@ -146,15 +148,15 @@ directed edges in the graph.
 
 ## Example
 
-Using the forbiddenLibrary graph from library documentation, check if a researcher's initial access
-leads to dangerous knowledge:
+Using the roleHierarchy graph from library documentation, determine all roles a user
+effectively has through inheritance:
 
 ```sapl
-policy "restrict-deep-knowledge-access"
-deny
+policy "require-elevated-access"
+permit
 where
-  var accessibleTomes = graph.reachable(forbiddenLibrary, subject.grantedTomes);
-  "deep-one-inscriptions" in accessibleTomes;
+  var effectiveRoles = graph.reachable(roleHierarchy, subject.assignedRoles);
+  "security-analyst" in effectiveRoles;
 ```
 
 

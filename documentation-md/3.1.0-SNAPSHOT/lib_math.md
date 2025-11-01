@@ -9,6 +9,14 @@ nav_order: 117
 
 A collection of mathematical functions for scalar operations.
 
+# Math Function Library (name: math)
+
+This library provides standard mathematical functions for numeric operations in policies.
+Functions include basic arithmetic operations (min, max, abs), rounding (ceil, floor, round),
+exponentiation and roots (pow, sqrt), logarithms (log, log10, logb), clamping, sign determination,
+random number generation, and mathematical constants (pi, e).
+
+All functions operate on JSON numbers and return numeric results or error values for invalid inputs.
 
 
 ---
@@ -17,7 +25,7 @@ A collection of mathematical functions for scalar operations.
 
 ```sqrt(NUMBER value)```: Returns the square root of a number. Returns an error if the value is negative.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -42,7 +50,7 @@ number (64-bit) to maintain consistency with JSON number representation and Java
 **Requirements:**
 - ```seed``` must be an integer
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -58,7 +66,7 @@ where
 ```logb(NUMBER value, NUMBER base)```: Returns the logarithm of a value with an arbitrary base.
 Returns an error if the value is not positive or if the base is not positive and not equal to 1.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -75,7 +83,7 @@ where
 
 ```pow(NUMBER base, NUMBER exponent)```: Returns the value of the base raised to the power of the exponent.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -93,7 +101,7 @@ where
 
 ```log10(NUMBER value)```: Returns the base-10 logarithm of a number. Returns an error if the value is not positive.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -111,7 +119,7 @@ where
 ```log(NUMBER value)```: Returns the natural logarithm (base e) of a number. Returns an error if the value
 is not positive.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -128,7 +136,7 @@ where
 
 ```floor(NUMBER value)```: Returns the largest integer less than or equal to the value (rounds down).
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -152,7 +160,7 @@ reproducible results.
 - ```bound``` must be a positive integer
 - ```seed``` must be an integer
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -169,7 +177,7 @@ where
 If the value is less than the minimum, returns the minimum. If the value is greater than the maximum, returns
 the maximum. Otherwise, returns the value unchanged.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -177,6 +185,7 @@ where
   math.clamp(5, 0, 10) == 5;      // within range
   math.clamp(-5, 0, 10) == 0;     // below minimum
   math.clamp(15, 0, 10) == 10;    // above maximum
+  math.clamp(10, 0, 10) == 10;    // at boundary
 ```
 
 
@@ -190,13 +199,13 @@ where
 **Requirements:**
 - ```bound``` must be a positive integer
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
 where
-  var randomValue = math.randomInteger(10);  // returns 0-9
-  var diceRoll = math.randomInteger(6) + 1;  // returns 1-6
+  var diceRoll = math.randomInteger(6) + 1;       // 1-6 inclusive
+  var randomPercent = math.randomInteger(101);    // 0-100 inclusive
 ```
 
 
@@ -206,7 +215,7 @@ where
 
 ```ceil(NUMBER value)```: Returns the smallest integer greater than or equal to the value (rounds up).
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -225,7 +234,7 @@ where
 ```round(NUMBER value)```: Returns the value rounded to the nearest integer. Values exactly halfway between
 two integers are rounded up (towards positive infinity).
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -243,7 +252,7 @@ where
 
 ```abs(NUMBER value)```: Returns the absolute value of a number.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -264,7 +273,7 @@ where
 **Technical Note:** Despite the name ```randomFloat```, this function returns a double-precision floating-point
 number (64-bit) to maintain consistency with JSON number representation and Java's numeric operations.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -281,7 +290,7 @@ where
 
 ```min(NUMBER a, NUMBER b)```: Returns the smaller of two numbers.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -298,7 +307,7 @@ where
 
 ```max(NUMBER a, NUMBER b)```: Returns the larger of two numbers.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -316,7 +325,7 @@ where
 ```sign(NUMBER value)```: Returns the sign of a number: ```-1``` for negative numbers, ```0``` for zero,
 and ```1``` for positive numbers.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -334,7 +343,7 @@ where
 ```pi()```: Returns the mathematical constant π (pi), the ratio of a circle's circumference to its diameter.
 Value is approximately 3.141592653589793.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit
@@ -351,7 +360,7 @@ where
 ```e()```: Returns the mathematical constant e (Euler's number), the base of natural logarithms.
 Value is approximately 2.718281828459045.
 
-**Examples:**
+**Example:**
 ```sapl
 policy "example"
 permit

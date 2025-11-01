@@ -16,19 +16,19 @@ Utility functions for dumping data from policy evaluation on the PDP console for
 ## log.info(Text message, value)
 
 ```info(TEXT message, value)```: Logs the ```value``` prepended with the ```message``` to the
-console at the DEBUG log level.
-It is useful to add an additional statement line in a ```where``` block of a policy.
+console at the INFO log level.
+This function is useful to add an additional statement line in a ```where``` block of a policy.
 As the function always returns ```true```, the rest of the policy evaluation is not affected.
 *Note:* If a statement above the logging statement evaluates to ```false```, the logger will
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "audit_policy_execution"
 permit
 where
-  log.info(action.amount);
-  subject.name == "testUser";
+  log.info("Transaction amount", action.amount);
+  subject.approvalLimit >= action.amount;
 ```
 
 
@@ -38,15 +38,15 @@ where
 
 ```warnSpy(TEXT message, value)```: Logs the ```value``` prepended with the ```message``` to the
 console at the WARN log level.
-The function behaves like the identity funtion, returning ```value``` unchanged.
-This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
+The function behaves like the identity function, returning ```value``` unchanged.
+This allows wrapping any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "monitor_suspicious_access"
 permit
 where
-  log.warnSpy(subject.name) == "testUser";
+  log.warnSpy("Access attempt from", subject.ipAddress) in resource.allowedIPs;
 ```
 
 
@@ -63,11 +63,11 @@ not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "detailed_access_log"
 permit
 where
-  log.trace(action.amount);
-  subject.name == "testUser";
+  log.trace("Request details", action);
+  subject.role == "auditor";
 ```
 
 
@@ -77,18 +77,18 @@ where
 
 ```error(TEXT message, value)```: Logs the ```value``` prepended with the ```message``` to the
 console at the ERROR log level.
-This function is useful to add an additional statement line in a where block of a policy.
+This function is useful to add an additional statement line in a ```where``` block of a policy.
 As the function always returns ```true```, the rest of the policy evaluation is not affected.
 *Note:* If a statement above the logging statement evaluates to ```false```, the logger will
 not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "log_critical_errors"
 permit
 where
-  log.error(action.amount);
-  subject.name == "testUser";
+  log.error("Critical system access", subject.userId);
+  subject.clearanceLevel == "top-secret";
 ```
 
 
@@ -105,11 +105,11 @@ not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "debug_authorization"
 permit
 where
-  log.debug(action.amount);
-  subject.name == "testUser";
+  log.debug("Evaluating permissions", subject.permissions);
+  subject.department == "engineering";
 ```
 
 
@@ -119,15 +119,15 @@ where
 
 ```errorSpy(TEXT message, value)```: Logs the ```value``` prepended with the ```message``` to the
 console at the ERROR log level.
-The function behaves like the identity funtion, returning ```value``` unchanged.
-This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
+The function behaves like the identity function, returning ```value``` unchanged.
+This allows wrapping any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "track_authorization_failures"
 permit
 where
-  log.errorSpy(subject.name) == "testUser";
+  log.errorSpy("Failed auth for user", subject.username) != "guest";
 ```
 
 
@@ -144,11 +144,11 @@ not be triggered, as the evaluation of statements is lazy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "flag_unusual_access"
 permit
 where
-  log.warn(action.amount);
-  subject.name == "testUser";
+  log.warn("Access outside business hours", time.now());
+  subject.role in ["admin", "oncall"];
 ```
 
 
@@ -158,15 +158,15 @@ where
 
 ```traceSpy(TEXT message, value)```: Logs the ```value``` prepended with the ```message``` to the
 console at the TRACE log level.
-The function behaves like the identity funtion, returning ```value``` unchanged.
-This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
+The function behaves like the identity function, returning ```value``` unchanged.
+This allows wrapping any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "audit_user_access"
 permit
 where
-  log.traceSpy(subject.name) == "testUser";
+  log.traceSpy("Checking user", subject.name) == "admin";
 ```
 
 
@@ -176,15 +176,15 @@ where
 
 ```debugSpy(TEXT message, value)```: Logs the ```value``` prepended with the ```message``` to the
 console at the DEBUG log level.
-The function behaves like the identity funtion, returning ```value``` unchanged.
-This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
+The function behaves like the identity function, returning ```value``` unchanged.
+This allows wrapping any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "validate_permissions"
 permit
 where
-  log.debugSpy(subject.name) == "testUser";
+  log.debugSpy("Permissions list", subject.permissions) |> filter.contains("read");
 ```
 
 
@@ -194,15 +194,15 @@ where
 
 ```infoSpy(TEXT message, value)```: Logs the provided ```value```, prepended with the ```message```, to the
 console at the INFO log level.
-The function behaves like the identity funtion, returning ```value``` unchanged.
-This allows it to be used to wrap any value in a SAPL expression without changing the overall structure of the policy.
+The function behaves like the identity function, returning ```value``` unchanged.
+This allows wrapping any value in a SAPL expression without changing the overall structure of the policy.
 
 **Example:**
 ```sapl
-policy "logging"
+policy "check_resource_owner"
 permit
 where
-  log.infoSpy(subject.name) == "testUser";
+  log.infoSpy("Resource owner", resource.ownerId) == subject.id;
 ```
 
 

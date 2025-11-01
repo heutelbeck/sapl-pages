@@ -9,6 +9,11 @@ nav_order: 136
 
 Function library for XML marshalling and unmarshalling operations.
 
+## XML Functions
+
+Enables XML processing in SAPL policies for systems that exchange authorization-relevant data in XML format.
+Parse XML from external systems into SAPL values for policy evaluation, or serialize policy decisions and
+context into XML for logging or integration.
 
 
 ---
@@ -20,11 +25,12 @@ value representing the content of the XML document.
 
 **Example:**
 ```sapl
-policy "example"
+policy "permit_with_resource_attributes"
 permit
 where
-   var xmlText = "<Flower><name>Poppy</name><color>RED</color><petals>9</petals></Flower>";
-   xml.xmlToVal(xmlText) == {"n":"Poppy","color":"RED","petals":"9"};
+   var resourceXml = "<Resource><owner>alice</owner><classification>PUBLIC</classification></Resource>";
+   var resource = xml.xmlToVal(resourceXml);
+   resource.owner == subject.name;
 ```
 
 
@@ -36,12 +42,12 @@ where
 
 **Example:**
 ```sapl
-policy "example"
+policy "log_access_attempt"
 permit
 where
-   var object = {"name":"Poppy","color":"RED","petals":9};
-   var expected = "<LinkedHashMap><name>Poppy</name><color>RED</color><petals>9</petals></LinkedHashMap>";
-   xml.valToXml(object) == expected;
+   var accessLog = {"user":"bob","resource":"/documents/report.pdf","action":"READ","timestamp":"2025-01-15T10:30:00Z"};
+   var logXml = xml.valToXml(accessLog);
+   // logXml contains: <LinkedHashMap><user>bob</user><resource>/documents/report.pdf</resource>...
 ```
 
 

@@ -9,6 +9,51 @@ nav_order: 111
 
 Function library for JSON marshalling and unmarshalling operations.
 
+# JSON Function Library
+
+Provides bidirectional conversion between JSON text and SAPL values.
+
+Use json.jsonToVal to parse JSON strings from external sources such as API responses,
+configuration files, or database fields stored as JSON text.
+
+Use json.valToJson to serialize SAPL values into JSON strings for obligations,
+advice, or when passing data to external systems.
+
+## Examples
+
+Parse stored configuration:
+```sapl
+policy "check-feature-flags"
+permit
+where
+  var config = json.jsonToVal(resource.configJson);
+  config.featureEnabled == true;
+  config.minVersion <= subject.appVersion;
+```
+
+Parse embedded permissions:
+```sapl
+policy "validate-permissions"
+permit resource.type == "document"
+where
+  var userPerms = json.jsonToVal(subject.permissionsJson);
+  userPerms.canRead == true;
+```
+
+Generate structured obligation data:
+```sapl
+policy "require-audit"
+permit
+obligation
+  {
+    "auditEntry": json.valToJson({
+      "userId": subject.id,
+      "resourceId": resource.id,
+      "action": action.method,
+      "timestamp": time.now()
+    })
+  }
+```
 
 
 ---
@@ -17,14 +62,15 @@ Function library for JSON marshalling and unmarshalling operations.
 
 ```jsonToVal(TEXT json)```: Converts a well-formed JSON document ```json``` into a SAPL
 value representing the content of the JSON document.
+Returns an error if the JSON is malformed.
 
 **Example:**
 ```sapl
-policy "example"
-permit
+policy "check-embedded-role"
+permit action.method == "read"
 where
-   var jsonText = "{ \"hello\": \"world\" }";
-   json.jsonToVal(jsonText) == { "hello":"world" };
+  var userMetadata = json.jsonToVal(subject.metadataJson);
+  userMetadata.role == "admin";
 ```
 
 
@@ -33,14 +79,17 @@ where
 ## json.valToJson(value)
 
 ```valToJson(value)```: Converts a SAPL ```value``` into a JSON string representation.
+Returns an error if serialization fails. Undefined and error values are returned unchanged.
 
 **Example:**
 ```sapl
-policy "example"
+policy "log-decision-context"
 permit
-where
-   var object = { "hello":"world" };
-   json.valToJson(object) == "{\"hello\":\"world\"}";
+obligation
+  {
+    "type": "audit",
+    "context": json.valToJson(subject)
+  }
 ```
 
 

@@ -9,6 +9,11 @@ nav_order: 131
 
 Function library for TOML marshalling and unmarshalling operations.
 
+## TOML Functions
+
+Enables TOML configuration file processing in SAPL policies for systems using TOML-based configuration management.
+Parse TOML configuration files into SAPL values for policy evaluation, or serialize authorization configurations
+into TOML format for application configuration files and infrastructure management.
 
 
 ---
@@ -20,11 +25,12 @@ value representing the content of the TOML document.
 
 **Example:**
 ```sapl
-policy "example"
+policy "permit_based_on_config"
 permit
 where
-   var tomlText = "[flower]\nname = \"Poppy\"\ncolor = \"RED\"\npetals = 9";
-   toml.tomlToVal(tomlText) == {"flower":{"name":"Poppy","color":"RED","petals":9}};
+   var configToml = "[resource]\nowner = \"alice\"\nclassification = \"CONFIDENTIAL\"\naccessLevel = 3";
+   var config = toml.tomlToVal(configToml);
+   config.resource.owner == subject.name;
 ```
 
 
@@ -36,12 +42,12 @@ where
 
 **Example:**
 ```sapl
-policy "example"
+policy "export_policy_config"
 permit
 where
-   var object = {"flower":{"name":"Poppy","color":"RED","petals":9}};
-   var expected = "[flower]\nname = \"Poppy\"\ncolor = \"RED\"\npetals = 9\n";
-   toml.valToToml(object) == expected;
+   var policyConfig = {"permissions":{"user":"bob","actions":["READ","WRITE"],"resources":["/api/data"]}};
+   var configToml = toml.valToToml(policyConfig);
+   // configToml contains TOML-formatted configuration
 ```
 
 

@@ -9,6 +9,27 @@ nav_order: 134
 
 Utility functions for UUID handling.
 
+The UUID library provides functions for generating and parsing Universally Unique Identifiers.
+Use it when you need unique identifiers for correlation, tracking, or deduplication in policies.
+
+Common use cases include generating request IDs for audit trails, creating unique session tokens,
+or parsing UUID-based resource identifiers from requests. The library supports both cryptographically
+secure random UUIDs for production and deterministic seeded UUIDs for testing.
+
+**Example:**
+```sapl
+policy "audit_with_request_id"
+permit
+where
+  var requestId = uuid.random();
+  // Use requestId for audit correlation
+obligation
+  {
+    "type": "log",
+    "requestId": requestId,
+    "action": action.method
+  }
+```
 
 
 ---

@@ -7,25 +7,126 @@ nav_order: 135
 ---
 # x509
 
-Functions for parsing and extracting information from X.509 certificates used in PKI and TLS/SSL.
+Functions for certificate-based access control in mTLS and PKI scenarios.
 
+
+
+---
+
+## x509.hasIpAddress(Text certificatePem, Text ipAddress)
+
+```hasIpAddress(TEXT certPem, TEXT ipAddress)```: Checks if certificate contains a specific IP address.
+
+Checks Subject Alternative Names for the specified IP address. Use this when
+authorizing connections from IP-identified clients rather than DNS-named hosts.
+
+Example - Authorize by client IP:
+```sapl
+policy "allow specific ips"
+permit action == "connect"
+where
+  x509.hasIpAddress(request.clientCertificate, request.sourceIp);
+```
+
+
+---
+
+## x509.hasDnsName(Text certificatePem, Text dnsName)
+
+```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
+
+Checks both the subject CN and all Subject Alternative Names for the specified DNS
+name. This is simpler than extracting SANs and checking manually, and handles
+wildcard certificates correctly.
+
+Example - Verify certificate is valid for accessed domain:
+```sapl
+policy "validate domain match"
+permit action == "connect"
+where
+  x509.hasDnsName(request.serverCertificate, resource.domain);
+```
+
+
+---
+
+## x509.isValidAt(Text certificatePem, Text isoTimestamp)
+
+```isValidAt(TEXT certPem, TEXT isoTimestamp)```: Checks if certificate is valid at a specific time.
+
+Returns true if the given timestamp falls within the certificate's validity period
+(between notBefore and notAfter). Use this for time-based access or historical
+audit validation.
+
+Example - Check validity during maintenance window:
+```sapl
+policy "maintenance window access"
+permit action == "admin" && resource.type == "production"
+where
+  var maintenanceStart = "2025-06-15T02:00:00Z";
+  x509.isValidAt(request.adminCertificate, maintenanceStart);
+```
+
+
+---
+
+## x509.extractCommonName(Text certificatePem)
+
+```extractCommonName(TEXT certPem)```: Extracts the Common Name from the subject.
+
+Returns just the CN field from the certificate subject, which typically contains
+the hostname or entity name. This is simpler than parsing the full DN when only
+the CN is needed.
+
+Example - Verify service identity in mTLS:
+```sapl
+policy "service-to-service auth"
+permit action == "invoke"
+where
+  var serviceName = x509.extractCommonName(request.clientCertificate);
+  serviceName in resource.allowedServices;
+```
+
+
+---
+
+## x509.matchesFingerprint(Text certificatePem, Text expectedFingerprint, Text algorithm)
+
+```matchesFingerprint(TEXT certPem, TEXT expectedFingerprint, TEXT algorithm)```: Checks if certificate matches expected fingerprint.
+
+Computes the certificate fingerprint using the specified algorithm and compares it
+to the expected value. This implements certificate pinning to ensure the exact
+certificate is being used, preventing man-in-the-middle attacks.
+
+Example - Pin production service certificates:
+```sapl
+policy "verify pinned certificate"
+permit action == "connect" && resource.type == "payment-gateway"
+where
+  x509.matchesFingerprint(
+    request.clientCertificate,
+    "a1b2c3d4e5f6...",
+    "SHA-256"
+  );
+```
 
 
 ---
 
 ## x509.extractSubjectDn(Text certificatePem)
 
-```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name from a certificate.
+```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
 
-Returns the full DN string in RFC 2253 format (e.g., "CN=example.com,O=Example Corp,C=US").
+Returns the full DN string in RFC 2253 format. Use this for matching against
+specific organizations or organizational units in certificate-based access control.
 
-**Examples:**
+Example - Restrict access to specific department:
 ```sapl
-policy "check subject"
-permit
+policy "allow hr department only"
+permit action == "read" && resource.type == "personnel-records"
 where
-  var subjectDn = x509.extractSubjectDn(certPem);
-  subjectDn =~ "CN=.*\.example\.com";
+  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
+  subjectDn =~ "OU=Human Resources,O=Acme Corp";
 ```
 
 
@@ -35,14 +136,16 @@ where
 
 ```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
 
-Returns the serial number as a decimal string.
+Returns the serial number as a decimal string. Use this for certificate revocation
+checking or tracking specific certificates in audit logs.
 
-**Examples:**
+Example - Block revoked certificates:
 ```sapl
-policy "check serial"
-permit
+policy "check revocation list"
+deny
 where
-  x509.extractSerialNumber(certPem) == "123456789";
+  var serial = x509.extractSerialNumber(request.clientCertificate);
+  serial in data.revokedSerials;
 ```
 
 
@@ -52,14 +155,15 @@ where
 
 ```isExpired(TEXT certPem)```: Checks if a certificate has expired.
 
-Returns true if the current time is after the certificate's notAfter date.
+Returns true if the current time is after the certificate's notAfter date. Use this
+as a basic validity check before allowing access.
 
-**Examples:**
+Example - Reject expired certificates:
 ```sapl
-policy "reject expired"
+policy "reject expired certificates"
 deny
 where
-  x509.isExpired(clientCertificate);
+  x509.isExpired(request.clientCertificate);
 ```
 
 
@@ -69,36 +173,48 @@ where
 
 ```parseCertificate(TEXT certPem)```: Parses an X.509 certificate and returns its structure.
 
-Accepts certificates in PEM or DER format and returns a JSON object containing
-all certificate fields including subject, issuer, validity dates, serial number,
-and public key information.
+Accepts certificates in PEM or DER format and returns a JSON object containing all
+certificate fields including subject, issuer, validity dates, serial number, and
+public key information. Use this when multiple certificate properties are needed
+in a single policy.
 
-**Examples:**
+Example - Validate multiple certificate properties for mTLS:
 ```sapl
-policy "parse certificate"
-permit
+policy "require valid partner certificate"
+permit action == "api.call"
 where
-  var cert = x509.parseCertificate(certPem);
-  cert.subject.commonName == "example.com";
-  cert.serialNumber == "1234567890";
+  var cert = x509.parseCertificate(request.clientCertificate);
+  cert.subject =~ "O=Trusted Partners Inc";
+  cert.issuer =~ "CN=Internal CA";
+  cert.serialNumber in resource.allowedSerials;
 ```
 
 
 ---
 
-## x509.isValidAt(Text certificatePem, Text isoTimestamp)
+## x509.remainingValidityDays(Text certificatePem)
 
-```isValidAt(TEXT certPem, TEXT isoTimestamp)```: Checks if a certificate is valid at a specific time.
+```remainingValidityDays(TEXT certPem)```: Returns the number of days until certificate expires.
 
-Returns true if the given timestamp falls within the certificate's validity period
-(between notBefore and notAfter).
+Calculates how many days remain until the certificate's notAfter date. Returns a
+negative number if already expired. Use this to trigger certificate renewal warnings
+or implement graceful certificate rotation.
 
-**Examples:**
+Example - Trigger renewal warning:
 ```sapl
-policy "check historical validity"
+policy "certificate renewal warning"
 permit
 where
-  x509.isValidAt(certPem, "2024-06-15T12:00:00Z");
+  var daysRemaining = x509.remainingValidityDays(request.clientCertificate);
+  daysRemaining > 0;
+advice
+  var daysRemaining = x509.remainingValidityDays(request.clientCertificate);
+  daysRemaining < 30;
+obligation
+  {
+    "type": "certificate-expiring-soon",
+    "daysRemaining": daysRemaining
+  }
 ```
 
 
@@ -106,17 +222,18 @@ where
 
 ## x509.extractIssuerDn(Text certificatePem)
 
-```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name from a certificate.
+```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
 
-Returns the full issuer DN string in RFC 2253 format.
+Returns the full issuer DN string in RFC 2253 format. Use this to verify
+certificates were issued by trusted CAs.
 
-**Examples:**
+Example - Require certificates from internal CA:
 ```sapl
-policy "check issuer"
+policy "internal ca only"
 permit
 where
-  var issuerDn = x509.extractIssuerDn(certPem);
-  issuerDn =~ "O=Trusted CA";
+  var issuerDn = x509.extractIssuerDn(request.clientCertificate);
+  issuerDn =~ "CN=Acme Internal CA,O=Acme Corp";
 ```
 
 
@@ -126,15 +243,18 @@ where
 
 ```extractNotAfter(TEXT certPem)```: Extracts the certificate validity end date.
 
-Returns the date in ISO 8601 format (e.g., "2025-12-31T23:59:59Z").
+Returns the date in ISO 8601 format. Use this to implement proactive certificate
+renewal warnings or temporary access grants.
 
-**Examples:**
+Example - Warn about expiring certificates:
 ```sapl
-policy "check expiration"
+policy "certificate expiring soon"
 permit
 where
-  var notAfter = x509.extractNotAfter(certPem);
-  notAfter > "2025-01-01T00:00:00Z";
+  var notAfter = x509.extractNotAfter(request.clientCertificate);
+  notAfter < time.plusDays(time.now(), 30);
+advice
+  "certificate-renewal-warning"
 ```
 
 
@@ -144,18 +264,17 @@ where
 
 ```extractFingerprint(TEXT certPem, TEXT algorithm)```: Computes the certificate fingerprint.
 
-Calculates the fingerprint (hash of the certificate) using the specified algorithm.
-Returns the fingerprint as a lowercase hexadecimal string.
+Computes the hash of the entire certificate using the specified algorithm (SHA-1,
+SHA-256, or SHA-512). Returns the fingerprint as a hexadecimal string. Use this for
+certificate pinning to ensure the exact certificate is being used.
 
-Supported algorithms: "SHA-1", "SHA-256", "SHA-384", "SHA-512"
-
-**Examples:**
+Example - Certificate pinning for critical services:
 ```sapl
-policy "pin certificate"
-permit
+policy "pin database certificate"
+permit action == "query" && resource.type == "production-db"
 where
-  var fingerprint = x509.extractFingerprint(certPem, "SHA-256");
-  fingerprint == "expected_fingerprint_value";
+  var fingerprint = x509.extractFingerprint(request.clientCertificate, "SHA-256");
+  x509.matchesFingerprint(request.clientCertificate, resource.expectedFingerprint, "SHA-256");
 ```
 
 
@@ -163,18 +282,19 @@ where
 
 ## x509.extractSubjectAltNames(Text certificatePem)
 
-```extractSubjectAltNames(TEXT certPem)```: Extracts Subject Alternative Names from a certificate.
+```extractSubjectAltNames(TEXT certPem)```: Extracts Subject Alternative Names.
 
 Returns an array of SANs, which can include DNS names, IP addresses, email addresses,
-and URIs. Each entry is an object with 'type' and 'value' fields.
+and URIs. Each entry is an object with type and value fields. Use this when the
+certificate subject doesn't match the accessed resource name.
 
-**Examples:**
+Example - Check SAN for virtual hosts:
 ```sapl
-policy "check san"
-permit
+policy "allow san-based routing"
+permit action == "route"
 where
-  var sans = x509.extractSubjectAltNames(certPem);
-  "example.com" in sans[*].value;
+  var sans = x509.extractSubjectAltNames(request.clientCertificate);
+  resource.hostname in sans[*].value;
 ```
 
 
@@ -184,15 +304,16 @@ where
 
 ```extractNotBefore(TEXT certPem)```: Extracts the certificate validity start date.
 
-Returns the date in ISO 8601 format (e.g., "2024-01-01T00:00:00Z").
+Returns the date in ISO 8601 format. Use this to implement time-based access
+restrictions or maintenance windows.
 
-**Examples:**
+Example - Enforce staged certificate rollout:
 ```sapl
-policy "check validity start"
+policy "new certificates only after cutover"
 permit
 where
-  var notBefore = x509.extractNotBefore(certPem);
-  notBefore < "2025-01-01T00:00:00Z";
+  var notBefore = x509.extractNotBefore(request.clientCertificate);
+  notBefore >= "2025-01-01T00:00:00Z";
 ```
 
 

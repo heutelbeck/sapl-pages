@@ -15,7 +15,7 @@ This library contains the functions for testing the compliance of a value with a
 
 ## jsonschema.isCompliant(validationSubject, JsonObject jsonSchema)
 
-```isCompliantWithSchema(validationSubject, OBJECT schema)```:
+```isCompliant(validationSubject, OBJECT schema)```:
 This function tests the `validationSubject` for compliance with the with the provided JSON schema `schema`.
 
 The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
@@ -39,9 +39,100 @@ where
 
 ---
 
+## jsonschema.validateWithExternalSchemas(validationSubject, JsonObject jsonSchema, externalSchemas)
+
+```validateWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
+This function validates the ```validationSubject``` against the provided JSON schema `schema` and returns
+a detailed validation result including error details.
+
+The result contains a `valid` boolean field and an `errors` array with detailed information about any
+validation failures. Each error includes the location in the subject (`path`), a human-readable message,
+the validation keyword that failed (`type`), and the schema location (`schemaPath`).
+
+The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
+looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
+If no $id field is provided, the schema will not be detectable.
+
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+
+**Example:**
+```sapl
+policy "validate_api_request_with_shared_schemas"
+permit action == "api:call"
+where
+  var addressSchema = {
+    "$id": "https://schemas.company.com/address",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "street": { "type": "string" },
+      "city": { "type": "string" },
+      "country": { "type": "string", "minLength": 2, "maxLength": 2 }
+    },
+    "required": ["street", "city", "country"]
+  };
+  var userSchema = {
+    "$id": "https://schemas.company.com/user",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "userId": { "type": "string", "format": "uuid" },
+      "email": { "type": "string", "format": "email" },
+      "role": { "enum": ["user", "admin", "auditor"] },
+      "address": { "$ref": "https://schemas.company.com/address" }
+    },
+    "required": ["userId", "email", "role"]
+  };
+  var result = jsonschema.validateWithExternalSchemas(
+    resource.userData,
+    userSchema,
+    [addressSchema]
+  );
+  result.valid || result.errors[0].type == "required";
+```
+
+
+---
+
+## jsonschema.validate(validationSubject, JsonObject jsonSchema)
+
+```validate(validationSubject, OBJECT schema)```:
+This function validates the `validationSubject` against the provided JSON schema `schema` and returns
+a detailed validation result.
+
+The result contains a `valid` boolean field and an `errors` array with detailed information about any
+validation failures. Each error includes the location in the subject (`path`), a human-readable message,
+the validation keyword that failed (`type`), and the schema location (`schemaPath`).
+
+The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+
+**Example:**
+```sapl
+policy "validate_document_metadata"
+permit action == "upload:document"
+where
+  var metadataSchema = {
+    "type": "object",
+    "properties": {
+      "classification": { "enum": ["public", "internal", "confidential", "secret"] },
+      "owner": { "type": "string", "minLength": 1 },
+      "createdAt": { "type": "string", "format": "date-time" }
+    },
+    "required": ["classification", "owner"]
+  };
+  var result = jsonschema.validate(resource.metadata, metadataSchema);
+  result.valid;
+```
+
+
+---
+
 ## jsonschema.isCompliantWithExternalSchemas(validationSubject, JsonObject jsonSchema, externalSchemas)
 
-```isCompliantWithSchema(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
+```isCompliantWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
 This function tests the ```validationSubject``` for compliance with the with the provided JSON
 schema `schema`.
 
