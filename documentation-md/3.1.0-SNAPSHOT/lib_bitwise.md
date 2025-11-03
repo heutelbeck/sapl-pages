@@ -394,32 +394,6 @@ where
 
 ---
 
-## bitwise.unsignedRightShift(Long value, Long positions)
-
-```bitwise.unsignedRightShift(LONG value, LONG positions)```
-
-Shifts bits to the right by the specified number of positions using logical shift
-(zero-fill). Zeros are always shifted in from the left, regardless of the sign bit.
-Treats the value as an unsigned 64-bit integer for the purpose of shifting.
-
-Parameters:
-- value: Value to shift
-- positions: Number of positions to shift (0 to 63)
-
-Returns: Right-shifted value with zero-fill
-
-Example:
-```sapl
-policy "example"
-permit
-where
-    bitwise.unsignedRightShift(16, 2) == 4;
-    bitwise.unsignedRightShift(-1, 1) == 9223372036854775807;
-```
-
-
----
-
 ## bitwise.leadingZeros(Long value)
 
 ```bitwise.leadingZeros(LONG value)```
@@ -447,27 +421,27 @@ where
 
 ---
 
-## bitwise.bitwiseAnd(Long left, Long right)
+## bitwise.unsignedRightShift(Long value, Long positions)
 
-```bitwise.bitwiseAnd(LONG left, LONG right)```
+```bitwise.unsignedRightShift(LONG value, LONG positions)```
 
-Performs bitwise AND operation where the result bit is 1 only if both corresponding
-bits are 1. Use this to check if all required permission bits are set or to mask
-out specific bits.
+Shifts bits to the right by the specified number of positions using logical shift
+(zero-fill). Zeros are always shifted in from the left, regardless of the sign bit.
+Treats the value as an unsigned 64-bit integer for the purpose of shifting.
 
 Parameters:
-- left: First operand
-- right: Second operand
+- value: Value to shift
+- positions: Number of positions to shift (0 to 63)
 
-Returns: Bitwise AND result
+Returns: Right-shifted value with zero-fill
 
-Example - check if user has all required permissions:
+Example:
 ```sapl
 policy "example"
 permit
 where
-    var REQUIRED = 15;
-    bitwise.bitwiseAnd(subject.permissions, REQUIRED) == REQUIRED;
+    bitwise.unsignedRightShift(16, 2) == 4;
+    bitwise.unsignedRightShift(-1, 1) == 9223372036854775807;
 ```
 
 
@@ -494,6 +468,32 @@ permit action == "toggle_feature"
 transform
     var featurePosition = resource.featureId;
     subject.featureFlags = bitwise.toggleBit(subject.featureFlags, featurePosition);
+```
+
+
+---
+
+## bitwise.bitwiseAnd(Long left, Long right)
+
+```bitwise.bitwiseAnd(LONG left, LONG right)```
+
+Performs bitwise AND operation where the result bit is 1 only if both corresponding
+bits are 1. Use this to check if all required permission bits are set or to mask
+out specific bits.
+
+Parameters:
+- left: First operand
+- right: Second operand
+
+Returns: Bitwise AND result
+
+Example - check if user has all required permissions:
+```sapl
+policy "example"
+permit
+where
+    var REQUIRED = 15;
+    bitwise.bitwiseAnd(subject.permissions, REQUIRED) == REQUIRED;
 ```
 
 
