@@ -131,29 +131,21 @@ This attribute may return a value like:
 
 Name: geofenceEntityId [TEXT]
 
-# Parameters of Attribute Finder
-
-Name: traccarConfig [JSON]
-
 # Schema of Return Value
 
 ```JSON
 ```
-```geofenceEntityId.<traccar.traccarGeofence(traccarConfig)>``` is an attribute that retrieves metadata for a specific
-geofence from the Traccar server using the provided geofence identifier and configuration.
+```geofenceEntityId.<traccar.traccarGeofence>``` is an attribute that retrieves metadata for a specific geofence from
+the Traccar server using the provided geofence identifier. This method uses the environment variable
+`TRACCAR_CONFIG` to retrieve the server connection configuration.
 
 **Parameters:**
 - `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
-- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.traccarGeofence({
-    "baseUrl": "https://demo.traccar.org",
-    "userName": "email@address.org",
-    "password": "password"
-})>
+"12345".<traccar.traccarGeofence>
 ```
 
 This may return a value like:
@@ -172,18 +164,30 @@ This may return a value like:
 ## devices
 
 
+# Parameters of Attribute Finder
+
+Name: traccarConfig [JSON]
+
 # Schema of Return Value
 
 ```JSON
 ```
-```<traccar.devices>``` is an environment attribute that retrieves a list of devices from the
+```<traccar.devices(traccarConfig)>``` is an environment attribute that retrieves a list of devices from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Devices/paths/~1devices/get).
-It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+It uses the settings provided in the `traccarConfig` parameter to connect to the server.
 
- **Example:**
+**Parameters:**
+
+ - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
 
 ```
-<traccar.devices>
+<traccar.devices({
+                  "baseUrl": "https://demo.traccar.org",
+                  "userName": "email@address.org",
+                  "password": "password"
+                })>
 ```
 
 This attribute may return a value like:

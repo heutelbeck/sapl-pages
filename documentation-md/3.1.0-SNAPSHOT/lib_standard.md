@@ -13,22 +13,6 @@ This the standard function library for SAPL.
 
 ---
 
-## standard.toString(value)
-
-```toString(value)```: Converts any ```value``` to a string representation.
-
-
-**Example:**
-```sapl
-policy "example"
-permit
-where
-  standard.toString([1,2,3]) == "[1,2,3]";
-```
-
-
----
-
 ## standard.onErrorMap(guardedExpression, fallback)
 
 ```onErrorMap(guardedExpression, fallbackExpression)```: If evaluation of ```guardedExpression``` results in an error,
@@ -40,6 +24,22 @@ policy "example"
 permit
 where
   standard.onErrorMap(1/0,999) == 999;
+```
+
+
+---
+
+## standard.toString(value)
+
+```toString(value)```: Converts any ```value``` to a string representation.
+
+
+**Example:**
+```sapl
+policy "example"
+permit
+where
+  standard.toString([1,2,3]) == "[1,2,3]";
 ```
 
 
