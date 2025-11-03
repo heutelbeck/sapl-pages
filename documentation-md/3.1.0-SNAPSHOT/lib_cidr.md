@@ -163,20 +163,6 @@ obligation
 
 ---
 
-## cidr.getFirstUsableAddress(Text cidr)
-
-```cidr.getFirstUsableAddress(STRING cidr)```
-
-Returns the first usable host address (network address + 1).
-
-Parameters:
-- cidr: CIDR range
-
-Returns: First usable address string
-
-
----
-
 ## cidr.isPrivateIpv4(Text ipAddress)
 
 ```cidr.isPrivateIpv4(STRING ipAddress)```
@@ -202,6 +188,20 @@ Parameters:
 - cidr: CIDR range
 
 Returns: Network address string
+
+
+---
+
+## cidr.getFirstUsableAddress(Text cidr)
+
+```cidr.getFirstUsableAddress(STRING cidr)```
+
+Returns the first usable host address (network address + 1).
+
+Parameters:
+- cidr: CIDR range
+
+Returns: First usable address string
 
 
 ---
@@ -266,6 +266,22 @@ Returns: Last usable address string
 
 ---
 
+## cidr.getUsableHostCount(Text cidr)
+
+```cidr.getUsableHostCount(STRING cidr)```
+
+Returns usable host addresses in a CIDR range. For IPv4, excludes network and
+broadcast addresses. For /31 and /32, returns 0. Returns string to handle
+large IPv6 ranges.
+
+Parameters:
+- cidr: CIDR range
+
+Returns: Usable host count as string
+
+
+---
+
 ## cidr.canSubdivide(Text cidr, Int targetPrefixLength)
 
 ```cidr.canSubdivide(STRING cidr, INT targetPrefixLength)```
@@ -279,22 +295,6 @@ Parameters:
 - targetPrefixLength: Desired subdivision prefix
 
 Returns: Boolean indicating subdivision possibility
-
-
----
-
-## cidr.getUsableHostCount(Text cidr)
-
-```cidr.getUsableHostCount(STRING cidr)```
-
-Returns usable host addresses in a CIDR range. For IPv4, excludes network and
-broadcast addresses. For /31 and /32, returns 0. Returns string to handle
-large IPv6 ranges.
-
-Parameters:
-- cidr: CIDR range
-
-Returns: Usable host count as string
 
 
 ---
