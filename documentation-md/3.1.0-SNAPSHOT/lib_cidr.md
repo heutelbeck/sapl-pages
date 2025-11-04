@@ -163,20 +163,6 @@ obligation
 
 ---
 
-## cidr.getFirstUsableAddress(Text cidr)
-
-```cidr.getFirstUsableAddress(STRING cidr)```
-
-Returns the first usable host address (network address + 1).
-
-Parameters:
-- cidr: CIDR range
-
-Returns: First usable address string
-
-
----
-
 ## cidr.isPrivateIpv4(Text ipAddress)
 
 ```cidr.isPrivateIpv4(STRING ipAddress)```
@@ -202,6 +188,20 @@ Parameters:
 - cidr: CIDR range
 
 Returns: Network address string
+
+
+---
+
+## cidr.getFirstUsableAddress(Text cidr)
+
+```cidr.getFirstUsableAddress(STRING cidr)```
+
+Returns the first usable host address (network address + 1).
+
+Parameters:
+- cidr: CIDR range
+
+Returns: First usable address string
 
 
 ---
