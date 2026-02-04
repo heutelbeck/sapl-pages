@@ -16,8 +16,8 @@ basic temporal logic.
 
 ## now
 
-```<now>``` is an environment attribute stream and takes no left-hand arguments.
-```<now>```emits the current date and time as an ISO 8601 String at UTC.
+```<time.now>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.now>```emits the current date and time as an ISO 8601 String at UTC.
 The first time is emitted instantly.
 After that the time is emitted once every second.
 
@@ -25,7 +25,7 @@ Example:
 ```sapl
 policy "time example"
 permit
-   time.dayOfWeek(<now>) == "MONDAY";
+   time.dayOfWeek(<time.now>) == "MONDAY";
 ```
 
 
@@ -33,8 +33,8 @@ permit
 
 ## now
 
-```<now(INTEGER>0 updateIntervalInMillis>``` is an environment attribute stream and takes no left-hand arguments.
-```<now(updateIntervalInMillis>``` emits the current date and time as an ISO 8601 String at UTC.
+```<time.now(INTEGER>0 updateIntervalInMillis>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.now(updateIntervalInMillis>``` emits the current date and time as an ISO 8601 String at UTC.
 The first time is emitted instantly.
 After that the time is emitted once every ```updateIntervalInMillis`` milliseconds.
 
@@ -42,7 +42,7 @@ Example:
 ```sapl
 policy "time example"
 permit
-   time.dayOfWeek(<now(time.durationOfMinutes(5)>) == "MONDAY";
+   time.dayOfWeek(<time.now(time.durationOfMinutes(5)>) == "MONDAY";
 ```
 
 
@@ -50,9 +50,9 @@ permit
 
 ## toggle
 
-```<toggle(INTEGER>0 trueDurationMs, INTEGER>0 falseDurationMs)>``` is an environment attribute
+```<time.toggle(INTEGER>0 trueDurationMs, INTEGER>0 falseDurationMs)>``` is an environment attribute
 stream and takes no left-hand arguments.
-```<toggle(trueDurationMs, falseDurationMs)>``` emits a periodically toggling Boolean signal.
+```<time.toggle(trueDurationMs, falseDurationMs)>``` emits a periodically toggling Boolean signal.
 Will be ```true``` immediately for the first duration ```trueDurationMs``` (in milliseconds)
 and then ```false``` for the second duration ```falseDurationMs``` (in milliseconds).
 This will repeat periodically.
@@ -75,8 +75,8 @@ will be the result for two seconds.
 
 ## nowIsAfter
 
-```<nowIsAfter(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<nowIsAfter(checkpoint)>``` ```true```, if the current date time is after the ```checkpoint```
+```<time.nowIsAfter(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.nowIsAfter(checkpoint)>``` ```true```, if the current date time is after the ```checkpoint```
 time (ISO 8601 String at UTC) and ```false```otherwise.
 The attribute immediately emits the comparison result between the current time and the ```checkpoint```.
 If the time at the beginning of the attribute stream was before the ```checkpoint``` and it returned ```false```,
@@ -99,8 +99,8 @@ Alternatively, assume that the current time is ```"2021-11-08T13:00:00Z"``` then
 
 ## localTimeIsAfter
 
-```<localTimeIsAfter(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<localTimeIsAfter(checkpoint)>``` ```true```, if the current time of the day without date is after the
+```<time.localTimeIsAfter(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.localTimeIsAfter(checkpoint)>``` ```true```, if the current time of the day without date is after the
 ```checkpoint``` time (e.g., "17:00") at UTC and ```false```otherwise. This is examined relative to the current
 day. I.e., the answer toggles at "00:00".
 The attribute immediately emits the comparison result between the current time and the ```checkpoint```.
@@ -124,9 +124,9 @@ one hour it will emit ```true```.
 
 ## nowIsBetween
 
-```<nowIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
+```<time.nowIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
 arguments.
-```<nowIsBetween(startTime, endTime)>``` ```true```, if the current date time is after the ```startTime``` and
+```<time.nowIsBetween(startTime, endTime)>``` ```true```, if the current date time is after the ```startTime``` and
 before the ```endTime``` (both ISO 8601 String at UTC) and ```false```otherwise.
 The attribute immediately emits the comparison result between the current time and the provided time interval.
 A new result will be emitted, if the current time crosses any of the interval boundaries.
@@ -145,8 +145,8 @@ permit action == "work";
 
 ## nowIsBefore
 
-```<nowIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<nowIsBefore(checkpoint)>``` ```true```, if the current date time is before the ```checkpoint```
+```<time.nowIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.nowIsBefore(checkpoint)>``` ```true```, if the current date time is before the ```checkpoint```
 time (ISO 8601 String at UTC) and ```false```otherwise.
 The attribute immediately emits the comparison result between the current time and the ```checkpoint```.
 If the time at the beginning of the attribute stream was before the ```checkpoint``` and it returned ```true```,
@@ -169,12 +169,12 @@ Alternatively, assume that the current time is ```"2021-11-08T13:00:00Z"``` then
 
 ## systemTimeZone
 
-```<systemTimeZone>``` is an environment attribute stream and takes no left-hand arguments.
-```<systemTimeZone>``` emits the PDP's system time zone code.
+```<time.systemTimeZone>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.systemTimeZone>``` emits the PDP's system time zone code.
 The zone is initially emitted instantly. After that the attribute verifies if the time zone changed every five
 minutes and emits an update, if the time zone changed.
 
-Example: The expression ```<systemTimeZone>``` will emit ```"US/Pacific"``` if the PDP's host default
+Example: The expression ```<time.systemTimeZone>``` will emit ```"US/Pacific"``` if the PDP's host default
 time zone is set this way and will not emit anything if no changes are made.
 
 
@@ -182,9 +182,9 @@ time zone is set this way and will not emit anything if no changes are made.
 
 ## localTimeIsBetween
 
-```<localTimeIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
+```<time.localTimeIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
 arguments.
-```<localTimeIsBetween(startTime, endTime)>``` ```true```, if the current time at UTC between the ```startTime```
+```<time.localTimeIsBetween(startTime, endTime)>``` ```true```, if the current time at UTC between the ```startTime```
 and the ```endTime``` (both ISO 8601 String at UTC) and ```false```otherwise.
 The attribute immediately emits the comparison result between the current time and the provided time interval.
 A new result will be emitted, if the current time crosses any of the interval boundaries.
@@ -205,8 +205,8 @@ permit action == "work";
 
 ## localTimeIsBefore
 
-```<localTimeIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<localTimeIsBefore(checkpoint)>``` ```false```, if the current time of the day without date is after the
+```<time.localTimeIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.localTimeIsBefore(checkpoint)>``` ```false```, if the current time of the day without date is after the
 ```checkpoint``` time (e.g., "17:00") at UTC and ```true```otherwise. This is examined relative to the current
 day. I.e., the answer toggles at "00:00".
 The attribute immediately emits the comparison result between the current time and the ```checkpoint```.

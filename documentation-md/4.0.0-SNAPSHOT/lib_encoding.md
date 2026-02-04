@@ -175,24 +175,6 @@ permit
 
 ---
 
-## hexEncode
-
-```hexEncode(TEXT data)```: Encodes text data to hexadecimal representation.
-
-Converts each byte of the UTF-8 encoded text to two hexadecimal digits.
-Output uses lowercase letters (a-f).
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  encoding.hexEncode("hello") == "68656c6c6f";
-  encoding.hexEncode("A") == "41";
-```
-
-
----
-
 ## hexDecode
 
 ```hexDecode(TEXT data)```: Decodes hexadecimal representation to text.
@@ -277,6 +259,24 @@ policy "example"
 permit
   encoding.base64UrlDecode("aGVsbG8=") == "hello";
   encoding.base64UrlDecode("aGVsbG8") == "hello";  // lenient: missing padding accepted
+```
+
+
+---
+
+## hexEncode
+
+```hexEncode(TEXT data)```: Encodes text data to hexadecimal representation.
+
+Converts each byte of the UTF-8 encoded text to two hexadecimal digits.
+Output uses lowercase letters (a-f).
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  encoding.hexEncode("hello") == "68656c6c6f";
+  encoding.hexEncode("A") == "41";
 ```
 
 
