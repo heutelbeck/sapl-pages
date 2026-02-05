@@ -9,6 +9,48 @@ nav_order: 128
 
 Functions for string manipulation in authorization policies.
 
+# String Functions
+
+Functions for string manipulation in authorization policies. Use these for
+normalizing input, validating formats, and extracting components.
+
+## Function Categories
+
+| Category    | Functions                                              |
+|-------------|--------------------------------------------------------|
+| Case        | `toLowerCase`, `toUpperCase`, `equalsIgnoreCase`       |
+| Whitespace  | `trim`, `trimStart`, `trimEnd`, `isBlank`              |
+| Search      | `contains`, `startsWith`, `endsWith`, `indexOf`        |
+| Extraction  | `substring`, `substringRange`, `length`                |
+| Building    | `join`, `concat`, `replace`, `leftPad`, `repeat`       |
+
+## Common Patterns
+
+Case-insensitive role comparison:
+
+```sapl
+policy "admin access"
+permit
+    string.equalsIgnoreCase(subject.role, "administrator");
+```
+
+Path-based authorization:
+
+```sapl
+policy "api access"
+permit
+    string.startsWith(resource.path, "/api/public/");
+```
+
+Building composite identifiers:
+
+```sapl
+policy "tenant resource"
+permit
+where
+    var resourceKey = string.join([subject.tenant, resource.type, resource.id], ":");
+    resourceKey in subject.accessibleResources;
+```
 
 
 ---

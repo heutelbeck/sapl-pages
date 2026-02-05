@@ -7,8 +7,91 @@ nav_order: 106
 ---
 # encoding
 
-Encoding and decoding functions for Base64 and hexadecimal representations used in cryptographic operations.
+Encoding and decoding functions for Base64 and hexadecimal representations.
 
+# Encoding Functions
+
+Convert between text and encoded representations (Base64, hexadecimal) for
+working with cryptographic data, URLs, and binary content.
+
+## Encoding Variants
+
+| Format          | Characters      | Use Case                          |
+|-----------------|-----------------|-----------------------------------|
+| Base64          | A-Z, a-z, +, /  | General binary-to-text            |
+| Base64 URL-safe | A-Z, a-z, -, _  | URLs, filenames, JWT tokens       |
+| Hexadecimal     | 0-9, a-f        | Hashes, byte inspection           |
+
+## Lenient vs Strict Decoding
+
+Lenient functions accept missing padding; strict functions require RFC-compliant
+format with proper `=` padding and length divisible by 4.
+
+```sapl
+policy "validate token format"
+permit
+    action == "authenticate"
+where
+    encoding.isValidBase64UrlStrict(resource.token);
+```
+
+## Working with Cryptographic Data
+
+Decode Base64-encoded signatures or certificates for verification:
+
+```sapl
+policy "verify signature format"
+permit
+where
+    var sig = encoding.base64Decode(resource.signature);
+    standard.length(sig) > 0;
+```
+
+**Security:** Input limited to 10MB to prevent resource exhaustion.
+
+
+---
+
+## base64Decode
+
+```base64Decode(TEXT data)```: Decodes Base64 standard format to text (lenient).
+
+Decodes data encoded with the standard Base64 alphabet. This function is lenient
+and accepts input with or without proper padding. For strict RFC-compliant
+validation that requires proper padding, use base64DecodeStrict.
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  encoding.base64Decode("aGVsbG8=") == "hello";
+  encoding.base64Decode("aGVsbG8") == "hello";  // lenient: missing padding accepted
+```
+
+
+---
+
+## base64UrlDecode
+
+```base64UrlDecode(TEXT data)```: Decodes Base64 URL-safe format to text (lenient).
+
+Decodes data encoded with the URL-safe Base64 alphabet. This function is lenient
+and accepts input with or without proper padding. For strict RFC-compliant
+validation that requires proper padding, use base64UrlDecodeStrict.
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  encoding.base64UrlDecode("aGVsbG8=") == "hello";
+  encoding.base64UrlDecode("aGVsbG8") == "hello";  // lenient: missing padding accepted
+```
 
 
 ---
@@ -175,6 +258,24 @@ permit
 
 ---
 
+## hexEncode
+
+```hexEncode(TEXT data)```: Encodes text data to hexadecimal representation.
+
+Converts each byte of the UTF-8 encoded text to two hexadecimal digits.
+Output uses lowercase letters (a-f).
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  encoding.hexEncode("hello") == "68656c6c6f";
+  encoding.hexEncode("A") == "41";
+```
+
+
+---
+
 ## hexDecode
 
 ```hexDecode(TEXT data)```: Decodes hexadecimal representation to text.
@@ -215,68 +316,6 @@ permit
   encoding.isValidHex("68_65_6c_6c_6f") == true;
   encoding.isValidHex("xyz") == false;
   encoding.isValidHex("123") == false;  // odd number of characters
-```
-
-
----
-
-## base64Decode
-
-```base64Decode(TEXT data)```: Decodes Base64 standard format to text (lenient).
-
-Decodes data encoded with the standard Base64 alphabet. This function is lenient
-and accepts input with or without proper padding. For strict RFC-compliant
-validation that requires proper padding, use base64DecodeStrict.
-
-The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
-result in an error.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  encoding.base64Decode("aGVsbG8=") == "hello";
-  encoding.base64Decode("aGVsbG8") == "hello";  // lenient: missing padding accepted
-```
-
-
----
-
-## base64UrlDecode
-
-```base64UrlDecode(TEXT data)```: Decodes Base64 URL-safe format to text (lenient).
-
-Decodes data encoded with the URL-safe Base64 alphabet. This function is lenient
-and accepts input with or without proper padding. For strict RFC-compliant
-validation that requires proper padding, use base64UrlDecodeStrict.
-
-The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
-result in an error.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  encoding.base64UrlDecode("aGVsbG8=") == "hello";
-  encoding.base64UrlDecode("aGVsbG8") == "hello";  // lenient: missing padding accepted
-```
-
-
----
-
-## hexEncode
-
-```hexEncode(TEXT data)```: Encodes text data to hexadecimal representation.
-
-Converts each byte of the UTF-8 encoded text to two hexadecimal digits.
-Output uses lowercase letters (a-f).
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  encoding.hexEncode("hello") == "68656c6c6f";
-  encoding.hexEncode("A") == "41";
 ```
 
 

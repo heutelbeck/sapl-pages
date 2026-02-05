@@ -91,54 +91,6 @@ Complete guide: [OWASP SQL Injection Cheat Sheet](https://cheatsheetseries.owasp
 
 ---
 
-## assertNoSqlInjectionStrict
-
-```sanitize.assertNoSqlInjectionStrict(TEXT inputToSanitize)```
-
-Checks text using strict detection. Rejects anything with SQL metacharacters or keywords, even when harmless.
-Gives maximum security but produces false positives on legitimate text.
-
-Blocks single quotes, semicolons, SQL metacharacters, SQL keywords (SELECT, INSERT, DROP), logical
-operators (OR, AND, NOT), and URL-encoded characters. Only safe for structured identifiers that shouldn't
-contain SQL syntax.
-
-Takes a TEXT value and returns it unchanged if clean, or an error if any SQL syntax is found.
-
-These inputs pass through:
-```
-sanitize.assertNoSqlInjectionStrict("USER123")              // Alphanumeric ID
-sanitize.assertNoSqlInjectionStrict("dept-hr")              // Hyphenated code
-sanitize.assertNoSqlInjectionStrict("US")                   // Country code
-```
-
-These get rejected (even though some are harmless):
-```
-sanitize.assertNoSqlInjectionStrict("O'Brien")              // Apostrophe (blocked)
-sanitize.assertNoSqlInjectionStrict("Portland OR Seattle")  // Contains OR (blocked)
-sanitize.assertNoSqlInjectionStrict("user@email.com")       // Special chars (blocked)
-```
-
-Example usage:
-```
-policy "device_access"
-permit action == "control";
-    var deviceId = sanitize.assertNoSqlInjectionStrict(environment.deviceId);
-    var request = {
-        "baseUrl": "https://api.example.com",
-        "urlParameters": { "device": deviceId }
-    };
-    <http.get(request)>.ownerId == subject.id;
-```
-
-Zero tolerance for SQL syntax means higher security but more false positives. It rejects legitimate text
-with apostrophes or SQL-like words. Only use this when input should be a code or identifier where SQL
-syntax legitimately shouldn't appear.
-
-For natural language or user names, use assertNoSqlInjection instead.
-
-
----
-
 ## assertNoSqlInjection
 
 ```sanitize.assertNoSqlInjection(TEXT inputToSanitize)```
@@ -184,6 +136,54 @@ permit action == "read";
 ```
 
 Use assertNoSqlInjectionStrict if the input should be a structured identifier where SQL syntax never belongs.
+
+
+---
+
+## assertNoSqlInjectionStrict
+
+```sanitize.assertNoSqlInjectionStrict(TEXT inputToSanitize)```
+
+Checks text using strict detection. Rejects anything with SQL metacharacters or keywords, even when harmless.
+Gives maximum security but produces false positives on legitimate text.
+
+Blocks single quotes, semicolons, SQL metacharacters, SQL keywords (SELECT, INSERT, DROP), logical
+operators (OR, AND, NOT), and URL-encoded characters. Only safe for structured identifiers that shouldn't
+contain SQL syntax.
+
+Takes a TEXT value and returns it unchanged if clean, or an error if any SQL syntax is found.
+
+These inputs pass through:
+```
+sanitize.assertNoSqlInjectionStrict("USER123")              // Alphanumeric ID
+sanitize.assertNoSqlInjectionStrict("dept-hr")              // Hyphenated code
+sanitize.assertNoSqlInjectionStrict("US")                   // Country code
+```
+
+These get rejected (even though some are harmless):
+```
+sanitize.assertNoSqlInjectionStrict("O'Brien")              // Apostrophe (blocked)
+sanitize.assertNoSqlInjectionStrict("Portland OR Seattle")  // Contains OR (blocked)
+sanitize.assertNoSqlInjectionStrict("user@email.com")       // Special chars (blocked)
+```
+
+Example usage:
+```
+policy "device_access"
+permit action == "control";
+    var deviceId = sanitize.assertNoSqlInjectionStrict(environment.deviceId);
+    var request = {
+        "baseUrl": "https://api.example.com",
+        "urlParameters": { "device": deviceId }
+    };
+    <http.get(request)>.ownerId == subject.id;
+```
+
+Zero tolerance for SQL syntax means higher security but more false positives. It rejects legitimate text
+with apostrophes or SQL-like words. Only use this when input should be a code or identifier where SQL
+syntax legitimately shouldn't appear.
+
+For natural language or user names, use assertNoSqlInjection instead.
 
 
 ---

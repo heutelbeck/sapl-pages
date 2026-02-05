@@ -7,8 +7,35 @@ nav_order: 127
 ---
 # standard
 
-This the standard function library for SAPL.
+Essential utility functions for measuring size, converting values, and handling errors.
 
+# Standard Functions
+
+Essential utility functions available in every SAPL policy for common operations
+like measuring collection sizes, converting values to strings, and handling errors
+gracefully.
+
+## Error Handling
+
+Use `onErrorMap` to provide fallback values when expressions might fail:
+
+```sapl
+policy "safe division"
+permit
+where
+    var ratio = standard.onErrorMap(resource.count / resource.total, 0);
+    ratio > 0.5;
+```
+
+## Measuring Size
+
+The `length` function works uniformly across text, arrays, and objects:
+
+```sapl
+policy "limit items"
+deny
+    action == "add_item" & standard.length(resource.cart) >= 100;
+```
 
 
 ---

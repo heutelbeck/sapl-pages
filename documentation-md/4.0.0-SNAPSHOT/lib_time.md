@@ -602,17 +602,6 @@ returns ```"2021-11-08T12:12:35Z"```.
 
 ---
 
-## offsetTime
-
-```offsetTime(TEXT isoTime)```: Parses an ISO 8601 time with offset and
-returns the matching time at UTC.
-
-**Example:**
-
-The expression ```time.offsetTime("13:12:35-05:00")``` returns ```"18:12:35"```.
-
----
-
 ## offsetDateTime
 
 ```offsetDateTime(TEXT isoDateTime)```: Parses an ISO 8601 date-time with offset and
@@ -622,6 +611,17 @@ returns the matching ISO 8601 instant at UTC.
 
 The expression ```time.offsetDateTime("2021-11-08T13:12:35+05:00")```
 returns ```"2021-11-08T08:12:35Z"```.
+
+---
+
+## offsetTime
+
+```offsetTime(TEXT isoTime)```: Parses an ISO 8601 time with offset and
+returns the matching time at UTC.
+
+**Example:**
+
+The expression ```time.offsetTime("13:12:35-05:00")``` returns ```"18:12:35"```.
 
 ---
 
