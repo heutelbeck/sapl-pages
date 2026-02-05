@@ -125,25 +125,17 @@ This may return a value like:
 
 ## server
 
-```<traccar.server(traccarConfig)>``` is an environment attribute that retrieves server metadata from the
+```<traccar.server>``` is an environment attribute that retrieves server metadata from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Server/paths/~1server/get).
-It uses the settings provided in the `traccarConfig` parameter to connect to the server.
-
- **Parameters:**
-
-- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
 
 **Example:**
 
 ```
-<traccar.server({
-                  "baseUrl": "https://demo.traccar.org",
-                  "userName": "email@address.org",
-                  "password": "password"
-                })>
+<traccar.server>
 ```
 
-This attribute may return a value like:
+This may return a value like:
 
 ```json
 {
@@ -173,17 +165,25 @@ This attribute may return a value like:
 
 ## server
 
-```<traccar.server>``` is an environment attribute that retrieves server metadata from the
+```<traccar.server(traccarConfig)>``` is an environment attribute that retrieves server metadata from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Server/paths/~1server/get).
-It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+It uses the settings provided in the `traccarConfig` parameter to connect to the server.
+
+ **Parameters:**
+
+- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
 
 **Example:**
 
 ```
-<traccar.server>
+<traccar.server({
+                  "baseUrl": "https://demo.traccar.org",
+                  "userName": "email@address.org",
+                  "password": "password"
+                })>
 ```
 
-This may return a value like:
+This attribute may return a value like:
 
 ```json
 {
