@@ -125,6 +125,46 @@ This may return a value like:
 
 ## server
 
+```<traccar.server>``` is an environment attribute that retrieves server metadata from the
+[Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Server/paths/~1server/get).
+It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+
+**Example:**
+
+```
+<traccar.server>
+```
+
+This may return a value like:
+
+```json
+{
+  "id": 0,
+  "registration": true,
+  "readonly": true,
+  "deviceReadonly": true,
+  "limitCommands": true,
+  "map": "string",
+  "bingKey": "string",
+  "mapUrl": "string",
+  "poiLayer": "string",
+  "latitude": 0,
+  "longitude": 0,
+  "zoom": 0,
+  "version": "string",
+  "forceSettings": true,
+  "coordinateFormat": "string",
+  "openIdEnabled": true,
+  "openIdForce": true,
+  "attributes": {}
+}
+```
+
+
+---
+
+## server
+
 ```<traccar.server(traccarConfig)>``` is an environment attribute that retrieves server metadata from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Server/paths/~1server/get).
 It uses the settings provided in the `traccarConfig` parameter to connect to the server.
@@ -171,64 +211,16 @@ This attribute may return a value like:
 
 ---
 
-## server
-
-```<traccar.server>``` is an environment attribute that retrieves server metadata from the
-[Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Server/paths/~1server/get).
-It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
-
-**Example:**
-
-```
-<traccar.server>
-```
-
-This may return a value like:
-
-```json
-{
-  "id": 0,
-  "registration": true,
-  "readonly": true,
-  "deviceReadonly": true,
-  "limitCommands": true,
-  "map": "string",
-  "bingKey": "string",
-  "mapUrl": "string",
-  "poiLayer": "string",
-  "latitude": 0,
-  "longitude": 0,
-  "zoom": 0,
-  "version": "string",
-  "forceSettings": true,
-  "coordinateFormat": "string",
-  "openIdEnabled": true,
-  "openIdForce": true,
-  "attributes": {}
-}
-```
-
-
----
-
 ## devices
 
-```<traccar.devices(traccarConfig)>``` is an environment attribute that retrieves a list of devices from the
+```<traccar.devices>``` is an environment attribute that retrieves a list of devices from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Devices/paths/~1devices/get).
-It uses the settings provided in the `traccarConfig` parameter to connect to the server.
+It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
 
-**Parameters:**
-
- - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
-
-**Example:**
+ **Example:**
 
 ```
-<traccar.devices({
-                  "baseUrl": "https://demo.traccar.org",
-                  "userName": "email@address.org",
-                  "password": "password"
-                })>
+<traccar.devices>
 ```
 
 This attribute may return a value like:
@@ -257,14 +249,22 @@ This attribute may return a value like:
 
 ## devices
 
-```<traccar.devices>``` is an environment attribute that retrieves a list of devices from the
+```<traccar.devices(traccarConfig)>``` is an environment attribute that retrieves a list of devices from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Devices/paths/~1devices/get).
-It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+It uses the settings provided in the `traccarConfig` parameter to connect to the server.
 
- **Example:**
+**Parameters:**
+
+ - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
 
 ```
-<traccar.devices>
+<traccar.devices({
+                  "baseUrl": "https://demo.traccar.org",
+                  "userName": "email@address.org",
+                  "password": "password"
+                })>
 ```
 
 This attribute may return a value like:
@@ -498,6 +498,44 @@ This may return a value like:
 
 ## traccarPosition
 
+```deviceEntityId.<traccar.traccarPosition>``` is an attribute that retrieves the most recent position of a specific
+device from the Traccar server. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
+server connection configuration.
+
+**Parameters:**
+- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+
+**Example:**
+
+```
+"12345".<traccar.traccarPosition>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "protocol": "string",
+    "deviceId": 12345,
+    "serverTime": "2019-08-24T14:15:22Z",
+    "deviceTime": "2019-08-24T14:15:22Z",
+    "fixTime": "2019-08-24T14:15:22Z",
+    "valid": true,
+    "latitude": 0,
+    "longitude": 0,
+    "altitude": 0,
+    "speed": 0,
+    "course": 0,
+    "address": "string",
+    "attributes": {}
+}
+```
+
+
+---
+
+## traccarPosition
+
 ```deviceEntityId.<traccar.traccarPosition(traccarConfig)>``` is an attribute that retrieves the most recent position of
 a specific device from the Traccar server using the provided `traccarConfig` parameter.
 
@@ -539,38 +577,34 @@ This may return a value like:
 
 ---
 
-## traccarPosition
+## geofenceGeometry
 
-```deviceEntityId.<traccar.traccarPosition>``` is an attribute that retrieves the most recent position of a specific
-device from the Traccar server. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
+```geofenceEntityId.<traccar.geofenceGeometry>``` is an attribute that converts geofence metadata into GeoJSON format
+for geometric representation. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
 server connection configuration.
 
 **Parameters:**
-- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+- `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
 
 **Example:**
 
 ```
-"12345".<traccar.traccarPosition>
+"12345".<traccar.geofenceGeometry>
 ```
 
 This may return a value like:
 ```json
 {
-    "id": 0,
-    "protocol": "string",
-    "deviceId": 12345,
-    "serverTime": "2019-08-24T14:15:22Z",
-    "deviceTime": "2019-08-24T14:15:22Z",
-    "fixTime": "2019-08-24T14:15:22Z",
-    "valid": true,
-    "latitude": 0,
-    "longitude": 0,
-    "altitude": 0,
-    "speed": 0,
-    "course": 0,
-    "address": "string",
-    "attributes": {}
+    "type": "Polygon",
+    "coordinates": [
+        [
+            [102.0, 2.0],
+            [103.0, 2.0],
+            [103.0, 3.0],
+            [102.0, 3.0],
+            [102.0, 2.0]
+        ]
+    ]
 }
 ```
 
@@ -596,40 +630,6 @@ Traccar server.
     "userName": "email@address.org",
     "password": "password"
 })>
-```
-
-This may return a value like:
-```json
-{
-    "type": "Polygon",
-    "coordinates": [
-        [
-            [102.0, 2.0],
-            [103.0, 2.0],
-            [103.0, 3.0],
-            [102.0, 3.0],
-            [102.0, 2.0]
-        ]
-    ]
-}
-```
-
-
----
-
-## geofenceGeometry
-
-```geofenceEntityId.<traccar.geofenceGeometry>``` is an attribute that converts geofence metadata into GeoJSON format
-for geometric representation. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
-server connection configuration.
-
-**Parameters:**
-- `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
-
-**Example:**
-
-```
-"12345".<traccar.geofenceGeometry>
 ```
 
 This may return a value like:
