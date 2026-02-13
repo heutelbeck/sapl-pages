@@ -23,7 +23,7 @@ scenarios. All functions accept PEM or DER encoded certificates.
 | Metadata       | `extractSerialNumber`, `extractNotBefore`, `extractNotAfter` |
 | Fingerprinting | `extractFingerprint`, `matchesFingerprint`           |
 | SAN checks     | `extractSubjectAltNames`, `hasDnsName`, `hasIpAddress` |
-| Validity       | `isExpired`, `isValidAt`, `remainingValidityDays`    |
+| Validity       | `isValidAt`                                          |
 
 ## mTLS Client Authorization
 
@@ -32,17 +32,20 @@ Authorize API clients based on their certificate properties:
 ```sapl
 policy "allow trusted partners"
 permit
-    action == "api:call"
-where
+    action == "api:call";
     var cert = x509.parseCertificate(subject.clientCertificate);
     cert.subject =~ "O=Trusted Partners";
-    !x509.isExpired(subject.clientCertificate);
+    subject.clientCertificate.<x509.isCurrentlyValid>;
 ```
 
 Example: `subject.clientCertificate` contains a PEM string. `parseCertificate`
 returns `{"subject": "CN=api-client,O=Trusted Partners,C=US", ...}`. The
-regex matches "O=Trusted Partners" in the subject. `isExpired` returns false
-if current time is before notAfter. Policy permits.
+regex matches "O=Trusted Partners" in the subject. The `x509.isCurrentlyValid`
+attribute reactively monitors certificate validity. Policy permits while the
+certificate is within its validity period.
+
+For reactive certificate validity monitoring, use the X509 Policy Information
+Point attributes: `<x509.isCurrentlyValid>` and `<x509.isExpired>`.
 
 ## Certificate Pinning
 
@@ -64,23 +67,6 @@ Example: `resource.serverCertificate` is the payment gateway's cert.
 `matchesFingerprint` computes SHA-256 of the cert and compares to the
 expected hex fingerprint. Returns true only for exact match.
 
-## Certificate Expiry Monitoring
-
-Add obligations for certificates nearing expiry:
-
-```sapl
-policy "warn on expiring certs"
-permit
-where
-    var days = x509.remainingValidityDays(subject.clientCertificate);
-    days > 0;
-obligation
-    days < 30 ? { "type": "renewalWarning", "daysRemaining": days } : null;
-```
-
-Example: `remainingValidityDays` returns 15 for a cert expiring in 15 days.
-Since 15 > 0, access is permitted. Since 15 < 30, the renewal warning
-obligation is attached to the response.
 
 
 ---
@@ -313,23 +299,6 @@ permit action == "connect";
 
 ---
 
-## isExpired
-
-```isExpired(TEXT certPem)```: Checks if a certificate has expired.
-
-Returns true if the current time is after the certificate's notAfter date. Use this
-as a basic validity check before allowing access.
-
-Example - Reject expired certificates:
-```sapl
-policy "reject expired certificates"
-deny
-  x509.isExpired(request.clientCertificate);
-```
-
-
----
-
 ## isValidAt
 
 ```isValidAt(TEXT certPem, TEXT isoTimestamp)```: Checks if certificate is valid at a specific time.
@@ -344,33 +313,6 @@ policy "maintenance window access"
 permit action == "admin" && resource.type == "production"
   var maintenanceStart = "2025-06-15T02:00:00Z";
   x509.isValidAt(request.adminCertificate, maintenanceStart);
-```
-
-
----
-
-## remainingValidityDays
-
-```remainingValidityDays(TEXT certPem)```: Returns the number of days until certificate expires.
-
-Calculates how many days remain until the certificate's notAfter date. Returns a
-negative number if already expired. Use this to trigger certificate renewal warnings
-or implement graceful certificate rotation.
-
-Example - Trigger renewal warning:
-```sapl
-policy "certificate renewal warning"
-permit
-  var daysRemaining = x509.remainingValidityDays(request.clientCertificate);
-  daysRemaining > 0;
-advice
-  var daysRemaining = x509.remainingValidityDays(request.clientCertificate);
-  daysRemaining < 30;
-obligation
-  {
-    "type": "certificate-expiring-soon",
-    "daysRemaining": daysRemaining
-  }
 ```
 
 
