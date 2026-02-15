@@ -3,7 +3,7 @@ layout: default
 title: numeral
 parent: Functions
 grand_parent: SAPL Reference
-nav_order: 118
+nav_order: 117
 ---
 # numeral
 

@@ -3,7 +3,7 @@ layout: default
 title: patterns
 parent: Functions
 grand_parent: SAPL Reference
-nav_order: 120
+nav_order: 119
 ---
 # patterns
 

@@ -3,7 +3,7 @@ layout: default
 title: semver
 parent: Functions
 grand_parent: SAPL Reference
-nav_order: 125
+nav_order: 124
 ---
 # semver
 

@@ -7,16 +7,43 @@ nav_order: 202
 ---
 # jwt
 
-Policy Information Point for validating and monitoring JSON Web Tokens (JWT). Attributes update automatically based on token lifecycle events such as maturity and expiration.
+Policy Information Point for validating and monitoring JSON Web Tokens (JWT). Tokens are read securely from subscription secrets. Attributes update automatically based on token lifecycle events such as maturity and expiration.
 
 This Policy Information Point validates JSON Web Tokens and monitors their validity state over time.
 
-JWT tokens are validated against multiple criteria:
+JWT tokens are read securely from subscription secrets, never from the policy evaluation context.
+Public key configuration is read from policy variables.
+
+**Token Access**
+
+Use the `<jwt.token>` environment attribute to access token data:
+
+```sapl
+policy "require valid jwt"
+permit
+  <jwt.token>.valid;
+
+policy "role check"
+permit action == "admin:action";
+  "admin" in <jwt.token>.payload.roles;
+  <jwt.token>.validity == "VALID";
+```
+
+The attribute returns an object with:
+* `header`: Decoded JWT header (algorithm, key ID, etc.)
+* `payload`: Decoded JWT payload with time claims converted to ISO-8601
+* `valid`: Boolean indicating current validity
+* `validity`: Detailed validity state string
 
 **Signature Verification**
 
-Tokens must be signed with RS256 algorithm. Public keys for signature verification are sourced from:
-* A whitelist of trusted public keys configured in policy variables
+Tokens are verified against all standard JWS algorithms:
+* RSA: RS256, RS384, RS512, PS256, PS384, PS512
+* ECDSA: ES256, ES384, ES512
+* HMAC: HS256, HS384, HS512
+
+Public keys for signature verification are sourced from:
+* A whitelist of trusted keys configured in policy variables
 * A remote key server that provides public keys on demand
 
 **Time-based Validation**
@@ -25,42 +52,41 @@ Tokens are validated against time claims:
 * `nbf` (not before): Token becomes valid at this timestamp
 * `exp` (expiration): Token becomes invalid at this timestamp
 
-Validity states transition automatically as time progresses, triggering policy re-evaluation when
-tokens become mature or expire.
+Validity states transition automatically, triggering policy re-evaluation.
 
 **Configuration**
 
-Configure the JWT PIP through policy variables in `pdp.json`:
+Configure through policy variables in `pdp.json`:
 
 ```json
 {
-  "algorithm": { "votingMode": "PRIORITY_PERMIT", "defaultDecision": "DENY", "errorHandling": "ABSTAIN" },
   "variables": {
     "jwt": {
+      "secretsKey": "jwt",
+      "clockSkewSeconds": 60,
       "publicKeyServer": {
         "uri": "http://authz-server:9000/public-key/{id}",
-        "method": "POST",
+        "method": "GET",
         "keyCachingTtlMillis": 300000
       },
       "whitelist": {
-        "key-id-1": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
-        "key-id-2": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEB..."
+        "key-id-1": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA..."
       }
     }
   }
 }
 ```
 
-**Public Key Server Configuration**
+The `secretsKey` field specifies which key in subscription secrets holds the JWT token.
+Defaults to `"jwt"` if omitted.
 
-* `uri`: URL template for fetching public keys. Use `{id}` placeholder for key ID
-* `method`: HTTP method for requests (GET or POST). Defaults to GET if omitted
-* `keyCachingTtlMillis`: Cache duration for retrieved keys in milliseconds. Defaults to 300000 (5 minutes)
+The `clockSkewSeconds` field specifies clock skew tolerance in seconds for time claim
+validation (RFC 7519 recommends allowing some leeway). Defaults to 0 (exact comparison)
+if omitted. Set to 60 for typical server deployments.
 
-**Whitelist Configuration**
-
-The whitelist maps key IDs to Base64-encoded public keys. Whitelisted keys take precedence over
-the key server. Keys must be Base64 URL-safe encoded X.509 SubjectPublicKeyInfo structures.
+The `maxTokenLifetimeSeconds` field specifies the maximum allowed token lifetime in seconds.
+If set and the token's lifetime (`exp` minus `iat`, or `exp` minus now if `iat` is absent)
+exceeds this value, the token is treated as `NEVER_VALID`. Defaults to 0 (disabled) if omitted.
 
 **Validity States**
 
@@ -69,172 +95,80 @@ the key server. Keys must be Base64 URL-safe encoded X.509 SubjectPublicKeyInfo 
 * `IMMATURE`: Token has not yet reached its not-before time
 * `NEVER_VALID`: Token's not-before time is after its expiration time
 * `UNTRUSTED`: Signature verification failed or public key unavailable
-* `INCOMPATIBLE`: Token uses unsupported algorithm or has critical parameters
+* `INCOMPATIBLE`: Token has critical header parameters
 * `INCOMPLETE`: Required claims (key ID) are missing
 * `MALFORMED`: Token is not a valid JWT structure
+* `MISSING_TOKEN`: No token found under the configured secrets key
 
-**Access Control Examples**
+**Limitations**
 
-Basic token validation:
-```sapl
-policy "require_valid_jwt"
-permit
-  var token = subject.jwt;
-  token.<jwt.valid>;
-```
-
-Check specific validity state:
-```sapl
-policy "allow_immature_tokens_for_testing"
-permit action == "test:access";
-  var token = subject.jwt;
-  var state = token.<jwt.validity>;
-  state == "VALID" || state == "IMMATURE";
-```
-
-Grant access only when token is valid, deny when expired:
-```sapl
-policy "time_sensitive_access"
-permit action == "document:read";
-  var token = subject.credentials.bearer;
-  var state = token.<jwt.validity>;
-  state == "VALID";
-
-obligation
-  {
-    "type": "logAccess",
-    "tokenState": state
-  }
-```
-
-Reject untrusted or tampered tokens:
-```sapl
-policy "reject_untrusted_tokens"
-deny
-  var token = subject.jwt;
-  var state = token.<jwt.validity>;
-  state == "UNTRUSTED" || state == "MALFORMED";
-```
-
-**Reactive Behavior**
-
-The validity attributes are reactive streams that emit new values when the token's state changes.
-This triggers automatic policy re-evaluation without requiring the client to re-submit requests.
-
-Example timeline for a token with nbf=now+10s and exp=now+30s:
-* t=0s: Emits IMMATURE
-* t=10s: Emits VALID (policy re-evaluated)
-* t=30s: Emits EXPIRED (policy re-evaluated)
+* Only JWS (JSON Web Signature, RFC 7515) tokens are supported. JWE (JSON Web
+  Encryption, RFC 7516) tokens are not supported. JWE encrypts the token payload
+  for confidentiality and uses a fundamentally different structure (5 parts instead
+  of 3) requiring private decryption keys. Attempting to use a JWE token will
+  result in `MALFORMED` validity state. JWE adoption is low as most deployments
+  rely on TLS for transport confidentiality.
+* Token revocation is not checked. JWTs are validated statelessly based on
+  cryptographic signature and time claims only. A revoked token remains valid
+  from this PIP's perspective until it expires. Applications requiring revocation
+  checks should use OAuth2 Token Introspection (RFC 7662) at the application
+  layer or a dedicated introspection PIP.
+* Audience (`aud`) and issuer (`iss`) claims are not validated by the PIP.
+  These are exposed in `<jwt.token>.payload` for policy authors to check
+  directly in policy conditions.
 
 
 ---
 
-## valid
+## token
 
-```(TEXT jwt).<valid>``` validates a JWT token and returns true if the token is currently valid.
+```<jwt.token>``` reads a JWT from subscription secrets using the configured default secrets key
+and returns an object containing the decoded token data and its current validity state.
 
-This attribute takes the JWT token as the left-hand input and returns a boolean stream that
-updates automatically as the token transitions between validity states.
+The returned object has the structure:
+```json
+{
+  "header": { "kid": "key-1", "alg": "RS256" },
+  "payload": { "sub": "user123", "roles": ["admin"], "exp": "2026-02-15T..." },
+  "valid": true,
+  "validity": "VALID"
+}
+```
 
-A token is considered valid when:
-* Signature verification succeeds with a trusted public key
-* Current time is within the token's validity period (after nbf, before exp)
-* Token structure and claims meet requirements (RS256 algorithm, key ID present)
+Time claims (nbf, exp, iat) are converted from epoch seconds to ISO-8601 timestamps.
 
-The attribute returns `true` only when the validity state is VALID. All other states
-(EXPIRED, IMMATURE, UNTRUSTED, etc.) result in `false`.
+The stream re-emits automatically when the token transitions between validity states
+(IMMATURE -> VALID -> EXPIRED).
 
 Example:
 ```sapl
-policy "api_access"
-permit action == "api:call";
-  var token = subject.credentials.bearer;
-  token.<jwt.valid>;
+policy "require valid jwt"
+permit
+  <jwt.token>.valid;
 ```
 
-Example with token extracted from authorization header:
+Example with claims:
 ```sapl
-policy "rest_api_access"
-permit action.http.method == "GET";
-  var authHeader = resource.http.headers.Authorization;
-  var token = authHeader.substring(7);
-  token.<jwt.valid>;
+policy "admin access"
+permit action == "admin:action";
+  "admin" in <jwt.token>.payload.roles;
 ```
 
 
 ---
 
-## validity
+## token
 
-```(TEXT jwt).<validity>``` returns the current validity state of a JWT token as a text value.
+```<jwt.token(TEXT secretsKeyName)>``` reads a JWT from subscription secrets using the specified
+key name and returns an object containing the decoded token data and its current validity state.
 
-This attribute provides detailed information about why a token is or is not valid. The stream
-emits new states as the token lifecycle progresses, enabling policies to react to state changes.
+This overload allows reading tokens stored under a custom key in subscription secrets.
 
-Possible return values:
-* `VALID`: Token is currently valid and trusted
-* `EXPIRED`: Token validity period has ended
-* `IMMATURE`: Token validity period has not yet begun
-* `NEVER_VALID`: Token configuration is invalid (nbf after exp)
-* `UNTRUSTED`: Signature verification failed or key unavailable
-* `INCOMPATIBLE`: Unsupported algorithm or critical parameters
-* `INCOMPLETE`: Required claims missing (e.g., key ID)
-* `MALFORMED`: Invalid JWT structure
-
-Example checking for multiple acceptable states:
+Example:
 ```sapl
-policy "grace_period_access"
-permit action == "service:use";
-  var token = subject.jwt;
-  var state = token.<jwt.validity>;
-  state == "VALID" || state == "IMMATURE";
-```
-
-Example with state-specific obligations:
-```sapl
-policy "monitored_access"
-permit action == "resource:access";
-  var token = subject.credentials.jwt;
-  var state = token.<jwt.validity>;
-  state == "VALID" || state == "IMMATURE";
-
-obligation
-  {
-    "type": "auditLog",
-    "tokenState": state,
-    "userId": token.<jwt.parseJwt>.payload.sub
-  }
-```
-
-Example denying specific invalid states:
-```sapl
-policy "deny_tampered_tokens"
-deny
-  var token = subject.jwt;
-  var state = token.<jwt.validity>;
-  state == "UNTRUSTED" || state == "MALFORMED" || state == "INCOMPATIBLE";
-
-obligation
-  {
-    "type": "securityAlert",
-    "reason": "Invalid token detected",
-    "state": state
-  }
-```
-
-Example handling expiration gracefully:
-```sapl
-policy "token_refresh_hint"
-permit action == "api:call";
-  var token = subject.jwt;
-  var state = token.<jwt.validity>;
-  state == "VALID";
-
-advice
-  {
-    "type": "tokenStatus",
-    "message": state == "VALID" ? "Token valid" : "Token refresh required"
-  }
+policy "access token check"
+permit
+  <jwt.token("accessToken")>.valid;
 ```
 
 
