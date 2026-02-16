@@ -9,86 +9,161 @@ nav_order: 205
 
 This policy information point can fetch device positions and geofences from a traccar server.
 
- This policy information point allows interaction with Traccar servers.
- [Traccar](https://www.traccar.org/) is a GPS tracking platform for monitoring the location of devices and
- managing geofences.
+ This policy information point allows interaction with a single
+ [Traccar](https://www.traccar.org/) GPS tracking server, fetching device positions,
+ geofences, and server metadata.
 
- This library enables fetching device positions as device attributes and geofence geometries as fence attributes.
- By integrating with the geographical function library (`geo`), this allows for policies that enforce geographical
- access control and geofencing. This library also allows direct access to Traccar-specific data within its schema,
- allowing to retrieve positions and geofences as GeoJSON objects for use with the operators of the `geo`
- function library.
+ By integrating with the geographical function library (`geo`), this allows for
+ policies that enforce geographical access control and geofencing. The library
+ provides both Traccar-native data (positions, geofences in Traccar schema) and
+ GeoJSON-converted data for use with the `geo` function library operators.
 
- **Traccar Server Configuration**
+ ## Available Attributes
 
- This library uses email and password authentication.
- A Traccar server configuration is a JSON object named `traccarConfiguration` containing the following attributes:
-  - `baseUrl`: The base URL for constructing API requests. Example: `https://demo.traccar.org`.
-  - `userName`: The email address used to authenticate to the Traccar Server.
-  - `password`: The password to authenticate to the Traccar Server.
-  - `pollingIntervalMs`: The interval, in milliseconds, between polling the Traccar server endpoint. Defaults to 1000ms.
-  - `repetitions`: The maximum number of repeated requests. Defaults to `0x7fffffffffffffffL`.
+ Environment attributes (no left-hand operand):
 
- *** Example: ***
+ | Attribute | Description |
+ |---|---|
+ | `<traccar.server>` | Traccar server metadata |
+ | `<traccar.devices>` | List of all devices |
+ | `<traccar.geofences>` | List of all geofences |
 
+ Left-hand operand attributes (entity ID on the left):
+
+ | Attribute | Description |
+ |---|---|
+ | `deviceId.<traccar.device>` | Single device metadata |
+ | `deviceId.<traccar.traccarPosition>` | Most recent position (Traccar schema) |
+ | `deviceId.<traccar.position>` | Most recent position (GeoJSON) |
+ | `geofenceId.<traccar.traccarGeofence>` | Single geofence metadata (Traccar schema) |
+ | `geofenceId.<traccar.geofenceGeometry>` | Single geofence geometry (GeoJSON) |
+
+ Every attribute has two variations:
+ * Without parameter: uses the `TRACCAR_CONFIG` environment variable.
+ * With `traccarConfig` parameter: uses the inline configuration object.
+
+ Both variations use the same `secrets.traccar` credentials (see below).
+
+ ## Server Configuration
+
+ The Traccar server configuration is a JSON object with non-sensitive connection
+ settings. It does not contain any credentials.
+
+ Configuration fields:
+ * `baseUrl` (required): The base URL of the Traccar server.
+ * `pollingIntervalMs` (optional): Interval in milliseconds between polling requests.
+   Defaults to 1000.
+ * `repetitions` (optional): Maximum number of repeated polling requests. Defaults to
+   `Long.MAX_VALUE`.
+
+ The configuration is provided via the `TRACCAR_CONFIG` environment variable in
+ `pdp.json`:
  ```json
  {
-     "baseUrl": "https://demo.traccar.org",
-     "userName": "email@address.org",
-     "password": "password",
-     "pollingIntervalMs": 250
+   "variables": {
+     "TRACCAR_CONFIG": {
+       "baseUrl": "https://demo.traccar.org",
+       "pollingIntervalMs": 250
+     }
+   }
  }
  ```
 
- All attribute finders of this library offer a variation with or without the `traccarConfiguration` as a parameter.
- If the parameter is not used in a policy, the attribute finder will default to the value of the environment variable
- `TRACCAR_CONFIG`.
+ This PIP connects to a single Traccar server. There is no multi-server support.
+ All attribute finders -- whether invoked with or without the inline `traccarConfig`
+ parameter -- authenticate against the same `secrets.traccar` credentials.
 
- *** Examples: ***
+ ## Secrets Configuration
 
-  - `subject.device.<traccar.position>` will use the value of the environment variable `TRACCAR_CONFIG`
-   to connect to the Traccar server.
+ Credentials are sourced exclusively from the `secrets` section in `pdp.json`. They
+ are never read from the `TRACCAR_CONFIG` variable, inline configuration parameters,
+ or any other policy-visible source. Even if a `traccarConfig` object contains
+ `userName` or `password` fields, they are ignored for authentication.
 
-  - Alternatively, a policy-specific set of settings can be used:
-   ```sapl
-   subject.device.<{
-                     "baseUrl": "https://demo.traccar.org",
-                     "userName": "email@address.org",
-                     "password": "password"
-                   }>
-   ```
+ There is a single set of Traccar credentials per PDP. All attribute finders use
+ the same `secrets.traccar` entry regardless of whether they use `TRACCAR_CONFIG`
+ or an inline configuration parameter.
 
-  - `subject.device.<traccar.position(TRACCAR_SERVER_1)>` will use the value of the environment variable
-   `TRACCAR_SERVER_1` to connect to the Traccar server.
+ Two authentication methods are supported:
 
-As a best practice, credentials should be stored in an environment variable and marked as secret to minimize
-the risk of exposing credentials.
+ **API token authentication (recommended for Traccar 6.x):**
 
+ The token is passed as a `?token=` query parameter on every API request.
+ ```json
+ { "secrets": { "traccar": { "token": "YOUR_API_TOKEN" } } }
+ ```
 
----
+ **Basic authentication with email and password:**
 
-## position
+ An `Authorization: Basic ...` header is added to every API request.
+ ```json
+ { "secrets": { "traccar": { "userName": "email@address.org", "password": "password" } } }
+ ```
 
-```deviceEntityId.<traccar.position>``` is an attribute that converts the most recent position of a specific device
-from the Traccar server into GeoJSON format. This method uses the environment variable `TRACCAR_CONFIG`
-to retrieve the server connection configuration.
+ Credential resolution:
+ 1. If `secrets.traccar.token` is present, use token authentication.
+ 2. Otherwise, if `secrets.traccar.userName` is present, use basic authentication.
+ 3. If neither is present, the attribute returns an error.
 
-**Parameters:**
-- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+ If both `token` and `userName`/`password` are present, token authentication takes
+ precedence.
 
-**Example:**
+ ## Attribute Invocation and Resolution
 
-```
-"12345".<traccar.position>
-```
+ **Without parameter** (uses `TRACCAR_CONFIG` environment variable):
+ ```sapl
+ policy "check_server"
+ permit
+   <traccar.server>.version == "6.7";
+ ```
+ Resolution: reads `TRACCAR_CONFIG` from `ctx.variables()`, reads credentials from
+ `ctx.pdpSecrets().traccar`, makes the API call.
 
-This may return a value like:
-```json
-{
-    "type": "Point",
-    "coordinates": [102.0, 0.5]
-}
-```
+ **With inline config** (overrides connection settings only):
+ ```sapl
+ policy "check_position"
+ permit
+   subject.device.<traccar.position({
+                    "baseUrl": "https://other.traccar.org",
+                    "pollingIntervalMs": 500
+                  })>;
+ ```
+ Resolution: uses the inline object for `baseUrl` and `pollingIntervalMs`, but
+ credentials still come from `ctx.pdpSecrets().traccar` -- the same single set of
+ secrets. The inline object cannot override authentication.
+
+ ## Complete pdp.json Example
+
+ ```json
+ {
+   "variables": {
+     "TRACCAR_CONFIG": {
+       "baseUrl": "https://traccar.example.com",
+       "pollingIntervalMs": 1000
+     }
+   },
+   "secrets": {
+     "traccar": { "token": "YOUR_API_TOKEN" }
+   }
+ }
+ ```
+
+ With this configuration:
+ * `<traccar.devices>` fetches devices from `traccar.example.com` using the API token.
+ * `"42".<traccar.position>` fetches the position of device 42 from the same server.
+ * `"42".<traccar.position({ "baseUrl": "https://other.traccar.org" })>` fetches
+   from a different server, but still authenticates with the same API token from
+   `secrets.traccar`.
+
+ ## Geofencing Example
+
+ ```sapl
+ policy "geofence_check"
+ permit
+   var position = subject.device.<traccar.position>;
+   var fence    = subject.geofence.<traccar.geofenceGeometry>;
+   geo.contains(fence, position);
+ ```
 
 
 ---
@@ -107,9 +182,34 @@ specific device from the Traccar server into GeoJSON format using the provided `
 ```
 "12345".<traccar.position({
     "baseUrl": "https://demo.traccar.org",
-    "userName": "email@address.org",
-    "password": "password"
+    "pollingIntervalMs": 250
 })>
+```
+
+This may return a value like:
+```json
+{
+    "type": "Point",
+    "coordinates": [102.0, 0.5]
+}
+```
+
+
+---
+
+## position
+
+```deviceEntityId.<traccar.position>``` is an attribute that converts the most recent position of a specific device
+from the Traccar server into GeoJSON format. This method uses the environment variable `TRACCAR_CONFIG`
+to retrieve the server connection configuration.
+
+**Parameters:**
+- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+
+**Example:**
+
+```
+"12345".<traccar.position>
 ```
 
 This may return a value like:
@@ -178,8 +278,7 @@ It uses the settings provided in the `traccarConfig` parameter to connect to the
 ```
 <traccar.server({
                   "baseUrl": "https://demo.traccar.org",
-                  "userName": "email@address.org",
-                  "password": "password"
+                  "pollingIntervalMs": 500
                 })>
 ```
 
@@ -262,8 +361,7 @@ It uses the settings provided in the `traccarConfig` parameter to connect to the
 ```
 <traccar.devices({
                   "baseUrl": "https://demo.traccar.org",
-                  "userName": "email@address.org",
-                  "password": "password"
+                  "pollingIntervalMs": 500
                 })>
 ```
 
@@ -286,6 +384,49 @@ This attribute may return a value like:
     "attributes": {}
   }
 ]
+```
+
+
+---
+
+## device
+
+```deviceEntityId.<traccar.device(traccarConfig)>``` is an attribute that fetches detailed metadata for a specific device from
+the Traccar server.
+The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
+not the device's `uniqueId` in the database.
+It uses the provided `traccarConfig` parameter to connect to the server.
+
+ **Parameters:**
+ - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+ - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
+
+```
+"12345".<traccar.device({
+                  "baseUrl": "https://demo.traccar.org",
+                  "pollingIntervalMs": 500
+                })>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "name": "string",
+    "uniqueId": "string",
+    "status": "string",
+    "disabled": true,
+    "lastUpdate": "2019-08-24T14:15:22Z",
+    "positionId": 0,
+    "groupId": 0,
+    "phone": "string",
+    "model": "string",
+    "contact": "string",
+    "category": "string",
+    "attributes": {}
+}
 ```
 
 
@@ -330,85 +471,6 @@ This may return a value like:
 
 ---
 
-## device
-
-```deviceEntityId.<traccar.device(traccarConfig)>``` is an attribute that fetches detailed metadata for a specific device from
-the Traccar server.
-The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
-not the device's `uniqueId` in the database.
-It uses the provided `traccarConfig` parameter to connect to the server.
-
- **Parameters:**
- - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
- - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
-
-**Example:**
-
-```
-"12345".<traccar.device({
-                  "baseUrl": "https://demo.traccar.org",
-                  "userName": "email@address.org",
-                  "password": "password"
-                })>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "name": "string",
-    "uniqueId": "string",
-    "status": "string",
-    "disabled": true,
-    "lastUpdate": "2019-08-24T14:15:22Z",
-    "positionId": 0,
-    "groupId": 0,
-    "phone": "string",
-    "model": "string",
-    "contact": "string",
-    "category": "string",
-    "attributes": {}
-}
-```
-
-
----
-
-## geofences
-
-```<traccar.geofences(traccarConfig)>``` is an environment attribute that retrieves a list of all geofences from
-the Traccar server. It uses the provided `traccarConfig` parameter to connect to the server.
-
-**Parameters:**
-
-- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
-
-**Example:**
-
-```
-<traccar.geofences({
-    "baseUrl": "https://demo.traccar.org",
-    "userName": "email@address.org",
-    "password": "password"
-})>
-```
-
-This may return a value like:
-```json
-[
-    {
-        "id": 0,
-        "name": "string",
-        "description": "string",
-        "area": "string",
-        "attributes": {}
-    }
-]
-```
-
-
----
-
 ## geofences
 
 ```<traccar.geofences>``` is an environment attribute that retrieves a list of all geofences from the Traccar server.
@@ -436,6 +498,71 @@ This may return a value like:
 
 ---
 
+## geofences
+
+```<traccar.geofences(traccarConfig)>``` is an environment attribute that retrieves a list of all geofences from
+the Traccar server. It uses the provided `traccarConfig` parameter to connect to the server.
+
+**Parameters:**
+
+- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
+
+```
+<traccar.geofences({
+    "baseUrl": "https://demo.traccar.org",
+    "pollingIntervalMs": 250
+})>
+```
+
+This may return a value like:
+```json
+[
+    {
+        "id": 0,
+        "name": "string",
+        "description": "string",
+        "area": "string",
+        "attributes": {}
+    }
+]
+```
+
+
+---
+
+## traccarGeofence
+
+```geofenceEntityId.<traccar.traccarGeofence(traccarConfig)>``` is an attribute that retrieves metadata for a specific
+geofence from the Traccar server using the provided geofence identifier and configuration.
+
+**Parameters:**
+- `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
+- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
+
+```
+"12345".<traccar.traccarGeofence({
+    "baseUrl": "https://demo.traccar.org",
+    "pollingIntervalMs": 250
+})>
+```
+
+This may return a value like:
+```json
+{
+    "id": 12345,
+    "name": "Geofence A",
+    "area": "Polygon",
+    "attributes": {}
+}
+```
+
+
+---
+
 ## traccarGeofence
 
 ```geofenceEntityId.<traccar.traccarGeofence>``` is an attribute that retrieves metadata for a specific geofence from
@@ -457,119 +584,6 @@ This may return a value like:
     "id": 12345,
     "name": "Geofence A",
     "area": "Polygon",
-    "attributes": {}
-}
-```
-
-
----
-
-## traccarGeofence
-
-```geofenceEntityId.<traccar.traccarGeofence(traccarConfig)>``` is an attribute that retrieves metadata for a specific
-geofence from the Traccar server using the provided geofence identifier and configuration.
-
-**Parameters:**
-- `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
-- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
-
-**Example:**
-
-```
-"12345".<traccar.traccarGeofence({
-    "baseUrl": "https://demo.traccar.org",
-    "userName": "email@address.org",
-    "password": "password"
-})>
-```
-
-This may return a value like:
-```json
-{
-    "id": 12345,
-    "name": "Geofence A",
-    "area": "Polygon",
-    "attributes": {}
-}
-```
-
-
----
-
-## traccarPosition
-
-```deviceEntityId.<traccar.traccarPosition>``` is an attribute that retrieves the most recent position of a specific
-device from the Traccar server. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
-server connection configuration.
-
-**Parameters:**
-- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
-
-**Example:**
-
-```
-"12345".<traccar.traccarPosition>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "protocol": "string",
-    "deviceId": 12345,
-    "serverTime": "2019-08-24T14:15:22Z",
-    "deviceTime": "2019-08-24T14:15:22Z",
-    "fixTime": "2019-08-24T14:15:22Z",
-    "valid": true,
-    "latitude": 0,
-    "longitude": 0,
-    "altitude": 0,
-    "speed": 0,
-    "course": 0,
-    "address": "string",
-    "attributes": {}
-}
-```
-
-
----
-
-## traccarPosition
-
-```deviceEntityId.<traccar.traccarPosition(traccarConfig)>``` is an attribute that retrieves the most recent position of
-a specific device from the Traccar server using the provided `traccarConfig` parameter.
-
-**Parameters:**
-
-- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
-- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
-
-**Example:**
-
-```
-"12345".<traccar.traccarPosition({
-    "baseUrl": "https://demo.traccar.org",
-    "userName": "email@address.org",
-    "password": "password"
-})>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "protocol": "string",
-    "deviceId": 12345,
-    "serverTime": "2019-08-24T14:15:22Z",
-    "deviceTime": "2019-08-24T14:15:22Z",
-    "fixTime": "2019-08-24T14:15:22Z",
-    "valid": true,
-    "latitude": 0,
-    "longitude": 0,
-    "altitude": 0,
-    "speed": 0,
-    "course": 0,
-    "address": "string",
     "attributes": {}
 }
 ```
@@ -627,8 +641,7 @@ Traccar server.
 ```
 "12345".<traccar.geofenceGeometry({
     "baseUrl": "https://demo.traccar.org",
-    "userName": "email@address.org",
-    "password": "password"
+    "pollingIntervalMs": 250
 })>
 ```
 
@@ -645,6 +658,86 @@ This may return a value like:
             [102.0, 2.0]
         ]
     ]
+}
+```
+
+
+---
+
+## traccarPosition
+
+```deviceEntityId.<traccar.traccarPosition(traccarConfig)>``` is an attribute that retrieves the most recent position of
+a specific device from the Traccar server using the provided `traccarConfig` parameter.
+
+**Parameters:**
+
+- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
+
+```
+"12345".<traccar.traccarPosition({
+    "baseUrl": "https://demo.traccar.org",
+    "pollingIntervalMs": 250
+})>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "protocol": "string",
+    "deviceId": 12345,
+    "serverTime": "2019-08-24T14:15:22Z",
+    "deviceTime": "2019-08-24T14:15:22Z",
+    "fixTime": "2019-08-24T14:15:22Z",
+    "valid": true,
+    "latitude": 0,
+    "longitude": 0,
+    "altitude": 0,
+    "speed": 0,
+    "course": 0,
+    "address": "string",
+    "attributes": {}
+}
+```
+
+
+---
+
+## traccarPosition
+
+```deviceEntityId.<traccar.traccarPosition>``` is an attribute that retrieves the most recent position of a specific
+device from the Traccar server. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
+server connection configuration.
+
+**Parameters:**
+- `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+
+**Example:**
+
+```
+"12345".<traccar.traccarPosition>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "protocol": "string",
+    "deviceId": 12345,
+    "serverTime": "2019-08-24T14:15:22Z",
+    "deviceTime": "2019-08-24T14:15:22Z",
+    "fixTime": "2019-08-24T14:15:22Z",
+    "valid": true,
+    "latitude": 0,
+    "longitude": 0,
+    "altitude": 0,
+    "speed": 0,
+    "course": 0,
+    "address": "string",
+    "attributes": {}
 }
 ```
 
