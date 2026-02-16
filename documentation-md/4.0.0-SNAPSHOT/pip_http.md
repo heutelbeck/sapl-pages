@@ -9,57 +9,126 @@ nav_order: 201
 
 This Policy Information Point to get and monitor HTTP based information.
 
-This Policy Information Point provides basic means to source attribute data by consuming
-HTTP-based APIs and Websockets.
+This Policy Information Point provides means to source attribute data by consuming
+HTTP-based APIs and WebSockets.
 
-The Attributes are named according to the HTTP verb, i.e., get, put, delete, post, and patch.
-And are available as either environment attributes or attributes of a an URL which semantically
-identifies a resource used as the left-hand input parameter of the attribute finders.
+## Attribute Invocation
 
-This PIP is more technical than domain driven and therefore the attributes are specified by
-defining HTTP requests by defining a ```requestSetings``` object, which may contain the following
-parameters:
-* ```baseUrl```: The starting URL to build the request path.
-* ```path```: Path components to be appended to the baseUrl.
-* ```urlParameters```: An object with key-value pairs representing the HTTP query parameters to
-be embedded in the request URL.
-* ```headers```: An object with key-value pairs representing the HTTP headers.
-* ```body```: The request body.
-* ```accept```: The accepted mime media type.
-* ```contentType```: The mime type of the request body.
-* ```pollingIntervalMs```: The number of milliseconds between polling the HTTP endpoint. Defaults to 1000ms.
-* ```repetitions```: Upper bound for number of repeated requests. Defaults to 0x7fffffffffffffffL.
+Attributes are named after the HTTP verb: `get`, `post`, `put`, `patch`, `delete`,
+and `websocket`. Each is available as an environment attribute or as an attribute of
+a resource URL.
 
-For the media type ```text/event-stream```, the attribute finder will treat the consumed
-endpoint to be sending server-sent events (SSEs) and will not poll the endpoint, but subscribe
-to the events emitted by the consumed API.
+| Policy syntax | Meaning |
+|---|---|
+| `<http.get(request)>` | Environment attribute, HTTP GET with request settings. |
+| `"https://api.example.com".<http.get(request)>` | Entity attribute, URL used as `baseUrl`. |
+| `<http.post(request)>` | Environment attribute, HTTP POST. |
+| `<http.websocket(request)>` | Environment attribute, WebSocket connection. |
 
-If the accepted media type is ```application/json```, the PIP will attempt to parse it and map
-the response body to a SAPL value. Else, the response body is returned as a text value.
+## Request Settings
 
-Connection timeout is 10 seconds, read timeout is 30 seconds. Unresponsive endpoints will
-result in an error value.
+All attributes take a `requestSettings` object parameter with the following fields:
 
-Example:
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `baseUrl` | text | (required) | The base URL for the HTTP request. |
+| `path` | text | `""` | Path appended to the base URL. |
+| `urlParameters` | object | `{}` | Key-value pairs for HTTP query parameters. |
+| `headers` | object | `{}` | Key-value pairs for HTTP request headers. |
+| `body` | any | (none) | The request body. |
+| `accept` | text | `"application/json"` | Accepted response media type. |
+| `contentType` | text | `"application/json"` | Media type of the request body. |
+| `pollingIntervalMs` | number | `1000` | Milliseconds between polling requests. |
+| `repetitions` | number | `Long.MAX_VALUE` | Upper bound for repeated requests. |
+| `secretsKey` | text | (none) | Selects a named credential set from secrets (see below). |
+
+The `secretsKey` field is metadata for credential selection and is stripped before
+the HTTP request is sent.
+
+## Secrets Configuration
+
+HTTP credentials (API keys, bearer tokens, custom headers) are sourced from the
+`secrets` section in `pdp.json` and/or from subscription secrets. They are never
+embedded directly in policies.
+
+Header precedence (highest to lowest):
+1. **pdpSecrets** -- operator-configured secrets always win
+2. **Policy headers** -- headers specified in the `requestSettings` object
+3. **subscriptionSecrets** -- headers from the authorization subscription
+
+When headers from multiple sources use the same header name, the higher-priority
+source overwrites the lower-priority value.
+
+### Named Credentials with `secretsKey`
+
+Use the `secretsKey` field in `requestSettings` to select which named credential
+set to use. For a request with `"secretsKey": "weather-api"`, the PDP resolves
+`secrets.http.weather-api.headers` from each secrets source.
+
+If the `secretsKey` is specified but the named entry does not exist in a given
+secrets source, no headers are contributed from that source (fail closed).
+
+### Flat Fallback (no `secretsKey`)
+
+When no `secretsKey` is specified, the PDP falls back to `secrets.http.headers`
+as a flat default for each secrets source.
+
+### Resolution Walkthrough
+
+For each secrets source (pdpSecrets and subscriptionSecrets):
+1. If `secretsKey` is present, look up `secrets.http.<secretsKey>.headers`.
+2. If `secretsKey` is absent, look up `secrets.http.headers`.
+3. If neither exists, no headers from that source.
+
+### Multi-Service Secrets Example
+
 ```json
 {
-  "baseUrl": "https://example.com",
-  "path": "/api/owners",
-  "urlParameters": {
-                      "age": 5,
-                      "sort": "ascending"
-                   },
-  "headers": {
-               "Authorization": "Bearer <token>",
-               "If-Modified-Since": "Tue, 19 Jul 2016 12:22:11 UTC"
-             },
-  "body": "<tag>abc</tag>",
-  "accept": "application/json",
-  "contentType": "application/xml",
-  "pollingIntervalMs": 4500,
-  "repetitions": 999
+  "variables": { },
+  "secrets": {
+    "http": {
+      "weather-api": {
+        "headers": { "X-API-Key": "abc123" }
+      },
+      "internal-api": {
+        "headers": { "Authorization": "Bearer infra-token" }
+      },
+      "headers": { "Authorization": "Bearer default-fallback" }
+    }
+  }
 }
 ```
+
+With this configuration:
+* A request with `"secretsKey": "weather-api"` gets header `X-API-Key: abc123`.
+* A request with `"secretsKey": "internal-api"` gets header
+  `Authorization: Bearer infra-token`.
+* A request without `secretsKey` gets header
+  `Authorization: Bearer default-fallback`.
+
+### Subscription Secrets
+
+Subscription secrets follow the same structure and can be supplied per authorization
+subscription. They have the lowest priority and are overridden by both policy headers
+and pdpSecrets headers.
+
+## Security
+
+Avoid embedding credentials directly in policy `headers`. Use the secrets
+configuration to keep credentials separate from policy logic. The `secretsKey`
+field itself is non-sensitive metadata and is safe to use in policies.
+
+## Media Type Handling
+
+* `application/json`: Response body is parsed and mapped to a SAPL value.
+* `text/event-stream`: The PIP subscribes to server-sent events (SSEs) instead
+  of polling.
+* Other types: Response body is returned as a text value.
+
+## Timeouts
+
+Connection timeout is 10 seconds, read timeout is 30 seconds. Unresponsive
+endpoints result in an error value.
 
 
 ---
