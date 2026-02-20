@@ -122,6 +122,23 @@ exceeds this value, the token is treated as `NEVER_VALID`. Defaults to 0 (disabl
 
 ## token
 
+```<jwt.token(TEXT secretsKeyName)>``` reads a JWT from subscription secrets using the specified
+key name and returns an object containing the decoded token data and its current validity state.
+
+This overload allows reading tokens stored under a custom key in subscription secrets.
+
+Example:
+```sapl
+policy "access token check"
+permit
+  <jwt.token("accessToken")>.valid;
+```
+
+
+---
+
+## token
+
 ```<jwt.token>``` reads a JWT from subscription secrets using the configured default secrets key
 and returns an object containing the decoded token data and its current validity state.
 
@@ -152,23 +169,6 @@ Example with claims:
 policy "admin access"
 permit action == "admin:action";
   "admin" in <jwt.token>.payload.roles;
-```
-
-
----
-
-## token
-
-```<jwt.token(TEXT secretsKeyName)>``` reads a JWT from subscription secrets using the specified
-key name and returns an object containing the decoded token data and its current validity state.
-
-This overload allows reading tokens stored under a custom key in subscription secrets.
-
-Example:
-```sapl
-policy "access token check"
-permit
-  <jwt.token("accessToken")>.valid;
 ```
 
 
