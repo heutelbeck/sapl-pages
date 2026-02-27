@@ -22,7 +22,7 @@
               {%- if page.title -%}
                 {% unless page.exclude %}
                   {% if page.title == "Documentation" %}
-                    <a class="page-link" href="{{ page.url | relative_url }}">Documentation</a>
+                    <a class="page-link" href="/docs/latest/">Documentation</a>
                   {% else %}
                     <a class="page-link" href="{{ page.url | relative_url }}">{{ page.title | escape }}</a>
                   {% endif %}
