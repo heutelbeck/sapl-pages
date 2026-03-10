@@ -523,6 +523,28 @@ permit
 
 ---
 
+## avg
+
+```array.avg(ARRAY array)```
+
+Returns the arithmetic mean (average) of all numeric elements in the array. Returns
+an error for empty arrays. All elements must be numeric.
+
+Parameters:
+- array: Array of numbers to average
+
+Returns: Average value
+
+Example:
+```sapl
+policy "example"
+permit
+    array.avg(subject.performanceScores) >= 8.0;
+```
+
+
+---
+
 ## rangeStepped
 
 ```array.rangeStepped(NUMBER from, NUMBER to, NUMBER step)```
@@ -671,28 +693,6 @@ permit
     var resources = ["doc1", "doc2"];
     var combinations = array.crossProduct(actions, resources);
     combinations == [ ["read" , "doc1"], ["read" , "doc2"], ["write" , "doc1"], ["write" , "doc2"]];
-```
-
-
----
-
-## avg
-
-```array.avg(ARRAY array)```
-
-Returns the arithmetic mean (average) of all numeric elements in the array. Returns
-an error for empty arrays. All elements must be numeric.
-
-Parameters:
-- array: Array of numbers to average
-
-Returns: Average value
-
-Example:
-```sapl
-policy "example"
-permit
-    array.avg(subject.performanceScores) >= 8.0;
 ```
 
 
