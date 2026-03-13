@@ -523,6 +523,39 @@ permit
 
 ---
 
+## isWithinDistance
+
+```isWithinDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, DOUBLE distance)```:
+Tests whether the distance between two geometries is within a specified value.
+
+**Inputs:**
+
+- `thisGeometry`: A geometry object in GeoJSON format.
+- `thatGeometry`: Another geometry object in GeoJSON format.
+- `distance`: A numeric value specifying the distance threshold.
+
+**Output:**
+
+- Returns `true` if the distance between the geometries is less than or equal to `distance`.
+- Returns `false` otherwise.
+
+**Example:**
+
+```sapl
+policy "example"
+permit
+    var point1 = { "type": "Point", "coordinates": [0, 0] };
+    var point2 = { "type": "Point", "coordinates": [3, 4] };
+    geo.isWithinDistance(point1, point2, 5.0) == true;
+```
+
+**Notes:**
+
+- Use this function for proximity checks between geometries.
+
+
+---
+
 ## crosses
 
 ```crosses(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
@@ -551,39 +584,6 @@ permit
 **Notes:**
 - Suitable for checking intersections between lines or other geometries that share some interior points.
 - Does not apply if one geometry fully contains the other.
-
-
----
-
-## isWithinGeodesicDistance
-
-```isWithinGeodesicDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, DOUBLE distance)```:
-Tests whether two geometries are within a specified geodesic (earth surface) distance.
-
-**Inputs:**
-
-- `thisGeometry`: A geometry object in GeoJSON format.
-- `thatGeometry`: Another geometry object in GeoJSON format.
-- `distance`: A numeric value specifying the geodesic distance threshold (meters).
-
-**Output:**
-
-- Returns `true` if the geometries are within the specified geodesic distance.
-- Returns `false` otherwise.
-
-**Example:**
-
-```sapl
-policy "example"
-permit
-    var point1 = { "type": "Point", "coordinates": [0, 0] };
-    var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    geo.isWithinGeoDistance(point1, point2, 150) == true;
-```
-
-**Notes:**
-
-- Suitable for geodesic distance checks, especially for large-scale geographic data.
 
 
 ---
@@ -620,20 +620,20 @@ permit
 
 ---
 
-## isWithinDistance
+## isWithinGeodesicDistance
 
-```isWithinDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, DOUBLE distance)```:
-Tests whether the distance between two geometries is within a specified value.
+```isWithinGeodesicDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, DOUBLE distance)```:
+Tests whether two geometries are within a specified geodesic (earth surface) distance.
 
 **Inputs:**
 
 - `thisGeometry`: A geometry object in GeoJSON format.
 - `thatGeometry`: Another geometry object in GeoJSON format.
-- `distance`: A numeric value specifying the distance threshold.
+- `distance`: A numeric value specifying the geodesic distance threshold (meters).
 
 **Output:**
 
-- Returns `true` if the distance between the geometries is less than or equal to `distance`.
+- Returns `true` if the geometries are within the specified geodesic distance.
 - Returns `false` otherwise.
 
 **Example:**
@@ -642,13 +642,13 @@ Tests whether the distance between two geometries is within a specified value.
 policy "example"
 permit
     var point1 = { "type": "Point", "coordinates": [0, 0] };
-    var point2 = { "type": "Point", "coordinates": [3, 4] };
-    geo.isWithinDistance(point1, point2, 5.0) == true;
+    var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
+    geo.isWithinGeoDistance(point1, point2, 150) == true;
 ```
 
 **Notes:**
 
-- Use this function for proximity checks between geometries.
+- Suitable for geodesic distance checks, especially for large-scale geographic data.
 
 
 ---
