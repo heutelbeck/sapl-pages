@@ -338,7 +338,7 @@ exits with a code that encodes the decision. No output is written
 to stdout, making this command ideal for shell scripts and CI/CD
 pipelines.
 
-By default, policies are loaded from the current directory. Use
+By default, policies are loaded from ~/.sapl/. Use
 `--dir` for a different directory, `--bundle` for a bundle file, or
 `--remote` to query a running PDP server.
 
@@ -436,7 +436,7 @@ decision line is emitted automatically.
 
 Runs until interrupted (Ctrl+C) or the decision stream completes.
 
-By default, policies are loaded from the current directory. Use
+By default, policies are loaded from ~/.sapl/. Use
 `--dir` for a different directory, `--bundle` for a bundle file, or
 `--remote` to query a running PDP server.
 
@@ -526,7 +526,7 @@ prints the full decision to stdout as a JSON object containing the
 decision (PERMIT, DENY, NOT_APPLICABLE, INDETERMINATE), any
 obligations, advice, and resource transformations.
 
-By default, policies are loaded from the current directory. Use
+By default, policies are loaded from ~/.sapl/. Use
 `--dir` for a different directory, `--bundle` for a bundle file, or
 `--remote` to query a running PDP server.
 
