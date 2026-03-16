@@ -25,6 +25,7 @@ SAPL Node PDP server and policy CLI.
   - [`sapl generate`](#sapl-generate) -- Generate authentication credentials for PDP server clients.
     - [`sapl generate basic`](#sapl-generate-basic) -- Generate HTTP Basic Auth credentials with Argon2id-encoded password.
     - [`sapl generate apikey`](#sapl-generate-apikey) -- Generate a Bearer token API key with Argon2id-encoded hash.
+  - [`sapl test`](#sapl-test) -- Run SAPL tests and generate coverage reports.
 
 ## sapl server
 
@@ -723,4 +724,83 @@ sapl generate apikey --id my-service --pdp-id production
 ```
 
 See Also: [sapl generate basic](#sapl-generate-basic), [sapl server](#sapl-server)
+
+## sapl test
+
+Run SAPL tests and generate coverage reports.
+
+Discovers `.sapl` policy files and .sapltest test files from a directory,
+executes all test scenarios, and generates coverage reports. Policies
+and tests are matched by the document names referenced in the test
+files.
+
+Policies are discovered from --dir. Tests are discovered from `--testdir`
+if specified, otherwise from --dir.
+
+Coverage data is written to the output directory as coverage.ndjson.
+HTML and SonarQube reports can be generated from this data.
+
+Quality gate thresholds can be configured to fail the command when
+coverage ratios are below the required percentages.
+
+
+**Synopsis**
+
+```
+sapl test [-hV] [--[no-]html] [--[no-]sonar]
+                 [--branch-coverage-ratio=<branchCoverageRatio>]
+                 [--condition-hit-ratio=<conditionHitRatio>] [--dir=<dir>]
+                 [--output=<output>] [--policy-hit-ratio=<policyHitRatio>]
+                 [--policy-set-hit-ratio=<policySetHitRatio>]
+                 [--testdir=<testdir>]
+```
+
+**Options**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--dir <dir>` | Directory containing `.sapl` policy files | `.` |
+| `--testdir <testdir>` | Directory containing .sapltest test files (default: same as --dir) |  |
+| `--output <output>` | Output directory for coverage data and reports | `./sapl-coverage` |
+| `--html` | Generate HTML coverage report | `true` |
+| `--sonar` | Generate SonarQube coverage report | `false` |
+| `--policy-set-hit-ratio <policySetHitRatio>` | Required policy set hit ratio, 0-100 (0 = disabled) | `0` |
+| `--policy-hit-ratio <policyHitRatio>` | Required policy hit ratio, 0-100 (0 = disabled) | `0` |
+| `--condition-hit-ratio <conditionHitRatio>` | Required condition hit ratio, 0-100 (0 = disabled) | `0` |
+| `--branch-coverage-ratio <branchCoverageRatio>` | Required branch coverage ratio, 0-100 (0 = disabled) | `0` |
+| `-h, --help` | Show this help message and exit. |  |
+| `-V, --version` | Print version information and exit. |  |
+
+**Exit Codes**
+
+| Code | Description |
+|------|-------------|
+| 0 | All tests passed (and quality gate met, if configured) |
+| 1 | Error during test execution (I/O, parse errors) |
+| 2 | One or more tests failed |
+| 3 | Quality gate not met (tests passed but coverage below threshold) |
+
+**Examples**
+
+```shell
+# Run tests from current directory
+sapl test
+
+# Run tests from a specific directory
+sapl test --dir ./my-policies
+
+# Policies in one directory, tests in another
+sapl test --dir ./policies --testdir ./tests
+
+# Generate only SonarQube report (no HTML)
+sapl test --no-html --sonar
+
+# Custom output directory
+sapl test --output ./reports/sapl-coverage
+
+# Enforce a coverage threshold
+sapl test --policy-hit-ratio 80
+```
+
+See Also: [sapl check](#sapl-check), [sapl decide](#sapl-decide)
 
