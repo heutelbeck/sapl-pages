@@ -17,7 +17,8 @@ module Rouge
       mimetypes 'text/x-sapl'
 
       state :root do
-        rule %r/.*\n?/m, Text
+        rule %r/.+/, Text
+        rule %r/\n/, Text
       end
     end
 
@@ -27,7 +28,8 @@ module Rouge
       tag 'sapl-demo'
 
       state :root do
-        rule %r/.*\n?/m, Text
+        rule %r/.+/, Text
+        rule %r/\n/, Text
       end
     end
 
