@@ -109,10 +109,10 @@ module SaplDemoBlocks
           <sapl-demo>
             <pre class="sapl-fallback"><code>#{CGI.escapeHTML(policy)}</code></pre>
             <script type="sapl/policy">
-          #{CGI.escapeHTML(policy)}
+          #{policy}
             </script>
             <script type="sapl/subscription">
-          #{CGI.escapeHTML(subscription)}
+          #{subscription}
             </script>
           </sapl-demo>
         HTML
