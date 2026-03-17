@@ -113,7 +113,7 @@ mvn install -Pproduction
 
 After completing the build process, you can run the SAPL Server CE locally by navigating to the target folder and run the jar-file, e.g. by executing the following command:
 ```shell
-java -jar sapl-server-ce-3.0.0-SNAPSHOT.jar
+java -jar sapl-server-ce-3.0.0.jar
 ```
 
 #### Running from Source
@@ -154,7 +154,7 @@ io.sapl.server.accesscontrol.admin-username
 
 So, if either of the two parameters is not configured or if no `application.yml` is found at all, the setup wizard will appear on the web interface. For this tutorial, we will use the JAR file built above and place it on our server. Next to it, we will create the folder `config` and put our `keystore.p12` there. Now, we start the application with
 ```shell
-java -jar sapl-server-ce-3.0.0-SNAPSHOT.jar
+java -jar sapl-server-ce-3.0.0.jar
 ```
 
 Since the application.yml is completely missing on the server, the setup wizard's web interface can be accessed by visiting the following URL in a browser on the server:

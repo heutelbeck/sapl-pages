@@ -1,7 +1,7 @@
 ---
 layout: post
 author: Dominic Heutelbeck
-title: "Implementing Attribute-based Access Control (ABAC) with Spring and SAPL Version 3.0.0-SNAPSHOT"
+title: "Implementing Attribute-based Access Control (ABAC) with Spring and SAPL Version 3.0.0"
 date: 2024-02-20
 tags: abac asbac sapl spring spring-boot tutorial
 categories: tutorials
@@ -77,7 +77,7 @@ Now unzip the project and import it into your preferred IDE.
 
 ### Adding SAPL Dependencies
 
-This tutorial uses the `3.0.0-SNAPSHOT` version of SAPL. To enable Maven to download the respective libraries, add the central snapshot repository to your `pom.xml` file:
+This tutorial uses the `3.0.0` version of SAPL. To enable Maven to download the respective libraries, add the central snapshot repository to your `pom.xml` file:
 
 ```xml
     <repositories>
@@ -103,7 +103,7 @@ SAPL provides a bill of materials module to help you to use compatible versions 
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
+                <version>3.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -650,7 +650,7 @@ The PDP will grant access, and the log will look similar to this:
 
 Note that your system's ordering of the log entries may be slightly different. The log indicates that both policies matched the subscription and that the PDP evaluated them. Then, the combining algorithm resolved the two decisions, i.e., one `permit` and one `deny`, to `permit`.
 
-The PDP uses the `DENY_UNLESS_PERMIT` combining algorithm selected in the `pdp.json` configuration file. This algorithm is relatively permissive because it only returns `deny` if no `permit` is present. The SAPL engine implements alternative algorithms to resolve the presence of different, potentially contradicting, decisions (also see [SAPL Documentation - Combining Algorithm](https://sapl.io/docs/3.0.0-SNAPSHOT/6_5_CombiningAlgorithm/#combining-algorithm)). For the tutorial domain, select a more restrictive algorithm. Replace `DENY_UNLESS_PERMIT` in the `pdp.json` file with `DENY_OVERRIDES`. This algorithm prioritizes `deny` decisions over `permit`.
+The PDP uses the `DENY_UNLESS_PERMIT` combining algorithm selected in the `pdp.json` configuration file. This algorithm is relatively permissive because it only returns `deny` if no `permit` is present. The SAPL engine implements alternative algorithms to resolve the presence of different, potentially contradicting, decisions (also see [SAPL Documentation - Combining Algorithm](https://sapl.io/docs/3.0.0/6_5_CombiningAlgorithm/#combining-algorithm)). For the tutorial domain, select a more restrictive algorithm. Replace `DENY_UNLESS_PERMIT` in the `pdp.json` file with `DENY_OVERRIDES`. This algorithm prioritizes `deny` decisions over `permit`.
 
 Now restart the application, authenticate with any user and access <http://localhost:8080/api/books/1> again.
 
@@ -681,7 +681,7 @@ As expected, the combining algorithm gave precedence to the `deny` decision.
 
 Finally, rename `deny_all.sapl` to `deny_all.sapl.off` and `permit_all.sapl` to `permit_all.sapl.off`. Now access to the book should be denied, as the PDP only loads documents with the `.sapl`suffix.
 
-The PDP returns `not applicable` because it did not find a document making a decision explicitly and `DENY_OVERRIDES` does not have a default decision like `DENY_UNLESS_PERMIT`. The PDP may also return `indeterminate` if an error occurred during policy evaluation. In both cases, a PEP must not grant access. Additional information about the different results of a policy evaluation can be found in the [SAPL documentation](https://sapl.io/docs/3.0.0-SNAPSHOT/6_2_Policy/#policy).
+The PDP returns `not applicable` because it did not find a document making a decision explicitly and `DENY_OVERRIDES` does not have a default decision like `DENY_UNLESS_PERMIT`. The PDP may also return `indeterminate` if an error occurred during policy evaluation. In both cases, a PEP must not grant access. Additional information about the different results of a policy evaluation can be found in the [SAPL documentation](https://sapl.io/docs/3.0.0/6_2_Policy/#policy).
 
 In this section, you learned how a PEP and PDP interact in SAPL and how the PDP combines outcomes of different policies. In the next step, you will learn how to write more practical policies and when precisely a policy is *applicable*, i.e., matches, for an authorization subscription.
 
@@ -1003,7 +1003,7 @@ This policy introduces the `transform` expression for the *transformations*.
 
 If the policy is applicable, i.e., all rules evaluate to `true`, whatever JSON value the `transform` expression evaluates to is added to the authorization decision as the property `resource`. The presence of a `resource` object in the authorization decision instructs the PEP to replace the original `resource` data with the one supplied.
 
-In this case, the so-called filter operator `|-` is applied to the `resource` object. The filter operator enables the selection of individual parts of a JSON value for manipulation, e.g., applying a function to the selected value. In this case, the operator selects the `content` key of the resource and replaces it with a version of its content, only exposing the three leftmost characters and replacing the rest with a black square ("\\u2588" in Unicode). The selection expression is very powerful. Please refer to the [SAPL Documentation](https://sapl.io/docs/3.0.0-SNAPSHOT/5_7_SAPLExpressions/#filtering) for a full explanation.
+In this case, the so-called filter operator `|-` is applied to the `resource` object. The filter operator enables the selection of individual parts of a JSON value for manipulation, e.g., applying a function to the selected value. In this case, the operator selects the `content` key of the resource and replaces it with a version of its content, only exposing the three leftmost characters and replacing the rest with a black square ("\\u2588" in Unicode). The selection expression is very powerful. Please refer to the [SAPL Documentation](https://sapl.io/docs/3.0.0/5_7_SAPLExpressions/#filtering) for a full explanation.
 
 Ensure that the original age-checking policy is still in place. Now, restart and log in as Alice.
 
