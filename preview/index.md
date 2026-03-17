@@ -1,0 +1,70 @@
+---
+layout: preview
+title: SAPL
+---
+
+<section class="hero">
+  <h1>TODO: Headline</h1>
+  <p class="subtitle">TODO: One sentence — problem + solution</p>
+  <div class="cta-group">
+    <a href="/preview/getstarted" class="btn btn-primary">Get Started</a>
+    <a href="https://playground.sapl.io/" class="btn btn-secondary">Try in Playground</a>
+  </div>
+</section>
+
+<div class="editor-embed">
+  <sapl-code>
+    <pre class="sapl-fallback"><code>policy "read only"
+permit
+  action == "read";</code></pre>
+  </sapl-code>
+
+  <sapl-demo>
+    <pre class="sapl-fallback"><code>policy "example"
+permit
+  time.secondOf(&lt;time.now&gt;) % 5 &lt; 2;</code></pre>
+    <script type="sapl/policy">
+policy "example"
+permit
+  time.secondOf(<time.now>) % 5 < 2;
+    </script>
+    <script type="sapl/subscription">
+{"subject":"alice","action":"read","resource":"document"}
+    </script>
+  </sapl-demo>
+</div>
+
+<script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
+
+<section class="section">
+  <h2>TODO: Why SAPL</h2>
+  <div class="features">
+    <div class="feature">
+      <h3>TODO: Streaming</h3>
+      <p>Placeholder</p>
+    </div>
+    <div class="feature">
+      <h3>TODO: Readable Policies</h3>
+      <p>Placeholder</p>
+    </div>
+    <div class="feature">
+      <h3>TODO: Policy Testing</h3>
+      <p>Placeholder</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>TODO: Multi-Language</h2>
+  <p>TODO: Tabbed code examples — Spring Boot / Python / NestJS / .NET</p>
+</section>
+
+<section class="section">
+  <h2>TODO: Scenarios</h2>
+  <p>TODO: AI Security / Policy Testing / Spring Security / Data-Level Security</p>
+</section>
+
+<section class="section">
+  <h2>TODO: European Open Source</h2>
+  <p>TODO: Digital sovereignty angle</p>
+</section>
