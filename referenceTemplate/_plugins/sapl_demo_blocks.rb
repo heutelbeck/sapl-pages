@@ -11,31 +11,36 @@
 #   ```sapl              -- static CodeMirror highlight (read-only, no interactivity)
 #   ```sapl-demo         -- interactive: CodeMirror + "Try it live" click-to-load
 #
+# Kramdown + Rouge produces this HTML structure for fenced code blocks:
+#
+#   <div class="language-sapl highlighter-rouge">
+#     <div class="highlight">
+#       <pre class="highlight"><code>...</code></pre>
+#     </div>
+#   </div>
+#
+# For sapl-demo with IAL data attributes:
+#
+#   <div data-subject="bob" data-action="write" data-resource="file"
+#        class="language-sapl-demo highlighter-rouge">
+#     <div class="highlight">
+#       <pre class="highlight"><code>...</code></pre>
+#     </div>
+#   </div>
+#
 # Subscription sources for demo blocks (checked in order):
 #
-# 1. HTML comment immediately after the code block:
+# 1. HTML comment immediately after the closing </div>:
 #
-#      ```sapl-demo
-#      policy "example" permit subject.role == "admin";
-#      ```
 #      <!-- sapl-subscription
-#      {
-#        "subject": {"name": "alice", "role": "admin"},
-#        "action": "read",
-#        "resource": {"type": "medical", "id": "record-7"}
-#      }
+#      { "subject": {"name": "alice"}, "action": "read", "resource": "doc" }
 #      -->
 #
-# 2. Kramdown IAL data attributes (simple subscriptions only):
+# 2. Kramdown IAL data attributes on the wrapper div:
 #
-#      ```sapl-demo
-#      policy "example" permit
-#      ```
 #      {: data-subject="bob" data-action="write" data-resource="file" }
 #
 # 3. Default: {"subject":"alice","action":"read","resource":"document"}
-#
-# Fallback: without JavaScript, the raw policy text is visible in a <pre>.
 #
 
 require 'cgi'
@@ -46,14 +51,13 @@ module SaplDemoBlocks
   EMBED_SCRIPT = "#{PLAYGROUND_URL}/embed/sapl-embed.js".freeze
   DEFAULT_SUBSCRIPTION = '{"subject":"alice","action":"read","resource":"document"}'.freeze
 
-  # Matches <pre> elements containing <code class="language-sapl"> or
-  # <code class="language-sapl-demo">. Captures optional attributes on the
-  # <pre>, the language variant, the code content, and any trailing HTML
-  # comment with sapl-subscription.
+  # Matches the Kramdown/Rouge output structure for language-sapl and
+  # language-sapl-demo code blocks, plus optional trailing HTML comments.
   BLOCK_PATTERN = %r{
-    <pre(?<attrs>[^>]*)>\s*
-    <code\s+class="language-sapl(?<demo>-demo)?"
-    >(?<code>.*?)</code>\s*</pre>
+    <div(?<attrs>[^>]*)class="language-sapl(?<demo>-demo)?\s+highlighter-rouge"[^>]*>
+    \s*<div\s+class="highlight">\s*
+    <pre\s+class="highlight"><code>(?<code>.*?)</code></pre>
+    \s*</div>\s*</div>
     (?<after>
       \s*<!--\s*sapl-subscription\s*\n(?<subscription>.*?)-->
     )?
@@ -71,10 +75,10 @@ module SaplDemoBlocks
     DEFAULT_SUBSCRIPTION
   end
 
-  def self.build_subscription_from_attrs(pre_attrs)
-    subject  = extract_attr(pre_attrs, 'data-subject')
-    action   = extract_attr(pre_attrs, 'data-action')
-    resource = extract_attr(pre_attrs, 'data-resource')
+  def self.build_subscription_from_attrs(attrs_str)
+    subject  = extract_attr(attrs_str, 'data-subject')
+    action   = extract_attr(attrs_str, 'data-action')
+    resource = extract_attr(attrs_str, 'data-resource')
 
     return DEFAULT_SUBSCRIPTION unless subject || action || resource
 
