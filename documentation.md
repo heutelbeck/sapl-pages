@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Documentation
-permalink: /documentation
+permalink: /docs/
 ---
 
 ## [4.0.0-SNAPSHOT](/docs/4.0.0-SNAPSHOT/)
