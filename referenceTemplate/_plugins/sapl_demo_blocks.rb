@@ -11,19 +11,29 @@
 #   ```sapl              -- static CodeMirror highlight (read-only, no interactivity)
 #   ```sapl-demo         -- interactive: CodeMirror + "Try it live" click-to-load
 #
-# Subscription for demo blocks is read from data attributes (Kramdown IAL):
+# Subscription sources for demo blocks (checked in order):
 #
-#   ```sapl-demo
-#   policy "example" permit
-#   ```
-#   {: data-subject="bob" data-action="write" data-resource="file" }
+# 1. HTML comment immediately after the code block:
 #
-#   ```sapl-demo
-#   policy "example" permit subject.role == "admin";
-#   ```
-#   {: data-json='{"subject":{"name":"alice","role":"admin"},"action":"read","resource":"doc"}' }
+#      ```sapl-demo
+#      policy "example" permit subject.role == "admin";
+#      ```
+#      <!-- sapl-subscription
+#      {
+#        "subject": {"name": "alice", "role": "admin"},
+#        "action": "read",
+#        "resource": {"type": "medical", "id": "record-7"}
+#      }
+#      -->
 #
-# When no data attributes are present, a default subscription is used.
+# 2. Kramdown IAL data attributes (simple subscriptions only):
+#
+#      ```sapl-demo
+#      policy "example" permit
+#      ```
+#      {: data-subject="bob" data-action="write" data-resource="file" }
+#
+# 3. Default: {"subject":"alice","action":"read","resource":"document"}
 #
 # Fallback: without JavaScript, the raw policy text is visible in a <pre>.
 #
@@ -37,25 +47,42 @@ module SaplDemoBlocks
   DEFAULT_SUBSCRIPTION = '{"subject":"alice","action":"read","resource":"document"}'.freeze
 
   # Matches <pre> elements containing <code class="language-sapl"> or
-  # <code class="language-sapl-demo">. Captures optional data-* attributes
-  # on the <pre>, the language variant, and the code content.
+  # <code class="language-sapl-demo">. Captures optional attributes on the
+  # <pre>, the language variant, the code content, and any trailing HTML
+  # comment with sapl-subscription.
   BLOCK_PATTERN = %r{
-    <pre(?<attrs>[^>]*)>
+    <pre(?<attrs>[^>]*)>\s*
     <code\s+class="language-sapl(?<demo>-demo)?"
-    >(?<code>.*?)</code></pre>
+    >(?<code>.*?)</code>\s*</pre>
+    (?<after>
+      \s*<!--\s*sapl-subscription\s*\n(?<subscription>.*?)-->
+    )?
   }mx
 
-  def self.build_subscription(pre_attrs)
-    return DEFAULT_SUBSCRIPTION if pre_attrs.nil? || pre_attrs.empty?
+  def self.build_subscription(match)
+    comment_json = match[:subscription]
+    if comment_json && !comment_json.strip.empty?
+      return comment_json.strip
+    end
 
-    json = extract_attr(pre_attrs, 'data-json')
-    return json if json
+    pre_attrs = match[:attrs]
+    return build_subscription_from_attrs(pre_attrs) if pre_attrs && !pre_attrs.empty?
 
-    subject  = extract_attr(pre_attrs, 'data-subject') || 'alice'
-    action   = extract_attr(pre_attrs, 'data-action') || 'read'
-    resource = extract_attr(pre_attrs, 'data-resource') || 'document'
+    DEFAULT_SUBSCRIPTION
+  end
 
-    JSON.generate({ subject: subject, action: action, resource: resource })
+  def self.build_subscription_from_attrs(pre_attrs)
+    subject  = extract_attr(pre_attrs, 'data-subject')
+    action   = extract_attr(pre_attrs, 'data-action')
+    resource = extract_attr(pre_attrs, 'data-resource')
+
+    return DEFAULT_SUBSCRIPTION unless subject || action || resource
+
+    JSON.generate({
+      subject:  subject || 'alice',
+      action:   action || 'read',
+      resource: resource || 'document'
+    })
   end
 
   def self.extract_attr(attrs_str, name)
@@ -67,13 +94,13 @@ module SaplDemoBlocks
     script_injected = false
 
     result = content.gsub(BLOCK_PATTERN) do
-      pre_attrs = Regexp.last_match(:attrs)
-      is_demo = Regexp.last_match(:demo)
-      raw_code = CGI.unescapeHTML(Regexp.last_match(:code))
+      m = Regexp.last_match
+      is_demo = m[:demo]
+      raw_code = CGI.unescapeHTML(m[:code])
       policy = raw_code.strip
 
       if is_demo
-        subscription = build_subscription(pre_attrs)
+        subscription = build_subscription(m)
         html = <<~HTML
           <sapl-demo>
             <pre class="sapl-fallback"><code>#{CGI.escapeHTML(policy)}</code></pre>
