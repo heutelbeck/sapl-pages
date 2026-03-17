@@ -4,72 +4,30 @@ require 'rouge'
 
 module Rouge
   module Lexers
+    # SAPL and sapl-demo code blocks are handled by sapl-embed.js (CodeMirror).
+    # Only register minimal placeholder lexers so Kramdown/Rouge does not error
+    # on unknown language tags. The output is replaced post-render by the
+    # sapl_demo_blocks.rb plugin.
+
     class SAPL < RegexLexer
       title "SAPL"
-      desc "Streaming Attribute Policy Language"
+      desc "Streaming Attribute Policy Language (placeholder for sapl-embed.js)"
       tag 'sapl'
       filenames '*.sapl'
       mimetypes 'text/x-sapl'
 
       state :root do
-        rule %r/\s+/, Text
-        rule %r/\/\/.*$/, Comment::Single
-        rule %r/\/\*/, Comment::Multiline, :multiline_comment
-        rule %r/"/, Str::Double, :string
-        rule %r/-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
-        rule %r/\b(?:policy|set|permit|deny|var|import|as|schema|enforced|obligation|advice|transform|for|each|or|errors|abstain|propagate|first|priority|strict|unanimous|unique)\b/, Keyword
-        rule %r/\b(?:true|false|null|undefined)\b/, Keyword::Constant
-        rule %r/\b(?:subject|action|resource|environment)\b/, Name::Builtin
-        rule %r/\|?<(?=[a-zA-Z_$])/, Operator, :attribute_finder
-        rule %r/\|\|/, Operator
-        rule %r/&&/, Operator
-        rule %r/==/, Operator
-        rule %r/!=/, Operator
-        rule %r/=~/, Operator
-        rule %r/<=/, Operator
-        rule %r/>=/, Operator
-        rule %r/\bin\b/, Operator::Word
-        rule %r/\.\./, Operator
-        rule %r/\|-/, Operator
-        rule %r/::/, Operator
-        rule %r/=/, Operator
-        rule %r/[|^&<>+\-*\/%!?]/, Operator
-        rule %r/[@#]/, Name::Variable::Instance
-        rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)+(?=\()/, Name::Function
-        rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\()/, Name::Function
-        rule %r/\^?[a-zA-Z_$][a-zA-Z0-9_$]*/, Name
-        rule %r/[{}()\[\]:;,.]/, Punctuation
+        rule %r/.*\n?/m, Text
       end
+    end
 
-      state :string do
-        rule %r/"/, Str::Double, :pop!
-        rule %r/\\["\\\/bfnrt]/, Str::Escape
-        rule %r/\\u[0-9a-fA-F]{4}/, Str::Escape
-        rule %r/\\./, Str::Double
-        rule %r/[^"\\]+/, Str::Double
-      end
+    class SAPLDemo < RegexLexer
+      title "SAPL Demo"
+      desc "Interactive SAPL demo block (placeholder for sapl-embed.js)"
+      tag 'sapl-demo'
 
-      state :multiline_comment do
-        rule %r/\*\//, Comment::Multiline, :pop!
-        rule %r/[^*]+/, Comment::Multiline
-        rule %r/\*/, Comment::Multiline
-      end
-
-      state :attribute_finder do
-        rule %r/>/, Operator, :pop!
-        rule %r/\b[a-zA-Z_$][a-zA-Z0-9_$.]*/, Name::Decorator
-        rule %r/\(/, Punctuation, :attribute_args
-        rule %r/\s+/, Text
-      end
-
-      state :attribute_args do
-        rule %r/\)/, Punctuation, :pop!
-        rule %r/,/, Punctuation
-        rule %r/"/, Str::Double, :string
-        rule %r/-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
-        rule %r/\b(?:true|false|null)\b/, Keyword::Constant
-        rule %r/[a-zA-Z_$][a-zA-Z0-9_$]*/, Name
-        rule %r/\s+/, Text
+      state :root do
+        rule %r/.*\n?/m, Text
       end
     end
 

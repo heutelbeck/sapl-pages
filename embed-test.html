@@ -19,25 +19,33 @@ permalink: /embed-test
             padding: 0 1rem;
         }
         h1 { color: #89b4fa; }
+        h2 { color: #a6adc8; }
     </style>
 </head>
 <body>
 
-<h1>SAPL Playground Embed Test</h1>
-<p>This page tests embedding the interactive SAPL playground on sapl.io.</p>
+<h1>SAPL Embed Test</h1>
+<p>This page tests embedding SAPL code blocks and interactive demos on sapl.io.</p>
 
+<h2>Static code block</h2>
+<sapl-code>
+    <pre class="sapl-fallback"><code>policy "read only"
+permit
+  action == "read";</code></pre>
+</sapl-code>
+
+<h2>Interactive demo</h2>
 <sapl-demo>
+    <pre class="sapl-fallback"><code>policy "example"
+permit
+  time.secondOf(&lt;time.now&gt;) % 5 &lt; 2;</code></pre>
     <script type="sapl/policy">
 policy "example"
 permit
   time.secondOf(<time.now>) % 5 < 2;
     </script>
     <script type="sapl/subscription">
-{
-  "subject": "alice",
-  "action": "read",
-  "resource": "document"
-}
+{"subject":"alice","action":"read","resource":"document"}
     </script>
 </sapl-demo>
 
