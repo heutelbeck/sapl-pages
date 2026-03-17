@@ -555,6 +555,39 @@ permit
 
 ---
 
+## isWithinGeodesicDistance
+
+```isWithinGeodesicDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, DOUBLE distance)```:
+Tests whether two geometries are within a specified geodesic (earth surface) distance.
+
+**Inputs:**
+
+- `thisGeometry`: A geometry object in GeoJSON format.
+- `thatGeometry`: Another geometry object in GeoJSON format.
+- `distance`: A numeric value specifying the geodesic distance threshold (meters).
+
+**Output:**
+
+- Returns `true` if the geometries are within the specified geodesic distance.
+- Returns `false` otherwise.
+
+**Example:**
+
+```sapl
+policy "example"
+permit
+    var point1 = { "type": "Point", "coordinates": [0, 0] };
+    var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
+    geo.isWithinGeoDistance(point1, point2, 150) == true;
+```
+
+**Notes:**
+
+- Suitable for geodesic distance checks, especially for large-scale geographic data.
+
+
+---
+
 ## within
 
 ```within(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
@@ -616,39 +649,6 @@ permit
 **Notes:**
 
 - Use this function for proximity checks between geometries.
-
-
----
-
-## isWithinGeodesicDistance
-
-```isWithinGeodesicDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, DOUBLE distance)```:
-Tests whether two geometries are within a specified geodesic (earth surface) distance.
-
-**Inputs:**
-
-- `thisGeometry`: A geometry object in GeoJSON format.
-- `thatGeometry`: Another geometry object in GeoJSON format.
-- `distance`: A numeric value specifying the geodesic distance threshold (meters).
-
-**Output:**
-
-- Returns `true` if the geometries are within the specified geodesic distance.
-- Returns `false` otherwise.
-
-**Example:**
-
-```sapl
-policy "example"
-permit
-    var point1 = { "type": "Point", "coordinates": [0, 0] };
-    var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    geo.isWithinGeoDistance(point1, point2, 150) == true;
-```
-
-**Notes:**
-
-- Suitable for geodesic distance checks, especially for large-scale geographic data.
 
 
 ---
