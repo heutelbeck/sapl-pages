@@ -134,19 +134,17 @@ main {
 
 .btn-secondary:hover { background: var(--color-border); }
 
-/* Editor embed placeholder */
+/* Editor embed */
 .editor-embed {
-  background: var(--color-code-bg);
-  border-radius: 8px;
-  min-height: 300px;
   margin: 2rem auto;
   max-width: 800px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #888;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
+}
+
+.editor-embed sapl-code,
+.editor-embed sapl-demo {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 /* Feature grid */

@@ -13,25 +13,25 @@ title: SAPL
 </section>
 
 <div class="editor-embed">
-  <sapl-code>
-    <pre class="sapl-fallback"><code>policy "read only"
+<sapl-code>
+<pre class="sapl-fallback"><code>policy "read only"
 permit
   action == "read";</code></pre>
-  </sapl-code>
+</sapl-code>
 
-  <sapl-demo>
-    <pre class="sapl-fallback"><code>policy "example"
+<sapl-demo>
+<pre class="sapl-fallback"><code>policy "example"
 permit
   time.secondOf(&lt;time.now&gt;) % 5 &lt; 2;</code></pre>
-    <script type="sapl/policy">
+<script type="sapl/policy">
 policy "example"
 permit
   time.secondOf(<time.now>) % 5 < 2;
-    </script>
-    <script type="sapl/subscription">
+</script>
+<script type="sapl/subscription">
 {"subject":"alice","action":"read","resource":"document"}
-    </script>
-  </sapl-demo>
+</script>
+</sapl-demo>
 </div>
 
 <script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
