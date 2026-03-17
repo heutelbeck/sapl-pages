@@ -101,9 +101,17 @@ jobs:
                 # This ensures that the appropriate version is set and displayed as the default in the select box
                 if [ $folder_name == $folder_name2 ]
                 then
-                  echo "<option value=\"https://sapl.io/docs/$folder_name2\" selected>$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                  if [ "$folder_name2" == "2.0.1" ]; then
+                    echo "<option value=\"https://sapl.io/docs/2.0.1/sapl-reference.html\" selected>2.0.1</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                  else
+                    echo "<option value=\"https://sapl.io/docs/$folder_name2/\" selected>$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                  fi
                 else
-                  echo "<option value=\"https://sapl.io/docs/$folder_name2\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                  if [ "$folder_name2" == "2.0.1" ]; then
+                    echo "<option value=\"https://sapl.io/docs/2.0.1/sapl-reference.html\">2.0.1</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                  else
+                    echo "<option value=\"https://sapl.io/docs/$folder_name2/\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                  fi
                 fi
               done
               echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html
