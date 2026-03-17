@@ -84,7 +84,11 @@ jobs:
           find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
             # Create the links in the documentation page
-            echo "## [Latest Release $folder_name](/docs/$folder_name)" >> ./documentation.md
+            if [[ "$folder_name" == *"-SNAPSHOT"* ]]; then
+              echo "## [Development Snapshot $folder_name](/docs/$folder_name)" >> ./documentation.md
+            else
+              echo "## [Release $folder_name](/docs/$folder_name)" >> ./documentation.md
+            fi
           
             if [ "${folder_name}" != "2.0.1" ]
             then
