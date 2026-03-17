@@ -1,0 +1,47 @@
+---
+layout: null
+permalink: /embed-test
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAPL Embed Test</title>
+    <link rel="icon" href="data:,">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        h1 { color: #89b4fa; }
+    </style>
+</head>
+<body>
+
+<h1>SAPL Playground Embed Test</h1>
+<p>This page tests embedding the interactive SAPL playground on sapl.io.</p>
+
+<sapl-demo>
+    <script type="sapl/policy">
+policy "example"
+permit
+  time.secondOf(<time.now>) % 5 < 2;
+    </script>
+    <script type="sapl/subscription">
+{
+  "subject": "alice",
+  "action": "read",
+  "resource": "document"
+}
+    </script>
+</sapl-demo>
+
+<script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
+
+</body>
+</html>
