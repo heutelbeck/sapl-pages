@@ -1,8 +1,7 @@
 ---
-layout: page
-title: Data Privacy
+layout: sapl
+title: Data Privacy - SAPL
 permalink: /privacy
-exclude: true
 ---
 
 # Privacy Policy

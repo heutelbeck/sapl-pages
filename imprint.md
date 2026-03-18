@@ -1,8 +1,7 @@
 ---
-layout: page
-title: Imprint
+layout: sapl
+title: Imprint - SAPL
 permalink: /imprint
-exclude: true
 ---
 
 # Site Notice
