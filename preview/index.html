@@ -169,7 +169,7 @@ async def get_export_data(request, pilot_id: str, sequence_id: str):
 
 <section class="section">
   <h2>Test policies like you test code</h2>
-  <p>SAPL is the only authorization engine with a dedicated policy testing language. Mock external data sources, emit streaming attribute changes, and assert that decisions update correctly — all declaratively. No boilerplate, no test infrastructure, no polling loops.</p>
+  <p>SAPL is the only authorization engine with a dedicated policy testing language. Mock external data sources, emit streaming attribute changes, and assert that decisions update correctly — all declaratively. Run tests from the CLI, enforce coverage thresholds as quality gates in CI/CD pipelines, and generate coverage reports — no JVM build tool required.</p>
 
   <div class="testing-demo">
     <div class="testing-columns">
@@ -199,26 +199,37 @@ permit
         </div>
       </div>
     </div>
-    <div class="testing-output">
-      <div class="testing-label">Output</div>
-<pre class="test-output"><code><span class="test-pass">PASS</span> permit on emergency
-  <span class="test-pass">PASS</span> decision changes when emergency status changes
-       <span class="test-dim">given</span>  "status".&lt;mqtt.messages&gt; emits "emergency"
-       <span class="test-dim">when</span>   "user" attempts "read" on "time"
-       <span class="test-ok">expect PERMIT .................. ok</span>
-       <span class="test-dim">then</span>   "statusMock" emits "ok"
-       <span class="test-ok">expect NOT_APPLICABLE .......... ok</span>
-       <span class="test-dim">then</span>   "statusMock" emits "emergency"
-       <span class="test-ok">expect PERMIT .................. ok</span>
+    <div class="testing-output terminal">
+<pre class="test-output"><code><span class="term-prompt">&gt;</span> sapl test --dir policies --testdir tests --policy-hit-ratio 100 --condition-hit-ratio 100
 
-<span class="test-summary">3 expectations, 3 passed, 0 failed</span></code></pre>
+<span class="term-bold">  permit_on_emergency.sapltest</span>
+<span class="term-bold">    Permit access only during emergency status</span>
+      <span class="test-pass">PASS</span>  permit when MQTT status is emergency  <span class="test-dim">13ms</span>
+      <span class="test-pass">PASS</span>  not-applicable when MQTT status is ok  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  indeterminate when MQTT PIP returns error  <span class="test-dim">1ms</span>
+<span class="term-bold">    Policy scope - only read action on time resource</span>
+      <span class="test-pass">PASS</span>  not-applicable for write action even during emergency  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  not-applicable for delete action even during emergency  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  not-applicable for read on different resource  <span class="test-dim">1ms</span>
+<span class="term-bold">    Streaming - decision changes dynamically with MQTT status</span>
+      <span class="test-pass">PASS</span>  permit then not-applicable as status changes  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  not-applicable then permit as status changes  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  alternating decisions with multiple status changes  <span class="test-dim">1ms</span>
+
+Tests:  <span class="test-pass-bold">10 passed</span>, 10 total
+Time:   <span class="test-dim">27ms</span>
+Coverage:
+  Policy Hit Ratio    <span class="test-pass-bold">100.00%</span> >= 100.00%  <span class="test-pass">PASS</span>
+  Condition Hit Ratio <span class="test-pass-bold">100.00%</span> >= 100.00%  <span class="test-pass">PASS</span>
+</code></pre>
     </div>
   </div>
 </section>
 
 <section class="section">
   <h2>TODO: Scenarios</h2>
-  <p>TODO: AI Security / Policy Testing / Spring Security / Data-Level Security</p>
+  <p>TODO: AI Security / Spring Security / Data-Level Security / IoT &amp; MQTT</p>
+  <p>TODO: Scriptable authorization — <code>sapl check</code> as a shell-level authorization gate. Exit code 0 = PERMIT, non-zero = deny. Use in shell scripts, cron jobs, CI/CD pipelines, Makefiles, git hooks — anywhere a command-line decision is needed.</p>
 </section>
 
 <section class="section">
@@ -227,18 +238,23 @@ permit
 
   <div class="features">
     <div class="feature">
-      <h3>Energy infrastructure</h3>
-      <p><a href="https://vpp4islands.eu/">VPP4Islands</a> uses SAPL to secure virtual power plant operations across European island energy systems, protecting grid control and distributed energy resource management.</p>
-      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/957852">Horizon 2020 Grant 957852</a></p>
+      <h3><a href="https://vpp4islands.eu/"><img src="/assets/vpp4islands-logo.png" alt="VPP4Islands" class="project-logo"></a></h3>
+      <p>SAPL secures virtual power plant operations across European island energy systems, protecting grid control and distributed energy resource management.</p>
+      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/957852">Horizon 2020 &mdash; Grant Agreement No. 957852</a></p>
     </div>
     <div class="feature">
-      <h3>Mental health data</h3>
-      <p><a href="https://www.horizonsmile.eu/">SMILE</a> uses SAPL to protect sensitive clinical data in a multi-centre mental health study for young people across seven European countries.</p>
-      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/101080923">Horizon Europe Grant 101080923</a></p>
+      <h3><a href="https://www.horizonsmile.eu/"><img src="/assets/smile-logo.png" alt="SMILE" class="project-logo"></a></h3>
+      <p>SAPL protects sensitive clinical data in a multi-centre mental health study for young people across seven European countries.</p>
+      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/101080923">Horizon Europe &mdash; Grant Agreement No. 101080923</a></p>
     </div>
     <div class="feature">
       <h3>Open source, self-hosted</h3>
       <p>Apache 2.0 licensed. No vendor lock-in, no external dependencies, no data leaves your infrastructure. Run the PDP embedded in your application or as a standalone server.</p>
     </div>
+  </div>
+
+  <div class="eu-funding">
+    <img src="/assets/eu-flag-84x57.png" alt="Funded by the European Union" class="eu-flag">
+    <p>SAPL has received funding from the European Union's Horizon 2020 research and innovation programme under Grant Agreement No. <a href="https://cordis.europa.eu/project/id/957852">957852</a> (VPP4Islands) and from the European Union's Horizon Europe programme under Grant Agreement No. <a href="https://cordis.europa.eu/project/id/101080923">101080923</a> (SMILE). The views expressed are those of the authors and do not necessarily reflect those of the European Commission.</p>
   </div>
 </section>
