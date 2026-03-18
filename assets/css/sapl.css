@@ -773,7 +773,7 @@ p + p { margin-top: 1rem; }
 /* Flow container — always dark */
 .sd-flow {
   display: grid;
-  grid-template-columns: 1fr 28px 1fr 28px 1.6fr;
+  grid-template-columns: 0.8fr 28px 0.6fr 28px 1.8fr;
   grid-template-rows: 1fr;
   border: 1px solid var(--color-border);
   border-top: none;
