@@ -31,26 +31,53 @@
           <a href="/scenarios/" class="nav-dropdown-trigger">Scenarios</a>
           <div class="nav-dropdown-menu">
             <div class="nav-dropdown-menu-inner">
-            <a href="/scenarios/spring/" class="nav-dropdown-item">
-              <strong>Spring Security</strong>
-              <span>ABAC for Spring Boot with @PreEnforce</span>
-            </a>
-            <a href="/scenarios/ai-mcp/" class="nav-dropdown-item">
-              <strong>AI Security</strong>
-              <span>RAG, MCP tool access, human-in-the-loop</span>
-            </a>
-            <a href="/scenarios/" class="nav-dropdown-item">
-              <strong>Policy Testing</strong>
-              <span>SAPLTest DSL, coverage, CI/CD gates</span>
-            </a>
-            <a href="/scenarios/" class="nav-dropdown-item">
-              <strong>Data-Level Security</strong>
-              <span>JPA, R2DBC, MongoDB row-level filtering</span>
-            </a>
-            <a href="/scenarios/" class="nav-dropdown-item">
-              <strong>Multi-Language</strong>
-              <span>Python, Node.js, .NET integrations</span>
-            </a>
+              <div class="nav-dropdown-scroll">
+
+              <div class="nav-dropdown-group-label">AI Security</div>
+              <a href="/scenarios/ai-rag/" class="nav-dropdown-item">
+                <strong>RAG Pipeline</strong>
+                <span>Document-level access control for retrieval-augmented generation</span>
+              </a>
+              <a href="/scenarios/ai-mcp/" class="nav-dropdown-item">
+                <strong>MCP Tool Access</strong>
+                <span>Per-tool authorization for Spring AI MCP servers</span>
+              </a>
+              <a href="/scenarios/ai-hitl/" class="nav-dropdown-item">
+                <strong>Human-in-the-Loop</strong>
+                <span>Policy-driven approval workflows for sensitive operations</span>
+              </a>
+              <a href="/scenarios/ai-fastmcp/" class="nav-dropdown-item">
+                <strong>FastMCP (Python)</strong>
+                <span>Authorize tools, resources, and prompts in Python MCP servers</span>
+              </a>
+
+              <div class="nav-dropdown-group-label">Spring Security</div>
+              <a href="/scenarios/spring/" class="nav-dropdown-item">
+                <strong>Spring Boot ABAC</strong>
+                <span>Method-level enforcement with @PreEnforce and @PostEnforce</span>
+              </a>
+
+              <div class="nav-dropdown-group-label">Policy Testing</div>
+              <a href="/scenarios/" class="nav-dropdown-item">
+                <strong>SAPLTest DSL</strong>
+                <span>Declarative tests, coverage reporting, CI/CD quality gates</span>
+              </a>
+
+              <div class="nav-dropdown-group-label">Data-Level Security</div>
+              <a href="/scenarios/" class="nav-dropdown-item">
+                <strong>Query Rewriting</strong>
+                <span>Row-level filtering with JPA, R2DBC, and MongoDB</span>
+              </a>
+
+              <div class="nav-dropdown-group-label">Multi-Language</div>
+              <a href="/scenarios/" class="nav-dropdown-item">
+                <strong>Python, Node.js, .NET</strong>
+                <span>FastAPI, Django, Flask, NestJS, Express, ASP.NET Core</span>
+              </a>
+
+              <a href="/scenarios/" class="nav-dropdown-footer">View all scenarios</a>
+
+              </div>
             </div>
           </div>
         </div>
