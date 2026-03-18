@@ -12,13 +12,12 @@ FastMCP is the standard Python framework for building MCP servers. SAPL's Python
 - Per-tool authorization with `@pre_enforce` decorators on FastMCP tool handlers
 - Per-resource and per-prompt access control
 - Constraint handlers for response transformation (redaction, filtering)
-- Streaming enforcement modes (enforce_till_denied, enforce_drop_while_denied, enforce_recoverable_if_denied)
-- Remote PDP via HTTP with Server-Sent Events for streaming decisions
+- Remote PDP via HTTP for authorization decisions
 - JWT/ABAC integration for user identity
 
 ### Architecture
 
-The FastMCP server connects to a remote SAPL Node PDP via the HTTP API. Authorization decisions stream over Server-Sent Events. The `@pre_enforce` decorator intercepts each MCP operation, builds an authorization subscription from the request context, and enforces the decision including any obligations. No proxy, no sidecar. The authorization logic is part of the server application.
+The FastMCP server connects to a remote SAPL Node PDP via the HTTP API. The `@pre_enforce` decorator intercepts each MCP operation, builds an authorization subscription from the request context, and enforces the decision including any obligations. No proxy, no sidecar. The authorization logic is part of the server application.
 
 ### Run the demo
 
