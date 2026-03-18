@@ -1,40 +1,36 @@
 // custom SCSS (or CSS) goes here
-// Colors aligned with sapl-vaadin-theme
-$sapl-bg: #1b1e21;
-$sapl-surface: #222629;
-$sapl-accent: #3fa09e;
-$sapl-border: #363a3e;
+// Uses theme-aware variables from the active color scheme (dark.scss or light.scss)
 
 .selectbox {
 	cursor: pointer;
 	outline: 0;
-	color: #e3e4e6;
+	color: $body-text-color;
 	font-size: 12px;
 	padding: 3px 10px;
 	min-width: 128px;
 	border-radius: 3px;
-	border: 1px solid $sapl-border;
-	background-color: $sapl-surface;
+	border: 1px solid $border-color;
+	background-color: $search-background-color;
 }
 .selectbox:hover, .selectbox:focus {
-	background-color: $sapl-surface;
-	color: #e3e4e6;
-	border: 1px solid $sapl-accent;
+	background-color: $search-background-color;
+	color: $body-heading-color;
+	border: 1px solid $btn-primary-color;
 }
 // Mermaid diagram background
 .language-mermaid svg {
-  background-color: $sapl-surface !important;
+  background-color: $code-background-color !important;
   padding: 1rem;
   border-radius: 4px;
 }
 
 pre:has(.language-mermaid) {
-  background-color: $sapl-surface !important;
+  background-color: $code-background-color !important;
   padding: 0;
 }
 
 code.language-mermaid {
-  background-color: $sapl-surface !important;
+  background-color: $code-background-color !important;
   display: block;
 }
 .language-mermaid .edgeLabel text,
