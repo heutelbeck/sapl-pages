@@ -551,8 +551,11 @@ main {
   justify-content: center;
   text-decoration: none;
   opacity: 0.6;
-  transition: opacity 150ms ease;
-  height: 32px;
+  transition: opacity 150ms ease, box-shadow 150ms ease;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba(128, 128, 128, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .logo-grid a:hover { opacity: 1; }
