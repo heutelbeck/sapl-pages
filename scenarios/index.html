@@ -1,0 +1,48 @@
+---
+layout: sapl
+title: Scenarios - SAPL
+---
+
+<section class="section">
+  <h2>Scenarios</h2>
+  <p>Step-by-step guides for common authorization patterns. Each scenario includes working code, policies, and a runnable demo.</p>
+
+  <div class="features">
+    <div class="feature">
+      <h3><a href="/scenarios/spring/">Spring Security</a></h3>
+      <p>Secure a Spring Boot application with attribute-based access control. Method-level enforcement with @PreEnforce and @PostEnforce, embedded PDP, reactive policies.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-rag/">RAG Pipeline</a></h3>
+      <p>Document-level access control in retrieval-augmented generation. Filter and redact retrieved content before it reaches the LLM.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-mcp/">MCP Tool Access</a></h3>
+      <p>Per-tool authorization for Spring AI MCP servers. Control which tools agents can call and transform tool responses.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-hitl/">Human-in-the-Loop</a></h3>
+      <p>Policy-driven approval workflows for sensitive AI operations. The policy decides when human confirmation is needed.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-fastmcp/">FastMCP (Python)</a></h3>
+      <p>Authorize MCP tool calls, resources, and prompts inside a Python FastMCP server.</p>
+    </div>
+    <div class="feature">
+      <h3>Policy Testing</h3>
+      <p>Declarative policy tests with the SAPLTest DSL, coverage reporting, and CI/CD quality gates. Coming soon.</p>
+    </div>
+    <div class="feature">
+      <h3>Data-Level Security</h3>
+      <p>Row-level filtering with JPA, R2DBC, and MongoDB query rewriting. Transparent authorization at the data layer. Coming soon.</p>
+    </div>
+    <div class="feature">
+      <h3>Multi-Language</h3>
+      <p>Python (FastAPI, Django, Flask, Tornado), Node.js (NestJS, Express), and .NET integration patterns. Coming soon.</p>
+    </div>
+    <div class="feature">
+      <h3>Integration Patterns</h3>
+      <p>MQTT as real-time attribute source, OAuth2/JWT claims in policies, embedded vs remote PDP deployment. Coming soon.</p>
+    </div>
+  </div>
+</section>

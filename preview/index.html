@@ -53,6 +53,46 @@ obligation {
 <script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
 
 <section class="section">
+  <h2>Authorization for AI agents and MCP</h2>
+  <p>AI agents call tools, access resources, and act on behalf of users. Each of these operations needs authorization that goes beyond allow or deny. SAPL evaluates policies inside your MCP server or AI framework, with full access to the request context. Policies can allow a tool call while attaching obligations: redact sensitive fields from the response, log the access, require human approval above a threshold, or cap a parameter value.</p>
+
+  <div class="integration-tiers">
+    <div class="feature">
+      <h3>Framework-native</h3>
+      <p>Decorators and annotations run inside your <a href="/docs/latest/6_9_FastMCP/">FastMCP</a>, <a href="/docs/latest/6_3_Spring/">Spring AI</a>, or <a href="/docs/latest/6_4_NestJS/">NestJS</a> server. Authorization is part of the application, not an external proxy. No extra infrastructure to deploy or operate.</p>
+    </div>
+    <div class="feature">
+      <h3>Beyond allow/deny</h3>
+      <p>Every decision can carry obligations and advice. Filter tool responses, transform parameters, enforce audit trails, or trigger approval workflows. The constraint engine executes these automatically.</p>
+    </div>
+    <div class="feature">
+      <h3>Per-tool, per-resource, per-prompt</h3>
+      <p>Policies see the full MCP operation context: which tool, what parameters, which user, what secrets. <a href="/docs/latest/6_9_FastMCP/">Control tool visibility</a>, gate resource access, and constrain prompt arguments individually.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 2rem;">AI scenarios with working code</h3>
+  <div class="features">
+    <div class="feature">
+      <h3><a href="/scenarios/ai-rag/">RAG Pipeline</a></h3>
+      <p>Document-level access control in retrieval-augmented generation. Filter and redact retrieved content before it reaches the LLM.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-mcp/">MCP Tool Access</a></h3>
+      <p>Per-tool authorization for Spring AI MCP servers. Control which tools agents can call and transform tool responses via obligations.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-hitl/">Human-in-the-Loop</a></h3>
+      <p>Policy-driven approval workflows for sensitive AI operations. The policy decides when human confirmation is needed, not the code.</p>
+    </div>
+    <div class="feature">
+      <h3><a href="/scenarios/ai-fastmcp/">FastMCP (Python)</a></h3>
+      <p>Authorize MCP tool calls, resources, and prompts inside a Python FastMCP server. Decorators, streaming enforcement, JWT/ABAC.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <h2>Decisions that stay current</h2>
   <p>Every authorization engine evaluates a request and returns a decision, and SAPL handles that case with zero overhead. The difference is what happens when context changes. Traditional engines have no way to revise the decision, so the application enforces a stale result until the next explicit check. With SAPL, the application subscribes to decisions and the PDP pushes updates whenever underlying attributes change. This is event-driven rather than polling, which reduces both latency and resource utilization. Toggle the threat level below and watch.</p>
 
@@ -322,9 +362,24 @@ Coverage:
 </section>
 
 <section class="section">
-  <h2>TODO: Scenarios</h2>
-  <p>TODO: AI Security / Spring Security / Data-Level Security / IoT &amp; MQTT</p>
-  <p>TODO: Scriptable authorization. <code>sapl check</code> as a shell-level authorization gate. Exit code 0 = PERMIT, non-zero = deny. Use in shell scripts, cron jobs, CI/CD pipelines, Makefiles, git hooks. Anywhere a command-line decision is needed.</p>
+  <h2>Scenarios</h2>
+  <p>Step-by-step guides for common authorization patterns, each with working code and runnable demos.</p>
+
+  <div class="features">
+    <div class="feature">
+      <h3><a href="/scenarios/spring/">Spring Security</a></h3>
+      <p>Secure a Spring Boot application with attribute-based access control. Method-level enforcement, embedded PDP, reactive policies.</p>
+    </div>
+    <div class="feature">
+      <h3>AI Security</h3>
+      <p>RAG pipeline authorization, MCP tool access control, human-in-the-loop approval workflows for AI agent operations. Coming soon.</p>
+    </div>
+    <div class="feature">
+      <h3>Policy Testing</h3>
+      <p>Declarative policy tests with the SAPLTest DSL, coverage reporting, and CI/CD quality gates. Coming soon.</p>
+    </div>
+  </div>
+  <p style="margin-top: 1rem;"><a href="/scenarios/" style="color: var(--color-primary);">View all scenarios</a></p>
 </section>
 
 <section class="section">
