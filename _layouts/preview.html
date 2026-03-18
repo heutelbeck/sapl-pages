@@ -64,6 +64,54 @@
     window.addEventListener('pageshow', function(e) {
       if (e.persisted) syncTheme();
     });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var parent = this.closest('.code-tabs');
+        parent.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+        parent.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+        this.classList.add('active');
+        parent.querySelector('#tab-' + this.dataset.tab).classList.add('active');
+      });
+    });
+
+    // CodeMirror for tab code blocks — reuses the embed's loaded modules
+    (async function() {
+      var langModules = {};
+      async function getLang(name) {
+        if (langModules[name]) return langModules[name];
+        var mod;
+        if (name === 'java') mod = await import('https://esm.sh/@codemirror/lang-java');
+        else if (name === 'python') mod = await import('https://esm.sh/@codemirror/lang-python');
+        else if (name === 'javascript') mod = await import('https://esm.sh/@codemirror/lang-javascript');
+        else return null;
+        langModules[name] = mod;
+        return mod;
+      }
+
+      var [{EditorView, minimalSetup}, {oneDark}] = await Promise.all([
+        import('https://esm.sh/codemirror'),
+        import('https://esm.sh/@codemirror/theme-one-dark')
+      ]);
+
+      document.querySelectorAll('.cm-source').forEach(async function(pre) {
+        var code = pre.querySelector('code').textContent;
+        var lang = pre.closest('.tab-content').dataset.lang;
+        var extensions = [minimalSetup, oneDark, EditorView.editable.of(false)];
+
+        var langMod = await getLang(lang);
+        if (langMod) {
+          if (langMod.java) extensions.push(langMod.java());
+          else if (langMod.python) extensions.push(langMod.python());
+          else if (langMod.javascript) extensions.push(langMod.javascript({ typescript: true }));
+        }
+
+        var editorDiv = document.createElement('div');
+        pre.replaceWith(editorDiv);
+        new EditorView({ doc: code, extensions: extensions, parent: editorDiv });
+      });
+    })();
   </script>
 </body>
 </html>

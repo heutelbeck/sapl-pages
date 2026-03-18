@@ -71,8 +71,46 @@ obligation {
 </section>
 
 <section class="section">
-  <h2>TODO: Multi-Language</h2>
-  <p>TODO: Tabbed code examples — Spring Boot / Python / NestJS / .NET</p>
+  <h2>Use it with any stack</h2>
+  <p>SAPL provides SDKs with idiomatic framework integration. One annotation or decorator to enforce policies — same authorization model everywhere.</p>
+  <div class="code-tabs">
+    <div class="tab-bar">
+      <button class="tab active" data-tab="spring" data-lang="java">Spring</button>
+      <button class="tab" data-tab="fastapi" data-lang="python">FastAPI</button>
+      <button class="tab" data-tab="nestjs" data-lang="javascript">NestJS</button>
+      <button class="tab" data-tab="dotnet" data-lang="java">.NET</button>
+      <button class="tab" data-tab="django" data-lang="python">Django</button>
+    </div>
+    <div class="tab-content active" id="tab-spring" data-lang="java">
+<pre class="cm-source"><code>@PreEnforce(action = "'read'", resource = "'patient'")
+public Patient getPatient(@PathVariable String id) {
+    return patientRepository.findById(id);
+}</code></pre>
+    </div>
+    <div class="tab-content" id="tab-fastapi" data-lang="python">
+<pre class="cm-source"><code>@pre_enforce(action="read", resource="patient")
+async def get_patient(patient_id: str):
+    return patient_service.find_by_id(patient_id)</code></pre>
+    </div>
+    <div class="tab-content" id="tab-nestjs" data-lang="javascript">
+<pre class="cm-source"><code>@PreEnforce({ action: 'read', resource: 'patient' })
+async getPatient(@Param('id') id: string) {
+    return this.patientService.findById(id);
+}</code></pre>
+    </div>
+    <div class="tab-content" id="tab-dotnet" data-lang="java">
+<pre class="cm-source"><code>[PreEnforce(Action = "read", Resource = "patient")]
+public async Task&lt;Patient&gt; GetPatient(string id)
+{
+    return await _patientService.FindByIdAsync(id);
+}</code></pre>
+    </div>
+    <div class="tab-content" id="tab-django" data-lang="python">
+<pre class="cm-source"><code>@pre_enforce(action="read", resource="patient")
+async def get_patient(request, patient_id):
+    return await patient_service.find_by_id(patient_id)</code></pre>
+    </div>
+  </div>
 </section>
 
 <section class="section">

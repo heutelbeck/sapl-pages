@@ -310,6 +310,74 @@ main {
   line-height: 1.5;
 }
 
+/* Code tabs */
+.code-tabs {
+  margin-top: 1.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-code-bg);
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+}
+
+.tab:hover { color: var(--color-text); }
+
+.tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tab-content {
+  display: none;
+  padding: 0;
+}
+
+.tab-content.active { display: block; }
+
+/* Fallback before CodeMirror loads */
+.tab-content pre.cm-source {
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--color-code-bg);
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.tab-content pre.cm-source code {
+  font-family: inherit;
+  background: none;
+}
+
+/* CodeMirror in tabs */
+.tab-content .cm-editor {
+  font-size: 0.85rem;
+  border-radius: 0;
+}
+
 /* Footer */
 .site-footer {
   border-top: 1px solid var(--color-border);
