@@ -232,25 +232,6 @@ time zone is set this way and will not emit anything if no changes are made.
 
 ## localTimeIsBefore
 
-```<time.localTimeIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.localTimeIsBefore(checkpoint)>``` ```false```, if the current time of the day without date is after the
-```checkpoint``` time (e.g., "17:00") in the clock's configured timezone and ```true``` otherwise.
-This is examined relative to the current day. I.e., the answer toggles at "00:00".
-This *attribute is not polling the clock* and should be used instead of doing manual comparisons against
-```<time.now>```, which would poll the clock regularly.
-
-Example:
-```sapl
-policy "time example"
-permit action == "work";
-  <time.localTimeIsBefore(subject.endTimeOfShift)>;
-```
-
-
----
-
-## localTimeIsBefore
-
 ```<time.localTimeIsBefore(TEXT checkpoint, TEXT timezone)>``` is an environment attribute stream and takes no
 left-hand arguments.
 ```<time.localTimeIsBefore(checkpoint, timezone)>``` ```false```, if the current time of the day without date is
@@ -267,18 +248,20 @@ permit action == "work";
 
 ---
 
-## weekdayIn
+## localTimeIsBefore
 
-```<time.weekdayIn(ARRAY days)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.weekdayIn(days)>``` emits ```true``` if the current day of the week (in the clock's configured timezone)
-is contained in the ```days``` array and ```false``` otherwise. The array contains day names as strings
-(e.g., ```["MONDAY", "WEDNESDAY", "FRIDAY"]```). The attribute automatically re-evaluates at midnight boundaries.
+```<time.localTimeIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.localTimeIsBefore(checkpoint)>``` ```false```, if the current time of the day without date is after the
+```checkpoint``` time (e.g., "17:00") in the clock's configured timezone and ```true``` otherwise.
+This is examined relative to the current day. I.e., the answer toggles at "00:00".
+This *attribute is not polling the clock* and should be used instead of doing manual comparisons against
+```<time.now>```, which would poll the clock regularly.
 
 Example:
 ```sapl
-policy "weekday access"
+policy "time example"
 permit action == "work";
-  <time.weekdayIn(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])>;
+  <time.localTimeIsBefore(subject.endTimeOfShift)>;
 ```
 
 
@@ -300,35 +283,18 @@ permit action == "work";
 
 ---
 
-## monthIn
+## weekdayIn
 
-```<time.monthIn(ARRAY months, TEXT timezone)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.monthIn(months, timezone)>``` emits ```true``` if the current month in the given ```timezone```
-(e.g., "Europe/Berlin") is contained in the ```months``` array and ```false``` otherwise.
-
-Example:
-```sapl
-policy "summer access"
-permit action == "vacation";
-  <time.monthIn(["JUNE", "JULY", "AUGUST"], "Europe/Berlin")>;
-```
-
-
----
-
-## monthIn
-
-```<time.monthIn(ARRAY months)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.monthIn(months)>``` emits ```true``` if the current month (in the clock's configured timezone) is
-contained in the ```months``` array and ```false``` otherwise. The array accepts month names
-(e.g., ```"JANUARY"```) or numbers (e.g., ```1``` for January). The attribute automatically re-evaluates
-at month boundaries.
+```<time.weekdayIn(ARRAY days)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.weekdayIn(days)>``` emits ```true``` if the current day of the week (in the clock's configured timezone)
+is contained in the ```days``` array and ```false``` otherwise. The array contains day names as strings
+(e.g., ```["MONDAY", "WEDNESDAY", "FRIDAY"]```). The attribute automatically re-evaluates at midnight boundaries.
 
 Example:
 ```sapl
-policy "summer access"
-permit action == "vacation";
-  <time.monthIn(["JUNE", "JULY", "AUGUST"])>;
+policy "weekday access"
+permit action == "work";
+  <time.weekdayIn(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])>;
 ```
 
 
@@ -365,6 +331,40 @@ Example:
 policy "weekend access"
 permit action == "relax";
   <time.dayOfWeekBetween("SATURDAY", "SUNDAY")>;
+```
+
+
+---
+
+## monthIn
+
+```<time.monthIn(ARRAY months)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.monthIn(months)>``` emits ```true``` if the current month (in the clock's configured timezone) is
+contained in the ```months``` array and ```false``` otherwise. The array accepts month names
+(e.g., ```"JANUARY"```) or numbers (e.g., ```1``` for January). The attribute automatically re-evaluates
+at month boundaries.
+
+Example:
+```sapl
+policy "summer access"
+permit action == "vacation";
+  <time.monthIn(["JUNE", "JULY", "AUGUST"])>;
+```
+
+
+---
+
+## monthIn
+
+```<time.monthIn(ARRAY months, TEXT timezone)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.monthIn(months, timezone)>``` emits ```true``` if the current month in the given ```timezone```
+(e.g., "Europe/Berlin") is contained in the ```months``` array and ```false``` otherwise.
+
+Example:
+```sapl
+policy "summer access"
+permit action == "vacation";
+  <time.monthIn(["JUNE", "JULY", "AUGUST"], "Europe/Berlin")>;
 ```
 
 
