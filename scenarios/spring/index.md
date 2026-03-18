@@ -7,7 +7,6 @@ title: "Spring Security with SAPL - SAPL Scenarios"
 
 Attribute-based Access Control (ABAC) is an expressive access control model. A system can use ABAC to determine if a subject is permitted to perform a specific action on a resource. In this tutorial, you will learn how to secure services and APIs of a Spring Boot application using the SAPL Engine to implement ABAC. The tutorial assumes a basic familiarity with the Spring application development process.
 
-<!--more-->
 
 ![abac.png](/assets/tutorial_02/abac.png)
 
