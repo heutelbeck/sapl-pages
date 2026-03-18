@@ -115,7 +115,7 @@ body {
 }
 
 .logo img {
-  height: 52px;
+  height: 56px;
   width: auto;
 }
 
@@ -123,20 +123,17 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
-}
-
-.logo-text {
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .logo-subtitle {
   display: block;
-  font-size: 0.6rem;
-  font-weight: 400;
+  font-size: 0.65rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
 }
 
 /* Logo theme swap — light is default, dark only with explicit attribute */
@@ -635,6 +632,97 @@ h2 {
 
 h3 { font-size: 1.1rem; }
 p + p { margin-top: 1rem; }
+
+/* ── Media page ── */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.media-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+}
+
+.youtube-embed {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.youtube-embed iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+.media-caption {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.podcast-links {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.podcast-link {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: all 150ms;
+}
+.podcast-link:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg-card);
+}
+
+.podcast-card {
+  max-width: 640px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.publications {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.publication {
+  padding: 1.25rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.pub-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
+}
+
+.pub-meta {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
 
 /* ── Streaming Demo ── */
 .sd-code-panels {
