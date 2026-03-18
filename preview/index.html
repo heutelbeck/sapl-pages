@@ -82,33 +82,63 @@ obligation {
       <button class="tab" data-tab="django" data-lang="python">Django</button>
     </div>
     <div class="tab-content active" id="tab-spring" data-lang="java">
-<pre class="cm-source"><code>@PreEnforce(action = "'read'", resource = "'patient'")
-public Patient getPatient(@PathVariable String id) {
-    return patientRepository.findById(id);
+<pre class="cm-source"><code>// SpEL expressions reference method parameters with #name
+@PreEnforce(
+    action   = "'notifyParticipant'",
+    resource = "{'recipient': #recipient, 'message': #message}"
+)
+public String notifyParticipant(String recipient, String message) {
+    return notificationService.send(recipient, message);
 }</code></pre>
     </div>
     <div class="tab-content" id="tab-fastapi" data-lang="python">
-<pre class="cm-source"><code>@pre_enforce(action="read", resource="patient")
-async def get_patient(patient_id: str):
-    return patient_service.find_by_id(patient_id)</code></pre>
+<pre class="cm-source"><code># Lambda builds resource from route params and JWT secrets
+@pre_enforce(
+    action="exportData",
+    resource=lambda ctx: {
+        "pilotId": ctx.params.get("pilot_id", ""),
+        "sequenceId": ctx.params.get("sequence_id", ""),
+    },
+    secrets=lambda ctx: {"jwt": ctx.request.state.token},
+)
+async def get_export_data(pilot_id: str, sequence_id: str):
+    return {"pilotId": pilot_id, "data": "export-payload"}</code></pre>
     </div>
     <div class="tab-content" id="tab-nestjs" data-lang="javascript">
-<pre class="cm-source"><code>@PreEnforce({ action: 'read', resource: 'patient' })
-async getPatient(@Param('id') id: string) {
-    return this.patientService.findById(id);
+<pre class="cm-source"><code>// Arrow function accesses return value after execution
+@PostEnforce({
+    action: 'readRecord',
+    resource: (ctx) =&gt; ({
+        type: 'record',
+        data: ctx.returnValue,
+    }),
+})
+@Get('record/:id')
+getRecord(@Param('id') id: string) {
+    return this.records.find(r =&gt; r.id === id);
 }</code></pre>
     </div>
     <div class="tab-content" id="tab-dotnet" data-lang="java">
-<pre class="cm-source"><code>[PreEnforce(Action = "read", Resource = "patient")]
-public async Task&lt;Patient&gt; GetPatient(string id)
+<pre class="cm-source"><code>// ISubscriptionCustomizer builds the subscription programmatically
+[HttpGet("exportData/{pilotId}/{sequenceId}")]
+[PreEnforce(Action = "exportData", Customizer = typeof(ExportCustomizer))]
+public IActionResult GetExportData(string pilotId, string sequenceId)
 {
-    return await _patientService.FindByIdAsync(id);
+    return Ok(new { pilotId, sequenceId, data = "export-payload" });
 }</code></pre>
     </div>
     <div class="tab-content" id="tab-django" data-lang="python">
-<pre class="cm-source"><code>@pre_enforce(action="read", resource="patient")
-async def get_patient(request, patient_id):
-    return await patient_service.find_by_id(patient_id)</code></pre>
+<pre class="cm-source"><code># Lambda builds resource from route params, with JWT secrets
+@pre_enforce(
+    action="exportData",
+    resource=lambda ctx: {
+        "pilotId": ctx.params.get("pilot_id", ""),
+        "sequenceId": ctx.params.get("sequence_id", ""),
+    },
+    secrets=lambda ctx: {"jwt": getattr(ctx.request, "sapl_token", None)},
+)
+async def get_export_data(request, pilot_id: str, sequence_id: str):
+    return JsonResponse({"pilotId": pilot_id, "data": "export-payload"})</code></pre>
     </div>
   </div>
 </section>

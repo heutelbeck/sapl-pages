@@ -78,10 +78,11 @@
 
     // CodeMirror for all code blocks — reuses the embed's loaded modules
     (async function() {
-      var [{EditorView, minimalSetup}, {StreamLanguage}, {oneDark}] = await Promise.all([
+      var [{EditorView, minimalSetup}, {StreamLanguage}, {oneDark}, {lineNumbers}] = await Promise.all([
         import('https://esm.sh/codemirror'),
         import('https://esm.sh/@codemirror/language'),
-        import('https://esm.sh/@codemirror/theme-one-dark')
+        import('https://esm.sh/@codemirror/theme-one-dark'),
+        import('https://esm.sh/@codemirror/view')
       ]);
 
       // SAPL language mode — aligned with SAPLLexer.g4
@@ -151,7 +152,7 @@
         var code = pre.querySelector('code').textContent;
         var container = pre.closest('[data-lang]');
         var lang = container ? container.dataset.lang : null;
-        var extensions = [minimalSetup, oneDark, EditorView.editable.of(false)];
+        var extensions = [minimalSetup, oneDark, lineNumbers(), EditorView.editable.of(false)];
 
         // Check for built-in SAPL/SAPLTest modes first
         var builtinExt = getLangExtension(lang);

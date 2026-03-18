@@ -376,6 +376,12 @@ main {
 .tab-content .cm-editor {
   font-size: 0.85rem;
   border-radius: 0;
+  padding: 0.5rem 0;
+}
+
+.tab-content .cm-gutters {
+  background: transparent;
+  border-right: none;
 }
 
 /* Test output */
@@ -439,7 +445,16 @@ main {
 
 .testing-code pre.cm-source code { font-family: inherit; background: none; }
 
-.testing-code .cm-editor { font-size: 0.8rem; border-radius: 0; }
+.testing-code .cm-editor {
+  font-size: 0.8rem;
+  border-radius: 0;
+  padding: 0.25rem 0;
+}
+
+.testing-code .cm-gutters {
+  background: transparent;
+  border-right: none;
+}
 
 .testing-output {
   border: 1px solid var(--color-border);
