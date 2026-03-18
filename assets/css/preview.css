@@ -522,6 +522,54 @@ main {
   margin-bottom: 0.5rem;
 }
 
+/* Partner logos */
+.partner-logos {
+  margin-top: 2rem;
+}
+
+.partner-logos h3 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.25rem;
+}
+
+.logo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem 2.5rem;
+}
+
+.logo-grid a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+  height: 32px;
+}
+
+.logo-grid a:hover { opacity: 1; }
+
+.logo-grid img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-text-fallback {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
 /* EU funding acknowledgment */
 .eu-funding {
   display: flex;
