@@ -21,7 +21,8 @@ a resource URL.
 | Policy syntax | Meaning |
 |---|---|
 | `<http.get(request)>` | Environment attribute, HTTP GET with request settings. |
-| `"https://api.example.com".<http.get(request)>` | Entity attribute, URL used as `baseUrl`. |
+| `"https://api.example.com".<http.get>` | Entity attribute, HTTP GET with default settings. |
+| `"https://api.example.com".<http.get(request)>` | Entity attribute, URL used as `baseUrl`, custom settings. |
 | `<http.post(request)>` | Environment attribute, HTTP POST. |
 | `<http.websocket(request)>` | Environment attribute, WebSocket connection. |
 
@@ -135,6 +136,32 @@ endpoints result in an error value.
 
 ## get
 
+```(TEXT resourceUrl).<get(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP GET
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.get({ })>.status == "HEALTHY";
+```
+
+
+---
+
+## get
+
+```(TEXT resourceUrl).<get>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP GET request with default settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.get>.status == "HEALTHY";
+```
 
 
 ---
@@ -147,6 +174,25 @@ endpoints result in an error value.
 
 ## put
 
+```(TEXT resourceUrl).<put>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP PUT request with default settings.
+
+
+---
+
+## put
+
+```(TEXT resourceUrl).<put(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP PUT
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.put({ "body": "\"test\"" })>.status == "OK";
+```
 
 
 ---
@@ -159,6 +205,17 @@ endpoints result in an error value.
 
 ## delete
 
+```(TEXT resourceUrl).<delete(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP DELETE
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.delete({})> != undefined;
+```
 
 
 ---
@@ -169,8 +226,35 @@ endpoints result in an error value.
 
 ---
 
+## delete
+
+```(TEXT resourceUrl).<delete>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP DELETE request with default settings.
+
+
+---
+
 ## patch
 
+```(TEXT resourceUrl).<patch(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP PATCH
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.patch({ "body": "\"test\"" })>.status == "OK";
+```
+
+
+---
+
+## patch
+
+```(TEXT resourceUrl).<patch>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP PATCH request with default settings.
 
 
 ---
@@ -189,6 +273,33 @@ endpoints result in an error value.
 
 ## post
 
+```(TEXT resourceUrl).<post(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP POST
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.post({ "body": "\"test\"" })>.status == "OK";
+```
+
+
+---
+
+## post
+
+```(TEXT resourceUrl).<post>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP POST request with default settings.
+
+
+---
+
+## websocket
+
+```(TEXT resourceUrl).<websocket>``` is an attribute of the resource identified by the ```resourceUrl```.
+Connects to a WebSocket with default settings.
 
 
 ---
@@ -201,6 +312,18 @@ endpoints result in an error value.
 
 ## websocket
 
+```(TEXT resourceUrl).<websocket(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and connects to a Websocket and emits events
+as sent by the server. Upon connection, the ```body``` of the settings is sent to the server.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = { "body": "message" };
+  "https://example.com/status".<http.websocket(request)>.health == "GOOD";
+```
 
 
 ---
