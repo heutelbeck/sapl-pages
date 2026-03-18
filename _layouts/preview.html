@@ -76,8 +76,59 @@
       });
     });
 
-    // CodeMirror for tab code blocks — reuses the embed's loaded modules
+    // CodeMirror for all code blocks — reuses the embed's loaded modules
     (async function() {
+      var [{EditorView, minimalSetup}, {StreamLanguage}, {oneDark}] = await Promise.all([
+        import('https://esm.sh/codemirror'),
+        import('https://esm.sh/@codemirror/language'),
+        import('https://esm.sh/@codemirror/theme-one-dark')
+      ]);
+
+      // SAPL language mode — aligned with SAPLLexer.g4
+      var saplLanguage = StreamLanguage.define({
+        token: function(stream) {
+          if (stream.match(/\/\/.*/)) return 'comment';
+          if (stream.match(/\/\*[\s\S]*?\*\//)) return 'comment';
+          if (stream.match(/"(?:[^"\\]|\\.)*"/)) return 'string';
+          if (stream.match(/-?\d+(\.\d+)?([eE][+-]?\d+)?/)) return 'number';
+          if (stream.match(/\b(policy|set|permit|deny|import|as|var|schema|enforced|advice|obligation|transform|in|each|for)\b/)) return 'keyword';
+          if (stream.match(/\b(subject|action|resource|environment)\b/)) return 'variableName.special';
+          if (stream.match(/\b(true|false|null|undefined)\b/)) return 'atom';
+          if (stream.match(/\b(first|priority|unanimous|strict|unique|or|abstain|errors|propagate)\b/)) return 'keyword';
+          if (stream.match(/[a-zA-Z_$][a-zA-Z_$0-9]*/)) return 'variableName';
+          if (stream.match(/\|\-|::|==|!=|=~|<=|>=|\|\<|\|\||&&/)) return 'operator';
+          if (stream.match(/[+\-*/%<>=!&|^~?:@#]+/)) return 'operator';
+          stream.next();
+          return null;
+        }
+      });
+
+      // SAPLTest language mode — aligned with SAPLTestLexer.g4
+      var saplTestLanguage = StreamLanguage.define({
+        token: function(stream) {
+          if (stream.match(/\/\/.*/)) return 'comment';
+          if (stream.match(/\/\*[\s\S]*?\*\//)) return 'comment';
+          if (stream.match(/"(?:[^"\\]|\\.)*"/)) return 'string';
+          if (stream.match(/-?\d+(\.\d+)?([eE][+-]?\d+)?/)) return 'number';
+          if (stream.match(/\b(not-applicable|pdp-configuration|null-or-empty|null-or-blank|case-insensitive|virtual-time)\b/)) return 'keyword';
+          if (stream.match(/\b(requirement|scenario|given|when|then|expect|verify)\b/)) return 'keyword';
+          if (stream.match(/\b(permit|deny|indeterminate|decision)\b/)) return 'keyword';
+          if (stream.match(/\b(subject|action|resource|environment|attempts|on)\b/)) return 'variableName.special';
+          if (stream.match(/\b(function|attribute|maps|to|emits|stream|of|is|called|error|next|once|times)\b/)) return 'keyword';
+          if (stream.match(/\b(variables|secrets|configuration|document|documents)\b/)) return 'keyword';
+          if (stream.match(/\b(first|priority|unanimous|strict|unique|or|abstain|errors|propagate)\b/)) return 'keyword';
+          if (stream.match(/\b(matching|any|equals|equal|containing|key|value|where|with|obligation|advice|obligations|and|in)\b/)) return 'keyword';
+          if (stream.match(/\b(blank|empty|compressed|whitespace|regex|starting|ending|length|order)\b/)) return 'keyword';
+          if (stream.match(/\b(null|text|number|boolean|array|object)\b/)) return 'typeName';
+          if (stream.match(/\b(true|false|undefined)\b/)) return 'atom';
+          if (stream.match(/\b(policy|set|policies)\b/)) return 'keyword';
+          if (stream.match(/[a-zA-Z_$][a-zA-Z_$0-9]*/)) return 'variableName';
+          stream.next();
+          return null;
+        }
+      });
+
+      // Language module cache for framework tabs
       var langModules = {};
       async function getLang(name) {
         if (langModules[name]) return langModules[name];
@@ -90,21 +141,30 @@
         return mod;
       }
 
-      var [{EditorView, minimalSetup}, {oneDark}] = await Promise.all([
-        import('https://esm.sh/codemirror'),
-        import('https://esm.sh/@codemirror/theme-one-dark')
-      ]);
+      function getLangExtension(name) {
+        if (name === 'sapl') return saplLanguage;
+        if (name === 'sapltest') return saplTestLanguage;
+        return null;
+      }
 
       document.querySelectorAll('.cm-source').forEach(async function(pre) {
         var code = pre.querySelector('code').textContent;
-        var lang = pre.closest('.tab-content').dataset.lang;
+        var container = pre.closest('[data-lang]');
+        var lang = container ? container.dataset.lang : null;
         var extensions = [minimalSetup, oneDark, EditorView.editable.of(false)];
 
-        var langMod = await getLang(lang);
-        if (langMod) {
-          if (langMod.java) extensions.push(langMod.java());
-          else if (langMod.python) extensions.push(langMod.python());
-          else if (langMod.javascript) extensions.push(langMod.javascript({ typescript: true }));
+        // Check for built-in SAPL/SAPLTest modes first
+        var builtinExt = getLangExtension(lang);
+        if (builtinExt) {
+          extensions.push(builtinExt);
+        } else if (lang) {
+          // Load external language module
+          var langMod = await getLang(lang);
+          if (langMod) {
+            if (langMod.java) extensions.push(langMod.java());
+            else if (langMod.python) extensions.push(langMod.python());
+            else if (langMod.javascript) extensions.push(langMod.javascript({ typescript: true }));
+          }
         }
 
         var editorDiv = document.createElement('div');

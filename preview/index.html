@@ -114,6 +114,55 @@ async def get_patient(request, patient_id):
 </section>
 
 <section class="section">
+  <h2>Test policies like you test code</h2>
+  <p>SAPL is the only authorization engine with a dedicated policy testing language. Mock external data sources, emit streaming attribute changes, and assert that decisions update correctly — all declaratively. No boilerplate, no test infrastructure, no polling loops.</p>
+
+  <div class="testing-demo">
+    <div class="testing-columns">
+      <div class="testing-col">
+        <div class="testing-label">Policy</div>
+        <div class="testing-code" data-lang="sapl">
+<pre class="cm-source"><code>policy "permit on emergency"
+permit
+    action == "read" &amp; resource == "time";
+    "status".&lt;mqtt.messages&gt; == "emergency";</code></pre>
+        </div>
+      </div>
+      <div class="testing-col">
+        <div class="testing-label">Test</div>
+        <div class="testing-code" data-lang="sapltest">
+<pre class="cm-source"><code>scenario "decision changes when emergency status changes"
+    given
+        - attribute "statusMock" "status".&lt;mqtt.messages&gt; emits "emergency"
+    when "user" attempts "read" on "time"
+    expect permit
+    then
+        - attribute "statusMock" emits "ok"
+    expect not-applicable
+    then
+        - attribute "statusMock" emits "emergency"
+    expect permit;</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="testing-output">
+      <div class="testing-label">Output</div>
+<pre class="test-output"><code><span class="test-pass">PASS</span> permit on emergency
+  <span class="test-pass">PASS</span> decision changes when emergency status changes
+       <span class="test-dim">given</span>  "status".&lt;mqtt.messages&gt; emits "emergency"
+       <span class="test-dim">when</span>   "user" attempts "read" on "time"
+       <span class="test-ok">expect PERMIT .................. ok</span>
+       <span class="test-dim">then</span>   "statusMock" emits "ok"
+       <span class="test-ok">expect NOT_APPLICABLE .......... ok</span>
+       <span class="test-dim">then</span>   "statusMock" emits "emergency"
+       <span class="test-ok">expect PERMIT .................. ok</span>
+
+<span class="test-summary">3 expectations, 3 passed, 0 failed</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <h2>TODO: Scenarios</h2>
   <p>TODO: AI Security / Policy Testing / Spring Security / Data-Level Security</p>
 </section>
