@@ -53,20 +53,114 @@ obligation {
 <script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
 
 <section class="section">
-  <h2>TODO: Why SAPL</h2>
-  <div class="features">
-    <div class="feature">
-      <h3>TODO: Streaming</h3>
-      <p>Placeholder</p>
+  <h2>Decisions that stay current</h2>
+  <p>Every authorization engine handles one-shot request-response decisions. SAPL does too, with zero overhead. But when context changes after the decision was made, one-shot engines go stale. SAPL keeps the decision stream open and updates it automatically. Toggle the threat level and watch.</p>
+
+  <!-- Streaming demo: code panels -->
+  <div class="sd-code-panels">
+    <div class="sd-code-panel" data-lang="sapl">
+      <div class="sd-code-label">Policy Set</div>
+<pre class="cm-source"><code>set "api activity access"
+priority deny or abstain
+for action == "monitorActivity"
+
+policy "lockdown on critical"
+deny
+    "https://siem.local/threat".<http.get>.level == "critical";
+
+policy "full access for investigation"
+permit
+    "https://siem.local/threat".<http.get>.level == "high";
+
+policy "redacted by default"
+permit
+    "https://siem.local/threat".<http.get>.level == "low";
+obligation {
+    "type": "filterJsonContent",
+    "actions": [
+        {"type":"blacken", "path":"$.user", "discloseLeft": 1},
+        {"type":"blacken", "path":"$.ip"}
+    ]
+}</code></pre>
     </div>
-    <div class="feature">
-      <h3>TODO: Readable Policies</h3>
-      <p>Placeholder</p>
+    <div class="sd-code-panel" data-lang="java">
+      <div class="sd-code-label">Endpoint</div>
+<pre class="cm-source"><code>@EnforceRecoverableIfDenied
+@GetMapping(
+    value = "/api/activity",
+    produces = MediaType
+        .TEXT_EVENT_STREAM_VALUE)
+public Flux&lt;ApiEvent&gt; stream() {
+    return activityService
+        .streamAll();
+}</code></pre>
     </div>
-    <div class="feature">
-      <h3>TODO: Policy Testing</h3>
-      <p>Placeholder</p>
+  </div>
+
+  <!-- Streaming demo: interactive flow -->
+  <div class="sd-wrapper" id="sdWrapper">
+  <div class="sd-start-overlay" id="sdOverlay">
+    <button class="sd-start-btn" id="sdStartBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      Start streaming demo
+    </button>
+  </div>
+  <div class="sd-flow">
+    <div class="sd-panel">
+      <div class="sd-panel-header">Attribute Source</div>
+      <div class="sd-panel-body">
+        <div class="sd-source-label">SIEM Threat Level</div>
+        <div class="sd-toggle sd-toggle-low" id="sdToggle">
+          <button class="sd-btn sd-btn-active-low" data-state="low">low</button>
+          <button class="sd-btn" data-state="high">high</button>
+          <button class="sd-btn" data-state="critical">critical</button>
+        </div>
+        <div class="sd-hint">Click to change</div>
+      </div>
     </div>
+    <div class="sd-connector">
+      <div class="sd-track"><div class="sd-pulse sd-pulse-warn" id="sdPulse1"></div></div>
+      <div class="sd-arrow sd-arrow-warn" id="sdArrow1">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1l5 5-5 5"/></svg>
+      </div>
+    </div>
+    <div class="sd-panel">
+      <div class="sd-panel-header">PDP Decision</div>
+      <div class="sd-panel-body">
+        <div class="sd-badge sd-badge-warn" id="sdBadge">
+          <div class="sd-badge-main"><span class="sd-dot"></span><span id="sdDecision">PERMIT</span></div>
+          <div class="sd-badge-sub sd-badge-sub-visible" id="sdSub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46"/></svg>redact PII</div>
+        </div>
+      </div>
+    </div>
+    <div class="sd-connector">
+      <div class="sd-track"><div class="sd-pulse sd-pulse-warn" id="sdPulse2"></div></div>
+      <div class="sd-arrow sd-arrow-warn" id="sdArrow2">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1l5 5-5 5"/></svg>
+      </div>
+    </div>
+    <div class="sd-panel sd-panel-app">
+      <div class="sd-panel-header">API Activity Monitor</div>
+      <div class="sd-panel-body">
+        <table class="sd-table">
+          <thead><tr><th>Time</th><th>Request</th><th>Status</th><th>User</th><th>Source IP</th></tr></thead>
+          <tbody id="sdBody"></tbody>
+        </table>
+        <div class="sd-overlay" id="sdAccessOverlay">
+          <div class="sd-overlay-icon"></div>
+          <div class="sd-overlay-title">Access denied</div>
+          <div class="sd-overlay-msg">Critical threat level — activity stream suspended</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sd-log">
+    <div class="sd-log-header">
+      <span>SSE Event Stream</span>
+      <span class="sd-log-status"><span class="sd-log-dot"></span>connected</span>
+    </div>
+    <div class="sd-log-entries" id="sdLog"></div>
+  </div>
   </div>
 </section>
 
