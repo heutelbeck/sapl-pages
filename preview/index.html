@@ -4,8 +4,8 @@ title: SAPL
 ---
 
 <section class="hero">
-  <h1>TODO: Headline</h1>
-  <p class="subtitle">TODO: One sentence — problem + solution</p>
+  <h1>Authorization you can read, test, and trust</h1>
+  <p class="subtitle">An open-source policy language and engine for the entire stack — from web apps and APIs to IoT and AI agents. Readable policies. Dedicated testing framework. Request-response and real-time streaming.</p>
   <div class="cta-group">
     <a href="/preview/getstarted" class="btn btn-primary">Get Started</a>
     <a href="https://playground.sapl.io/" class="btn btn-secondary">Try in Playground</a>
@@ -14,16 +14,38 @@ title: SAPL
 
 <div class="editor-embed">
 <sapl-demo>
-<pre class="sapl-fallback"><code>policy "example"
-permit
-  time.secondOf(&lt;time.now&gt;) % 5 &lt; 2;</code></pre>
+<pre class="sapl-fallback"><code>policy "freeze during peak hours"
+deny
+    subject.role == "engineer";
+    action == "deploy";
+    resource.environment == "production";
+    // In production, use real business hours:
+    // &lt;time.localTimeIsBetween("09:00", "17:00", "Europe/Berlin")&gt;;
+    // For this demo, the window toggles every few seconds:
+    &lt;time.toggle(8000, 4000)&gt;;
+obligation {
+    "type": "notify",
+    "channel": "ops-alerts",
+    "message": "Deployment blocked: peak hours"
+}</code></pre>
 <script type="sapl/policy">
-policy "example"
-permit
-  time.secondOf(<time.now>) % 5 < 2;
+policy "freeze during peak hours"
+deny
+    subject.role == "engineer";
+    action == "deploy";
+    resource.environment == "production";
+    // In production, use real business hours:
+    // <time.localTimeIsBetween("09:00", "17:00", "Europe/Berlin")>;
+    // For this demo, the window toggles every few seconds:
+    <time.toggle(8000, 4000)>;
+obligation {
+    "type": "notify",
+    "channel": "ops-alerts",
+    "message": "Deployment blocked: peak hours"
+}
 </script>
 <script type="sapl/subscription">
-{"subject":"alice","action":"read","resource":"document"}
+{"subject":{"role":"engineer"},"action":"deploy","resource":{"environment":"production"}}
 </script>
 </sapl-demo>
 </div>
