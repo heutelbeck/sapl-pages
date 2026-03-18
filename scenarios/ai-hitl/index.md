@@ -1,6 +1,7 @@
 ---
 layout: sapl
 title: "Human-in-the-Loop Approval - SAPL Scenarios"
+description: "Policy-driven human approval workflows for AI agent operations. The policy decides when confirmation is needed, not the application code. Spring AI, SAPL obligations."
 ---
 
 ## Human-in-the-Loop Approval

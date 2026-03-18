@@ -1,6 +1,7 @@
 ---
 layout: sapl
 title: "MCP Tool Access Authorization - SAPL Scenarios"
+description: "Per-tool authorization for MCP servers with SAPL. Control which tools AI agents can call, transform responses via obligations, filter tool visibility. Spring AI."
 ---
 
 ## MCP Tool Access Authorization

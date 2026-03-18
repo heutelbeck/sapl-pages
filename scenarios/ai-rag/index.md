@@ -1,6 +1,7 @@
 ---
 layout: sapl
 title: "RAG Pipeline Authorization - SAPL Scenarios"
+description: "Document-level access control for retrieval-augmented generation. Filter and redact retrieved content before it reaches the LLM. Spring AI, pgvector, SAPL policies."
 ---
 
 ## RAG Pipeline Authorization

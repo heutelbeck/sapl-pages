@@ -1,6 +1,7 @@
 ---
 layout: sapl
 title: "FastMCP Server Authorization (Python) - SAPL Scenarios"
+description: "Authorize MCP tool calls, resources, and prompts inside a Python FastMCP server. Decorators, constraint handlers, JWT/ABAC integration with SAPL."
 ---
 
 ## FastMCP Server Authorization (Python)

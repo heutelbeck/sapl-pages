@@ -167,6 +167,17 @@ jobs:
           done
         env:
           JEKYLL_ENV: production
+      - name: Generate sitemap index
+        run: |
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > ./_site/sitemap-index.xml
+          echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> ./_site/sitemap-index.xml
+          echo '  <sitemap><loc>https://sapl.io/sitemap.xml</loc></sitemap>' >> ./_site/sitemap-index.xml
+          find ./_site/docs -name "sitemap.xml" | sort -r | while read -r sitemap; do
+            path=$(echo "$sitemap" | sed 's|./_site||')
+            echo "  <sitemap><loc>https://sapl.io${path}</loc></sitemap>" >> ./_site/sitemap-index.xml
+          done
+          echo '</sitemapindex>' >> ./_site/sitemap-index.xml
+          cat ./_site/sitemap-index.xml
       - name: Create symlink
         run: |
           latest_doc=$(ls -1d ./_site/docs/*/ | sort | tail -n 1)

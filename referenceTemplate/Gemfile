@@ -4,6 +4,7 @@ gemspec
 gem "jekyll-github-metadata", ">= 2.15"
 
 gem "jekyll-include-cache", group: :jekyll_plugins
+gem "jekyll-sitemap", "~> 1.4", group: :jekyll_plugins
 
 gem "html-proofer", "~> 5.0", :group => :development
 
@@ -27,4 +28,4 @@ gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 gem "nokogiri", ">= 1.18.9"
 
 # Security fix: Update rexml to address CVE-2024-41123, CVE-2024-49761, CVE-2024-41946
-gem "rexml", ">= 3.3.9"  #
+gem "rexml", ">= 3.4.4"
