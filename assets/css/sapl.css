@@ -686,14 +686,15 @@ p + p { margin-top: 1rem; }
 .sd-flow {
   display: grid;
   grid-template-columns: 1fr 28px 1fr 28px 1.6fr;
+  grid-template-rows: 1fr;
   border: 1px solid var(--color-border);
   border-top: none;
   background: #1e1e2e;
   color: #e2e8f0;
-  min-height: 240px;
+  height: 240px;
 }
 
-.sd-panel { display: flex; flex-direction: column; }
+.sd-panel { display: flex; flex-direction: column; overflow: hidden; }
 
 .sd-panel-header {
   padding: 0.45rem 1rem;
