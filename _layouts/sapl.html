@@ -105,6 +105,24 @@
     </div>
   </footer>
   <script>
+    // Email obfuscation — XOR-encoded, assembled at click time only
+    (function() {
+      var k = 0x5A;
+      var p = [[62,50,63,47,46,63,54,56,63,57,49],[60,46,49,116,62,63]];
+      function d(a) { return a.map(function(c) { return String.fromCharCode(c ^ k); }).join(''); }
+      document.querySelectorAll('a[data-contact]').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          var s = el.getAttribute('data-subject') || '';
+          var b = el.getAttribute('data-body') || '';
+          var href = 'mailto:' + d(p[0]) + '@' + d(p[1]);
+          if (s) href += '?subject=' + s;
+          if (b) href += (s ? '&' : '?') + 'body=' + b;
+          window.location.href = href;
+        });
+      });
+    })();
+
     function syncTheme() {
       var saved = localStorage.getItem('theme');
       if (saved) document.documentElement.setAttribute('data-theme', saved);
