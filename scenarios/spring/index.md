@@ -3,55 +3,17 @@ layout: sapl
 title: "Spring Security with SAPL - SAPL Scenarios"
 ---
 
-## What is Attribute-based Access Control?
+## Spring Boot Method Security with SAPL
 
-Attribute-based Access Control (ABAC) is an expressive access control model. A system can use ABAC to determine if a subject is permitted to perform a specific action on a resource. In this tutorial, you will learn how to secure services and APIs of a Spring Boot application using the SAPL Engine to implement ABAC. The tutorial assumes a basic familiarity with the Spring application development process.
+This scenario walks through securing a Spring Boot application with SAPL. You will add policy-based authorization to JPA repository methods, write policies that enforce age restrictions, transform and filter query results based on user attributes, and implement constraint handlers for obligations.
 
-
-![abac.png](/assets/tutorial_02/abac.png)
-
-ABAC decides whether to grant access by checking the attributes of the subject, the resource, the action and the environment.
-
-The subject may be a user, a machine, another application, or a service requesting access to a resource. Attributes may include information such as the user's department in an organisation, a security clearance level, schedules, location, or qualifications in the form of certifications.
-
-The action is how the subject attempts to access the resource. An action may be one of the typical CRUD operations or something more domain-specific, such as "assign new operator," and attributes may include the operation's parameters.
-
-Resources are the entities to which the subject directs the action. Resource attributes may include owners, security classifications, categories, or other arbitrary domain-specific data.
-
-In some cases, it is also helpful to consider the authorization environment. Environment attributes include data like the system and infrastructure context or time.
-
-An application performing authorizing of an action formulates an authorization question by collecting attributes of the subject, action, resource, and environment as required by the domain. It poses it to a decision component, which then makes a decision based on domain-specific rules which the application then has to enforce.
-
-ABAC allows the implementation of fine-grained access control rules and flexible access control models, such as Role-based access control (RBAC), Mandatory Access Control (MAC), Bell-LaPadula, Clark-Wilson, Biba, Brewer-Nash, or very domain-specific models for an application.
-
-### The SAPL Attribute-Based Access Control (ABAC) Architecture
-
-SAPL implements its interpretation of ABAC called Attribute Stream-Based Access Control (ASBAC). It uses publish-subscribe as the primary mode of interaction between the individual components. This tutorial explains the basic ideas. The [SAPL Documentation](https://sapl.io/docs/latest/) provides a more complete discussion of the architecture.
-
-![sapl-architecture.png](/assets/tutorial_02/sapl-architecture.png)
-
-In your application, there will be multiple code paths where a subject attempts to perform some action on a resource, and based on the requirements of the domain, the action must be authorized. For example, all actions triggered by users or other components must be explicitly authorized in a zero-trust system.
-
-A *Policy Enforcement Point (PEP)* is the logic in your application that:
-
-* Provides access to the *Resource Access Point (RAP)*, i.e., which is the component that performs the action and potentially retrieves data.
-* Formulates the authorization request as an authorization subscription, a JSON object containing values for the subject, action, resource and possibly the environment. The PEP determines the values based on the domain and context of the current attempt to perform the action.
-* Delegates the decision on the authorization question to the *Policy Decision Point (PDP)* by subscribing to it using the authorization subscription.
-* Enforces any decisions made by the PDP.
-
-This tutorial will not examine the subscription nature of SAPL authorization.  Instead, it will only look at PEPs that require a single decision. 
-
-In SAPL, decisions can include additional requirements for the PEP to enforce beyond simply granting or denying access. SAPL decisions can include constraints, which are additional actions the PEP must perform to grant access. If a constraint is optional, it is called an *advice*. If the constraint is mandatory, it is called an *obligation*.
-
-SAPL also denotes a policy language used to express the rules that describe the overall policies governing access control in the organisation. For each authorization subscription, the PDP monitors the *Policy Retrieval Point (PRP)* for responsible policies, i.e., *applicable*, to the subscription. Individual policies may refer to attributes not stored within the authorization subscription. The PDP can subscribe to these attributes using domain-specific *Policy Information Points (PIPs)*. The PDP continuously evaluates the policies as the PIP attributes change and the policy documents are updated. It notifies the PEP when the implicit *authorization decision* changes.
-
-When developing an application using SAPL or ABAC in general, the PDP and the systems used by the PDP are usually well-developed and only require the integration of domain-specific PIPs. A significant part of the effort in adopting the ABAC pattern lies in implementing the PEPs. Developing a PEP capable of flexibly handling decisions with constraints can become very complex. SAPL provides several libraries that make this process as unobtrusive as possible and integrate deeply into the supported frameworks. This tutorial will show you how to implement PEPs in a Spring Boot application, using a JPA repository as an example.
+The scenario assumes basic familiarity with Spring Boot. For background on ABAC concepts and SAPL's architecture, see the [documentation](https://sapl.io/docs/latest/).
 
 ## Project Setup
 
 First, you will implement a simple Spring Boot application. Go to [Spring Initializr](https://start.spring.io/) and add the following dependencies to a project:
 
-* **Spring Web** (to provide a REST API for testing your application)
+* **Spring Web MVC** (to provide a REST API for testing your application)
 * **Spring Data JPA** (to develop the domain model for your application)
 * **H2 Database** (as a simple in-memory database to support the application)
 * **Lombok** (to eliminate some boilerplate code)
@@ -59,7 +21,7 @@ First, you will implement a simple Spring Boot application. Go to [Spring Initia
 
 We will use Maven as our build tool and Java as our language for this tutorial.
 
-Name your project template as you like. SAPL is compatible with Java 17 and higher. So you can choose your preferred version. Depending on your operating system, there are different downloads for Java. This must be followed according to the [instructions](https://www.java.com/de/download/manual.jsp).
+SAPL 4 requires Java 21 or higher. Select Java 21 (or higher) and Spring Boot 4.0.3 (or higher) in the Initializr.
 
  Your Initializr settings should now look something like this:
 
@@ -71,7 +33,7 @@ Now unzip the project and import it into your preferred IDE.
 
 ### Adding SAPL Dependencies
 
-This tutorial uses the `3.0.0` version of SAPL. To enable Maven to download the respective libraries, add the central snapshot repository to your `pom.xml` file:
+This tutorial uses the `4.0.0-SNAPSHOT` version of SAPL. To enable Maven to download the respective libraries, add the central snapshot repository to your `pom.xml` file:
 
 ```xml
     <repositories>
@@ -97,7 +59,7 @@ SAPL provides a bill of materials module to help you to use compatible versions 
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>3.0.0</version>
+                <version>4.0.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -105,21 +67,12 @@ SAPL provides a bill of materials module to help you to use compatible versions 
     </dependencyManagement>
 ```
 
-To develop an application using SAPL, you need two components. First, you need a component to make authorization decisions, the so-called Policy Decision Point (PDP). You can embed the PDP in your application or use a dedicated server application and delegate the decision-making to that remote service. This tutorial uses an embedded PDP that makes decisions locally based on policies stored in the application resources. Add the following dependency to your project:
+To develop an application using SAPL, you need two components. First, you need a component to make authorization decisions, the so-called Policy Decision Point (PDP). You can embed the PDP in your application or use a dedicated server application and delegate the decision-making to that remote service. This tutorial uses an embedded PDP that makes decisions locally based on policies stored in the application resources. SAPL offers deep integration with Spring Security, allowing you to deploy Policy Enforcement Points easily using a declarative aspect-oriented programming style. Add the following single starter dependency to your project:
 
 ```xml
     <dependency>
         <groupId>io.sapl</groupId>
-        <artifactId>sapl-spring-pdp-embedded</artifactId>
-    </dependency>
-```
-
-SAPL offers deep integration with Spring Security. This integration allows you to deploy Policy Enforcement Points easily in your Spring application using a declarative aspect-oriented programming style. Add the following dependency to your project:
-
-```xml
-    <dependency>
-        <groupId>io.sapl</groupId>
-        <artifactId>sapl-spring-security</artifactId>
+        <artifactId>sapl-spring-boot-starter</artifactId>
     </dependency>
 ```
 
@@ -128,8 +81,8 @@ To use the Argon2 Password Encoder, add the following dependency:
 ```xml
     <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk15on</artifactId>
-        <version>1.70</version>
+        <artifactId>bcpkix-jdk18on</artifactId>
+        <version>1.83</version>
     </dependency>
 ```
 
@@ -137,14 +90,24 @@ Finally, create a new folder in the resources folder `src/main/resources` called
 
 ```json
 {
-    "algorithm": "DENY_UNLESS_PERMIT",
+    "algorithm": {
+        "votingMode": "PRIORITY_DENY",
+        "defaultDecision": "DENY",
+        "errorHandling": "PROPAGATE"
+    },
     "variables": {}
 }
 ```
 
-The `algorithm` property selects an algorithm for resolving conflicting policy evaluation results. In this case, the algorithm ensures that the PDP always returns a `deny` decision when no policy evaluation returns an explicit `permit` decision.
+The `algorithm` object selects the combining algorithm for resolving conflicting policy evaluation results. The three fields control orthogonal concerns:
 
-**Note**: The algorithm in the `pdp.json` file must be written in uppercase and with `_`, unlike the same algorithm in later sections. 
+* `votingMode` determines which decision type takes priority when both permit and deny votes are present.
+* `defaultDecision` is the fallback when no policy matches the subscription.
+* `errorHandling` controls what happens when policy evaluation errors occur (`PROPAGATE` makes errors visible, `ABSTAIN` silently drops them).
+
+This configuration is deliberately restrictive: deny takes priority, the default is deny, and errors propagate. This is the secure-by-default posture. You will write explicit permit policies to grant access.
+
+The `policies` directory and `pdp.json` file are required for the embedded PDP to start. Without them, the application will fail during startup.
 
 You can use the `variables` property to define environment variables, such as the configuration of Policy Information Points (PIPs). All policies can access the contents of these variables.
 
@@ -152,11 +115,11 @@ This file completes the basic setup of the Maven project. Now, we can start impl
 
 ## The Project Domain
 
-This tutorial will be applied to a library where books can only be viewed and checked out if the user meets the minimum age specified for the book. If you are already familiar with Spring, JPA, and Spring Security basics, you can skip this section and go directly to  [Securing a Service Method with SAPL](#Method-Security).
+The domain is a library where books can only be viewed if the user meets the minimum age rating. If you are already familiar with Spring Boot, JPA, and Spring Security, skip ahead to [Securing Repository Methods with SAPL](#Method-Security).
 
 ### Define the Book Entity and Repository
 
-First, define a book entity that contains an ID, a name, and a suitable age rating. You can use project Lombok annotations to automatically create getters, setters, and constructors as follows:
+First, define a book entity that contains an ID, a name, a suitable age rating, and content. You can use project Lombok annotations to automatically create getters, setters, and constructors as follows:
 
 ```java
 @Data
@@ -168,6 +131,7 @@ public class Book {
     Long id;
     String name;
     Integer ageRating;
+    String content;
 }
 ```
 
@@ -308,10 +272,10 @@ public class DemoData implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // @formatter:off
-        bookRepository.save(new Book(1L, "Clifford: It's Pool Time!",                                  0));
-        bookRepository.save(new Book(2L, "The Rescue Mission: (Pokemon: Kalos Reader #1)",             4));
-        bookRepository.save(new Book(3L, "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight",  9));
-        bookRepository.save(new Book(4L, "The Three-Body Problem",                                    14));
+        bookRepository.save(new Book(1L, "Clifford: It's Pool Time!",                                  0, "*Woof*"));
+        bookRepository.save(new Book(2L, "The Rescue Mission: (Pokemon: Kalos Reader #1)",             4, "Gotta catch 'em all!"));
+        bookRepository.save(new Book(3L, "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight",  9, "Some fantasy story."));
+        bookRepository.save(new Book(4L, "The Three-Body Problem",                                    14, "Space is scary."));
         // @formatter:on
     }
 
@@ -340,22 +304,26 @@ After the application starts, go to <http://localhost:8080/api/books>. The brows
     {
         "id"       : 1,
         "name"     : "Clifford: It's Pool Time!",
-        "ageRating": 0
+        "ageRating": 0,
+        "content"  : "*Woof*"
     },
     {
         "id"       : 2,
         "name"     : "The Rescue Mission: (Pokemon: Kalos Reader #1)",
-        "ageRating": 4
+        "ageRating": 4,
+        "content"  : "Gotta catch 'em all!"
     },
     {
         "id"       : 3,
         "name"     : "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight",
-        "ageRating": 9
+        "ageRating": 9,
+        "content"  : "Some fantasy story."
     },
     {
         "id"       : 4,
         "name"     : "The Three-Body Problem",
-        "ageRating": 14
+        "ageRating": 14,
+        "content"  : "Space is scary."
     }
 ]
 ```
@@ -394,127 +362,86 @@ public interface BookRepository {
 
 ### Enable console output
 
-Add  `io.sapl.pdp.embedded.print-text-report=true` to your `application.properties` file. This property provides interesting insights into the decision-making of the PDP during policy evaluation, in a human-friendly way. You can also select the properties `...print-json-report` or `...print-trace`. `print-trace` is the most fine-grained explanation and is only recommended as a last resort for troubleshooting.
+Add `io.sapl.pdp.embedded.print-text-report=true` to your `application.properties` file. The text report logs each PDP decision with the subscription, decision outcome, and which policy documents matched. You can also select `...print-json-report` for a machine-readable variant or `...print-trace` for a full evaluation trace including attribute resolution. `print-trace` is the most fine-grained explanation and is only recommended as a last resort for troubleshooting.
 
-For Debug and to obtain more information in general, e.g., which policy documents are loaded at startup, you can use the properties `logging.level.io.sapl=TRACE` and `logging.level.org.springframework=WARN`.
+The text report output looks like this:
+
+```
+[...] : --- PDP Decision ---
+[...] : Timestamp      : 2026-03-18T20:43:19.327+01:00
+[...] : Subscription Id: 46d7ff56-...
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   policy-name -> PERMIT
+```
+
+For each decision, you see which documents were evaluated and their individual outcomes. For policy sets, sub-policy results are listed under the set name. If PIPs are involved, their attribute values appear in the trace. Obligations and advice are listed when present in the decision.
+
+For additional debug output, e.g., which policy documents are loaded at startup, you can use `logging.level.io.sapl=DEBUG` in your `application.properties`.
 
 Restart the application, log in, and navigate to <http://localhost:8080/api/books/1>. You should now see an error page including the statement: `There was an unexpected error (type=Forbidden, status=403).`
 
-Inspect the console, and you will find out what happened behind the scenes. The logs should contain some statements similar to the following:
+Inspect the console, and you will find out what happened behind the scenes. The logs should contain statements similar to the following:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"authorities":[],"details":{"remoteAddress":"0:0:0:0:0:0:0:1","sessionId":"EF114D1F3433826A178E7A97F6DFA7D2"},"authenticated":true,"principal":{"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2006-12-26"},"name":"zoe"},"action":{"http":{"characterEncoding":"UTF-8","protocol":"HTTP/1.1","scheme":"http","serverName":"localhost","serverPort":8080,"remoteAddress":"0:0:0:0:0:0:0:1","remoteHost":"0:0:0:0:0:0:0:1","remotePort":55905,"isSecure":false,"localName":"0:0:0:0:0:0:0:1","localAddress":"0:0:0:0:0:0:0:1","localPort":8080,"method":"GET","contextPath":"","requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661","requestedURI":"/api/books/1","requestURL":"http://localhost:8080/api/books/1","servletPath":"/api/books/1","headers":{"host":["localhost:8080"],"connection":["keep-alive"],"sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"dnt":["1"],"upgrade-insecure-requests":["1"],"user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],"sec-purpose":["prefetch;prerender"],"purpose":["prefetch"],"accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],"sec-fetch-site":["none"],"sec-fetch-mode":["navigate"],"sec-fetch-user":["?1"],"sec-fetch-dest":["document"],"accept-encoding":["gzip, deflate, br"],"accept-language":["de-DE,de;q=0.9"]},"cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],"locale":"de_DE","locales":["de_DE","de"]},"java":{"name":"findById","declaringTypeName":"io.sapl.springtutorial.domain.BookRepository","modifiers":["public"],"instanceof":[{"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},{"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},{"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},{"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},{"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},{"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},{"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},{"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},{"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},{"name":"java.io.Serializable","simpleName":"Serializable"},{"name":"java.lang.Object","simpleName":"Object"}],"arguments":[1]}},"resource":{"http":{"characterEncoding":"UTF-8","protocol":"HTTP/1.1","scheme":"http","serverName":"localhost","serverPort":8080,"remoteAddress":"0:0:0:0:0:0:0:1","remoteHost":"0:0:0:0:0:0:0:1","remotePort":55905,"isSecure":false,"localName":"0:0:0:0:0:0:0:1","localAddress":"0:0:0:0:0:0:0:1","localPort":8080,"method":"GET","contextPath":"","requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661","requestedURI":"/api/books/1","requestURL":"http://localhost:8080/api/books/1","servletPath":"/api/books/1","headers":{"host":["localhost:8080"],"connection":["keep-alive"],"sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],"sec-ch-ua-mobile":["?0"],"sec-ch-ua-platform":["\"Windows\""],"dnt":["1"],"upgrade-insecure-requests":["1"],"user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],"sec-purpose":["prefetch;prerender"],"purpose":["prefetch"],"accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],"sec-fetch-site":["none"],"sec-fetch-mode":["navigate"],"sec-fetch-user":["?1"],"sec-fetch-dest":["document"],"accept-encoding":["gzip, deflate, br"],"accept-language":["de-DE,de;q=0.9"]},"cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],"locale":"de_DE","locales":["de_DE","de"]},"java":{"name":"findById","declaringTypeName":"io.sapl.springtutorial.domain.BookRepository","modifiers":["public"],"instanceof":[{"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},{"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},{"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},{"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},{"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},{"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},{"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},{"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},{"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},{"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},{"name":"java.io.Serializable","simpleName":"Serializable"},{"name":"java.lang.Object","simpleName":"Object"}]}},"environment":null}
-[...] : Decision    : {"decision":"DENY"}
-[...] : Timestamp   : 2024-01-15T19:02:09.643312400Z
-[...] : Algorithm   : "DENY_UNLESS_PERMIT"
-[...] : Matches     : NONE (i.e.,no policies/policy sets were set, or all target expressions evaluated to false or error.)
-[...] : No policy or policy sets have been evaluated
+[...] : --- PDP Decision ---
+[...] : Timestamp      : 2026-03-18T20:43:19.327+01:00
+[...] : Subscription Id: 46d7ff56-11c5-f628-6d6a-952bb1425558
+[...] : Subscription   : { ... large JSON object ... }
+[...] : Decision       : DENY
+[...] : PDP ID         : default
 ```
 
-The first log entry contains the authorization subscription for which a decision is made. The second log entry contains the decision made by the PDP, followed by a timestamp and the algorithm used to resolve conflicting results.
+The log contains the authorization subscription (a large JSON object), the decision made by the PDP, a timestamp, and the PDP identifier. The decision is `DENY` because no policies exist yet and the combining algorithm defaults to deny.
 
-The fifth log entry will contain a list of all matching policies that are being evaluated, followed by more detailed information about each policy.
-
-The subscription is not very readable this way. Let us apply some formatting to the JSON data to unpack the subscription object:
+The subscription is not very readable in the log. Let us apply some formatting to unpack the key parts of the subscription object:
 
 ```json
 {
-    "subject":{
-        "authorities":[],
-        "details":{
-            "remoteAddress":"0:0:0:0:0:0:0:1",
-            "sessionId":"EF114D1F3433826A178E7A97F6DFA7D2"
-        },
-        "authenticated":true,
-        "principal":{
-            "username":"zoe",
-            "authorities":[],
-            "accountNonExpired":true,
-            "accountNonLocked":true,
-            "credentialsNonExpired":true,
-            "enabled":true,
-            "birthday":"2006-12-26"
-        },
-        "name":"zoe"
-    },
-    "action":{
-        "http":{
-            "characterEncoding":"UTF-8",
-            "protocol":"HTTP/1.1",
-            "scheme":"http",
-            "serverName":"localhost",
-            "serverPort":8080,
-            "remoteAddress":"0:0:0:0:0:0:0:1",
-            "remoteHost":"0:0:0:0:0:0:0:1",
-            "remotePort":55905,
-            "isSecure":false,
-            "localName":"0:0:0:0:0:0:0:1",
-            "localAddress":"0:0:0:0:0:0:0:1",
-            "localPort":8080,
-            "method":"GET",
-            "contextPath":"",
-            "requestedSessionId":"5456E2F43FFFBD37B4FFBDE9FB67E661",
-            "requestedURI":"/api/books/1",
-            "requestURL":"http://localhost:8080/api/books/1",
-            "servletPath":"/api/books/1",
-            "headers":{
-                "host":["localhost:8080"],
-                "connection":["keep-alive"],
-                "sec-ch-ua":["\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\""],
-                "sec-ch-ua-mobile":["?0"],
-                "sec-ch-ua-platform":["\"Windows\""],
-                "dnt":["1"],
-                "upgrade-insecure-requests":["1"],
-                "user-agent":["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"],
-                "sec-purpose":["prefetch;prerender"],
-                "purpose":["prefetch"],
-                "accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"],
-                "sec-fetch-site":["none"],
-                "sec-fetch-mode":["navigate"],
-                "sec-fetch-user":["?1"],
-                "sec-fetch-dest":["document"],
-                "accept-encoding":["gzip, deflate, br"],
-                "accept-language":["de-DE,de;q=0.9"]
-            },
-            "cookies":[{"name":"JSESSIONID","value":"5456E2F43FFFBD37B4FFBDE9FB67E661"}],
-            "locale":"de_DE",
-            "locales":["de_DE","de"]
-        },
-        "java":{
-            "name":"findById",
-            "declaringTypeName":"io.sapl.springtutorial.domain.BookRepository",
-            "modifiers":["public"],
-            "instanceof":[
-                {"name":"jdk.proxy4.$Proxy118","simpleName":"$Proxy118"},
-                {"name":"io.sapl.springtutorial.domain.JpaBookRepository","simpleName":"JpaBookRepository"},
-                {"name":"io.sapl.springtutorial.domain.BookRepository","simpleName":"BookRepository"},
-                {"name":"org.springframework.data.repository.CrudRepository","simpleName":"CrudRepository"},
-                {"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},
-                {"name":"org.springframework.data.repository.Repository","simpleName":"Repository"},
-                {"name":"org.springframework.transaction.interceptor.TransactionalProxy","simpleName":"TransactionalProxy"},
-                {"name":"org.springframework.aop.SpringProxy","simpleName":"SpringProxy"},
-                {"name":"org.springframework.aop.framework.Advised","simpleName":"Advised"},
-                {"name":"org.springframework.aop.TargetClassAware","simpleName":"TargetClassAware"},
-                {"name":"org.springframework.core.DecoratingProxy","simpleName":"DecoratingProxy"},
-                {"name":"java.lang.reflect.Proxy","simpleName":"Proxy"},
-                {"name":"java.io.Serializable","simpleName":"Serializable"},
-                {"name":"java.lang.Object","simpleName":"Object"}
-            ],
-            "arguments":[1]
+    "subject": {
+        "authenticated": true,
+        "authorities": [
+            { "authority": "FACTOR_PASSWORD", "issuedAt": "..." }
+        ],
+        "name": "zoe",
+        "principal": {
+            "username": "zoe",
+            "birthday": "2009-02-26",
+            "authorities": [],
+            "accountNonExpired": true,
+            "accountNonLocked": true,
+            "credentialsNonExpired": true,
+            "enabled": true
         }
     },
-    "resource":{
-        "http":{
-            [ ... ]
+    "action": {
+        "http": {
+            "method": "GET",
+            "requestedURI": "/api/books/1",
+            "requestURL": "http://localhost:8080/api/books/1",
+            "serverName": "localhost",
+            "serverPort": 8080,
+            "headers": { ... },
+            "cookies": [ ... ]
         },
-        "java":{
-            [ ... ]
+        "java": {
+            "name": "findById",
+            "declaringTypeName": "io.sapl.tutorial.domain.BookRepository",
+            "modifiers": ["public"],
+            "instanceof": [ ... ],
+            "arguments": [1]
         }
     },
-    "environment":null
+    "resource": {
+        "http": { ... },
+        "java": { ... }
+    }
 }
 ```
+
+Note: Spring Security 7 automatically adds a `FACTOR_PASSWORD` authority to the authentication when the user logs in with a password. This is part of the multi-factor authentication framework.
 
 As you can see, without any specific configuration, the subscription is a massive object with significant redundancies. This is because the SAPL Engine and Spring integration do not have any domain knowledge regarding the application. Thus, the PEP gathers any information it can find that could reasonably describe the three required objects (subject, action, resource) for an authorization subscription.
 
@@ -536,7 +463,7 @@ As you can see in the sixth line in the console log, the PDP did not find any po
 
 The default configuration of an embedded PDP is the first option, so the application's policies are currently embedded in the resources.
 
-If you want to configure this behavior, you have to add `io.sapl.pdp.embedded.pdp-config-type = FILESYSTEM` to the application.properties file.
+If you want to configure this behavior, you have to add `io.sapl.pdp.embedded.pdp-config-type = DIRECTORY` to the application.properties file.
 
 The `pdp.json` file and the policies can be stored in different folders. This is regulated with the properties `io.sapl.pdp.embedded.config-path` for the `pdp.json` file and `io.sapl.pdp.embedded.policies-path` for the policies. Both require a valid file system path for the folder where the files are located.
 
@@ -584,98 +511,53 @@ Now you should get the data for book 1:
 {
     "id"        : 1,
     "name"      : "Clifford: It's Pool Time!",
-    "ageRating" : 0
+    "ageRating" : 0,
+    "content"   : "*Woof*"
 }
 ```
 
 And your log should look like this:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: { ... }
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Timestamp   : 2024-01-18T14:41:39.298519100Z
-[...] : Algorithm   : "DENY_UNLESS_PERMIT"
-[...] : Matches     : ["permit all"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "permit all"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Target      : true
-[...] : Where       : true
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   permit all -> PERMIT
 ```
 
-In this log, you can see on the sixth line that the PRP has identified exactly one matching policy document for the authorization subscription. Let's take a look at the evaluation result for the policy document with the name `"permit all"`.
+The log shows that the PDP found one matching policy document (`permit all`) and it evaluated to `PERMIT`. Since this is the only policy and it has no conditions, the `"permit all"` policy always matches and always returns its entitlement.
 
-Let's start with lines 11 and 12, where you can see that the PDP came to the conclusion that both the *target expression* and the *where* block, which will be explained later, were evaluated as `true`. This is because the `"permit all"` policy does not contain any rules. Since both values are true, the decision of the evaluation of the individual policy document corresponds to the entitlement defined in the policy, i.e., `permit`.
+Since this is the only matching document and it returns `permit`, the PDP grants access. The PEP allows the repository method to execute.
 
-Finally, as this is the only matching document with a decision, the `DENY_UNLESS_PERMIT` combining algorithm also concludes to return a `permit`. Therefore, the PEP allows access to the repository method.
-
-Now, create a "deny all" policy. Add a file `deny_all.sapl` to the `resources/policies` folder of the maven project with the following contents:
+Now, create a "deny all" policy alongside. Add a file `deny_all.sapl` to the `resources/policies` folder:
 
 ```
 policy "deny all" deny
 ```
 
-Now restart the application, authenticate with any user and access <http://localhost:8080/api/books/1> again.
+Restart the application, authenticate with any user and access <http://localhost:8080/api/books/1> again.
 
-The PDP will grant access, and the log will look similar to this:
-
-```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: { ... }
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Timestamp   : 2024-01-18T18:55:20.363441300Z
-[...] : Algorithm   : "DENY_UNLESS_PERMIT"
-[...] : Matches     : ["permit all","deny all"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "permit all"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Target      : true
-[...] : Where       : true
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "deny all"
-[...] : Entitlement : "DENY"
-[...] : Decision    : {"decision":"DENY"}
-[...] : Target      : true
-[...] : Where       : true
-```
-
-Note that your system's ordering of the log entries may be slightly different. The log indicates that both policies matched the subscription and that the PDP evaluated them. Then, the combining algorithm resolved the two decisions, i.e., one `permit` and one `deny`, to `permit`.
-
-The PDP uses the `DENY_UNLESS_PERMIT` combining algorithm selected in the `pdp.json` configuration file. This algorithm is relatively permissive because it only returns `deny` if no `permit` is present. The SAPL engine implements alternative algorithms to resolve the presence of different, potentially contradicting, decisions (also see [SAPL Documentation - Combining Algorithm](https://sapl.io/docs/3.0.0/6_5_CombiningAlgorithm/#combining-algorithm)). For the tutorial domain, select a more restrictive algorithm. Replace `DENY_UNLESS_PERMIT` in the `pdp.json` file with `DENY_OVERRIDES`. This algorithm prioritizes `deny` decisions over `permit`.
-
-Now restart the application, authenticate with any user and access <http://localhost:8080/api/books/1> again.
-
-The application should `deny` access and the log will look similar to this (remember, the line order may vary):
+The application denies access. The log shows both policies matched, but the `PRIORITY_DENY` combining algorithm gives precedence to the `deny` decision:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: { ... }
-[...] : Decision    : {"decision":"DENY"}
-[...] : Timestamp   : 2024-01-20T14:45:49.524911400Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["permit all","deny all"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "permit all"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Target      : true
-[...] : Where       : true
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "deny all"
-[...] : Entitlement : "DENY"
-[...] : Decision    : {"decision":"DENY"}
-[...] : Target      : true
-[...] : Where       : true
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : DENY
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   permit all -> PERMIT
+[...] :   deny all -> DENY
 ```
 
-As expected, the combining algorithm gave precedence to the `deny` decision.
+This is the secure-by-default behavior: when both permit and deny are present, deny wins. The SAPL engine implements several combining algorithms to resolve conflicting decisions (see [SAPL Documentation - Combining Algorithms](https://sapl.io/docs/latest/2_5_CombiningAlgorithms/)).
 
-Finally, rename `deny_all.sapl` to `deny_all.sapl.off` and `permit_all.sapl` to `permit_all.sapl.off`. Now access to the book should be denied, as the PDP only loads documents with the `.sapl`suffix.
+The three fields in the `pdp.json` algorithm configuration control orthogonal concerns: `votingMode` determines priority between permit and deny, `defaultDecision` is the fallback when no policy matches, and `errorHandling` controls whether evaluation errors propagate or are silently absorbed.
 
-The PDP returns `not applicable` because it did not find a document making a decision explicitly and `DENY_OVERRIDES` does not have a default decision like `DENY_UNLESS_PERMIT`. The PDP may also return `indeterminate` if an error occurred during policy evaluation. In both cases, a PEP must not grant access. Additional information about the different results of a policy evaluation can be found in the [SAPL documentation](https://sapl.io/docs/3.0.0/6_2_Policy/#policy).
+Finally, rename `deny_all.sapl` to `deny_all.sapl.off` and `permit_all.sapl` to `permit_all.sapl.off`. After renaming, rebuild with `mvn clean compile` before restarting. The `clean` is needed because compiled resources in the `target/` directory are not removed by a regular build. Without it, the old `.sapl` files remain on the classpath and the PDP still loads them. Now access to the book should be denied, as the PDP only loads documents with the `.sapl` suffix and no matching policies remain.
+
+The PDP may also return `indeterminate` if an error occurred during policy evaluation. In all cases except an explicit `permit`, the PEP must deny access. Additional information about the different results of a policy evaluation can be found in the [SAPL documentation](https://sapl.io/docs/latest/).
 
 In this section, you learned how a PEP and PDP interact in SAPL and how the PDP combines outcomes of different policies. In the next step, you will learn how to write more practical policies and when precisely a policy is *applicable*, i.e., matches, for an authorization subscription.
 
@@ -700,63 +582,38 @@ Let's write a policy that says, "Only Bob can see individual book entries". Writ
 
 ```
 policy "only bob may see individual book entries"
-permit action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$"
-where
-   subject.name == "bob";
+permit
+    action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$";
+    subject.name == "bob";
 ```
 
-Now restart and log in as Bob. You should see the same error page, including the statement: `There was an unexpected error (type=Forbidden, status=403).` Like at the beginning of the tutorial. Your log should look as follows:
+Now rebuild with `mvn clean compile` (clean is needed to remove any previously compiled `.sapl.off` files from the target directory), restart, and log in as Bob. You should see an error page with status 403. This happens because the login redirects to `/api/books` which calls `findAll`, and no policy matches that method.
+
+Now access an individual book directly at <http://localhost:8080/api/books/1>. Access will be granted, and the log looks like this:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: { ... }
-[...] : Decision    : {"decision":"NOT_APPLICABLE"}
-[...] : Timestamp   : 2024-01-21T19:22:53.850109800Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : NONE (i.e.,no policies/policy sets were set, or all target expressions evaluated to false or error.)
-[...] : No policy or policy sets have been evaluated
-```
-
-This happens because we have implemented in our `SecurityConfiguration` class, that we are automatically redirected to `/api/books` after a successful login, which results in the `findAll` method being called. However, we have not created a corresponding policy for accessing this method, which is monitored by a PEP.
-
-Now access an individual book, <http://localhost:8080/api/books/1>. Access will be granted, and the log looks like this:
-
-```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: { ... }
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Timestamp   : 2024-01-21T19:23:00.783253700Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["only bob may see individual book entries"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "only bob may see individual book entries"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Target      : true
-[...] : Where       : true
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   only bob may see individual book entries -> PERMIT
 ```
 
 Now go to <http://localhost:8080/logout> and log out. Then log in as Zoe and try to access <http://localhost:8080/api/books/1>.
 
-The application denies access, and the log looks like this:
+The application denies access:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: { ... }
-[...] : Timestamp   : 2024-01-21T20:20:50.669216100Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["only bob may see individual book entries"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "only bob may see individual book entries"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"NOT_APPLICABLE"}
-[...] : Target      : true
-[...] : Where       : false
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : DENY
+[...] : PDP ID         : default
 ```
 
 As you can see, there are several differences in the decision-making process of the PDP. First, let us examine what leads to the fact that there are no applicable (matching) documents when accessing `/api/books` or after a successful login.
 
-If you look at the policy, there is an expression following the *entitlement* `permit` that states `action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$"` and ends at the (optional) keyword `where`. An expression at this position in a policy is called the *target expression*. The *target expression* is a rule which determines if the policy is applicable to a given authorization subscription. The PDP only evaluates policy documents if the expression is `true` for the given subscription and the policies are therefore applicable. As seen in the `"permit all"` example, if the *target expression* is missing, the policy is always considered applicable.
+If you look at the policy, the conditions following `permit` contain two rules separated by semicolons. The first condition `action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$"` acts as a scoping rule that determines if the policy is relevant to the given authorization subscription. The PDP only evaluates the remaining conditions if this first condition is `true`. As seen in the `"permit all"` example, if no conditions are present, the policy always applies.
 
 In this case, the *target expression* examines two attributes of the action in the subscription. It validates if `action.java.name` is equal to `"findById"` and if `action.java.declaringTypeName` matches the regular expression `".*BookRepository$"`, i.e., the attribute string ends with `BookRepository`, using the regex comparison operator `=~`.
 
@@ -766,11 +623,11 @@ These two expressions explain why the PDP has identified the policy document `"p
 
 Please note that SAPL distinguishes between lazy Boolean operators, i.e., `&&` and `||` for AND and OR, and eager Boolean operators `&` and `|` respectively. *Target expressions* only allow eager operators, a requirement for efficient indexing of larger sets of policies.
 
-The PDP evaluates the complete policy in the case where the user attempts to access the individual book, i.e., the rules following `where` are evaluated. This section of the policy is called the *where block* or *body*. The *where block* contains an arbitrary number of rules or variable assignments ending with a `;`. Each rule is a Boolean expression. The *where block* as a whole evaluates to `true` when all of its rules evaluate to `true`. Rules are evaluated lazily from top to bottom.
+The PDP evaluates the complete policy when the user attempts to access the individual book. The *policy body* is the list of conditions following `permit` or `deny`. It contains an arbitrary number of rules or variable assignments, each ending with a `;`. Each rule is a Boolean expression. The body as a whole evaluates to `true` when all of its rules evaluate to `true`. Rules are evaluated lazily from top to bottom.
 
-In the situations above, the rule `subject.name == "bob";` is only `true` for the case where Bob is accessing the book.
+In the situations above, the rule `subject.name == "bob";` is only `true` when Bob is accessing the book.
 
-In this section, you have learned when a SAPL document is applicable, the purpose of the *target expression*, and where to find the *where block* of a policy.
+In this section, you have learned when a SAPL document is applicable and how the conditions in the policy body determine the authorization decision.
 
 Next, you will learn how to customize the authorization subscription and use temporal functions to only grant access to age-appropriate books.
 
@@ -821,20 +678,21 @@ The resulting authorization subscription will look similar to this:
 ```json
 {
     "subject": {
-    	"password": null,
         "username": "zoe",
-    	"authorities": [],
-    	"accountNonExpired": true,
-    	"accountNonLocked": true,
-    	"credentialsNonExpired": true,
-    	"enabled": true,
-    	"birthday": "2007-01-03"
+        "birthday": "2009-02-26",
+        "password": null,
+        "accountNonExpired": true,
+        "accountNonLocked": true,
+        "authorities": [],
+        "credentialsNonExpired": true,
+        "enabled": true
     },
     "action": "read book",
     "resource": {
-    	"id": 1,
-    	"name": "Clifford: It's Pool Time!",
-    	"ageRating": 0
+        "id": 1,
+        "name": "Clifford: It's Pool Time!",
+        "ageRating": 0,
+        "content": "*Woof*"
     },
     "environment": null
 }
@@ -847,26 +705,24 @@ The policy we will write to enforce the book age restriction will introduce a nu
 * Definition of local attribute variables
 * Usage of Policy Information Points
 * Function libraries
-* Logging for debugging policy information
 
-Create a policy document `check_age_logging.sapl` as follows:
+Create a policy document `check_age.sapl` as follows:
 
 ```
-policy "check age" 
-permit action == "read book"
-where 
-   var birthday    = log.infoSpy("birthday     : ", subject.birthday);
-   var today       = log.infoSpy("today        : ", time.dateOf(|<time.now>));
-   var age         = log.infoSpy("age          : ", time.timeBetween(birthday, today, "years"));
-   var ageRating   = log.infoSpy("age rating   : ", resource.ageRating);
-                     log.infoSpy("is older     : ", age >= ageRating );
+policy "check age"
+permit
+    action == "read book";
+    var birthday  = subject.birthday;
+    var today     = time.dateOf(|<time.now>);
+    var age       = time.timeBetween(birthday, today, "years");
+    age >= resource.ageRating;
 ```
 
-In its *target expression*, the policy `check age` scopes its applicability to all authorization subscriptions with the action `read book`.
+In its first condition, the policy `check age` scopes its applicability to all authorization subscriptions with the action `read book`.
 
-Using the keyword in the first line of the block, the policy defines a local attribute variable named `birthday` and assigns it to the `subject.birthday` attribute. While doing so, the expression `subject.birthday` is wrapped in a function call. The function `log.infoSpy` is a utility function, logging its parameter to the console using the log level `INFO`. The function is the identity function with the logging as a side-effect. Similar functions exist for other log levels. The logging function library also contains functions like `log.debug`, without the `Spy` which logs their parameter and always returns `true`. These log functions can be used as single rule lines in a `where` block.
+The policy then defines a local attribute variable named `birthday` and assigns it to the `subject.birthday` attribute.
 
-The second line of the `where` block assigns the current date to the variable `today`. In SAPL, angled brackets `<ATTRIBUTE_IDENTIFIER>` always denotes an attribute stream, a subscription to an external attribute source, using a Policy Information Point (PIP). In this case, the identifier `time.now` is used to access the current time in UTC from the system clock.
+The next line assigns the current date to the variable `today`. In SAPL, angled brackets `<ATTRIBUTE_IDENTIFIER>` always denotes an attribute stream, a subscription to an external attribute source, using a Policy Information Point (PIP). In this case, the identifier `time.now` is used to access the current time in UTC from the system clock.
 
 In this scenario, we do not need the streaming nature of the time, and we are only interested in the first event in the attribute stream. Prepending the pipe symbol to the angled brackets `|<>` only takes the head element, i.e., the first event in the attribute stream, and then unsubscribes from the PIP. The time libraries in SAPL use ISO 8601 strings to represent time. The function `time.dateOF` is then used to extract the date component of the timestamp retrieved from the PIP.
 
@@ -876,64 +732,43 @@ Note that the engine evaluates variable assignment rules from top to bottom. And
 
 Finally, the `age` is compared with the `ageRating` and the policy returns `true`if the subject's age is above the book's age rating.
 
-For example, if you log in as Zoe and access the first book, the logs will look similar to this:
+For example, if you log in as Zoe and access the first book, the logs will show:
 
 ```
-[...] : [SAPL] birthday     :  "2007-01-04"
-[...] : [SAPL] today        :  "2024-01-24"
-[...] : [SAPL] age          :  17
-[...] : [SAPL] age rating   :  0
-[...] : [SAPL] is older     :  true
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"password":null,"username":"zoe","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2007-01-04"},"action":"read book","resource":{"id":1,"name":"Clifford: It's Pool Time!","ageRating":0},"environment":null}
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Timestamp   : 2024-01-24T09:49:35.745099400Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["check age"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "check age"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Target      : true
-[...] : Where       : true
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   check age -> PERMIT
 ```
 
-However, if Alice attempts to access book four, access will be denied because the policy is not applicable, i.e., not all rules evaluate to `true`:
+However, if Alice attempts to access book four, access will be denied because the age condition evaluates to `false` and the policy becomes not applicable:
 
 ```
-[...] : [SAPL] birthday     :  "2021-01-03"
-[...] : [SAPL] today        :  "2024-01-23"
-[...] : [SAPL] age          :  3
-[...] : [SAPL] age rating   :  14
-[...] : [SAPL] is older     :  false
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-03"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14},"environment":null}
-[...] : Decision    : {"decision":"NOT_APPLICABLE"}
-[...] : Timestamp   : 2024-01-24T09:54:43.202487200Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["check age"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "check age"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"NOT_APPLICABLE"}
-[...] : Target      : true
-[...] : Where       : false
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : DENY
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   check age -> NOT_APPLICABLE
 ```
 
-The policy can be written more compactly without logging and using an `import` statement:
+The policy can be written more compactly using an `import` statement:
 
 ```
-import time.*
-policy "check age compact" 
-permit action == "read book"
-where 
-   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
-   age >= resource.ageRating;
+import time.timeBetween
+import time.dateOf
+policy "check age compact"
+permit
+    action == "read book";
+    var age = timeBetween(subject.birthday, dateOf(|<time.now>), "years");
+    age >= resource.ageRating;
 ```
 
-Imports allow the use of a shorter name instead of the fully qualified name of functions or attribute finders stored in libraries within a SAPL policy document.
+Imports allow the use of a shorter name instead of the fully qualified name of functions stored in libraries within a SAPL policy document.
 
-For instance, the statement `import time.*` imports all time functions and attribute finders from the time library, making them available under their simple name (e.g., `<now>` instead of `<time.now>`).
+For instance, the statement `import time.timeBetween` imports the `timeBetween` function from the time library, making it available under its simple name. You can also import individual attribute finders or use `'library name' as 'alias'` for aliasing.
 
 It is also possible to import only single functions and use them under their simple names, as well as to choose an alias for a certain library with `'library name' as 'alias'`.
 
@@ -953,51 +788,28 @@ For example, any doctor may access a patient's medical record in an emergency. H
 
 ### How to use Transformations in SAPL Policies?
 
-To have some more data to work with, extend the domain model by adding some content to the books:
-
-```java
-@Data
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor
-public class Book {
-    @Id
-    Long id;
-    String name;
-    Integer ageRating;
-    String content;
-}
-```
-
-Also, extend the `DemoData` class accordingly:
-
-```java
-bookRepository.save(new Book(1L, "Clifford: It's Pool Time!", 0, "*Woof*"));
-bookRepository.save(new Book(2L, "The Rescue Mission: (Pokemon: Kalos Reader #1)", 4, "Gotta catch 'em all!"));
-bookRepository.save(new Book(3L, "Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight", 9, "Some fantasy story."));
-bookRepository.save(new Book(4L, "The Three-Body Problem", 14, "Space is scary."));
-```
-
-We want to change the policies of the library in a way that users not meeting the age requirement do not get their access denied. Instead, only the content of the applied book should be blackened. To implement this change, add the following `check_age_transform.sapl` policy document to the application's policies:
+The Book entity already includes a `content` field. We want to change the policies of the library in a way that users not meeting the age requirement do not get their access denied. Instead, only the content of the applied book should be blackened. To implement this change, add the following `check_age_transform.sapl` policy document to the application's policies:
 
 ```
-import time.*
-policy "check age transform" 
-permit action == "read book"
-where 
-   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
-   age < resource.ageRating;
+import time.timeBetween
+import time.dateOf
+import filter.blacken
+policy "check age transform"
+permit
+    action == "read book";
+    var age = timeBetween(subject.birthday, dateOf(|<time.now>), "years");
+    age < resource.ageRating;
 transform
-   resource |- {
-      @.content : filter.blacken(3,0,"\u2588")
-   }
+    resource |- {
+        @.content : blacken(3,0,"\u2588")
+    }
 ```
 
 This policy introduces the `transform` expression for the *transformations*.
 
-If the policy is applicable, i.e., all rules evaluate to `true`, whatever JSON value the `transform` expression evaluates to is added to the authorization decision as the property `resource`. The presence of a `resource` object in the authorization decision instructs the PEP to replace the original `resource` data with the one supplied.
+If the policy conditions are met (all evaluate to `true`), whatever JSON value the `transform` expression evaluates to is added to the authorization decision as the property `resource`. The presence of a `resource` object in the authorization decision instructs the PEP to replace the original `resource` data with the one supplied.
 
-In this case, the so-called filter operator `|-` is applied to the `resource` object. The filter operator enables the selection of individual parts of a JSON value for manipulation, e.g., applying a function to the selected value. In this case, the operator selects the `content` key of the resource and replaces it with a version of its content, only exposing the three leftmost characters and replacing the rest with a black square ("\\u2588" in Unicode). The selection expression is very powerful. Please refer to the [SAPL Documentation](https://sapl.io/docs/3.0.0/5_7_SAPLExpressions/#filtering) for a full explanation.
+In this case, the so-called filter operator `|-` is applied to the `resource` object. The filter operator enables the selection of individual parts of a JSON value for manipulation, e.g., applying a function to the selected value. In this case, the operator selects the `content` key of the resource and replaces it with a version of its content, only exposing the three leftmost characters and replacing the rest with a black square ("\\u2588" in Unicode). The selection expression is very powerful. Please refer to the [SAPL Documentation](https://sapl.io/docs/latest/) for a full explanation.
 
 Ensure that the original age-checking policy is still in place. Now, restart and log in as Alice.
 
@@ -1026,27 +838,16 @@ But of course, because Alice is only three years old, the content of the age-ina
 The logs for this access attempt look like this:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
-[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
-[...] : Timestamp   : 2024-01-24T10:36:21.144698500Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["check age compact","check age transform"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "check age compact"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"NOT_APPLICABLE"}
-[...] : Target      : true
-[...] : Where       : false
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "check age transform"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"}}
-[...] : Target      : true
-[...] : Where       : true
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   check age -> NOT_APPLICABLE
+[...] :   check age transform -> PERMIT
 ```
 
-The PRP discovered both policies to be matching the subscription. The PDP starts to evaluate both and the `check age compact` policy evaluates to `NOT_APPLICABLE`, because Alice is not old enough to read "The Three-Body Problem". At the same time, the `check age transform` policy evaluates to `permit`. As a result, the authorization decision also contains a resource object, namely the transformed one. The PEP has, therefore, replaced the changed resource object.
+Both policies match the subscription. The `check age` policy evaluates to `NOT_APPLICABLE` because Alice is not old enough to read "The Three-Body Problem". The `check age transform` policy evaluates to `PERMIT` with a transformed resource. As a result, the PEP replaces the original resource with the one from the decision, containing the blackened content.
 
 ### How to use Obligations and Advice in SAPL Policies?
 
@@ -1057,21 +858,23 @@ Now, we want to add an obligation to this policy. The system should also log att
 To do so, modify the `check_age_transform.sapl` policy as follows:
 
 ```
-import time.*
-policy "check age transform" 
-permit action == "read book"
-where 
-   var age = timeBetween(subject.birthday, dateOf(|<now>), "years");
-   age < resource.ageRating;
-obligation 
-   {
-      "type": "logAccess",
-      "message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
-   }
+import time.timeBetween
+import time.dateOf
+import filter.blacken
+policy "check age transform"
+permit
+    action == "read book";
+    var age = timeBetween(subject.birthday, dateOf(|<time.now>), "years");
+    age < resource.ageRating;
+obligation
+    {
+        "type": "logAccess",
+        "message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
+    }
 transform
-   resource |- {
-   @.content : filter.blacken(3,0,"\u2588")
-   }
+    resource |- {
+        @.content : blacken(3,0,"\u2588")
+    }
 ```
 
 Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
@@ -1079,24 +882,14 @@ Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
 Access will be denied, and the logs look as follows:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"password":null,"username":"alice","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2021-01-04"},"action":"read book","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Gotta catch 'em all!"},"environment":null}
-[...] : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
-[...] : Timestamp   : 2024-01-24T13:37:19.333683900Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["check age compact","check age transform"]
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "check age compact"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"NOT_APPLICABLE"}
-[...] : Target      : true
-[...] : Where       : false
-[...] : Policy Evaluation Result ===================
-[...] : Name        : "check age transform"
-[...] : Entitlement : "PERMIT"
-[...] : Decision    : {"decision":"PERMIT","resource":{"id":2,"name":"The Rescue Mission: (Pokemon: Kalos Reader #1)","ageRating":4,"content":"Got?????????????????"},"obligations":[{"type":"logAccess","message":"Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]}
-[...] : Target      : true
-[...] : Where       : true
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : Obligations: [{"type"="logAccess", "message"="Attention, alice accessed the book '...'"}]
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   check age -> NOT_APPLICABLE
+[...] :   check age transform -> PERMIT
 ```
 
 Despite the PDP's decision to permit access, it was still denied due to the obligation to log the access in the authorization decision. This is because SAPL expresses obligations and advice as arbitrary JSON objects and does not know which of them might be relevant in an application domain or how policies decide to describe them. Thus, the PEP was unable to understand and enforce the logging obligation, resulting in the denial of access.
@@ -1114,21 +907,26 @@ public class LoggingConstraintHandlerProvider implements RunnableConstraintHandl
     }
 
     @Override
-    public boolean isResponsible(JsonNode constraint) {
-        return constraint != null && constraint.has("type")
-               && "logAccess".equals(constraint.findValue("type").asText());
+    public boolean isResponsible(Value constraint) {
+        if (!(constraint instanceof ObjectValue obj)) {
+            return false;
+        }
+        return obj.get("type") instanceof TextValue type && "logAccess".equals(type.value());
     }
 
     @Override
-    public Runnable getHandler(JsonNode constraint) {
-        return () -> log.info(constraint.findValue("message").asText());
+    public Runnable getHandler(Value constraint) {
+        if (constraint instanceof ObjectValue obj && obj.get("message") instanceof TextValue message) {
+            return () -> log.info(message.value());
+        }
+        return () -> log.info("Access logged");
     }
 }
 ```
 
 The SAPL Spring integration offers different hooks in the execution path where applications can add constraint handlers. Depending on the annotation and if the underlying method returns a value synchronously or uses reactive datatypes like `Flux<>` different hooks are available.
 
-For each of these hooks, the constraint handlers can influence the execution differently. E.g., for `@PreEnforce` the constraint handler may attempt to change the arguments handed over to the method. The different hooks map to interfaces a service bean can implement to provide the capability of enforcing different types of constraints. You can find a full list of the potential interfaces in the `sapl-spring-security` module.
+For each of these hooks, the constraint handlers can influence the execution differently. E.g., for `@PreEnforce` the constraint handler may attempt to change the arguments handed over to the method. The different hooks map to interfaces a service bean can implement to provide the capability of enforcing different types of constraints. You can find a full list of the potential interfaces in the `sapl-spring-boot-starter` module.
 
 In the case of logging, the constraint handler triggers a side effect by logging the message contained in the obligation to the console. Therefore, the `RunnableConstraintHandlerProvider` is the appropriate interface to implement.
 
@@ -1171,18 +969,20 @@ The concept is the same as with the `findById` method. The parameter `subject = 
 To see all accessible books write a policy as follows:
 
 ```
-import time.*
+import time.timeBetween
+import time.dateOf
 policy "filter content in collection"
-permit action == "list books"
+permit
+    action == "list books";
 obligation
-   {
-      "type" : "jsonContentFilterPredicate",
-      "conditions" : [
-         {
-            "path" : "$.ageRating",
-            "type" : "<=",
-            "value" : timeBetween(subject.birthday, dateOf(|<now>), "years")
-         }
+    {
+        "type" : "jsonContentFilterPredicate",
+        "conditions" : [
+            {
+                "path" : "$.ageRating",
+                "type" : "<=",
+                "value" : timeBetween(subject.birthday, dateOf(|<time.now>), "years")
+            }
       ]
 }
 ```
@@ -1198,21 +998,24 @@ Instead of using the provided class, we can again implement our own *constraint 
 public class FilterByAgeProvider implements FilterPredicateConstraintHandlerProvider {
 
     @Override
-    public boolean isResponsible(JsonNode constraint) {
-        return constraint != null && constraint.has("type")
-               && "filterBooksByAge".equals(constraint.findValue("type").asText())
-               && constraint.has("age") && constraint.get("age").isInt();
+    public boolean isResponsible(Value constraint) {
+        if (!(constraint instanceof ObjectValue obj)) {
+            return false;
+        }
+        return obj.get("type") instanceof TextValue type
+                && "filterBooksByAge".equals(type.value())
+                && obj.get("age") instanceof NumberValue;
     }
 
     @Override
-    public Predicate<Object> getHandler(JsonNode constraint) {
+    public Predicate<Object> getHandler(Value constraint) {
         return o -> {
-            var age = constraint.get("age").asInt();
-            if (o instanceof Book book) {
-                return age >= book.getAgeRating();
-            } else {
-                return true;
+            if (constraint instanceof ObjectValue obj && obj.get("age") instanceof NumberValue age) {
+                if (o instanceof Book book) {
+                    return age.value().intValue() >= book.getAgeRating();
+                }
             }
+            return true;
         };
     }
 }
@@ -1252,7 +1055,7 @@ Now log in as Bob, and you will see the following list of books:
 
 ## Create a Policy Set
 
-A SAPL policy set allows a group of policies to be viewed separately and evaluated using a selected combining algorithm. The result is passed to the PDP and evaluated with the remaining policies (sets). The same algorithms are available as for final conflict resolution, including the `first-applicable` algorithm.
+A SAPL policy set allows a group of policies to be viewed separately and evaluated using a selected combining algorithm. The result is passed to the PDP and evaluated with the remaining policies (sets). The same algorithms are available as for final conflict resolution, including the `first or abstain errors propagate` algorithm.
 
 **Note**: In contrast to the `pdp.json` file, the algorithms in policy sets must be written in lowercase and with `-`.
 
@@ -1268,36 +1071,36 @@ A SAPL policy set consists of the following elements:
 As a small example, create a file `check_age_by_id_set.sapl`. Only one of the two policies, `'check age compact'` and `'check age transform'`, from the previous chapter can be applicable at a time. Therefore, let's create a policy set that processes both policies.
 
 ```
-import time.*
-import filter.*
+import time.dateOf
+import time.timeBetween
+import filter.blacken
 
 set "check age set"
-first-applicable
+first or abstain errors propagate
 for action == "read book"
 var birthday    = subject.birthday;
-var today       = dateOf(|<now>);
+var today       = dateOf(|<time.now>);
 var age         = timeBetween(birthday, today, "years");
 
-   policy "check age transform set"
-   permit
-   where
-      age < resource.ageRating;
-   obligation 
-      {
-         "type": "logAccess",
-         "message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
-      }
-   transform
-      resource |- {
-         @.content : blacken(3,0,"\u2588")
-   }
+    policy "check age transform set"
+    permit
+        age < resource.ageRating;
+    obligation
+        {
+            "type": "logAccess",
+            "message": "Attention, "+subject.username+" accessed the book '"+resource.name+"'."
+        }
+    transform
+        resource |- {
+            @.content : blacken(3,0,"\u2588")
+        }
 
-   policy "check age compact set"
-   permit
-      age >= resource.ageRating
+    policy "check age compact set"
+    permit
+        age >= resource.ageRating;
 ```
 
-The rules for policies of a set are the same as for top-level policies. So the `where` keyword is optional, as you can see in the second policy of the set. If you use the optional keyword, the line must also end with a `;` as usual.
+The rules for policies within a set are the same as for top-level policies. Each condition ends with a `;`. The second policy of the set has a single condition directly following `permit`.
 
 Deactivate the two policy documents `'check_age_compact.sapl'` and `'check_age_transform.sapl'` with the extension `.off` and restart the application.
 
@@ -1305,63 +1108,33 @@ Now, log in as Bob and access <http://localhost:8080/api/books/3>.
 Your logs look as follows:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":3,"name":"Dragonlance Chronicles Vol. 1: Dragons of Autumn Twilight","ageRating":9,"content":"Some fantasy story."},"environment":null}
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Timestamp   : 2024-02-09T08:14:37.063506800Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["check age set"]
-[...] : Policy Set Evaluation Result ===============
-[...] : Name        : "check age set"
-[...] : Algorithm   : "FIRST_APPLICABLE"
-[...] : Decision    : {"decision":"PERMIT"}
-[...] : Target      : true
-[...] :    |Policy Evaluation Result ===================
-[...] :    |Name        : "check age transform set"
-[...] :    |Entitlement : "PERMIT"
-[...] :    |Decision    : {"decision":"NOT_APPLICABLE"}
-[...] :    |Target      : true
-[...] :    |Where       : false
-[...] :    |Policy Information Point Data:
-[...] :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
-[...] :    |Policy Evaluation Result ===================
-[...] :    |Name        : "check age compact set"
-[...] :    |Entitlement : "PERMIT"
-[...] :    |Decision    : {"decision":"PERMIT"}
-[...] :    |Target      : true
-[...] :    |Where       : true
-[...] :    |Policy Information Point Data:
-[...] :    | - {"value":"2024-02-09T08:14:37.061507Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:14:37.061507Z"}}
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   check age set -> PERMIT
+[...] :   check age compact set -> PERMIT
+[...] :   check age transform set -> NOT_APPLICABLE
 ```
 
-The policies of the set are indented to distinguish them from the rest of the policies. They are ordered directly after the result of the *target expression*. Unlike top-level policies, the policies of a set explicitly follow the order specified in the set or are evaluated in this order. Combining a logical evaluation sequence with a `FIRST_APPLICABLE` algorithm can save time or avoid work for the PEP. In the case of book three, both policies are still evaluated.
+The policy set evaluates both sub-policies. The `check age compact set` matches (Bob is old enough), while `check age transform set` does not apply. The set uses `first or abstain errors propagate`, so the first applicable sub-policy determines the outcome.
 
 Now access <http://localhost:8080/api/books/4>, you will get:
 
 ```
-[...] : --- The PDP made a decision ---
-[...] : Subscription: {"subject":{"password":null,"username":"bob","authorities":[],"accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"enabled":true,"birthday":"2014-01-20"},"action":"read book","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Space is scary."},"environment":null}
-[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[...] : Timestamp   : 2024-02-09T08:19:12.474766200Z
-[...] : Algorithm   : "DENY_OVERRIDES"
-[...] : Matches     : ["check age set"]
-[...] : Policy Set Evaluation Result ===============
-[...] : Name        : "check age set"
-[...] : Algorithm   : "FIRST_APPLICABLE"
-[...] : Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[...] : Target      : true
-[...] :    |Policy Evaluation Result ===================
-[...] :    |Name        : "check age transform set"
-[...] :    |Entitlement : "PERMIT"
-[...] :    |Decision    : {"decision":"PERMIT","resource":{"id":4,"name":"The Three-Body Problem","ageRating":14,"content":"Spa????????????"},"obligations":[{"type":"logAccess","message":"Attention, bob accessed the book 'The Three-Body Problem'."}]}
-[...] :    |Target      : true
-[...] :    |Where       : true
-[...] :    |Policy Information Point Data:
-[...] :    | - {"value":"2024-02-09T08:19:12.4707663Z","attributeName":"<time.now>","timestamp":{"value":"2024-02-09T08:19:12.470766300Z"}}
+[...] : --- PDP Decision ---
+[...] : Subscription   : { ... }
+[...] : Decision       : PERMIT
+[...] : Obligations: [{"type"="logAccess", "message"="Attention, bob accessed the book 'The Three-Body Problem'."}]
+[...] : PDP ID         : default
+[...] : Documents:
+[...] :   check age set -> PERMIT
+[...] :   check age transform set -> PERMIT
 [...] : Attention, bob accessed the book 'The Three-Body Problem'.
 ```
 
-As you can see, the second policy in the set was not evaluated because the first policy was already applicable.
+The `check age transform set` policy matches first (Bob's age < 14), so the set returns its result including the obligation and the transformed resource with blackened content. The second policy in the set is not evaluated because the first was already applicable.
 
 ## Collection of Obligations, Advice and Transformations
 
