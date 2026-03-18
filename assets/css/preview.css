@@ -554,8 +554,12 @@ main {
   transition: opacity 150ms ease, box-shadow 150ms ease;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  background: rgba(128, 128, 128, 0.08);
+  background: rgba(255, 255, 255, 0.7);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .logo-grid a {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .logo-grid a:hover { opacity: 1; }
