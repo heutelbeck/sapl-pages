@@ -72,7 +72,30 @@ obligation {
 
 <section class="section">
   <h2>Use it with any stack</h2>
-  <p>SAPL provides SDKs with idiomatic framework integration. One annotation or decorator to enforce policies — same authorization model everywhere.</p>
+
+  <div class="integration-tiers">
+    <div class="feature">
+      <h3>HTTP API</h3>
+      <p>Use the <a href="/docs/latest/6_1_HTTPApi/">REST and Server-Sent Events API</a> from any language. Run SAPL Server as a standalone authorization service. No SDK required.</p>
+    </div>
+    <div class="feature">
+      <h3>Embedded JVM</h3>
+      <p>Embed the PDP directly in your <a href="/docs/latest/6_2_JavaApi/">Java, Kotlin, or Scala</a> application. No network hop, no sidecar. Supports <a href="/docs/latest/6_1_HTTPApi/">multi-subscriptions</a> for batch authorization.</p>
+    </div>
+    <div class="feature">
+      <h3>Framework SDKs</h3>
+      <p>One annotation or decorator per endpoint. Idiomatic integration for
+        <a href="/docs/latest/6_3_Spring/">Spring</a>,
+        <a href="/docs/latest/6_4_NestJS/">NestJS</a>,
+        <a href="/docs/latest/6_5_Django/">Django</a>,
+        <a href="/docs/latest/6_6_Flask/">Flask</a>,
+        <a href="/docs/latest/6_7_FastAPI/">FastAPI</a>,
+        <a href="/docs/latest/6_8_Tornado/">Tornado</a>,
+        <a href="/docs/latest/6_9_FastMCP/">FastMCP</a>, and
+        <a href="/docs/latest/6_10_DotNet/">.NET</a>.</p>
+    </div>
+  </div>
+
   <div class="code-tabs">
     <div class="tab-bar">
       <button class="tab active" data-tab="spring" data-lang="java">Spring</button>

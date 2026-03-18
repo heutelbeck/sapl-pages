@@ -310,6 +310,25 @@ main {
   line-height: 1.5;
 }
 
+/* Integration tiers */
+.integration-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.integration-tiers a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.integration-tiers a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .integration-tiers { grid-template-columns: 1fr; }
+}
+
 /* Code tabs */
 .code-tabs {
   margin-top: 1.5rem;

@@ -28,18 +28,17 @@
 - [Policy Language](https://sapl.io/docs/latest/): SAPL syntax, expressions, combining algorithms
 - [Testing DSL](https://sapl.io/docs/latest/): SAPLTest for policy testing with coverage
 
-## Integration SDKs
-- [HTTP API](https://sapl.io/docs/latest/6_1_HTTPApi/): Language-agnostic REST/SSE interface
-- [Java API](https://sapl.io/docs/latest/6_2_JavaApi/): Programmatic PDP access
-- [Multi-Subscriptions](https://sapl.io/docs/latest/6_3_MultiSubscriptions/): Batch authorization
-- [Spring Security](https://sapl.io/docs/latest/6_4_SpringIntegration/): Annotation-based PEP, embedded PDP, WebFlux
-- [NestJS](https://sapl.io/docs/latest/6_5_NestJS/): Decorators, constraint handlers, streaming SSE
-- [Python Django](https://sapl.io/docs/latest/6_6_PythonDjango/): Decorators, async views, streaming
-- [Python Flask](https://sapl.io/docs/latest/6_7_PythonFlask/): Pre/post enforcement, constraint handlers
-- [Python FastAPI](https://sapl.io/docs/latest/6_8_PythonFastAPI/): Full ABAC with streaming SSE
-- [Python Tornado](https://sapl.io/docs/latest/6_9_PythonTornado/): Async enforcement, streaming
-- [Python FastMCP](https://sapl.io/docs/latest/6_10_PythonFastMCP/): MCP server authorization (AI agent tool access)
-- [.NET / ASP.NET Core](https://sapl.io/docs/latest/6_11_DotNet/): Attributes, constraint handlers, SSE
+## SDKs and APIs
+- [HTTP API](https://sapl.io/docs/latest/6_1_HTTPApi/): REST/SSE interface for any language, includes multi-subscription endpoints
+- [Java API](https://sapl.io/docs/latest/6_2_JavaApi/): Reactive API for embedded or remote PDP access
+- [Spring SDK](https://sapl.io/docs/latest/6_3_Spring/): Annotation-based PEP, embedded PDP, WebFlux
+- [NestJS SDK](https://sapl.io/docs/latest/6_4_NestJS/): Decorators, constraint handlers, streaming SSE
+- [Django SDK](https://sapl.io/docs/latest/6_5_Django/): Decorators, async views, streaming
+- [Flask SDK](https://sapl.io/docs/latest/6_6_Flask/): Pre/post enforcement, constraint handlers
+- [FastAPI SDK](https://sapl.io/docs/latest/6_7_FastAPI/): Full ABAC with streaming SSE
+- [Tornado SDK](https://sapl.io/docs/latest/6_8_Tornado/): Async enforcement, streaming
+- [FastMCP SDK](https://sapl.io/docs/latest/6_9_FastMCP/): MCP server authorization (AI agent tool access)
+- [.NET SDK](https://sapl.io/docs/latest/6_10_DotNet/): Attributes, constraint handlers, SSE
 
 ## Streaming Enforcement Patterns
 All SDKs implement three PEP-side enforcement modes for streaming authorization:
