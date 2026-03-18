@@ -1,18 +1,33 @@
+// Aligned with sapl-vaadin-theme (styles-aura.css)
+// Background:  hsl(210, 10%, 12%)  = #1b1e21
+// Surface:     hsl(210, 10%, 15%)  = #222629
+// Elevated:    hsl(210, 10%, 18%)  = #292c2f
+// Accent:      hsl(179, 43%, 44%)  = #3fa09e
+// Accent text: rgb(64, 160, 159)   = #40a09f
+
+$sapl-bg:      #1b1e21;
+$sapl-surface: #222629;
+$sapl-elevated: #292c2f;
+$sapl-accent:  #3fa09e;
+$sapl-text:    #e3e4e6;
+$sapl-text-secondary: #929699;
+$sapl-border:  #363a3e;
+
 $color-scheme: dark;
-$body-background-color: $grey-dk-300;
-$body-heading-color: $grey-lt-000;
-$body-text-color: $grey-lt-300;
-$link-color: #bbbbbb;
-$nav-child-link-color: $grey-dk-000;
-$sidebar-color: $grey-dk-300;
-$base-button-color: $grey-dk-250;
-$btn-primary-color: $blue-200;
-$code-background-color: #31343f; // OneDarkJekyll default for syntax-one-dark-vivid
-$code-linenumber-color: #dee2f7; // OneDarkJekyll .nf for syntax-one-dark-vivid
-$feedback-color: darken($sidebar-color, 3%);
-$table-background-color: $grey-dk-250;
-$search-background-color: $grey-dk-250;
-$search-result-preview-color: $grey-dk-000;
-$border-color: $grey-dk-200;
+$body-background-color: $sapl-bg;
+$body-heading-color: $sapl-text;
+$body-text-color: #c8cacc;
+$link-color: $sapl-accent;
+$nav-child-link-color: $sapl-text-secondary;
+$sidebar-color: $sapl-bg;
+$base-button-color: $sapl-elevated;
+$btn-primary-color: $sapl-accent;
+$code-background-color: #1e2126;
+$code-linenumber-color: $sapl-text-secondary;
+$feedback-color: darken($sapl-bg, 2%);
+$table-background-color: $sapl-surface;
+$search-background-color: $sapl-surface;
+$search-result-preview-color: $sapl-text-secondary;
+$border-color: $sapl-border;
 
 @import "./vendor/OneDarkJekyll/syntax"; // this is the one-dark-vivid atom syntax theme

@@ -10,7 +10,7 @@
 <body>
   <header class="site-header">
     <nav class="nav-container">
-      <a href="/preview/" class="logo"><img src="/assets/sapl-icon-light.svg" alt="SAPL" height="32"> SAPL</a>
+      <a href="/preview/" class="logo"><img src="/assets/sapl-icon-light.svg" alt="SAPL" height="32" class="logo-light"><img src="/assets/sapl-icon.svg" alt="SAPL" height="32" class="logo-dark"> SAPL</a>
       <div class="nav-links">
         <a href="/preview/">Home</a>
         <a href="/preview/getstarted">Get Started</a>
@@ -18,6 +18,10 @@
         <a href="https://playground.sapl.io/">Playground</a>
         <a href="https://github.com/heutelbeck/sapl-policy-engine" class="nav-icon">GitHub</a>
         <a href="https://discord.gg/pRXEVWm3xM" class="nav-icon">Discord</a>
+        <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
       </div>
     </nav>
   </header>
@@ -31,5 +35,20 @@
       <p>&copy; 2026 SAPL - The Streaming Attribute Policy Language</p>
     </div>
   </footer>
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+
+  document.querySelector('.theme-toggle').addEventListener('click', function() {
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+})();
+</script>
 </body>
 </html>
