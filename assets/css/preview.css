@@ -11,13 +11,13 @@
   --color-accent: #8f9cc1;         /* slate blue — logo inner element */
   --color-accent-muted: #799cc1;   /* muted blue — logo connector */
 
-  /* Page colors — cool off-white, not pure white */
-  --color-bg: #f8fafc;
-  --color-bg-card: #ffffff;
+  /* Page colors — soft cool grey, easy on eyes */
+  --color-bg: #edf2f7;
+  --color-bg-card: #f8fafc;
   --color-text: #1a1a2e;
   --color-text-secondary: #4a5568;
-  --color-surface: #f0f4f8;
-  --color-border: #e2e8f0;
+  --color-surface: #e2e8f0;
+  --color-border: #cbd5e1;
   --color-code-bg: #1e1e2e;
 
   /* Shadows — teal-tinted, layered */
