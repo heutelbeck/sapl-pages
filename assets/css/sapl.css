@@ -362,8 +362,8 @@ main {
 .tab-bar {
   display: flex;
   gap: 0;
-  background: var(--color-bg-card);
-  border-bottom: 1px solid var(--color-border);
+  background: #181825;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   overflow-x: auto;
 }
 
@@ -373,7 +373,7 @@ main {
   padding: 0.6rem 1.2rem;
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: #6c7086;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: color 150ms ease, border-color 150ms ease;
@@ -381,7 +381,7 @@ main {
   font-family: var(--font-sans);
 }
 
-.tab:hover { color: var(--color-text); }
+.tab:hover { color: #e2e8f0; }
 
 .tab.active {
   color: var(--color-primary);
@@ -474,8 +474,8 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #6c7086;
-  background: var(--color-bg-card);
-  border-bottom: 1px solid var(--color-border);
+  background: #181825;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .testing-code { overflow-x: auto; }

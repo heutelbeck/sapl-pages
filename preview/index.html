@@ -5,7 +5,7 @@ title: SAPL - The Open Source Streaming Attribute Policy Language
 
 <section class="hero">
   <h1>Authorization you can read, test, and trust</h1>
-  <p class="subtitle">Policies your team can read. A testing framework that proves they work. Decisions that update in real time as the world changes — from Spring and Django to NestJS, .NET, and beyond.</p>
+  <p class="subtitle">Policies your team can read, a testing framework that proves they work, and decisions that update in real time when context changes. Spring, Django, NestJS, .NET, and more.</p>
   <div class="cta-group">
     <a href="/preview/getstarted" class="btn btn-primary">Get Started</a>
     <a href="https://playground.sapl.io/" class="btn btn-secondary">Try in Playground</a>
@@ -54,7 +54,7 @@ obligation {
 
 <section class="section">
   <h2>Decisions that stay current</h2>
-  <p>Every authorization engine handles one-shot request-response decisions. SAPL does too, with zero overhead. But when context changes after the decision was made, one-shot engines go stale. SAPL keeps the decision stream open and updates it automatically. Toggle the threat level and watch.</p>
+  <p>Every authorization engine evaluates a request and returns a decision, and SAPL handles that case with zero overhead. The difference is what happens when context changes. Traditional engines have no way to revise the decision, so the application enforces a stale result until the next explicit check. With SAPL, the application subscribes to decisions and the PDP pushes updates whenever underlying attributes change. This is event-driven rather than polling, which reduces both latency and resource utilization. Toggle the threat level below and watch.</p>
 
   <!-- Streaming demo: code panels -->
   <div class="sd-code-panels">
@@ -149,7 +149,7 @@ public Flux&lt;ApiEvent&gt; stream() {
         <div class="sd-overlay" id="sdAccessOverlay">
           <div class="sd-overlay-icon"></div>
           <div class="sd-overlay-title">Access denied</div>
-          <div class="sd-overlay-msg">Critical threat level — activity stream suspended</div>
+          <div class="sd-overlay-msg">Critical threat level. Activity stream suspended.</div>
         </div>
       </div>
     </div>
@@ -170,7 +170,7 @@ public Flux&lt;ApiEvent&gt; stream() {
   <div class="integration-tiers">
     <div class="feature">
       <h3>Standalone server</h3>
-      <p>Run <a href="/docs/latest/7_0_SaplNode/">SAPL Node</a> as a dedicated authorization service. Any language can query it via the <a href="/docs/latest/6_1_HTTPApi/">HTTP API</a> — REST for one-shot decisions, Server-Sent Events for streaming.</p>
+      <p>Run <a href="/docs/latest/7_0_SaplNode/">SAPL Node</a> as a dedicated authorization service. Any language can query it via the <a href="/docs/latest/6_1_HTTPApi/">HTTP API</a>. REST for one-shot decisions, Server-Sent Events for streaming.</p>
     </div>
     <div class="feature">
       <h3>Framework SDKs</h3>
@@ -186,7 +186,7 @@ public Flux&lt;ApiEvent&gt; stream() {
     </div>
     <div class="feature">
       <h3>In-process on the JVM</h3>
-      <p>Add the PDP as a dependency to your <a href="/docs/latest/6_2_JavaApi/">Java, Kotlin, or Scala</a> project. Policies evaluate in your process — no network hop, no sidecar, no separate service to operate.</p>
+      <p>Add the PDP as a dependency to your <a href="/docs/latest/6_2_JavaApi/">Java, Kotlin, or Scala</a> project. Policies evaluate in your process. No network hop, no sidecar, no separate service to operate.</p>
     </div>
   </div>
   <p class="integration-note">All integration modes support single and multi-subscriptions, streaming and one-shot decisions, and the full obligation/advice/resource transformation model.</p>
@@ -263,7 +263,7 @@ async def get_export_data(request, pilot_id: str, sequence_id: str):
 
 <section class="section">
   <h2>Test policies like you test code</h2>
-  <p>SAPL is the only authorization engine with a dedicated policy testing language. Mock external data sources, emit streaming attribute changes, and assert that decisions update correctly — all declaratively. Enforce coverage thresholds as quality gates in CI/CD pipelines and generate coverage reports.</p>
+  <p>SAPL is the only authorization engine with a dedicated policy testing language. Mock external data sources, emit streaming attribute changes, and assert that decisions update correctly, all declaratively. Enforce coverage thresholds as quality gates in CI/CD pipelines and generate coverage reports.</p>
 
   <div class="testing-demo">
     <div class="testing-columns">
@@ -323,23 +323,23 @@ Coverage:
 <section class="section">
   <h2>TODO: Scenarios</h2>
   <p>TODO: AI Security / Spring Security / Data-Level Security / IoT &amp; MQTT</p>
-  <p>TODO: Scriptable authorization — <code>sapl check</code> as a shell-level authorization gate. Exit code 0 = PERMIT, non-zero = deny. Use in shell scripts, cron jobs, CI/CD pipelines, Makefiles, git hooks — anywhere a command-line decision is needed.</p>
+  <p>TODO: Scriptable authorization. <code>sapl check</code> as a shell-level authorization gate. Exit code 0 = PERMIT, non-zero = deny. Use in shell scripts, cron jobs, CI/CD pipelines, Makefiles, git hooks. Anywhere a command-line decision is needed.</p>
 </section>
 
 <section class="section">
   <h2>European open source</h2>
-  <p>Born in European research. Built for transparency, privacy, and digital independence. SAPL is deployed in production across European research and industry projects protecting critical infrastructure and sensitive personal data. Open source, self-hosted, no vendor lock-in.</p>
+  <p>SAPL originated in European research and is built around transparency, privacy, and digital independence. It is deployed in production across European research and industry projects protecting critical infrastructure and sensitive personal data. Open source, self-hosted, no vendor lock-in.</p>
 
   <div class="features">
     <div class="feature">
       <h3><a href="https://vpp4islands.eu/"><img src="/assets/vpp4islands-logo.png" alt="VPP4Islands" class="project-logo"></a></h3>
       <p>SAPL secures virtual power plant operations across European island energy systems, protecting grid control and distributed energy resource management.</p>
-      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/957852">Horizon 2020 &mdash; Grant Agreement No. 957852</a></p>
+      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/957852">Horizon 2020 - Grant Agreement No. 957852</a></p>
     </div>
     <div class="feature">
       <h3><a href="https://www.horizonsmile.eu/"><img src="/assets/smile-logo.png" alt="SMILE" class="project-logo"></a></h3>
       <p>SAPL protects sensitive clinical data in a multi-centre mental health study for young people across seven European countries.</p>
-      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/101080923">Horizon Europe &mdash; Grant Agreement No. 101080923</a></p>
+      <p class="feature-meta"><a href="https://cordis.europa.eu/project/id/101080923">Horizon Europe - Grant Agreement No. 101080923</a></p>
     </div>
     <div class="feature">
       <h3><a href="https://opensource.org/license/apache-2-0" style="display:inline-flex;align-items:flex-start"><img src="/assets/osi-logo.svg" alt="Open Source Initiative" class="project-logo" style="display:inline;margin:0"><sup>&reg;</sup></a></h3>
