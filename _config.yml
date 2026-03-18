@@ -25,7 +25,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   It provides development tooling for testing and policy authoring, standalone authorization servers,
   and framework integrations for Spring, NestJS, Axon, and Vaadin that offer flexible policy enforcement points in your application.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://heutelbeck.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://sapl.io"
 #twitter_username: jekyllrb
 github_username:  heutelbeck
 

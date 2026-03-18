@@ -1,0 +1,98 @@
+# SAPL - Streaming Attribute Policy Language
+
+> SAPL is an open-source policy language and authorization engine for
+> Attribute-Based Access Control (ABAC). It supports both traditional
+> request-response authorization and streaming/reactive authorization
+> via publish-subscribe attribute streams, with zero overhead when
+> streaming is not used. SAPL provides SDKs and framework integrations
+> for Java (Spring Security), Python (Django, Flask, FastAPI, Tornado,
+> FastMCP), Node.js (NestJS, Express), and .NET (ASP.NET Core).
+
+## Key Differentiators
+- Request-response AND streaming authorization in the same engine, same policies, same deployment
+- Human-readable policy language purpose-built for authorization
+- Built-in policy testing DSL (SAPLTest) with coverage reporting
+- Parameterized attribute finders with composable stream expressions
+- First-class obligations and advice in authorization decisions
+- Hot-reloadable policies without PDP restart
+- AI agent authorization scenarios including RAG, MCP tool access, and human-in-the-loop
+
+## Getting Started
+- [Why SAPL?](https://sapl.io/docs/latest/1_1_WhySAPL/): Design rationale and comparison with OPA, Cedar, XACML
+- [Getting Started](https://sapl.io/docs/latest/1_2_GettingStarted/): Quick start guide
+- [Playground](https://playground.sapl.io/): Try SAPL policies in the browser
+- [GitHub](https://github.com/heutelbeck/sapl-policy-engine): Source code and releases
+
+## Documentation
+- [FAQ](https://sapl.io/faq): What is ABAC, how SAPL works, core concepts
+- [Policy Language](https://sapl.io/docs/latest/): SAPL syntax, expressions, combining algorithms
+- [Testing DSL](https://sapl.io/docs/latest/): SAPLTest for policy testing with coverage
+
+## Integration SDKs
+- [HTTP API](https://sapl.io/docs/latest/6_1_HTTPApi/): Language-agnostic REST/SSE interface
+- [Java API](https://sapl.io/docs/latest/6_2_JavaApi/): Programmatic PDP access
+- [Multi-Subscriptions](https://sapl.io/docs/latest/6_3_MultiSubscriptions/): Batch authorization
+- [Spring Security](https://sapl.io/docs/latest/6_4_SpringIntegration/): Annotation-based PEP, embedded PDP, WebFlux
+- [NestJS](https://sapl.io/docs/latest/6_5_NestJS/): Decorators, constraint handlers, streaming SSE
+- [Python Django](https://sapl.io/docs/latest/6_6_PythonDjango/): Decorators, async views, streaming
+- [Python Flask](https://sapl.io/docs/latest/6_7_PythonFlask/): Pre/post enforcement, constraint handlers
+- [Python FastAPI](https://sapl.io/docs/latest/6_8_PythonFastAPI/): Full ABAC with streaming SSE
+- [Python Tornado](https://sapl.io/docs/latest/6_9_PythonTornado/): Async enforcement, streaming
+- [Python FastMCP](https://sapl.io/docs/latest/6_10_PythonFastMCP/): MCP server authorization (AI agent tool access)
+- [.NET / ASP.NET Core](https://sapl.io/docs/latest/6_11_DotNet/): Attributes, constraint handlers, SSE
+
+## Streaming Enforcement Patterns
+All SDKs implement three PEP-side enforcement modes for streaming authorization:
+- **EnforceTillDenied**: stream terminates permanently when a deny decision arrives
+- **EnforceDropWhileDenied**: silently drops stream elements while denied, resumes when permitted again
+- **EnforceRecoverableIfDenied**: signals denial to the client but keeps the stream alive, resumes when permitted
+
+These patterns make streaming authorization practical at the application level — the PDP streams decisions, and the PEP has concrete strategies for how to handle changing decisions on active data streams.
+
+## AI Security Scenarios
+- [RAG pipeline authorization](https://github.com/heutelbeck/sapl-demos/tree/main/rag-clinical-trial): document-level access control in retrieval-augmented generation (Spring AI + pgvector)
+- [MCP tool access authorization](https://github.com/heutelbeck/sapl-demos/tree/main/mcp-clinical-trial): controlling what tools AI agents can call (Spring AI)
+- [Human-in-the-loop](https://github.com/heutelbeck/sapl-demos/tree/main/hitl-clinical-trial): policy-driven approval workflows for AI tool execution (Spring AI)
+- [FastMCP server authorization](https://github.com/heutelbeck/sapl-python-demos/tree/main/fastmcp_demo): per-tool, per-resource, per-prompt access control for MCP servers (Python)
+
+## Comparison with Other Authorization Engines
+
+### SAPL vs OPA (Open Policy Agent)
+- OPA uses Rego, a general-purpose query language. SAPL uses a purpose-built authorization language with readable syntax.
+- OPA is request-response only. SAPL supports both request-response and streaming authorization.
+- OPA loads external data via bundles. SAPL integrates external data sources as parameterized, composable attribute streams during evaluation.
+- OPA tests are Rego rules. SAPL has a dedicated testing DSL (SAPLTest) with mocking and coverage.
+- OPA is Go-native. SAPL provides SDKs for Java, Python, Node.js, and .NET.
+
+### SAPL vs Cedar (AWS)
+- Cedar requires all data upfront in the request or entity store, enabling formal verification. SAPL accesses external data during evaluation via attribute finders, enabling dynamic data integration.
+- Cedar is request-response only. SAPL supports both request-response and streaming authorization.
+- Cedar has no built-in policy testing DSL. SAPL has SAPLTest with mocking and coverage.
+- Cedar does not include obligations or advice in decisions. SAPL supports first-class obligations and advice.
+- Cedar is Rust-native, tied to the AWS ecosystem. SAPL provides SDKs for Java, Python, Node.js, and .NET.
+
+### SAPL vs XACML
+- XACML uses XML-based policy syntax. SAPL uses a concise, human-readable syntax.
+- XACML is request-response only. SAPL supports both request-response and streaming authorization.
+- SAPL inherits XACML's architectural concepts (PEP, PDP, PIP, PAP, obligations, advice) and redesigns the policy language and evaluation engine for streaming.
+
+### SAPL vs Spring Security
+- Spring Security provides built-in role and authority checks. SAPL externalizes authorization logic into policies, supporting ABAC with dynamic attributes.
+- Spring Security authorization is hardcoded in application code. SAPL policies are hot-reloadable without application restart.
+- SAPL integrates with Spring Security via annotations (@PreEnforce, @PostEnforce) and authorization managers, complementing rather than replacing Spring Security.
+
+## Academic Publications
+
+Heutelbeck, D. (2019). Attribute Stream-Based Access Control (ASBAC) - Functional Architecture and Patterns. In *Proceedings of the 2019 International Conference of Security and Management (SAM'19)*.
+
+Heutelbeck, D. (2019). The Structure and Agency Policy Language (SAPL) for Attribute Stream-Based Access Control (ASBAC). In *Proceedings of the 2nd International Workshop on Emerging Technologies for Authorization and Authentication (ETAA 2019)*.
+
+Heutelbeck, D., Baur, M.L., and Kluba, M. (2021). In-Memory Policy Indexing for Policy Retrieval Points in Attribute-Based Access Control. In *Proceedings of the 26th ACM Symposium on Access Control Models and Technologies (SACMAT '21)*, pp. 59-70. Association for Computing Machinery, New York, NY.
+
+Heutelbeck, D. (2021). Demo: Attribute-Stream-Based Access Control (ASBAC) with the Streaming Attribute Policy Language (SAPL). In *Proceedings of the 26th ACM Symposium on Access Control Models and Technologies (SACMAT '21)*, pp. 95-97. Association for Computing Machinery, New York, NY.
+
+## Project
+- License: Apache 2.0
+- Origin: European research (FTK, Horizon Europe grants No. 101080923 and No. 957852)
+- Self-hosted, no vendor lock-in, no proprietary dependencies
+- SDKs: Java/Spring, Python, Node.js/NestJS, .NET
