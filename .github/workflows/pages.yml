@@ -31,6 +31,8 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-22.04
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -75,8 +77,8 @@ jobs:
           # Creation of a new documentation page linking to the reference pages
           cat >./documentation.md <<EOL
           ---
-          layout: page
-          title: Documentation
+          layout: sapl
+          title: Documentation - SAPL
           permalink: /docs/
           ---
           EOL
@@ -195,6 +197,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-22.04
     needs: build
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

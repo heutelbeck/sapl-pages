@@ -1,7 +1,8 @@
 ---
-layout: page
-title: FAQ
-permalink: /faq
+layout: sapl
+title: FAQ - SAPL
+description: "Frequently asked questions about SAPL. What is ABAC, how SAPL works, streaming authorization, policy language, and framework integrations."
+permalink: /faq/
 ---
 
 ## What is SAPL?
