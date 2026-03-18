@@ -9,11 +9,13 @@ This scenario walks through securing a Spring Boot application with SAPL. You wi
 
 The scenario assumes basic familiarity with Spring Boot. For background on ABAC concepts and SAPL's architecture, see the [documentation](https://sapl.io/docs/latest/).
 
+The complete source code is available at [github.com/heutelbeck/sapl-tutorial-01-spring](https://github.com/heutelbeck/sapl-tutorial-01-spring).
+
 ## Project Setup
 
 First, you will implement a simple Spring Boot application. Go to [Spring Initializr](https://start.spring.io/) and add the following dependencies to a project:
 
-* **Spring Web MVC** (to provide a REST API for testing your application)
+* **Spring Web** (to provide a REST API for testing your application)
 * **Spring Data JPA** (to develop the domain model for your application)
 * **H2 Database** (as a simple in-memory database to support the application)
 * **Lombok** (to eliminate some boilerplate code)
@@ -25,7 +27,7 @@ SAPL 4 requires Java 21 or higher. Select Java 21 (or higher) and Spring Boot 4.
 
  Your Initializr settings should now look something like this:
 
-![Spring Initializr.png](/assets/tutorial_02/spring_initializr.png)
+![Spring Initializr](/assets/scenarios/spring/spring_initializr.png)
 
 Now click "GENERATE." Your browser will download the project template as a ".zip" file.
 
