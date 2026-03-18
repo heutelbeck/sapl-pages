@@ -83,11 +83,21 @@ jobs:
           
           find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder; do
             folder_name=$(basename "$subfolder")
+            # Determine the landing page for each version
+            if [ "$folder_name" == "2.0.1" ]; then
+              doc_url="/docs/2.0.1/"
+            elif [ -f "$subfolder/1_1_WhySAPL.md" ]; then
+              doc_url="/docs/$folder_name/1_1_WhySAPL/"
+            elif [ -f "$subfolder/1_1_Introduction.md" ]; then
+              doc_url="/docs/$folder_name/1_1_Introduction/"
+            else
+              doc_url="/docs/$folder_name/"
+            fi
             # Create the links in the documentation page
             if [[ "$folder_name" == *"-SNAPSHOT"* ]]; then
-              echo "## [Development Snapshot $folder_name](/docs/$folder_name)" >> ./documentation.md
+              echo "## [Development Snapshot $folder_name]($doc_url)" >> ./documentation.md
             else
-              echo "## [Release $folder_name](/docs/$folder_name)" >> ./documentation.md
+              echo "## [Release $folder_name]($doc_url)" >> ./documentation.md
             fi
           
             if [ "${folder_name}" != "2.0.1" ]
@@ -95,23 +105,23 @@ jobs:
               # Creates for each reference page to be built a SAPL-specific back button and a select box containing all reference versions
               echo "<a href=\"{{ site.content.redirectBackToLink }}\" class=\"site-title fs-3\"><img src=\"/docs/$folder_name/assets/sapl_reference_images/SAPL_Icon_transparent.svg\" title=\"back to {% include title.html %}\"></a>" >> ${subfolder}/_includes/components/sapl_site_nav.html
               echo "<select class=\"selectbox\" id=\"saplversion\" name=\"saplversion\" style=\"width:  150px;\" onchange=\"document.location.href=this.value\">" >> ${subfolder}/_includes/components/sapl_site_nav.html
-              # Add an option element to the select box for reference version
+              # Add an option element to the select box for each reference version
               find "$build_path" -mindepth  1 -maxdepth  1 -type d | sort -r | while read -r subfolder2; do
                 folder_name2=$(basename "$subfolder2")
-                # This ensures that the appropriate version is set and displayed as the default in the select box
-                if [ $folder_name == $folder_name2 ]
-                then
-                  if [ "$folder_name2" == "2.0.1" ]; then
-                    echo "<option value=\"https://sapl.io/docs/2.0.1/sapl-reference.html\" selected>2.0.1</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
-                  else
-                    echo "<option value=\"https://sapl.io/docs/$folder_name2/\" selected>$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
-                  fi
+                # Determine the landing page for each version
+                if [ "$folder_name2" == "2.0.1" ]; then
+                  version_url="https://sapl.io/docs/2.0.1/"
+                elif [ -f "$subfolder2/1_1_WhySAPL.md" ]; then
+                  version_url="https://sapl.io/docs/$folder_name2/1_1_WhySAPL/"
+                elif [ -f "$subfolder2/1_1_Introduction.md" ]; then
+                  version_url="https://sapl.io/docs/$folder_name2/1_1_Introduction/"
                 else
-                  if [ "$folder_name2" == "2.0.1" ]; then
-                    echo "<option value=\"https://sapl.io/docs/2.0.1/sapl-reference.html\">2.0.1</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
-                  else
-                    echo "<option value=\"https://sapl.io/docs/$folder_name2/\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
-                  fi
+                  version_url="https://sapl.io/docs/$folder_name2/"
+                fi
+                if [ $folder_name == $folder_name2 ]; then
+                  echo "<option value=\"$version_url\" selected>$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
+                else
+                  echo "<option value=\"$version_url\">$folder_name2</option>" >> ${subfolder}/_includes/components/sapl_site_nav.html
                 fi
               done
               echo "</select>" >> ${subfolder}/_includes/components/sapl_site_nav.html

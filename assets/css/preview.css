@@ -115,7 +115,6 @@ body {
 }
 
 .logo img {
-  display: block;
   height: 52px;
   width: auto;
 }
@@ -141,10 +140,10 @@ body {
 }
 
 /* Logo theme swap — light is default, dark only with explicit attribute */
-.logo-dark { display: none !important; }
-.logo-light { display: block !important; }
-[data-theme="dark"] .logo-dark { display: block !important; }
-[data-theme="dark"] .logo-light { display: none !important; }
+.logo img.logo-dark { display: none; }
+.logo img.logo-light { display: block; }
+html[data-theme="dark"] .logo img.logo-dark { display: block; }
+html[data-theme="dark"] .logo img.logo-light { display: none; }
 
 .nav-links { display: flex; gap: 1.5rem; align-items: center; }
 
