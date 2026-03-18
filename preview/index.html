@@ -277,7 +277,7 @@ permit
         </div>
       </div>
       <div class="testing-col">
-        <div class="testing-label">Test</div>
+        <div class="testing-label">Test (excerpt)</div>
         <div class="testing-code" data-lang="sapltest">
 <pre class="cm-source"><code>scenario "decision changes when emergency status changes"
     given
@@ -300,15 +300,16 @@ permit
 <span class="term-bold">    Permit access only during emergency status</span>
       <span class="test-pass">PASS</span>  permit when MQTT status is emergency  <span class="test-dim">13ms</span>
       <span class="test-pass">PASS</span>  not-applicable when MQTT status is ok  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  not-applicable when MQTT status is any other value  <span class="test-dim">1ms</span>
       <span class="test-pass">PASS</span>  indeterminate when MQTT PIP returns error  <span class="test-dim">1ms</span>
 <span class="term-bold">    Policy scope - only read action on time resource</span>
       <span class="test-pass">PASS</span>  not-applicable for write action even during emergency  <span class="test-dim">1ms</span>
       <span class="test-pass">PASS</span>  not-applicable for delete action even during emergency  <span class="test-dim">1ms</span>
       <span class="test-pass">PASS</span>  not-applicable for read on different resource  <span class="test-dim">1ms</span>
 <span class="term-bold">    Streaming - decision changes dynamically with MQTT status</span>
-      <span class="test-pass">PASS</span>  permit then not-applicable as status changes  <span class="test-dim">1ms</span>
-      <span class="test-pass">PASS</span>  not-applicable then permit as status changes  <span class="test-dim">1ms</span>
-      <span class="test-pass">PASS</span>  alternating decisions with multiple status changes  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  permit then not-applicable as status changes from emergency to ok  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  not-applicable then permit as status changes from ok to emergency  <span class="test-dim">1ms</span>
+      <span class="test-pass">PASS</span>  alternating permit and not-applicable with multiple status changes  <span class="test-dim">1ms</span>
 
 Tests:  <span class="test-pass-bold">10 passed</span>, 10 total
 Time:   <span class="test-dim">27ms</span>
