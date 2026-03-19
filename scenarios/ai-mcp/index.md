@@ -262,6 +262,7 @@ mvn spring-boot:run
 
 ### Related
 
+- [Spring SDK Documentation](/docs/latest/6_3_Spring/): the SAPL Spring Boot SDK used in this demo
 - [RAG Pipeline Authorization](/scenarios/ai-rag/): document-level access control for retrieval-augmented generation
 - [Human-in-the-Loop Approval](/scenarios/ai-hitl/): policy-driven approval workflows for sensitive operations
-- [FastMCP Server Authorization (Python)](/scenarios/ai-fastmcp/): the same authorization model for Python MCP servers
+- [FastMCP Server Authorization](/scenarios/ai-fastmcp/): the same authorization model for FastMCP servers

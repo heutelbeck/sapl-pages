@@ -1,10 +1,10 @@
 ---
 layout: sapl
-title: "FastMCP Server Authorization (Python) - SAPL Scenarios"
+title: "FastMCP Server Authorization - SAPL Scenarios"
 description: "Authorize MCP tool calls, resources, and prompts inside a Python FastMCP server. Decorators, constraint handlers, JWT/ABAC integration with SAPL."
 ---
 
-## FastMCP Server Authorization (Python)
+## FastMCP Server Authorization
 
 FastMCP is the standard Python framework for building MCP servers. SAPL's Python SDK adds `@pre_enforce` and `@post_enforce` decorators that authorize tool calls, resource access, and prompt requests directly inside the FastMCP server.
 

@@ -35,4 +35,4 @@ Full source: [sapl-demos/hitl-clinical-trial](https://github.com/heutelbeck/sapl
 
 - [RAG Pipeline Authorization](/scenarios/ai-rag/)
 - [MCP Tool Access Authorization](/scenarios/ai-mcp/)
-- [FastMCP Server Authorization (Python)](/scenarios/ai-fastmcp/)
+- [FastMCP Server Authorization](/scenarios/ai-fastmcp/)

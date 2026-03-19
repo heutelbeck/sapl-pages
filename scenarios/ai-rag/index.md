@@ -275,6 +275,7 @@ mvn spring-boot:run
 
 ### Related
 
+- [Spring SDK Documentation](/docs/latest/6_3_Spring/): the SAPL Spring Boot SDK used in this demo
 - [MCP Tool Access Authorization](/scenarios/ai-mcp/): per-tool authorization for the same clinical trial use case
 - [Human-in-the-Loop Approval](/scenarios/ai-hitl/): policy-driven approval workflows for sensitive operations
-- [FastMCP Server Authorization (Python)](/scenarios/ai-fastmcp/): the same authorization model for Python MCP servers
+- [FastMCP Server Authorization](/scenarios/ai-fastmcp/): the same authorization model for FastMCP servers
