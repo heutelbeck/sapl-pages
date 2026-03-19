@@ -24,7 +24,7 @@ First, you will implement a simple Spring Boot application. Go to [Spring Initia
 
 We will use Maven as our build tool and Java as our language for this tutorial.
 
-SAPL 4 requires Java 21 or higher. Select Java 21 (or higher) and Spring Boot 4.0.3 (or higher) in the Initializr.
+Select Java 21 (or higher) and Spring Boot 4.0.3 (or higher) in the Initializr.
 
  Your Initializr settings should now look something like this:
 
