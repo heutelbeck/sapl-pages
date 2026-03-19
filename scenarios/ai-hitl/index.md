@@ -68,13 +68,20 @@ policy "permit-notify-with-approval"
 permit
   action == "notifyParticipant";
 obligation
-  { "type": "humanApprovalRequired" }
+  { "type": "humanApprovalRequired",
+    "toolName": action,
+    "summary": "Notify participant " + resource.recipient,
+    "detail": resource.message }
 
 policy "permit-suspend-with-mandatory-approval"
 permit
   action == "suspendParticipant";
 obligation
-  { "type": "humanApprovalRequired", "noAutoApprove": true, "timeout": "PT120S" }
+  { "type": "humanApprovalRequired", "noAutoApprove": true, "timeout": "PT120S",
+    "toolName": action,
+    "summary": "Suspend participant " + resource.participantId,
+    "detail": "Participant " + resource.participantId
+              + " will be suspended from active treatment." }
 ```
 
 If the organization decides that safety report exports should also require approval, a single policy change adds the obligation. No application code changes. No redeployment of the assistant. The constraint handler that implements the approval dialog already exists. The policy simply activates it for a new action.
@@ -83,37 +90,31 @@ The demo includes an auto-approve toggle and an action log so you can observe ho
 
 ### The scenario in action
 
-The following interactions demonstrate how policy-driven approval workflows guide an AI assistant through a safety-critical protocol, requiring human judgment at the right moments without blocking routine operations.
+The following demos show the full approval workflow in action. The AI assistant handles all adverse events in the clinical trial, pausing for human confirmation where the policy requires it.
 
-**The AI executes a multi-step safety protocol**
+**Demo: manual approval, auto-approve, and denial**
 
-![The AI assistant works through the severe adverse event protocol, pausing for human approval on safety-critical actions.](/assets/scenarios/ai-hitl/01_safety_protocol.png)
+<div class="yt-lazy" data-id="oDagl9nZwQg"></div>
 
-The safety officer asks the assistant to handle AE-001, a severe adverse event involving suicidal ideation. The assistant retrieves the event details and safety guidelines (immediate, no approval needed), then begins executing the protocol. It notifies the emergency contact, notifies the participant, and attempts to suspend the participant from treatment. Each notification pauses for approval. The suspension requires mandatory confirmation regardless of the auto-approve setting.
+The video shows two runs of the same protocol. In the first run, the operator manually approves each action. Read-only tools (listing events, retrieving details, fetching guidelines) execute immediately. When the assistant reaches a write action (notifying a participant, suspending treatment, exporting a report), the approval dialog appears with the tool name, a summary of the action, and the full message or parameters. In the second run, the operator enables auto-approve. Notifications execute without interruption. But when the assistant attempts to suspend participant P-003, the approval dialog appears regardless because the policy marks suspension as `noAutoApprove: true`. The operator denies the suspension. The assistant receives a semantically meaningful error, reports partial completion, and continues with the remaining events.
 
-**Auto-approve speeds up routine confirmations but mandatory actions still pause**
+**The approval dialog**
 
-![With auto-approve enabled, notifications execute automatically but the suspension still requires explicit confirmation.](/assets/scenarios/ai-hitl/02_auto_approve_still_asks.png)
-
-The safety officer enables auto-approve for convenience during a busy shift. The assistant processes the protocol again. Notifications are auto-approved and execute without interruption. But when the assistant reaches the suspension action, the approval dialog appears regardless. The policy has marked this action as `noAutoApprove: true`. The auto-approve toggle is a user preference. The policy overrides it for actions where the organization has determined that human judgment is non-negotiable.
-
-**The assistant adapts when an action is denied**
-
-![The AI assistant reports partial completion after the safety officer denies the suspension action.](/assets/scenarios/ai-hitl/03_partial_completion.png)
-
-The safety officer approves the notifications but denies the suspension. The assistant does not crash, retry, or ignore the denial. It reports what it accomplished (notifications sent, safety report exported) and what it could not do (suspension denied by the operator). The conversation continues. The safety officer can ask follow-up questions, re-attempt the suspension later, or take manual action. The assistant treats the denial as a fact, not an error.
-
-**The approval dialog with countdown**
-
-![The approval dialog shows the action details, recipient, message content, and a countdown timer.](/assets/scenarios/ai-hitl/04_approval_dialog.png)
+![The approval dialog shows the tool name, a human-readable summary of the action, and a countdown timer. The operator approves or denies before the timeout expires.](/assets/scenarios/ai-hitl/1_HITL_dialogue.png)
 
 Each approval dialog shows what the AI wants to do: which tool, what parameters, what the effect will be. The safety officer sees the recipient, the message content, and the clinical context before deciding. A countdown timer auto-denies the action if no response is given within the timeout period. For mandatory approvals, the timeout is configurable per policy (120 seconds for suspension). This prevents the system from blocking indefinitely if the operator steps away.
+
+**Complete protocol output with denial**
+
+![The assistant handled all adverse events with auto-approve enabled. P-003 suspension was denied by the operator. The action log on the right shows the full sequence of executed actions.](/assets/scenarios/ai-hitl/2_final_output.png)
+
+The assistant reports what it accomplished and what it could not do. Notifications were sent, safety reports were exported, and participant P-005 was suspended. Participant P-003's suspension was denied by the operator. The assistant treats the denial as a fact, not an error, and notes that the study coordinator should be contacted to complete the authorization manually.
 
 ### How SAPL solves this
 
 The mechanism is SAPL obligations. An obligation is a machine-readable instruction attached to a PERMIT decision that the application must fulfill before the permit takes effect. If the obligation is not fulfilled, the PERMIT becomes a DENY. This is enforced by the framework, not by application logic.
 
-For human-in-the-loop, the obligation is `{"type": "humanApprovalRequired"}`. A registered constraint handler intercepts this obligation, pauses the tool execution, and triggers an approval workflow. The tool method is already authorized (the decision is PERMIT), but execution is suspended until the human responds.
+For human-in-the-loop, the obligation carries `"type": "humanApprovalRequired"` along with the tool name and a human-readable summary and detail composed from the authorization subscription. A registered constraint handler intercepts this obligation, pauses the tool execution, and presents an approval dialog that shows the operator exactly what the AI wants to do. The tool method is already authorized (the decision is PERMIT), but execution is suspended until the human responds.
 
 ```java
 @PreEnforce(action = "'notifyParticipant'",
@@ -157,10 +158,14 @@ The approval obligation is not a boolean flag. It carries properties that the co
 
 ```sapl
 obligation
-  { "type": "humanApprovalRequired",
-    "noAutoApprove": true,
-    "timeout": "PT120S" }
+  { "type": "humanApprovalRequired", "noAutoApprove": true, "timeout": "PT120S",
+    "toolName": action,
+    "summary": "Suspend participant " + resource.participantId,
+    "detail": "Participant " + resource.participantId
+              + " will be suspended from active treatment." }
 ```
+
+The obligation composes the approval dialog content directly from the authorization subscription. `action` provides the tool name. `resource` contains the tool parameters as supplied by the `@PreEnforce` annotation. The policy author decides what the operator sees, not the application code.
 
 `noAutoApprove` overrides the user's auto-approve preference. This lets the policy distinguish between actions where approval is a formality (the user may choose to auto-approve for efficiency) and actions where the organization mandates that a human actively reads the parameters and clicks approve. The user's convenience preference does not override organizational risk policy.
 
