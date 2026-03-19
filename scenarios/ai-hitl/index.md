@@ -175,9 +175,122 @@ These properties are policy-driven. The application code implements one generic 
 
 ### Audit trail
 
-Every approval decision is logged: who was asked, what action was proposed, what parameters were passed, whether the human approved or denied, and how long the decision took. Combined with the SAPL policy decision log, this creates a complete chain of accountability: the policy decided that approval was required, the system presented the action to the operator, and the operator approved or denied it within a specific timeframe.
+Every tool call is logged with the full authorization context: who made the request, which tool was called, what parameters were passed, and whether the decision included an approval obligation. Combined with the operator's approve/deny response, this creates a complete chain of accountability.
 
-TODO: audit log examples
+The following decisions are from the interaction where Dr. Marcus Brandt (Site Investigator) asks the AI assistant to handle all adverse events. The assistant calls multiple tools. SAPL evaluates each one independently.
+
+**Decision 1: getSafetyGuidelines — PERMIT (immediate)**
+
+The assistant retrieves the safety response protocol. This is a read-only tool. The policy permits it without any obligation. No approval dialog. No delay.
+
+```
+17:44:51.785 [...] --- PDP Decision ---
+17:44:51.785 [...] Subscription   :
+{
+  "subject": {
+    "principal": {
+      "name": "Dr. Marcus Brandt",
+      "role": "Site Investigator"
+    }
+  },
+  "action": "getSafetyGuidelines",
+  "resource": {}
+}
+17:44:51.785 [...] Decision       : PERMIT
+17:44:51.785 [...] Documents:
+17:44:51.785 [...]   hitl-tools              -> PERMIT
+17:44:51.785 [...]   permit-read-tools       -> PERMIT
+```
+
+**Decision 2: notifyParticipant (Dr. James Campbell) — PERMIT with approval obligation**
+
+The assistant notifies the emergency contact about participant P-003's suicidal ideation. The decision is PERMIT, but the obligation carries the full message that the operator must review. The tool name, recipient, and message content are composed into the obligation directly from the authorization subscription by the policy.
+
+```
+17:44:35.049 [...] --- PDP Decision ---
+17:44:35.049 [...] Subscription   :
+{
+  "subject": {
+    "principal": {
+      "name": "Dr. Marcus Brandt",
+      "role": "Site Investigator"
+    }
+  },
+  "action": "notifyParticipant",
+  "resource": {
+    "recipient": "Dr. James Campbell",
+    "message": "This is an urgent notification regarding your emergency
+               contact, participant P-003 in the CT-2025-001 clinical
+               study. During the Week 6 routine assessment on 2025-02-15,
+               the participant reported increased frequency of thoughts
+               of self-harm. ..."
+  }
+}
+17:44:35.049 [...] Decision       : PERMIT
+17:44:35.049 [...] Obligations:
+  {
+    "type": "humanApprovalRequired",
+    "toolName": "notifyParticipant",
+    "summary": "Notify participant Dr. James Campbell",
+    "detail": "This is an urgent notification regarding ..."
+  }
+17:44:35.049 [...] Documents:
+17:44:35.049 [...]   hitl-tools                          -> PERMIT
+17:44:35.049 [...]   permit-read-tools                   -> NOT_APPLICABLE
+17:44:35.049 [...]   permit-export-report                -> NOT_APPLICABLE
+17:44:35.049 [...]   permit-notify-with-approval         -> PERMIT
+```
+
+The obligation is fulfilled when the operator approves. The notification is then sent:
+
+```
+17:44:37.446 [...] ACTION: Notified Dr. James Campbell
+```
+
+**Decision 3: suspendParticipant (P-003) — PERMIT with mandatory approval, operator denied**
+
+The assistant attempts to suspend P-003 from treatment. The decision is PERMIT, but the obligation requires mandatory human approval (`noAutoApprove: true`) with a 120-second timeout. The operator denies. The obligation fails. The PERMIT is revoked. The tool never executes.
+
+```
+17:45:18.734 [...] --- PDP Decision ---
+17:45:18.734 [...] Subscription   :
+{
+  "subject": {
+    "principal": {
+      "name": "Dr. Marcus Brandt",
+      "role": "Site Investigator"
+    }
+  },
+  "action": "suspendParticipant",
+  "resource": {
+    "participantId": "P-003"
+  }
+}
+17:45:18.735 [...] Decision       : PERMIT
+17:45:18.735 [...] Obligations:
+  {
+    "type": "humanApprovalRequired",
+    "noAutoApprove": true,
+    "timeout": "PT120S",
+    "toolName": "suspendParticipant",
+    "summary": "Suspend participant P-003",
+    "detail": "Participant P-003 will be suspended from active treatment."
+  }
+17:45:18.735 [...] Documents:
+17:45:18.735 [...]   hitl-tools                                -> PERMIT
+17:45:18.735 [...]   permit-read-tools                         -> NOT_APPLICABLE
+17:45:18.735 [...]   permit-export-report                      -> NOT_APPLICABLE
+17:45:18.735 [...]   permit-notify-with-approval               -> NOT_APPLICABLE
+17:45:18.735 [...]   permit-suspend-with-mandatory-approval    -> PERMIT
+```
+
+The operator denies. The LLM receives:
+
+```
+Operator denied 'suspendParticipant': Suspend participant P-003
+```
+
+Three decisions, three different authorization outcomes: immediate permit, permit with approval (fulfilled), and permit with mandatory approval (denied by operator). Each decision is auditable with the full context of who, what, and why. This is the human-readable text report. SAPL can also emit these decisions as structured JSON logs, suitable for ingestion by log aggregation and SIEM systems.
 
 Beyond infrastructure-level audit logging, SAPL obligations can model domain-driven constraints and events triggered by authorization decisions. A policy can mandate that when a safety-critical action is approved, a record is created in the trial management system. Or that when an operator denies a suspension, the Chief Investigator is notified for follow-up. These are not logging side effects bolted onto the application. They are authorization requirements expressed in policy and enforced by the framework.
 
