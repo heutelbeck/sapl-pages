@@ -94,7 +94,7 @@ The following demos show the full approval workflow in action. The AI assistant 
 
 **Demo: manual approval, auto-approve, and denial**
 
-<div class="yt-lazy" data-id="oDagl9nZwQg"></div>
+<div class="yt-lazy" data-id="WY5wHFhiCVk"></div>
 
 The video shows two runs of the same protocol. In the first run, the operator manually approves each action. Read-only tools (listing events, retrieving details, fetching guidelines) execute immediately. When the assistant reaches a write action (notifying a participant, suspending treatment, exporting a report), the approval dialog appears with the tool name, a summary of the action, and the full message or parameters. In the second run, the operator enables auto-approve. Notifications execute without interruption. But when the assistant attempts to suspend participant P-003, the approval dialog appears regardless because the policy marks suspension as `noAutoApprove: true`. The operator denies the suspension. The assistant receives a semantically meaningful error, reports partial completion, and continues with the remaining events.
 
