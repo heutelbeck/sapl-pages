@@ -251,6 +251,8 @@ The LLM tries to retrieve adverse event reports from Edinburgh to find participa
 
 Three tool calls, three auditable decisions. One permitted, two denied. The participant registry was never accessed. Edinburgh data was never accessed. Each decision shows exactly which policies were evaluated and why. This is the human-readable text report. SAPL can also emit these decisions as structured JSON logs, suitable for ingestion by log aggregation and SIEM systems.
 
+Beyond infrastructure-level audit logging, SAPL obligations can model domain-driven constraints and events that are triggered by granted or denied access. A policy can mandate that when a team member accesses sensitive data under a security override, the Chief Investigator is notified automatically for post hoc review. Or that any access to the participant registry creates a compliance record in the trial management system. These are not logging side effects bolted onto the application. They are authorization requirements expressed in policy and enforced by the framework. The same obligation mechanism that rewrites queries and transforms responses can also trigger notifications, create audit records, or initiate review workflows, all driven by the authorization decision rather than scattered through application code.
+
 ### Run the demo
 
 ```
