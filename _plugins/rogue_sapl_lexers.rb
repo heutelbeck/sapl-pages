@@ -11,14 +11,40 @@ module Rouge
 
     class SAPL < RegexLexer
       title "SAPL"
-      desc "Streaming Attribute Policy Language (placeholder for sapl-embed.js)"
+      desc "Streaming Attribute Policy Language"
       tag 'sapl'
       filenames '*.sapl'
       mimetypes 'text/x-sapl'
 
       state :root do
-        rule %r/.+/, Text
-        rule %r/\n/, Text
+        rule %r/\s+/, Text
+        rule %r/\/\/.*$/, Comment::Single
+        rule %r/\/\*/, Comment::Multiline, :multiline_comment
+        rule %r/"/, Str::Double, :string
+        rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
+        rule %r/\b(?:policy|set|import|as)\b/, Keyword::Declaration
+        rule %r/\b(?:permit|deny)\b/, Name::Constant
+        rule %r/\b(?:obligation|advice|transform|where|for|in|each|var|schema|enforced)\b/, Keyword
+        rule %r/\b(?:first|priority|strict|unanimous|unique|or|and|abstain|errors|propagate)\b/, Keyword
+        rule %r/\b(?:subject|action|resource|environment)\b/, Name::Builtin
+        rule %r/\b(?:true|false|null|undefined)\b/, Keyword::Constant
+        rule %r/(?:==|!=|=~|<=|>=|&&|\|\||!|<|>)/, Operator
+        rule %r/[{}()\[\]:;,.<>]/, Punctuation
+        rule %r/[a-zA-Z_$][a-zA-Z0-9_$]*/, Name
+      end
+
+      state :string do
+        rule %r/"/, Str::Double, :pop!
+        rule %r/\\["\\\/bfnrt]/, Str::Escape
+        rule %r/\\u[0-9a-fA-F]{4}/, Str::Escape
+        rule %r/\\./, Str::Double
+        rule %r/[^"\\]+/, Str::Double
+      end
+
+      state :multiline_comment do
+        rule %r/\*\//, Comment::Multiline, :pop!
+        rule %r/[^*]+/, Comment::Multiline
+        rule %r/\*/, Comment::Multiline
       end
     end
 
