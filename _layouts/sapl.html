@@ -144,7 +144,7 @@
     document.querySelectorAll('.yt-lazy').forEach(function(el) {
       var id = el.dataset.id;
       var thumb = document.createElement('img');
-      thumb.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+      thumb.src = '/assets/yt-thumbs/' + id + '.jpg';
       thumb.alt = '';
       thumb.loading = 'lazy';
       var play = document.createElement('div');

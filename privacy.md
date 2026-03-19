@@ -160,6 +160,18 @@ You have the option to set up your browser in such a manner that you will be not
 
 Which cookies and services are used on this website can be found in this privacy policy.
 
+### YouTube videos
+
+This website embeds videos from YouTube. The provider is Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland. The parent company is Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.
+
+We use a two-click solution with YouTube's privacy-enhanced mode. When you visit a page that contains a video, no connection to YouTube or any other third party is established. A static preview image and play button are served from our own servers. No data is transmitted to YouTube until you actively click on the video to play it.
+
+When you click on a video, a connection to YouTube is established via the domain youtube-nocookie.com. YouTube then receives the information that you have visited the corresponding page of our website, along with your IP address and browser information. If you are logged into your YouTube account, YouTube can associate your browsing behavior with your personal profile. You can prevent this by logging out of your YouTube account before clicking on a video. YouTube may also set cookies or use recognition technologies on your device once the video player is loaded.
+
+The connection to YouTube is established only after your active click, which constitutes consent within the meaning of Art. 6(1)(a) GDPR and S 25(1) TDDDG. This consent can be revoked at any time by not clicking on embedded videos.
+
+YouTube is certified under the EU-US Data Privacy Framework. Further information about the handling of user data can be found in the data privacy policy of YouTube/Google: [https://policies.google.com/privacy](https://policies.google.com/privacy)
+
 ### Server log files
 
 The provider of this website and its pages automatically collects and stores information in so-called server log files, which your browser communicates to us automatically. The information comprises:
