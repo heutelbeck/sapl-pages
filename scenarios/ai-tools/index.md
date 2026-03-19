@@ -124,7 +124,7 @@ public String getPhq9Assessments(String site) {
 
 The `@PreEnforce` annotation intercepts the call and constructs an authorization subscription from the principal (the current user), the action (`getPhq9Assessments`), and the resource (the `site` parameter). The corresponding policy restricts site investigators to their own site:
 
-```
+```sapl
 policy "si-phq9-own-site"
 permit
     action == "getPhq9Assessments";
@@ -136,7 +136,7 @@ If Dr. Brandt (Heidelberg) asks the assistant for Edinburgh's PHQ-9 data, the to
 
 For the most sensitive data, the participant registry, access requires both the right role and a specific declared purpose:
 
-```
+```sapl
 policy "ci-registry-adverse-event-purpose"
 permit
     action == "getParticipantRegistry";

@@ -59,7 +59,7 @@ The first three tools are read-only. They execute immediately. The notification 
 
 This three-tier model is not hardcoded in the application. It is expressed entirely in SAPL policies:
 
-```
+```sapl
 policy "permit-read-tools"
 permit
   action in ["listAdverseEvents", "getAdverseEvent", "getSafetyGuidelines"];
@@ -155,7 +155,7 @@ SAPL keeps these states separate because they are separate. The policy language 
 
 The approval obligation is not a boolean flag. It carries properties that the constraint handler interprets:
 
-```
+```sapl
 obligation
   { "type": "humanApprovalRequired",
     "noAutoApprove": true,

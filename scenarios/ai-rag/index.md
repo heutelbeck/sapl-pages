@@ -123,7 +123,7 @@ Mono<List<Document>> retrieve(Mono<SearchRequest> searchRequest, boolean securit
 
 The `@PreEnforce` annotation triggers policy evaluation. The policy does not just permit or deny. It returns a PERMIT decision with an obligation attached:
 
-```
+```sapl
 policy "site-investigator-statistical-analysis"
 permit
   subject.principal.role == "Site Investigator";
@@ -160,7 +160,7 @@ These filter expressions are set on the `SearchRequest` before it reaches the ve
 
 The full policy set covers all role and purpose combinations:
 
-```
+```sapl
 set "rag-retrieval"
 first or abstain
 for action == "retrieve"
