@@ -24,17 +24,17 @@ The standard approach is to add metadata filters to the search request: `WHERE t
 
 The alternative is to filter after retrieval, in the application layer. This is worse. The documents have already left the database. They are in memory. If a bug, a logging statement, or a monitoring tool captures the raw retrieval results, the unauthorized data is exposed. Defense in depth requires filtering at the earliest possible point: inside the database query itself.
 
-### RAG vs MCP: two ways to get data into the context
+### RAG vs tool calling: two ways to get data into the context
 
-Both RAG and MCP tool calling solve the same fundamental problem: the LLM needs external knowledge in its context to answer a question. The difference is who controls the data acquisition and where authorization can intervene.
+Both RAG and tool calling solve the same fundamental problem: the LLM needs external knowledge in its context to answer a question. The difference is who controls the data acquisition and where authorization can intervene.
 
 With **RAG**, the system retrieves relevant documents before the LLM sees the query. A retrieval step, typically embedding similarity search, selects and injects data into the prompt. The LLM is passive. It reasons over whatever was pre-fetched. Authorization happens at retrieval time by rewriting the database query to filter which documents enter the context.
 
-With **MCP tool calling**, the LLM actively decides what data it needs during reasoning. It calls a tool, inspects the result, and may call additional tools based on what it learned. The model drives data acquisition iteratively. Authorization happens at each tool call, gating access as the model requests it.
+With **tool calling**, the LLM actively decides what data it needs during reasoning. It calls a tool, inspects the result, and may call additional tools based on what it learned. The model drives data acquisition iteratively. Authorization happens at each tool call, gating access as the model requests it.
 
-The authorization mechanism differs accordingly. In MCP, SAPL evaluates a separate policy for each tool call and makes a binary permit/deny decision. In RAG, SAPL evaluates a single policy for the retrieval operation and attaches obligations that dynamically rewrite the search query. The policy does not just allow or deny the retrieval. It shapes what the retrieval returns.
+The authorization mechanism differs accordingly. With tool calling, SAPL evaluates a separate policy for each tool call and makes a binary permit/deny decision. In RAG, SAPL evaluates a single policy for the retrieval operation and attaches obligations that dynamically rewrite the search query. The policy does not just allow or deny the retrieval. It shapes what the retrieval returns.
 
-The [MCP Tool Access Authorization](/scenarios/ai-mcp/) scenario demonstrates the same clinical trial use case with the same data, roles, and policies, but uses per-tool access control instead of retrieval filtering.
+The [AI Tool Authorization](/scenarios/ai-tools/) scenario demonstrates the same clinical trial use case with the same data, roles, and policies, but uses per-tool access control instead of retrieval filtering.
 
 ### The demo: a clinical trial AI assistant
 
@@ -109,7 +109,7 @@ This is what SAPL provides for RAG pipelines.
 
 ### How SAPL solves this
 
-SAPL policies run inside the application. The `@PreEnforce` annotation on the retrieval method intercepts the call before execution. But unlike the MCP scenario where the decision is binary (permit or deny the tool call), the RAG scenario uses SAPL obligations to dynamically rewrite the search query.
+SAPL policies run inside the application. The `@PreEnforce` annotation on the retrieval method intercepts the call before execution. But unlike the tool authorization scenario where the decision is binary (permit or deny the tool call), the RAG scenario uses SAPL obligations to dynamically rewrite the search query.
 
 The retrieval service receives a reactive `SearchRequest` that SAPL can intercept and transform:
 
@@ -207,7 +207,7 @@ No policy matches if the role is unrecognized. The combining algorithm is "first
 
 ### Obligations: more than permit or deny
 
-The key difference between the RAG and MCP authorization patterns is the use of obligations. In the MCP scenario, each tool call gets a binary permit or deny. In the RAG scenario, the decision is PERMIT with conditions attached. The obligation is a machine-readable instruction that the application must fulfill for the permit to take effect.
+The key difference between the RAG and tool authorization patterns is the use of obligations. In the tool authorization scenario, each tool call gets a binary permit or deny. In the RAG scenario, the decision is PERMIT with conditions attached. The obligation is a machine-readable instruction that the application must fulfill for the permit to take effect.
 
 If the obligation handler is not registered, or if it fails to apply the filter, the SAPL framework treats the obligation as unfulfilled and converts the PERMIT to a DENY. This is a safety property: a missing or broken filter does not silently grant full access. It fails closed.
 
@@ -219,6 +219,12 @@ This pattern extends beyond document type filtering. SAPL obligations can:
 - Trigger side effects (audit logging, usage tracking)
 
 The policy decides what happens. The constraint handler executes it. The application code stays clean.
+
+### Beyond retrieval filtering: related scenarios
+
+This scenario controls what data reaches the LLM. The [AI Tool Authorization](/scenarios/ai-tools/) and [Human-in-the-Loop Approval](/scenarios/ai-hitl/) scenarios control what the LLM does with it. Both enforce authorization at the tool-calling layer inside the Spring AI application, where the tools are local methods in the same process. The tool authorization scenario gates tool calls with binary permit/deny decisions. The HITL scenario goes further: the policy returns PERMIT with a condition that pauses execution until a human confirms the action. All three use the same SAPL obligation mechanism, applied to different concerns: query rewriting here, tool gating in tool authorization, and approval workflows in HITL.
+
+The [MCP Server Authorization](/scenarios/ai-mcp/) scenario takes a different approach. There, the tools are served by a separate MCP server process with its own network boundary. SAPL runs inside the MCP server and guards that boundary via middleware and decorators, controlling what external AI agents can do when they connect. This distinction matters architecturally: application-internal enforcement is appropriate when the application owns the tools, while MCP server enforcement is appropriate when the tools are exposed as a service to multiple clients.
 
 ### Audit trail
 
@@ -260,7 +266,7 @@ The policy set evaluates four policies. The `ci-statistical-analysis` policy mat
 
 A single retrieval, a single auditable decision. The decision is PERMIT, but the obligation rewrites the search query to exclude registry documents before it reaches the database. The LLM receives adverse event data, PHQ-9 scores, and the study protocol. It does not receive the participant registry. The audit log shows exactly which policy matched, what obligation was attached, and why the other policies did not apply.
 
-Compare this with the [MCP audit trail](/scenarios/ai-mcp/#audit-trail): in the MCP scenario, the same user interaction produces three separate PDP decisions (one per tool call). In the RAG scenario, there is one decision with an obligation that shapes the retrieval. Both are fully auditable. The difference is in the enforcement pattern, not the audit completeness.
+Compare this with the [tool authorization audit trail](/scenarios/ai-tools/#audit-trail): in the tool authorization scenario, the same user interaction produces three separate PDP decisions (one per tool call). In the RAG scenario, there is one decision with an obligation that shapes the retrieval. Both are fully auditable. The difference is in the enforcement pattern, not the audit completeness.
 
 This is the human-readable text report. SAPL can also emit these decisions as structured JSON logs, suitable for ingestion by log aggregation and SIEM systems.
 
@@ -278,6 +284,6 @@ mvn spring-boot:run
 ### Related
 
 - [Spring SDK Documentation](/docs/latest/6_3_Spring/): the SAPL Spring Boot SDK used in this demo
-- [MCP Tool Access Authorization](/scenarios/ai-mcp/): per-tool authorization for the same clinical trial use case
+- [AI Tool Authorization](/scenarios/ai-tools/): per-tool authorization for the same clinical trial use case
 - [Human-in-the-Loop Approval](/scenarios/ai-hitl/): policy-driven approval workflows for sensitive operations
-- [FastMCP Server Authorization](/scenarios/ai-fastmcp/): the same authorization model for FastMCP servers
+- [MCP Server Authorization](/scenarios/ai-mcp/): the same authorization model for MCP servers
