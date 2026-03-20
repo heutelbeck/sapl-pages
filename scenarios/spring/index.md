@@ -620,7 +620,7 @@ If you look at the policy, the conditions following `permit` contain two rules s
 
 In this case, the *target expression* examines two attributes of the action in the subscription. It validates if `action.java.name` is equal to `"findById"` and if `action.java.declaringTypeName` matches the regular expression `".*BookRepository$"`, i.e., the attribute string ends with `BookRepository`, using the regex comparison operator `=~`.
 
-**Note**: The JSON structure with `:{` must be converted to a `.`.
+**Note**: In the authorization subscription JSON, nested objects use `:{`. In SAPL policy expressions, you navigate these nested structures with dot notation. For example, `"action": {"java": {"name": "findById"}}` in the subscription becomes `action.java.name` in the policy.
 
 These two expressions explain why the PDP has identified the policy document `"permit_bob_for_books.sapl"` as applicable when accessing individual books, but does not find a matching document when accessing the entire list.
 
