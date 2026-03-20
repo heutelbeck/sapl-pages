@@ -58,7 +58,7 @@ def manage_pipelines(action: str, pipeline_id: str) -> dict:
     return {"pipeline_id": pipeline_id, "status": action}
 ```
 
-```
+```sapl
 policy "engineering-access"
 permit
     "engineering" in resource.tags;
@@ -73,7 +73,7 @@ Felix (engineer) can manage pipelines. Mara (analyst) cannot. The policy checks 
 
 **The solution.** The policy attaches an obligation that caps the limit. A constraint handler modifies the argument before the tool runs.
 
-```
+```sapl
 policy "analyst-customer-queries"
 permit
     resource.name == "query_customer_data";
@@ -95,7 +95,7 @@ This is GDPR Article 5(1)(c) data minimization enforced at the authorization lay
 
 **The solution.** The policy attaches a filter obligation. A constraint handler removes elements that do not match the allowed classification levels.
 
-```
+```sapl
 policy "analyst-export-listing"
 permit
     resource.name == "list_data_exports";
@@ -115,7 +115,7 @@ The `FilterByClassificationProvider` inspects each element in the returned list 
 
 **The solution.** The policy attaches a redaction obligation. A `RedactFieldsProvider` mapping handler walks the return value recursively and blackens the named fields, regardless of nesting depth.
 
-```
+```sapl
 policy "analyst-customer-queries"
 permit
     resource.name == "query_customer_data";
@@ -167,7 +167,7 @@ Sam (intern) calls `tools/list` and sees 4 tools. Mara (analyst) sees 6. Diana (
 
 **The solution.** Attach logging obligations to both permit and deny decisions. The policy decides what to log and when.
 
-```
+```sapl
 policy "compliance-purge"
 permit
     resource.name == "purge_dataset";
@@ -226,7 +226,7 @@ Both paths use the same policies and the same PDP. The difference is what the en
 
 **Prerequisites:** Docker (for Keycloak and SAPL Node) and Python 3.12+ (for the FastMCP server and demo script).
 
-```
+```shell
 git clone https://github.com/heutelbeck/sapl-python-demos
 cd sapl-python-demos/fastmcp_demo
 docker compose up -d
