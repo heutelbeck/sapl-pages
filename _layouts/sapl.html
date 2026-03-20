@@ -5,6 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ page.title }}{% unless page.title contains 'SAPL' %} - SAPL{% endunless %}</title>
   {% seo %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FTK e.V.",
+    "url": "https://ftk.de",
+    "logo": "https://sapl.io/assets/favicon.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Wandweg 3",
+      "addressLocality": "Dortmund",
+      "postalCode": "44149",
+      "addressCountry": "DE"
+    }
+  }
+  </script>
+  {% if page.url == "/" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "SAPL",
+    "alternateName": "Streaming Attribute Policy Language",
+    "url": "https://sapl.io",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform",
+    "license": "https://opensource.org/license/apache-2-0",
+    "isAccessibleForFree": true,
+    "programmingLanguage": ["Java", "Python", "JavaScript", "C#"],
+    "codeRepository": "https://github.com/heutelbeck/sapl-policy-engine",
+    "description": "Authorization engine with a human-readable policy language, streaming decisions that update in real time, and a dedicated testing DSL with coverage reporting.",
+    "author": {
+      "@type": "Organization",
+      "name": "FTK e.V.",
+      "url": "https://ftk.de"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    }
+  }
+  </script>
+  {% endif %}
   <link rel="stylesheet" href="/assets/css/sapl.css">
   <link rel="icon" href="/assets/favicon.png">
   <script>
