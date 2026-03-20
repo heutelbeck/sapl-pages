@@ -2,7 +2,6 @@
 layout: default
 title: x509
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 132
 ---
 # x509

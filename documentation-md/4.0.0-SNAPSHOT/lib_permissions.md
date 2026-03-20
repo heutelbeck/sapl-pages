@@ -2,7 +2,6 @@
 layout: default
 title: permissions
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 120
 ---
 # permissions

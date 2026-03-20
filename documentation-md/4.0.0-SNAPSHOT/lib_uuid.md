@@ -2,7 +2,6 @@
 layout: default
 title: uuid
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 131
 ---
 # uuid

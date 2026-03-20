@@ -2,7 +2,6 @@
 layout: default
 title: xml
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 133
 ---
 # xml

@@ -2,7 +2,6 @@
 layout: default
 title: mqtt
 parent: Attribute Finders
-grand_parent: SAPL Reference
 nav_order: 203
 ---
 # mqtt

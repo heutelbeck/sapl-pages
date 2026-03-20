@@ -2,7 +2,6 @@
 layout: default
 title: traccar
 parent: Attribute Finders
-grand_parent: SAPL Reference
 nav_order: 205
 ---
 # traccar

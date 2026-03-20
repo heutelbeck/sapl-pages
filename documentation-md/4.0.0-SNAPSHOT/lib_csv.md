@@ -2,7 +2,6 @@
 layout: default
 title: csv
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 104
 ---
 # csv

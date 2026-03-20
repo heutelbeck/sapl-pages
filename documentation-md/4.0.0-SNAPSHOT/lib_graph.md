@@ -2,7 +2,6 @@
 layout: default
 title: graph
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 109
 ---
 # graph

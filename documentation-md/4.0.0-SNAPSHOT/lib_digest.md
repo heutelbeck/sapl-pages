@@ -2,7 +2,6 @@
 layout: default
 title: digest
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 105
 ---
 # digest

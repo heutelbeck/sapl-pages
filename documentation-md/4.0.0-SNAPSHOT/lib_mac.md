@@ -2,7 +2,6 @@
 layout: default
 title: mac
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 114
 ---
 # mac

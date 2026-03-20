@@ -2,7 +2,6 @@
 layout: default
 title: math
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 115
 ---
 # math

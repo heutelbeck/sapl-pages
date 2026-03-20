@@ -2,7 +2,6 @@
 layout: default
 title: signature
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 125
 ---
 # signature

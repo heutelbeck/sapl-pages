@@ -2,7 +2,6 @@
 layout: default
 title: bitwise
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 102
 ---
 # bitwise

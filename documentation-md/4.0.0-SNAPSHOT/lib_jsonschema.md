@@ -2,7 +2,6 @@
 layout: default
 title: jsonschema
 parent: Functions
-grand_parent: SAPL Reference
 nav_order: 112
 ---
 # jsonschema
