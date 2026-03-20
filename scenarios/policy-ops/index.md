@@ -85,7 +85,7 @@ If coverage drops below these thresholds, the pipeline fails with exit code 3 an
 
 Every bundle is signed with an Ed25519 key. The SAPL Node verifies the signature before loading. If the bundle is modified in transit or on the server, the node rejects it.
 
-```
+```bash
 sapl bundle verify -b default.saplbundle -k signing.pub
 ```
 
@@ -93,7 +93,7 @@ sapl bundle verify -b default.saplbundle -k signing.pub
 
 With `print-text-report` enabled, the node logs a human-readable evaluation report for every decision:
 
-```
+```text
 --- PDP Decision ---
 Subscription   : {"subject"="user", "action"={"http"={"contextPath"="/string"}}, "resource"="resource"}
 Decision       : PERMIT

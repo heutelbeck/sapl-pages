@@ -183,7 +183,7 @@ The following decisions are from the interaction where Dr. Marcus Brandt (Site I
 
 The assistant retrieves the safety response protocol. This is a read-only tool. The policy permits it without any obligation. No approval dialog. No delay.
 
-```
+```text
 17:44:51.785 [...] --- PDP Decision ---
 17:44:51.785 [...] Subscription   :
 {
@@ -206,7 +206,7 @@ The assistant retrieves the safety response protocol. This is a read-only tool. 
 
 The assistant notifies the emergency contact about participant P-003's suicidal ideation. The decision is PERMIT, but the obligation carries the full message that the operator must review. The tool name, recipient, and message content are composed into the obligation directly from the authorization subscription by the policy.
 
-```
+```text
 17:44:35.049 [...] --- PDP Decision ---
 17:44:35.049 [...] Subscription   :
 {
@@ -243,7 +243,7 @@ The assistant notifies the emergency contact about participant P-003's suicidal 
 
 The obligation is fulfilled when the operator approves. The notification is then sent:
 
-```
+```text
 17:44:37.446 [...] ACTION: Notified Dr. James Campbell
 ```
 
@@ -251,7 +251,7 @@ The obligation is fulfilled when the operator approves. The notification is then
 
 The assistant attempts to suspend P-003 from treatment. The decision is PERMIT, but the obligation requires mandatory human approval (`noAutoApprove: true`) with a 120-second timeout. The operator denies. The obligation fails. The PERMIT is revoked. The tool never executes.
 
-```
+```text
 17:45:18.734 [...] --- PDP Decision ---
 17:45:18.734 [...] Subscription   :
 {
@@ -286,7 +286,7 @@ The assistant attempts to suspend P-003 from treatment. The decision is PERMIT, 
 
 The operator denies. The LLM receives:
 
-```
+```text
 Operator denied 'suspendParticipant': Suspend participant P-003
 ```
 
@@ -296,7 +296,7 @@ Beyond infrastructure-level audit logging, SAPL obligations can model domain-dri
 
 ### Run the demo
 
-```
+```bash
 git clone https://github.com/heutelbeck/sapl-demos
 cd sapl-demos/hitl-clinical-trial
 mvn spring-boot:run

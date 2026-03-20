@@ -166,7 +166,7 @@ The following is the SAPL decision log for the interaction where Dr. Thomas Bran
 
 The LLM starts by discovering what data is available. The catalog is open to all authenticated users.
 
-```
+```text
 02:06:10.462 [...] --- PDP Decision ---
 02:06:10.462 [...] Timestamp      : 2026-03-19T02:06:10.458+01:00
 02:06:10.463 [...] Subscription   :
@@ -193,7 +193,7 @@ The LLM starts by discovering what data is available. The catalog is open to all
 
 The LLM attempts to retrieve the participant registry to resolve pseudonyms to real names and email addresses. A Site Investigator never has access to the registry, regardless of purpose. All nine policies evaluate to NOT_APPLICABLE. The default decision is DENY. The tool never executes.
 
-```
+```text
 02:06:11.920 [...] --- PDP Decision ---
 02:06:11.920 [...] Timestamp      : 2026-03-19T02:06:11.919+01:00
 02:06:11.920 [...] Subscription   :
@@ -226,7 +226,7 @@ The LLM attempts to retrieve the participant registry to resolve pseudonyms to r
 
 The LLM tries to retrieve adverse event reports from Edinburgh to find participants who may need follow-up. Dr. Brandt is affiliated with Heidelberg. The site-scoping policy `si-adverse-events-own-site` does not match because the requested resource ("edinburgh") does not match the principal's site. Denied. He could access Heidelberg's adverse events, but not another site's data.
 
-```
+```text
 02:06:13.947 [...] --- PDP Decision ---
 02:06:13.947 [...] Timestamp      : 2026-03-19T02:06:13.947+01:00
 02:06:13.948 [...] Subscription   :
@@ -261,7 +261,7 @@ Beyond infrastructure-level audit logging, SAPL obligations can model domain-dri
 
 ### Run the demo
 
-```
+```bash
 git clone https://github.com/heutelbeck/sapl-demos
 cd sapl-demos/tools-clinical-trial
 docker compose up -d

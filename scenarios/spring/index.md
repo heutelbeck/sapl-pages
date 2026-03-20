@@ -369,7 +369,7 @@ Add `io.sapl.pdp.embedded.print-text-report=true` to your `application.propertie
 
 The text report output looks like this:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Timestamp      : 2026-03-18T20:43:19.327+01:00
 [...] : Subscription Id: 46d7ff56-...
@@ -388,7 +388,7 @@ Restart the application, log in, and navigate to <http://localhost:8080/api/book
 
 Inspect the console, and you will find out what happened behind the scenes. The logs should contain statements similar to the following:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Timestamp      : 2026-03-18T20:43:19.327+01:00
 [...] : Subscription Id: 46d7ff56-11c5-f628-6d6a-952bb1425558
@@ -497,7 +497,7 @@ The most basic policies are the policies to either permit or deny all actions wi
 
 Let us start with a "permit all" policy. Add a file `permit_all.sapl` to the `resources/policies` folder of the maven project with the following contents:
 
-```
+```sapl
 policy "permit all" permit
 ```
 
@@ -521,7 +521,7 @@ Now you should get the data for book 1:
 
 And your log should look like this:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
@@ -536,7 +536,7 @@ Since this is the only matching document and it returns `permit`, the PDP grants
 
 Now, create a "deny all" policy alongside. Add a file `deny_all.sapl` to the `resources/policies` folder:
 
-```
+```sapl
 policy "deny all" deny
 ```
 
@@ -544,7 +544,7 @@ Restart the application, authenticate with any user and access <http://localhost
 
 The application denies access. The log shows both policies matched, but the `PRIORITY_DENY` combining algorithm gives precedence to the `deny` decision:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : DENY
@@ -583,7 +583,7 @@ public interface BookRepository {
 
 Let's write a policy that says, "Only Bob can see individual book entries". Writing such *natural language policies (NLP)* is important to avoid inconsistencies between administrators and other users. Now, create a policy document `permit_bob_for_books.sapl` in the policies folder under resources, and translate the NLP into a SAPL policy document as follows:
 
-```
+```sapl
 policy "only bob may see individual book entries"
 permit
     action.java.name == "findById" & action.java.declaringTypeName =~ ".*BookRepository$";
@@ -594,7 +594,7 @@ Now rebuild with `mvn clean compile` (clean is needed to remove any previously c
 
 Now access an individual book directly at <http://localhost:8080/api/books/1>. Access will be granted, and the log looks like this:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
@@ -607,7 +607,7 @@ Now go to <http://localhost:8080/logout> and log out. Then log in as Zoe and try
 
 The application denies access:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : DENY
@@ -711,7 +711,7 @@ The policy we will write to enforce the book age restriction will introduce a nu
 
 Create a policy document `check_age.sapl` as follows:
 
-```
+```sapl
 policy "check age"
 permit
     action == "read book";
@@ -737,7 +737,7 @@ Finally, the `age` is compared with the `ageRating` and the policy returns `true
 
 For example, if you log in as Zoe and access the first book, the logs will show:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
@@ -748,7 +748,7 @@ For example, if you log in as Zoe and access the first book, the logs will show:
 
 However, if Alice attempts to access book four, access will be denied because the age condition evaluates to `false` and the policy becomes not applicable:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : DENY
@@ -759,7 +759,7 @@ However, if Alice attempts to access book four, access will be denied because th
 
 The policy can be written more compactly using an `import` statement:
 
-```
+```sapl
 import time.timeBetween
 import time.dateOf
 policy "check age compact"
@@ -793,7 +793,7 @@ For example, any doctor may access a patient's medical record in an emergency. H
 
 The Book entity already includes a `content` field. We want to change the policies of the library in a way that users not meeting the age requirement do not get their access denied. Instead, only the content of the applied book should be blackened. To implement this change, add the following `check_age_transform.sapl` policy document to the application's policies:
 
-```
+```sapl
 import time.timeBetween
 import time.dateOf
 import filter.blacken
@@ -840,7 +840,7 @@ But of course, because Alice is only three years old, the content of the age-ina
 
 The logs for this access attempt look like this:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
@@ -860,7 +860,7 @@ Now, we want to add an obligation to this policy. The system should also log att
 
 To do so, modify the `check_age_transform.sapl` policy as follows:
 
-```
+```sapl
 import time.timeBetween
 import time.dateOf
 import filter.blacken
@@ -884,7 +884,7 @@ Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
 
 Access will be denied, and the logs look as follows:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
@@ -941,7 +941,7 @@ This interface requires three methods:
 
 When logging in as Alice and attempting to access <http://localhost:8080/api/books/2> access will be granted, and the logs now contain the following line:
 
-```
+```text
 [...] : Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'.
 ```
 
@@ -971,7 +971,7 @@ The concept is the same as with the `findById` method. The parameter `subject = 
 
 To see all accessible books write a policy as follows:
 
-```
+```sapl
 import time.timeBetween
 import time.dateOf
 policy "filter content in collection"
@@ -1073,7 +1073,7 @@ A SAPL policy set consists of the following elements:
 
 As a small example, create a file `check_age_by_id_set.sapl`. Only one of the two policies, `'check age compact'` and `'check age transform'`, from the previous chapter can be applicable at a time. Therefore, let's create a policy set that processes both policies.
 
-```
+```sapl
 import time.dateOf
 import time.timeBetween
 import filter.blacken
@@ -1110,7 +1110,7 @@ Deactivate the two policy documents `'check_age_compact.sapl'` and `'check_age_t
 Now, log in as Bob and access <http://localhost:8080/api/books/3>.
 Your logs look as follows:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
@@ -1125,7 +1125,7 @@ The policy set evaluates both sub-policies. The `check age compact set` matches 
 
 Now access <http://localhost:8080/api/books/4>, you will get:
 
-```
+```text
 [...] : --- PDP Decision ---
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT

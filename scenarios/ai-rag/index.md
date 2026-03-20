@@ -236,7 +236,7 @@ The following is the SAPL decision log for the interaction where Dr. Elena Fisch
 
 The policy set evaluates four policies. The `ci-statistical-analysis` policy matches: the user is a Chief Investigator and the purpose is statistical analysis. The decision is PERMIT, but with an obligation to exclude registry documents from the similarity search. The `ci-adverse-event-handling` policy does not match because the purpose is wrong.
 
-```
+```text
 02:49:29.352 [...] --- PDP Decision ---
 02:49:29.352 [...] Timestamp      : 2026-03-19T02:49:29.352+01:00
 02:49:29.352 [...] Subscription   :
@@ -274,7 +274,7 @@ Beyond infrastructure-level audit logging, SAPL obligations can model domain-dri
 
 ### Run the demo
 
-```
+```bash
 git clone https://github.com/heutelbeck/sapl-demos
 cd sapl-demos/rag-clinical-trial
 docker compose up -d
