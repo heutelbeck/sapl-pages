@@ -24,6 +24,18 @@ The common approach to human-in-the-loop is to build it into the application. Th
 
 A more subtle problem is the conflation of "not permitted" and "needs approval." Some systems implement human-in-the-loop by denying the action and then providing a separate escalation path. This is architecturally wrong. A denied action is forbidden. It should not happen regardless of who approves it. An action that needs approval is permitted in principle but requires confirmation before execution. These are different authorization states with different semantics, different audit implications, and different user experiences. Conflating them means the system cannot distinguish between "this action is prohibited by policy" and "this action is allowed but the organization requires a human to confirm it first."
 
+### What Spring AI provides
+
+Spring AI does not ship a human-in-the-loop mechanism for tool calls. It ships a kill switch.
+
+Setting `internalToolExecutionEnabled(false)` on `ToolCallingChatOptions` tells the framework not to execute tool calls automatically. Instead, the model returns a response that says "I want to call this tool with these arguments," and you take it from there. You write the loop. You inspect the tool calls. You build the approval dialog, the blocking logic, the timeout handling, the session routing, and the fail-closed fallback. Spring AI gives you the spot where approval logic would go. It does not give you the approval logic.
+
+There is a [proposal](https://github.com/spring-projects/spring-ai/discussions/4878) for a `ToolApprovalStrategy` callback that would be consulted before each tool executes. The proposal explicitly puts asynchronous and human-in-the-loop flows out of scope for its first version. If it ships, it will be a synchronous gate -- useful for programmatic rules like "reject any tool call that modifies production data," but not for presenting a dialog to a human and waiting for their response.
+
+The [spring-ai-agent-utils](https://github.com/spring-ai-community/spring-ai-agent-utils) community library offers an `AskUserQuestionTool` that lets the agent ask clarifying questions during execution. This is a different pattern. The agent decides when to ask, and it can ask about anything. It is not an interceptor on the tool execution pipeline. There is no per-tool policy, no mandatory confirmation, no timeout, and no fail-closed guarantee that prevents execution if the question goes unanswered.
+
+The gap is not an oversight. Spring AI is a model integration framework. It connects your application to LLMs and provides the plumbing for tool discovery, argument marshalling, and response handling. Deciding which tool calls need human approval, enforcing that approval before execution, and making that decision changeable without redeploying the application is an authorization problem. That is what SAPL solves.
+
 ### Where HITL fits: the authorization spectrum
 
 The [tool authorization](/guides/ai-tools/) and [RAG](/guides/ai-rag/) guides control what data reaches the AI. This guide controls what the AI does with it.
