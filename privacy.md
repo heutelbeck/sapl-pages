@@ -172,6 +172,14 @@ The connection to YouTube is established only after your active click, which con
 
 YouTube is certified under the EU-US Data Privacy Framework. Further information about the handling of user data can be found in the data privacy policy of YouTube/Google: [https://policies.google.com/privacy](https://policies.google.com/privacy)
 
+### Embedded playground component
+
+The homepage of this website embeds an interactive policy editor component that is loaded from playground.sapl.io. When you visit the homepage, your browser establishes a connection to the playground.sapl.io server to retrieve the component. The server receives your IP address, browser type and version, and the referring page URL.
+
+The playground.sapl.io server is operated by FTK e.V. (the same controller as this website) on servers located in Germany. No personal data is shared with third parties through this mechanism. The component does not set cookies or access stored information on your device.
+
+The embedding serves the purpose of providing an interactive demonstration of the SAPL policy language directly on the website. The processing is based on Art. 6(1)(f) GDPR (legitimate interest). Our legitimate interest lies in presenting the core functionality of our software in an accessible way. The data processing is limited to standard HTTP request metadata and remains within our own infrastructure.
+
 ### Server log files
 
 The provider of this website and its pages automatically collects and stores information in so-called server log files, which your browser communicates to us automatically. The information comprises:

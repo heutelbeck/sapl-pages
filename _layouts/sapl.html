@@ -223,14 +223,12 @@
       });
     });
 
-    // CodeMirror for all code blocks — reuses the embed's loaded modules
+    // CodeMirror for all code blocks — self-hosted bundle (no external CDN)
     (async function() {
-      var [{EditorView, minimalSetup}, {StreamLanguage}, {oneDark}, {lineNumbers}] = await Promise.all([
-        import('https://esm.sh/codemirror'),
-        import('https://esm.sh/@codemirror/language'),
-        import('https://esm.sh/@codemirror/theme-one-dark'),
-        import('https://esm.sh/@codemirror/view')
-      ]);
+      var cm = await import('/assets/js/codemirror-bundle.min.js');
+      var EditorView = cm.EditorView, minimalSetup = cm.minimalSetup,
+          StreamLanguage = cm.StreamLanguage, oneDark = cm.oneDark,
+          lineNumbers = cm.lineNumbers;
 
       // SAPL language mode — aligned with SAPLLexer.g4
       var saplLanguage = StreamLanguage.define({
@@ -276,17 +274,12 @@
         }
       });
 
-      // Language module cache for framework tabs
-      var langModules = {};
-      async function getLang(name) {
-        if (langModules[name]) return langModules[name];
-        var mod;
-        if (name === 'java') mod = await import('https://esm.sh/@codemirror/lang-java');
-        else if (name === 'python') mod = await import('https://esm.sh/@codemirror/lang-python');
-        else if (name === 'javascript') mod = await import('https://esm.sh/@codemirror/lang-javascript');
-        else return null;
-        langModules[name] = mod;
-        return mod;
+      // Language modules from self-hosted bundle
+      function getLang(name) {
+        if (name === 'java') return { java: cm.languages.java };
+        if (name === 'python') return { python: cm.languages.python };
+        if (name === 'javascript') return { javascript: cm.languages.javascript };
+        return null;
       }
 
       function getLangExtension(name) {
@@ -295,7 +288,7 @@
         return null;
       }
 
-      document.querySelectorAll('.cm-source').forEach(async function(pre) {
+      document.querySelectorAll('.cm-source').forEach(function(pre) {
         var code = pre.querySelector('code').textContent;
         var container = pre.closest('[data-lang]');
         var lang = container ? container.dataset.lang : null;
@@ -306,8 +299,7 @@
         if (builtinExt) {
           extensions.push(builtinExt);
         } else if (lang) {
-          // Load external language module
-          var langMod = await getLang(lang);
+          var langMod = getLang(lang);
           if (langMod) {
             if (langMod.java) extensions.push(langMod.java());
             else if (langMod.python) extensions.push(langMod.python());
