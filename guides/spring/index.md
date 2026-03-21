@@ -1,14 +1,14 @@
 ---
 layout: sapl
-title: "Spring Security with SAPL - SAPL Scenarios"
+title: "Spring Security with SAPL - SAPL Guides"
 description: "Secure a Spring Boot application with attribute-based access control using SAPL. Method-level authorization, age-based policies, content transformation, obligations, and policy sets."
 ---
 
 ## Spring Boot Method Security with SAPL
 
-This scenario walks through securing a Spring Boot application with SAPL. You will add policy-based authorization to JPA repository methods, write policies that enforce age restrictions, transform and filter query results based on user attributes, and implement constraint handlers for obligations.
+This guide walks through securing a Spring Boot application with SAPL. You will add policy-based authorization to JPA repository methods, write policies that enforce age restrictions, transform and filter query results based on user attributes, and implement constraint handlers for obligations.
 
-The scenario assumes basic familiarity with Spring Boot. For background on ABAC concepts and SAPL's architecture, see the [documentation](https://sapl.io/docs/latest/).
+The guide assumes basic familiarity with Spring Boot. For background on ABAC concepts and SAPL's architecture, see the [documentation](https://sapl.io/docs/latest/).
 
 The complete source code is available at [github.com/heutelbeck/sapl-tutorial-01-spring](https://github.com/heutelbeck/sapl-tutorial-01-spring).
 
@@ -28,7 +28,7 @@ Select Java 21 (or higher) and Spring Boot 4.0.3 (or higher) in the Initializr.
 
  Your Initializr settings should now look something like this:
 
-![Spring Initializr](/assets/scenarios/spring/spring_initializr.png)
+![Spring Initializr](/assets/guides/spring/spring_initializr.png)
 
 Now click "GENERATE." Your browser will download the project template as a ".zip" file.
 
@@ -504,7 +504,7 @@ policy "permit all" permit
 As described above, we start with the keyword `policy`, which indicates that it is a policy.
 This keyword is always followed by the *name* of the SAPL policy as a string. In this case `"permit all"`. The policy name must always be followed by the *entitlement*, in this case `permit`.
 
-In this scenario, we haven't described any rules in the policy. Therefore, all of its rules are satisfied, and the policy tells the PDP to return a `permit` decision, regardless of any details of the attributes contained in the authorization subscription or any external attributes from PIPs. This type of policy is dangerous and not very practical for production systems. However, it is helpful during development to be able to perform quick tests without authorization getting in the way.
+In this guide, we haven't described any rules in the policy. Therefore, all of its rules are satisfied, and the policy tells the PDP to return a `permit` decision, regardless of any details of the attributes contained in the authorization subscription or any external attributes from PIPs. This type of policy is dangerous and not very practical for production systems. However, it is helpful during development to be able to perform quick tests without authorization getting in the way.
 
 Now restart the application, authenticate with any user and access <http://localhost:8080/api/books/1> again.
 
@@ -727,7 +727,7 @@ The policy then defines a local attribute variable named `birthday` and assigns 
 
 The next line assigns the current date to the variable `today`. In SAPL, angled brackets `<ATTRIBUTE_IDENTIFIER>` always denotes an attribute stream, a subscription to an external attribute source, using a Policy Information Point (PIP). In this case, the identifier `time.now` is used to access the current time in UTC from the system clock.
 
-In this scenario, we do not need the streaming nature of the time, and we are only interested in the first event in the attribute stream. Prepending the pipe symbol to the angled brackets `|<>` only takes the head element, i.e., the first event in the attribute stream, and then unsubscribes from the PIP. The time libraries in SAPL use ISO 8601 strings to represent time. The function `time.dateOF` is then used to extract the date component of the timestamp retrieved from the PIP.
+In this guide, we do not need the streaming nature of the time, and we are only interested in the first event in the attribute stream. Prepending the pipe symbol to the angled brackets `|<>` only takes the head element, i.e., the first event in the attribute stream, and then unsubscribes from the PIP. The time libraries in SAPL use ISO 8601 strings to represent time. The function `time.dateOF` is then used to extract the date component of the timestamp retrieved from the PIP.
 
 The policy calculates the subject's age in years using the `time.timeBetween` function and the defined variables. The `ageRating` of the book is stored in the matching variable.
 

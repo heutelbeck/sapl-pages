@@ -15,7 +15,7 @@
 - Parameterized attribute finders with composable stream expressions
 - First-class obligations and advice in authorization decisions
 - Hot-reloadable policies without PDP restart
-- AI agent authorization scenarios including RAG, MCP tool access, and human-in-the-loop
+- AI agent authorization guides including RAG, MCP tool access, and human-in-the-loop
 
 ## Getting Started
 - [Why SAPL?](https://sapl.io/docs/latest/1_1_WhySAPL/): Design rationale and comparison with OPA, Cedar, XACML
@@ -48,7 +48,7 @@ All SDKs implement three PEP-side enforcement modes for streaming authorization:
 
 These patterns make streaming authorization practical at the application level — the PDP streams decisions, and the PEP has concrete strategies for how to handle changing decisions on active data streams.
 
-## AI Security Scenarios
+## AI Security Guides
 - [RAG pipeline authorization](https://github.com/heutelbeck/sapl-demos/tree/main/rag-clinical-trial): document-level access control in retrieval-augmented generation (Spring AI + pgvector)
 - [MCP tool access authorization](https://github.com/heutelbeck/sapl-demos/tree/main/mcp-clinical-trial): controlling what tools AI agents can call (Spring AI)
 - [Human-in-the-loop](https://github.com/heutelbeck/sapl-demos/tree/main/hitl-clinical-trial): policy-driven approval workflows for AI tool execution (Spring AI)

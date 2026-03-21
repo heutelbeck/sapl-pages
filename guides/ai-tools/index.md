@@ -1,12 +1,12 @@
 ---
 layout: sapl
-title: "AI Tool Authorization - SAPL Scenarios"
+title: "AI Tool Authorization - SAPL Guides"
 description: "Per-tool authorization for AI agents with SAPL. Control which tools agents can call based on role, site, and purpose. Transform responses via obligations. Spring AI."
 ---
 
 ## AI Tool Authorization
 
-### What this scenario is about
+### What this guide covers
 
 A clinical trial generates pseudonymized patient data: depression scores, adverse event reports, site-level statistics. An AI assistant helps researchers query and analyze the trial through tool calls. The application exposes five tools. Most return pseudonymized data. One returns the participant registry: real names, dates of birth, email addresses, the mapping from pseudonyms to identities.
 
@@ -14,7 +14,7 @@ That mapping has to exist. When a serious adverse event occurs, the investigator
 
 GDPR Article 5(1)(b) requires that personal data is collected for specified, explicit purposes and not further processed in a manner incompatible with those purposes. The participant registry exists for adverse event handling. Using it for routine monitoring or statistical convenience violates the purpose limitation principle. Telling the LLM "only access the registry for adverse events" in the system prompt does not constitute a technical measure. It is an instruction to a probabilistic model that can be overridden, ignored, or circumvented through prompt injection.
 
-This scenario demonstrates how SAPL enforces purpose-limited, role-based, site-scoped access control directly on tool calls. Depending on the user's role, site affiliation, and declared purpose, policies permit or deny each tool call before execution. The agent cannot correlate pseudonymized data with identities unless the authorization context explicitly allows it. The enforcement happens at the tool boundary, inside the application, not in the prompt. If the policy denies access to the registry, the LLM can never be coaxed into disclosing a participant's identity because it never has access to the data in the first place.
+This guide demonstrates how SAPL enforces purpose-limited, role-based, site-scoped access control directly on tool calls. Depending on the user's role, site affiliation, and declared purpose, policies permit or deny each tool call before execution. The agent cannot correlate pseudonymized data with identities unless the authorization context explicitly allows it. The enforcement happens at the tool boundary, inside the application, not in the prompt. If the policy denies access to the registry, the LLM can never be coaxed into disclosing a participant's identity because it never has access to the data in the first place.
 
 ### The problem
 
@@ -38,11 +38,11 @@ With **tool calling**, the LLM actively decides what data it needs during reason
 
 In practice, many systems combine both. A tool might internally use RAG to search a large corpus. The distinction is about where the control sits: the pipeline or the model.
 
-This scenario demonstrates authorization for tool calling. The [RAG Pipeline Authorization](/scenarios/ai-rag/) scenario demonstrates the same clinical trial use case with the same data, roles, and policies, but uses document-level retrieval filtering instead of per-tool access control.
+This guide demonstrates authorization for tool calling. The [RAG Pipeline Authorization](/guides/ai-rag/) guide demonstrates the same clinical trial use case with the same data, roles, and policies, but uses document-level retrieval filtering instead of per-tool access control.
 
 ### The demo: a clinical trial AI assistant
 
-This scenario demonstrates the problem and solution using a clinical trial management system. A multi-site study on adolescent depression (CT-2025-001) runs across two sites, Heidelberg and Edinburgh, with 10 participants. The application is implemented with Spring AI and SAPL method security. An AI assistant helps staff interact with trial data through five tools:
+This guide demonstrates the problem and solution using a clinical trial management system. A multi-site study on adolescent depression (CT-2025-001) runs across two sites, Heidelberg and Edinburgh, with 10 participants. The application is implemented with Spring AI and SAPL method security. An AI assistant helps staff interact with trial data through five tools:
 
 | Tool | Data | Sensitivity |
 |------|------|-------------|
@@ -67,31 +67,31 @@ Without authorization, the AI assistant exposes all five tools to every user. A 
 
 The demo includes a toggle to switch SAPL enforcement on and off so you can observe the difference directly. The complete source code is available at [sapl-demos/tools-clinical-trial](https://github.com/heutelbeck/sapl-demos/tree/main/tools-clinical-trial).
 
-### The scenario in action
+### The guide in action
 
 The following four interactions demonstrate why prompt-level instructions are not a substitute for tool-level authorization, and why authorization is not just about restricting access but about enabling safe use of sensitive data.
 
 **Accidental doxing without authorization**
 
-![Without SAPL enforcement, a routine analytical question causes the AI to retrieve the participant registry and expose real identities.](/assets/scenarios/ai-tools/01_accidental_doxing.png)
+![Without SAPL enforcement, a routine analytical question causes the AI to retrieve the participant registry and expose real identities.](/assets/guides/ai-tools/01_accidental_doxing.png)
 
 SAPL enforcement is switched off. Dr. Emily Crawford, a Site Investigator, asks a routine analytical question: "What are the PHQ-9 scores for P-003?" The AI retrieves the study catalog, then the participant registry, then the PHQ-9 data. It correlates the pseudonym with a real identity and responds with the participant's full name, site assignment, and complete clinical history. No attack occurred. No prompt injection. The AI did exactly what it was designed to do: call the available tools and synthesize an answer. The problem is that it had access to a tool it should not have been able to call in this context.
 
 **Authorization closes the gap**
 
-![With SAPL enforcement active, the same question is answered without accessing the participant registry.](/assets/scenarios/ai-tools/02_no_access_no_doxing.png)
+![With SAPL enforcement active, the same question is answered without accessing the participant registry.](/assets/guides/ai-tools/02_no_access_no_doxing.png)
 
 SAPL enforcement is switched on. Same user, same question. The AI attempts to retrieve the participant registry to identify which site P-003 belongs to, but the policy denies the tool call. Without the registry, the AI cannot resolve the pseudonym to a site or identity. It tells the user what information it would need and asks them to provide the site. The data never entered the context window. The model cannot leak what it never received.
 
 **Authorization enables sensitive workflows**
 
-![The Chief Investigator with adverse event handling purpose can access the full participant registry including names and email addresses.](/assets/scenarios/ai-tools/03_ci_can_handle_adverse_events.png)
+![The Chief Investigator with adverse event handling purpose can access the full participant registry including names and email addresses.](/assets/guides/ai-tools/03_ci_can_handle_adverse_events.png)
 
 Same policies, different context. Dr. Elena Fischer, the Chief Investigator, selects "Adverse Event Handling" as her purpose. She asks which participants need to be contacted due to adverse events. The AI retrieves adverse event reports from both sites and the participant registry. It produces a prioritized contact list with real names, email addresses, event details, and recommended actions. This is the legitimate use case for the registry. The authorization context (Chief Investigator role combined with adverse event handling purpose) permits access to exactly the data needed for this safety-critical workflow.
 
 **Purpose limitation prevents misuse of privilege**
 
-![The same Chief Investigator with statistical analysis purpose is blocked from the participant registry.](/assets/scenarios/ai-tools/04_ci_cannot_dox_during_statistical_analysis.png)
+![The same Chief Investigator with statistical analysis purpose is blocked from the participant registry.](/assets/guides/ai-tools/04_ci_cannot_dox_during_statistical_analysis.png)
 
 Same user, same policies, different purpose. Dr. Fischer switches her declared purpose to "Statistical Analysis" and asks the same question. The AI retrieves the adverse event reports but is blocked from the participant registry. It lists the events by pseudonym and severity, notes which may require follow-up, but cannot provide names or contact details. It directs the user to their study coordinator for participant contact information. The Chief Investigator's role alone is not sufficient. The purpose must match. This is GDPR Article 5(1)(b) purpose limitation enforced at the tool boundary.
 
@@ -150,11 +150,11 @@ The Chief Investigator can only access participant identities (real names, dates
 
 Beyond per-call authorization, SAPL can also control which tools an agent is allowed to discover. The `tools/list` MCP operation can be filtered by policy so that an agent only sees tools it is authorized to call. A researcher's agent does not know that a financial reporting tool exists. This reduces the attack surface for prompt injection because the model cannot be asked to call a tool it does not know about. This demo focuses on per-call enforcement; tool visibility filtering is a separate SAPL capability.
 
-### Beyond permit and deny: related scenarios
+### Beyond permit and deny: related guides
 
-This scenario and the [Human-in-the-Loop Approval](/scenarios/ai-hitl/) scenario both enforce authorization at the tool-calling layer inside the Spring AI application. The tools are local methods in the same process. The same `@PreEnforce` annotation that gates tool access here also powers approval workflows in the HITL scenario, where the policy returns PERMIT with a condition: a human must confirm the action before it executes.
+This guide and the [Human-in-the-Loop Approval](/guides/ai-hitl/) guide both enforce authorization at the tool-calling layer inside the Spring AI application. The tools are local methods in the same process. The same `@PreEnforce` annotation that gates tool access here also powers approval workflows in the HITL guide, where the policy returns PERMIT with a condition: a human must confirm the action before it executes.
 
-The [MCP Server Authorization](/scenarios/ai-mcp/) scenario takes a different approach. There, the tools are served by a separate MCP server process with its own network boundary. SAPL runs inside the MCP server and guards that boundary via middleware and decorators, controlling what external AI agents can do when they connect. This distinction matters architecturally: application-internal enforcement is appropriate when the application owns the tools, while MCP server enforcement is appropriate when the tools are exposed as a service to multiple clients.
+The [MCP Server Authorization](/guides/ai-mcp/) guide takes a different approach. There, the tools are served by a separate MCP server process with its own network boundary. SAPL runs inside the MCP server and guards that boundary via middleware and decorators, controlling what external AI agents can do when they connect. This distinction matters architecturally: application-internal enforcement is appropriate when the application owns the tools, while MCP server enforcement is appropriate when the tools are exposed as a service to multiple clients.
 
 ### Audit trail
 
@@ -271,6 +271,6 @@ mvn spring-boot:run
 ### Related
 
 - [Spring SDK Documentation](/docs/latest/6_3_Spring/): the SAPL Spring Boot SDK used in this demo
-- [RAG Pipeline Authorization](/scenarios/ai-rag/): document-level access control for retrieval-augmented generation
-- [Human-in-the-Loop Approval](/scenarios/ai-hitl/): policy-driven approval workflows for sensitive operations
-- [MCP Server Authorization](/scenarios/ai-mcp/): the same authorization model for MCP servers
+- [RAG Pipeline Authorization](/guides/ai-rag/): document-level access control for retrieval-augmented generation
+- [Human-in-the-Loop Approval](/guides/ai-hitl/): policy-driven approval workflows for sensitive operations
+- [MCP Server Authorization](/guides/ai-mcp/): the same authorization model for MCP servers

@@ -1,12 +1,12 @@
 ---
 layout: sapl
-title: "Human-in-the-Loop Approval - SAPL Scenarios"
+title: "Human-in-the-Loop Approval - SAPL Guides"
 description: "Policy-driven human approval workflows for AI agent operations. SAPL obligations trigger confirmation dialogs for sensitive actions without changing application code. Spring AI."
 ---
 
 ## Human-in-the-Loop Approval
 
-### What this scenario is about
+### What this guide covers
 
 An AI assistant handling adverse events in a clinical trial needs to do more than read data. It needs to act: notify participants and their emergency contacts, suspend a participant from treatment, export safety reports to the ethics committee. These are not hypothetical capabilities. They are the reason the assistant exists. A safety officer dealing with a severe adverse event at 2 AM needs the AI to execute a multi-step safety protocol, not just describe what should happen.
 
@@ -14,7 +14,7 @@ But an AI agent that can autonomously notify a patient's emergency contact, susp
 
 The question is not whether the AI should have access to these tools. It should. The question is: which of these actions should execute immediately, which should pause for human confirmation, and which must always require a human to explicitly approve, regardless of any convenience settings? And critically: who decides? The application developer at compile time, or the policy at runtime?
 
-This scenario demonstrates how SAPL obligations turn authorization decisions into approval workflows. The policy does not just permit or deny. It permits with conditions. The condition is: a human must confirm this action before it executes. The application code does not know which actions require approval. The policy decides. If the organization's risk tolerance changes, the policy changes. The code does not.
+This guide demonstrates how SAPL obligations turn authorization decisions into approval workflows. The policy does not just permit or deny. It permits with conditions. The condition is: a human must confirm this action before it executes. The application code does not know which actions require approval. The policy decides. If the organization's risk tolerance changes, the policy changes. The code does not.
 
 ### The problem
 
@@ -26,9 +26,9 @@ A more subtle problem is the conflation of "not permitted" and "needs approval."
 
 ### Where HITL fits: the authorization spectrum
 
-The [tool authorization](/scenarios/ai-tools/) and [RAG](/scenarios/ai-rag/) scenarios control what data reaches the AI. This scenario controls what the AI does with it.
+The [tool authorization](/guides/ai-tools/) and [RAG](/guides/ai-rag/) guides control what data reaches the AI. This guide controls what the AI does with it.
 
-In the tool authorization scenario, SAPL decides whether a tool call executes at all. The decision is binary: permit or deny. In the RAG scenario, SAPL rewrites the retrieval query to control which documents reach the LLM. The decision shapes the data. In this scenario, SAPL goes further: the decision is permit, but with a condition that must be fulfilled before the action takes effect.
+In the tool authorization guide, SAPL decides whether a tool call executes at all. The decision is binary: permit or deny. In the RAG guide, SAPL rewrites the retrieval query to control which documents reach the LLM. The decision shapes the data. In this guide, SAPL goes further: the decision is permit, but with a condition that must be fulfilled before the action takes effect.
 
 These three patterns cover the full lifecycle of an AI interaction:
 
@@ -42,7 +42,7 @@ They are complementary. A real system might use all three: RAG filtering to cont
 
 ### The demo: a clinical trial safety assistant
 
-This scenario uses a clinical trial safety response system. A multi-site study on adolescent depression (CT-2025-001) has reported four adverse events ranging from mild headaches to severe suicidal ideation. An AI assistant helps the safety officer respond to these events by retrieving data, identifying required actions, and executing the safety protocol.
+This guide uses a clinical trial safety response system. A multi-site study on adolescent depression (CT-2025-001) has reported four adverse events ranging from mild headaches to severe suicidal ideation. An AI assistant helps the safety officer respond to these events by retrieving data, identifying required actions, and executing the safety protocol.
 
 The assistant has six tools:
 
@@ -88,7 +88,7 @@ If the organization decides that safety report exports should also require appro
 
 The demo includes an auto-approve toggle and an action log so you can observe how the assistant progresses through a multi-step safety protocol, pausing for confirmation where the policy requires it. The complete source code is available at [sapl-demos/hitl-clinical-trial](https://github.com/heutelbeck/sapl-demos/tree/main/hitl-clinical-trial).
 
-### The scenario in action
+### The guide in action
 
 The following demos show the full approval workflow in action. The AI assistant handles all adverse events in the clinical trial, pausing for human confirmation where the policy requires it.
 
@@ -100,13 +100,13 @@ The video shows two runs of the same protocol. In the first run, the operator ma
 
 **The approval dialog**
 
-![The approval dialog shows the tool name, a human-readable summary of the action, and a countdown timer. The operator approves or denies before the timeout expires.](/assets/scenarios/ai-hitl/1_HITL_dialogue.png)
+![The approval dialog shows the tool name, a human-readable summary of the action, and a countdown timer. The operator approves or denies before the timeout expires.](/assets/guides/ai-hitl/1_HITL_dialogue.png)
 
 Each approval dialog shows what the AI wants to do: which tool, what parameters, what the effect will be. The safety officer sees the recipient, the message content, and the clinical context before deciding. A countdown timer auto-denies the action if no response is given within the timeout period. For mandatory approvals, the timeout is configurable per policy (120 seconds for suspension). This prevents the system from blocking indefinitely if the operator steps away.
 
 **Complete protocol output with denial**
 
-![The assistant handled all adverse events with auto-approve enabled. P-003 suspension was denied by the operator. The action log on the right shows the full sequence of executed actions.](/assets/scenarios/ai-hitl/2_final_output.png)
+![The assistant handled all adverse events with auto-approve enabled. P-003 suspension was denied by the operator. The action log on the right shows the full sequence of executed actions.](/assets/guides/ai-hitl/2_final_output.png)
 
 The assistant reports what it accomplished and what it could not do. Notifications were sent, safety reports were exported, and participant P-005 was suspended. Participant P-003's suspension was denied by the operator. The assistant treats the denial as a fact, not an error, and notes that the study coordinator should be contacted to complete the authorization manually.
 
@@ -305,6 +305,6 @@ mvn spring-boot:run
 ### Related
 
 - [Spring SDK Documentation](/docs/latest/6_3_Spring/): the SAPL Spring Boot SDK used in this demo
-- [AI Tool Authorization](/scenarios/ai-tools/): per-tool authorization for the same clinical trial domain
-- [RAG Pipeline Authorization](/scenarios/ai-rag/): document-level access control for retrieval-augmented generation
-- [MCP Server Authorization](/scenarios/ai-mcp/): the same authorization model for MCP servers
+- [AI Tool Authorization](/guides/ai-tools/): per-tool authorization for the same clinical trial domain
+- [RAG Pipeline Authorization](/guides/ai-rag/): document-level access control for retrieval-augmented generation
+- [MCP Server Authorization](/guides/ai-mcp/): the same authorization model for MCP servers

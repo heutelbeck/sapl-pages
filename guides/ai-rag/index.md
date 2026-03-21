@@ -1,12 +1,12 @@
 ---
 layout: sapl
-title: "RAG Pipeline Authorization - SAPL Scenarios"
+title: "RAG Pipeline Authorization - SAPL Guides"
 description: "Document-level access control for retrieval-augmented generation with SAPL. Dynamic vector database query rewriting based on role, site, and purpose. Spring AI, pgvector."
 ---
 
 ## RAG Pipeline Authorization
 
-### What this scenario is about
+### What this guide covers
 
 A clinical trial generates pseudonymized patient data: depression scores, adverse event reports, site-level statistics. A RAG pipeline ingests this data into a vector database and retrieves relevant documents to answer researcher queries. The knowledge base contains five document types. Most are pseudonymized. One is the participant registry: real names, dates of birth, email addresses, the mapping from pseudonyms to identities.
 
@@ -14,7 +14,7 @@ That mapping has to exist. When a serious adverse event occurs, the investigator
 
 GDPR Article 5(1)(b) requires that personal data is collected for specified, explicit purposes and not further processed in a manner incompatible with those purposes. The participant registry exists for adverse event handling. Retrieving it during routine statistical analysis violates the purpose limitation principle. Instructing the LLM to "ignore participant registry data if you are doing statistical analysis" does not constitute a technical measure. The model has already seen the data. It is in the context window.
 
-This scenario demonstrates how SAPL enforces purpose-limited, role-based, site-scoped access control at the retrieval boundary by dynamically rewriting vector database queries. Depending on the user's role, site affiliation, and declared purpose, SAPL policies attach obligations that add filter expressions to the similarity search. Documents that the user is not authorized to see are excluded at the database level. They never enter the application, never reach the LLM, and never appear in the context window.
+This guide demonstrates how SAPL enforces purpose-limited, role-based, site-scoped access control at the retrieval boundary by dynamically rewriting vector database queries. Depending on the user's role, site affiliation, and declared purpose, SAPL policies attach obligations that add filter expressions to the similarity search. Documents that the user is not authorized to see are excluded at the database level. They never enter the application, never reach the LLM, and never appear in the context window.
 
 ### The problem
 
@@ -34,11 +34,11 @@ With **tool calling**, the LLM actively decides what data it needs during reason
 
 The authorization mechanism differs accordingly. With tool calling, SAPL evaluates a separate policy for each tool call and makes a binary permit/deny decision. In RAG, SAPL evaluates a single policy for the retrieval operation and attaches obligations that dynamically rewrite the search query. The policy does not just allow or deny the retrieval. It shapes what the retrieval returns.
 
-The [AI Tool Authorization](/scenarios/ai-tools/) scenario demonstrates the same clinical trial use case with the same data, roles, and policies, but uses per-tool access control instead of retrieval filtering.
+The [AI Tool Authorization](/guides/ai-tools/) guide demonstrates the same clinical trial use case with the same data, roles, and policies, but uses per-tool access control instead of retrieval filtering.
 
 ### The demo: a clinical trial AI assistant
 
-This scenario demonstrates the problem and solution using a clinical trial management system. A multi-site study on adolescent depression (CT-2025-001) runs across two sites, Heidelberg and Edinburgh, with 10 participants. The application is implemented with Spring AI, pgvector, and SAPL method security. The corpus is ingested into the vector store as embedded document chunks with metadata tags:
+This guide demonstrates the problem and solution using a clinical trial management system. A multi-site study on adolescent depression (CT-2025-001) runs across two sites, Heidelberg and Edinburgh, with 10 participants. The application is implemented with Spring AI, pgvector, and SAPL method security. The corpus is ingested into the vector store as embedded document chunks with metadata tags:
 
 | Document Type | Data | Metadata Tags | Sensitivity |
 |---------------|------|---------------|-------------|
@@ -64,31 +64,31 @@ The participant registry is only retrievable by the Chief Investigator during ad
 
 The demo includes a toggle to switch SAPL enforcement on and off so you can observe the difference directly. The complete source code is available at [sapl-demos/rag-clinical-trial](https://github.com/heutelbeck/sapl-demos/tree/main/rag-clinical-trial).
 
-### The scenario in action
+### The guide in action
 
 The following four interactions demonstrate how dynamic query rewriting enforces authorization at the retrieval boundary, and why this is fundamentally different from filtering after the fact.
 
 **Accidental doxing without authorization**
 
-![Without SAPL enforcement, a routine analytical question causes the RAG pipeline to retrieve participant registry data and expose real identities.](/assets/scenarios/ai-rag/01_accidental_doxing.png)
+![Without SAPL enforcement, a routine analytical question causes the RAG pipeline to retrieve participant registry data and expose real identities.](/assets/guides/ai-rag/01_accidental_doxing.png)
 
 SAPL enforcement is switched off. Dr. Emily Crawford, a Site Investigator, asks a routine analytical question: "What are the PHQ-9 scores for P-003?" The similarity search returns the most relevant documents without filtering. The participant registry is semantically relevant to any query mentioning a participant ID, so it is retrieved alongside the PHQ-9 data. The LLM correlates the pseudonym with a real identity and responds with the participant's full name and clinical history. No attack occurred. The RAG pipeline did exactly what it was designed to do: return the most relevant documents. The problem is that relevance and authorization are orthogonal.
 
 **Authorization closes the gap**
 
-![With SAPL enforcement active, the same question is answered without retrieving the participant registry.](/assets/scenarios/ai-rag/02_no_access_no_doxing.png)
+![With SAPL enforcement active, the same question is answered without retrieving the participant registry.](/assets/guides/ai-rag/02_no_access_no_doxing.png)
 
 SAPL enforcement is switched on. Same user, same question. The policy for a Site Investigator performing statistical analysis attaches two obligations: exclude registry documents and restrict to the user's own site. The similarity search WHERE clause becomes `type != 'registry' AND (site = 'edinburgh' OR site = 'all')`. The participant registry is never retrieved. The PHQ-9 data is scoped to Edinburgh. The LLM answers the question using only the data the user is authorized to see.
 
 **Authorization enables sensitive workflows**
 
-![The Chief Investigator with adverse event handling purpose retrieves the full participant registry including names and email addresses.](/assets/scenarios/ai-rag/03_ci_can_handle_adverse_events.png)
+![The Chief Investigator with adverse event handling purpose retrieves the full participant registry including names and email addresses.](/assets/guides/ai-rag/03_ci_can_handle_adverse_events.png)
 
 Same policies, different context. Dr. Elena Fischer, the Chief Investigator, selects "Adverse Event Handling" as her purpose. She asks which participants need to be contacted due to adverse events. The policy for a Chief Investigator with adverse event handling purpose attaches no obligations. The similarity search runs without restrictions. The registry, adverse event reports, and all site data are retrieved. The LLM produces a prioritized contact list with real names, email addresses, and recommended actions. This is the legitimate use case for the registry. The authorization context permits full retrieval.
 
 **Purpose limitation prevents misuse of privilege**
 
-![The same Chief Investigator with statistical analysis purpose cannot retrieve the participant registry.](/assets/scenarios/ai-rag/04_ci_cannot_dox_during_statistical_analysis.png)
+![The same Chief Investigator with statistical analysis purpose cannot retrieve the participant registry.](/assets/guides/ai-rag/04_ci_cannot_dox_during_statistical_analysis.png)
 
 Same user, same policies, different purpose. Dr. Fischer switches her declared purpose to "Statistical Analysis" and asks the same question. The policy attaches an obligation to exclude registry documents. The similarity search WHERE clause includes `type != 'registry'`. The LLM retrieves adverse event reports but cannot resolve pseudonyms to real identities. It lists the events by pseudonym and severity but cannot provide names or contact details. The Chief Investigator's role alone is not sufficient. The purpose must match. This is GDPR Article 5(1)(b) purpose limitation enforced at the database query level.
 
@@ -109,7 +109,7 @@ This is what SAPL provides for RAG pipelines.
 
 ### How SAPL solves this
 
-SAPL policies run inside the application. The `@PreEnforce` annotation on the retrieval method intercepts the call before execution. But unlike the tool authorization scenario where the decision is binary (permit or deny the tool call), the RAG scenario uses SAPL obligations to dynamically rewrite the search query.
+SAPL policies run inside the application. The `@PreEnforce` annotation on the retrieval method intercepts the call before execution. But unlike the tool authorization guide where the decision is binary (permit or deny the tool call), the RAG guide uses SAPL obligations to dynamically rewrite the search query.
 
 The retrieval service receives a reactive `SearchRequest` that SAPL can intercept and transform:
 
@@ -207,7 +207,7 @@ No policy matches if the role is unrecognized. The combining algorithm is "first
 
 ### Obligations: more than permit or deny
 
-The key difference between the RAG and tool authorization patterns is the use of obligations. In the tool authorization scenario, each tool call gets a binary permit or deny. In the RAG scenario, the decision is PERMIT with conditions attached. The obligation is a machine-readable instruction that the application must fulfill for the permit to take effect.
+The key difference between the RAG and tool authorization patterns is the use of obligations. In the tool authorization guide, each tool call gets a binary permit or deny. In the RAG guide, the decision is PERMIT with conditions attached. The obligation is a machine-readable instruction that the application must fulfill for the permit to take effect.
 
 If the obligation handler is not registered, or if it fails to apply the filter, the SAPL framework treats the obligation as unfulfilled and converts the PERMIT to a DENY. This is a safety property: a missing or broken filter does not silently grant full access. It fails closed.
 
@@ -220,11 +220,11 @@ This pattern extends beyond document type filtering. SAPL obligations can:
 
 The policy decides what happens. The constraint handler executes it. The application code stays clean.
 
-### Beyond retrieval filtering: related scenarios
+### Beyond retrieval filtering: related guides
 
-This scenario controls what data reaches the LLM. The [AI Tool Authorization](/scenarios/ai-tools/) and [Human-in-the-Loop Approval](/scenarios/ai-hitl/) scenarios control what the LLM does with it. Both enforce authorization at the tool-calling layer inside the Spring AI application, where the tools are local methods in the same process. The tool authorization scenario gates tool calls with binary permit/deny decisions. The HITL scenario goes further: the policy returns PERMIT with a condition that pauses execution until a human confirms the action. All three use the same SAPL obligation mechanism, applied to different concerns: query rewriting here, tool gating in tool authorization, and approval workflows in HITL.
+This guide controls what data reaches the LLM. The [AI Tool Authorization](/guides/ai-tools/) and [Human-in-the-Loop Approval](/guides/ai-hitl/) guides control what the LLM does with it. Both enforce authorization at the tool-calling layer inside the Spring AI application, where the tools are local methods in the same process. The tool authorization guide gates tool calls with binary permit/deny decisions. The HITL guide goes further: the policy returns PERMIT with a condition that pauses execution until a human confirms the action. All three use the same SAPL obligation mechanism, applied to different concerns: query rewriting here, tool gating in tool authorization, and approval workflows in HITL.
 
-The [MCP Server Authorization](/scenarios/ai-mcp/) scenario takes a different approach. There, the tools are served by a separate MCP server process with its own network boundary. SAPL runs inside the MCP server and guards that boundary via middleware and decorators, controlling what external AI agents can do when they connect. This distinction matters architecturally: application-internal enforcement is appropriate when the application owns the tools, while MCP server enforcement is appropriate when the tools are exposed as a service to multiple clients.
+The [MCP Server Authorization](/guides/ai-mcp/) guide takes a different approach. There, the tools are served by a separate MCP server process with its own network boundary. SAPL runs inside the MCP server and guards that boundary via middleware and decorators, controlling what external AI agents can do when they connect. This distinction matters architecturally: application-internal enforcement is appropriate when the application owns the tools, while MCP server enforcement is appropriate when the tools are exposed as a service to multiple clients.
 
 ### Audit trail
 
@@ -266,7 +266,7 @@ The policy set evaluates four policies. The `ci-statistical-analysis` policy mat
 
 A single retrieval, a single auditable decision. The decision is PERMIT, but the obligation rewrites the search query to exclude registry documents before it reaches the database. The LLM receives adverse event data, PHQ-9 scores, and the study protocol. It does not receive the participant registry. The audit log shows exactly which policy matched, what obligation was attached, and why the other policies did not apply.
 
-Compare this with the [tool authorization audit trail](/scenarios/ai-tools/#audit-trail): in the tool authorization scenario, the same user interaction produces three separate PDP decisions (one per tool call). In the RAG scenario, there is one decision with an obligation that shapes the retrieval. Both are fully auditable. The difference is in the enforcement pattern, not the audit completeness.
+Compare this with the [tool authorization audit trail](/guides/ai-tools/#audit-trail): in the tool authorization guide, the same user interaction produces three separate PDP decisions (one per tool call). In the RAG guide, there is one decision with an obligation that shapes the retrieval. Both are fully auditable. The difference is in the enforcement pattern, not the audit completeness.
 
 This is the human-readable text report. SAPL can also emit these decisions as structured JSON logs, suitable for ingestion by log aggregation and SIEM systems.
 
@@ -284,6 +284,6 @@ mvn spring-boot:run
 ### Related
 
 - [Spring SDK Documentation](/docs/latest/6_3_Spring/): the SAPL Spring Boot SDK used in this demo
-- [AI Tool Authorization](/scenarios/ai-tools/): per-tool authorization for the same clinical trial use case
-- [Human-in-the-Loop Approval](/scenarios/ai-hitl/): policy-driven approval workflows for sensitive operations
-- [MCP Server Authorization](/scenarios/ai-mcp/): the same authorization model for MCP servers
+- [AI Tool Authorization](/guides/ai-tools/): per-tool authorization for the same clinical trial use case
+- [Human-in-the-Loop Approval](/guides/ai-hitl/): policy-driven approval workflows for sensitive operations
+- [MCP Server Authorization](/guides/ai-mcp/): the same authorization model for MCP servers

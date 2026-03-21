@@ -162,20 +162,20 @@ Framework integration depth is the third difference. OPA, Cedar, and Cerbos give
 
 Yes. SAPL provides authorization for AI agents at multiple levels:
 
-- **Tool calling.** Per-tool permit/deny decisions for Spring AI tool methods. The policy sees the tool name, parameters, and user context. See the [AI Tool Authorization scenario](https://sapl.io/scenarios/ai-tools/).
-- **RAG pipelines.** Dynamic query rewriting at the retrieval boundary. The RAG scenario demonstrates this with a vector database, but the same obligation mechanism protects any retrieval path: RDBMS (JPA, R2DBC), NoSQL (MongoDB), graph databases, or semantic search. Documents the user is not authorized to see are excluded at the query level before they reach the LLM. See the [RAG scenario](https://sapl.io/scenarios/ai-rag/).
-- **Human-in-the-loop.** Policy-driven approval workflows where the decision is PERMIT with an obligation that pauses execution until a human confirms. The policy decides which actions need approval, whether auto-approve is allowed, and how long to wait. See the [HITL scenario](https://sapl.io/scenarios/ai-hitl/).
-- **MCP servers.** Authorize tool calls, resource access, and prompt arguments inside MCP servers with decorators and constraint handlers. See the [MCP scenario](https://sapl.io/scenarios/ai-mcp/).
+- **Tool calling.** Per-tool permit/deny decisions for Spring AI tool methods. The policy sees the tool name, parameters, and user context. See the [AI Tool Authorization guide](https://sapl.io/guides/ai-tools/).
+- **RAG pipelines.** Dynamic query rewriting at the retrieval boundary. The RAG guide demonstrates this with a vector database, but the same obligation mechanism protects any retrieval path: RDBMS (JPA, R2DBC), NoSQL (MongoDB), graph databases, or semantic search. Documents the user is not authorized to see are excluded at the query level before they reach the LLM. See the [RAG guide](https://sapl.io/guides/ai-rag/).
+- **Human-in-the-loop.** Policy-driven approval workflows where the decision is PERMIT with an obligation that pauses execution until a human confirms. The policy decides which actions need approval, whether auto-approve is allowed, and how long to wait. See the [HITL guide](https://sapl.io/guides/ai-hitl/).
+- **MCP servers.** Authorize tool calls, resource access, and prompt arguments inside MCP servers with decorators and constraint handlers. See the [MCP guide](https://sapl.io/guides/ai-mcp/).
 
 ## How does SAPL control what data reaches the LLM in a RAG pipeline?
 
-SAPL policies attach obligations that rewrite the retrieval query before it executes. The RAG scenario demonstrates this with a vector database (pgvector): a policy for a site investigator adds filter expressions that exclude the participant registry and restrict results to the investigator's own site. The WHERE clause is modified at the database level. Documents the user is not authorized to see are never retrieved, never enter the application, and never reach the LLM context window.
+SAPL policies attach obligations that rewrite the retrieval query before it executes. The RAG guide demonstrates this with a vector database (pgvector): a policy for a site investigator adds filter expressions that exclude the participant registry and restrict results to the investigator's own site. The WHERE clause is modified at the database level. Documents the user is not authorized to see are never retrieved, never enter the application, and never reach the LLM context window.
 
 The same mechanism works for any data source behind the retrieval. SAPL's Spring Data integrations rewrite queries for JPA (SQL), R2DBC (reactive SQL), and MongoDB (MQL) at the query level. If your RAG pipeline retrieves from an RDBMS, a document store, or a graph database, the obligation-based query rewriting pattern applies. The constraint handler translates policy obligations into the query language of whatever data source backs the retrieval.
 
 Pre-retrieval filtering is the strongest option because the data never leaves the database. SAPL also supports post-retrieval transformation via `@PostEnforce` and response transformation obligations: filter collection elements, redact fields, or modify return values after retrieval. Use query rewriting where possible, post-retrieval transformation where the data source lacks query-level filtering. Both are policy-driven, not hardcoded.
 
-See the [RAG scenario](https://sapl.io/scenarios/ai-rag/) for a full walkthrough with vector search.
+See the [RAG guide](https://sapl.io/guides/ai-rag/) for a full walkthrough with vector search.
 
 ## How does human-in-the-loop approval work?
 
@@ -183,7 +183,7 @@ The policy returns PERMIT with an obligation of type `humanApprovalRequired`. A 
 
 If the operator approves, the tool executes normally. If the operator denies or the request times out, the obligation fails and the PERMIT is revoked. The LLM receives a semantically meaningful error distinguishing "operator denied" from "approval timed out."
 
-The policy controls which actions need approval, whether the user's auto-approve preference can bypass the dialog, and the timeout duration. The application code has no approval logic. See the [HITL scenario](https://sapl.io/scenarios/ai-hitl/) for a full walkthrough.
+The policy controls which actions need approval, whether the user's auto-approve preference can bypass the dialog, and the timeout duration. The application code has no approval logic. See the [HITL guide](https://sapl.io/guides/ai-hitl/) for a full walkthrough.
 
 ## How do I deploy SAPL?
 
@@ -264,7 +264,7 @@ A typical Git-based workflow:
 4. **Publish** the signed bundle to your HTTP server of choice.
 5. **Load** in SAPL Node. Signature verified, policies hot-reloaded, active subscriptions re-evaluated.
 
-See the [Policy Operations scenario](https://sapl.io/scenarios/policy-ops/) for a complete walkthrough with a working CI pipeline.
+See the [Policy Operations guide](https://sapl.io/guides/policy-ops/) for a complete walkthrough with a working CI pipeline.
 
 ## What languages and frameworks does SAPL support?
 
@@ -309,6 +309,6 @@ Yes. [Apache License 2.0](https://opensource.org/license/apache-2-0). Source cod
 
 1. **Try it in the browser.** The [Playground](https://playground.sapl.io/) requires no installation.
 2. **Try it on the command line.** Download the `sapl` binary from the [releases page](https://github.com/heutelbeck/sapl-policy-engine/releases) and follow the [Getting Started guide](https://sapl.io/docs/latest/1_2_GettingStarted/).
-3. **Add it to a Spring Boot project.** Follow the [Spring Security scenario](https://sapl.io/scenarios/spring/) for a step-by-step walkthrough.
+3. **Add it to a Spring Boot project.** Follow the [Spring Security guide](https://sapl.io/guides/spring/) for a step-by-step walkthrough.
 4. **Explore the demos.** The [demo repository](https://github.com/heutelbeck/sapl-demos) has runnable examples for all integration patterns.
 5. **Talk to us.** [Request a demo](https://sapl.io/support/) tailored to your use case.

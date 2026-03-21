@@ -1,6 +1,6 @@
 ---
 layout: sapl
-title: "Policy Operations - SAPL Scenarios"
+title: "Policy Operations - SAPL Guides"
 description: "Ship authorization policies like you ship code. Version, test, sign, and deploy policies using Git, your CI system, and the monitoring stack you already run."
 ---
 
@@ -8,7 +8,7 @@ description: "Ship authorization policies like you ship code. Version, test, sig
 
 Your team already has a way to version code, run tests, publish artifacts, and monitor production. Authorization policies should flow through the same process.
 
-This scenario shows a policy pipeline built entirely from standard tools: Git for versioning, CI for testing and signing, HTTP for distribution, Prometheus for metrics, and structured logging for audit trails. The only new component is the SAPL CLI and runtime. Everything else is already in your infrastructure.
+This guide shows a policy pipeline built entirely from standard tools: Git for versioning, CI for testing and signing, HTTP for distribution, Prometheus for metrics, and structured logging for audit trails. The only new component is the SAPL CLI and runtime. Everything else is already in your infrastructure.
 
 ### The problem
 
@@ -25,7 +25,7 @@ Every proprietary tool added for authorization is another system your team has t
 
 ### How it works
 
-<img src="/assets/scenarios/policy-ops/pipeline.svg" alt="Policy pipeline: git push to CI pipeline to GitHub Release to SAPL Node, with testing, signing, and observability at each stage" style="width: 100%; max-width: 900px;">
+<img src="/assets/guides/policy-ops/pipeline.svg" alt="Policy pipeline: git push to CI pipeline to GitHub Release to SAPL Node, with testing, signing, and observability at each stage" style="width: 100%; max-width: 900px;">
 
 **Author.** Write policies and tests in your existing editor. The [SAPL Language Server](/docs/latest/7_1_GettingStarted/) provides syntax highlighting, code completion, inline validation, and quick fixes for VS Code, IntelliJ, Neovim, and any other LSP-capable editor. Policy authors get the same development experience they have for application code.
 
@@ -49,7 +49,7 @@ The node exposes standard [monitoring endpoints](/docs/latest/7_7_Monitoring/):
 
 No proprietary dashboard. No separate monitoring tool. The same Grafana instance that monitors your application monitors your authorization.
 
-### The scenario in action
+### The guide in action
 
 #### Testing catches mistakes
 
@@ -139,5 +139,5 @@ The repository includes four policy sets with streaming tests, a GitHub Actions 
 - [Remote Bundles](/docs/latest/7_4_RemoteBundles/) -- configuring SAPL Node for remote bundle loading
 - [Monitoring](/docs/latest/7_7_Monitoring/) -- structured logging, Prometheus metrics, health endpoints
 - [setup-sapl GitHub Action](https://github.com/heutelbeck/setup-sapl) -- install the SAPL CLI in GitHub Actions workflows
-- [Spring Security scenario](/scenarios/spring/) -- securing a Spring Boot application with SAPL
-- [AI scenarios](/scenarios/ai-rag/) -- authorization for RAG pipelines, tool calling, and human-in-the-loop
+- [Spring Security guide](/guides/spring/) -- securing a Spring Boot application with SAPL
+- [AI guides](/guides/ai-rag/) -- authorization for RAG pipelines, tool calling, and human-in-the-loop

@@ -1,6 +1,6 @@
 ---
 layout: sapl
-title: "Multi-Framework Authorization - SAPL Scenarios"
+title: "Multi-Framework Authorization - SAPL Guides"
 description: "Same SAPL policies, same authorization behavior, any stack. Tabbed code examples across Spring, Flask, FastAPI, Django, Tornado, NestJS, and .NET."
 ---
 
@@ -12,7 +12,7 @@ Write your authorization policies once. Enforce them identically in Spring, Flas
 
 SAPL separates the authorization decision (PDP) from enforcement (PEP). Each framework SDK implements the same PEP behavior: subscribe to the PDP, enforce decisions, handle obligations and advice, apply constraint handlers. The [PEP Implementation Specification](/docs/8_1_PEPImplementationSpecification/) specifies this contract. All SDKs listed below are built against it.
 
-Each pattern in this scenario links to the relevant specification section. For framework-specific details, see the SDK documentation:
+Each pattern in this guide links to the relevant specification section. For framework-specific details, see the SDK documentation:
 
 | Framework | SDK Documentation | Demo |
 |-----------|------------------|------|
@@ -454,5 +454,5 @@ Total: 28 | Passed: 28 | Failed: 0 | Skipped: 0
 ### Related
 
 - [PEP Implementation Specification](/docs/8_1_PEPImplementationSpecification/): the contract all SDKs implement
-- [Spring Security scenario](/scenarios/spring/): deeper dive into Spring-specific patterns
-- [Policy Operations](/scenarios/policy-ops/): git versioning, bundle signing, remote deployment
+- [Spring Security guide](/guides/spring/): deeper dive into Spring-specific patterns
+- [Policy Operations](/guides/policy-ops/): git versioning, bundle signing, remote deployment

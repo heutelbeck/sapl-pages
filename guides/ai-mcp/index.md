@@ -1,6 +1,6 @@
 ---
 layout: sapl
-title: "MCP Server Authorization - SAPL Scenarios"
+title: "MCP Server Authorization - SAPL Guides"
 description: "Per-tool, per-resource, per-prompt authorization for MCP servers with SAPL. Constraint handlers, stealth mode, JWT/ABAC, and fine-grained access control in Python FastMCP servers."
 ---
 
@@ -30,7 +30,7 @@ Five concrete problems follow:
 
 SAPL runs inside the FastMCP server as middleware. Every tool call, resource read, and prompt access is intercepted before execution. The middleware builds an authorization subscription from the request context (JWT claims, tool name, arguments, tags) and queries the PDP. The decision determines not just whether the operation proceeds, but how.
 
-This scenario walks through each problem above and shows the policy and code that addresses it.
+This guide walks through each problem above and shows the policy and code that addresses it.
 
 ### The demo: an analytics platform
 
@@ -241,6 +241,6 @@ Full source: [sapl-python-demos/fastmcp_demo](https://github.com/heutelbeck/sapl
 ### Related
 
 - [FastMCP SDK Documentation](/docs/latest/6_9_FastMCP/) - full API reference, handler types, configuration, troubleshooting
-- [AI Tool Authorization](/scenarios/ai-tools/) - per-tool authorization in Spring AI (same pattern, Java)
-- [RAG Pipeline Authorization](/scenarios/ai-rag/) - dynamic query rewriting for retrieval-augmented generation
-- [Human-in-the-Loop Approval](/scenarios/ai-hitl/) - policy-driven approval workflows for AI tool calls
+- [AI Tool Authorization](/guides/ai-tools/) - per-tool authorization in Spring AI (same pattern, Java)
+- [RAG Pipeline Authorization](/guides/ai-rag/) - dynamic query rewriting for retrieval-augmented generation
+- [Human-in-the-Loop Approval](/guides/ai-hitl/) - policy-driven approval workflows for AI tool calls
