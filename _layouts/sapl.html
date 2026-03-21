@@ -419,7 +419,7 @@
           el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_RESTORED","message":"Threat level changed - access restored"}';
         }
         log.insertBefore(el, log.firstChild);
-        while (log.children.length > 25) log.removeChild(log.lastChild);
+        while (log.children.length > 50) log.removeChild(log.lastChild);
       }
 
       function tick() { addRow(); addLog('data'); }

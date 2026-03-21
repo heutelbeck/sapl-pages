@@ -693,7 +693,7 @@ main > hr {
 
 /* Terminal output */
 .terminal {
-  background: #0c0c0c;
+  background: var(--color-code-bg);
   border-radius: 0 0 12px 12px;
   overflow: hidden;
 }
@@ -701,8 +701,8 @@ main > hr {
 .test-output {
   margin: 0;
   padding: 1rem 1.5rem;
-  background: #0c0c0c;
-  color: #cccccc;
+  background: var(--color-code-bg);
+  color: var(--color-code-text);
   font-family: var(--font-mono);
   font-size: 0.78rem;
   line-height: 1.7;
@@ -711,10 +711,13 @@ main > hr {
 
 .test-output code { font-family: inherit; background: none; }
 .term-prompt { color: var(--color-code-label-text); }
-.term-bold { color: #e0e0e0; font-weight: 700; }
-.test-pass { color: #4ec751; }
-.test-pass-bold { color: #4ec751; font-weight: 700; }
-.test-dim { color: #555555; }
+.term-bold { color: var(--color-text); font-weight: 700; }
+.test-pass { color: #16a34a; }
+.test-pass-bold { color: #16a34a; font-weight: 700; }
+.test-dim { color: var(--color-text-secondary); }
+[data-theme="dark"] .test-pass { color: #4ec751; }
+[data-theme="dark"] .test-pass-bold { color: #4ec751; }
+[data-theme="dark"] .term-bold { color: #e0e0e0; }
 
 /* Testing demo layout */
 .testing-demo { margin-top: 1.5rem; }
@@ -1271,7 +1274,7 @@ p + p { margin-top: 1rem; }
 /* Event log */
 .sd-log {
   border: 1px solid var(--color-border); border-top: none;
-  border-radius: 0 0 12px 12px; overflow: hidden; background: #0c0c0c;
+  border-radius: 0 0 12px 12px; overflow: hidden; background: var(--color-code-bg);
 }
 .sd-log-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -1284,17 +1287,23 @@ p + p { margin-top: 1rem; }
 .sd-log-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: sdPulse 2s ease-in-out infinite; }
 .sd-log-entries {
   padding: 0.6rem 1rem; height: 140px; overflow-y: auto;
-  font-family: var(--font-mono); font-size: 0.66rem; line-height: 1.85; color: #888;
+  font-family: var(--font-mono); font-size: 0.66rem; line-height: 1.85; color: var(--color-text-secondary);
 }
 .sd-log-entry { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: sdEntryIn 0.25s ease; }
 @keyframes sdEntryIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
-.sd-log-entry .lp { color: #555; }
-.sd-log-entry .lk { color: #82aaff; }
-.sd-log-entry .ls { color: #c3e88d; }
-.sd-log-entry .ln { color: #f78c6c; }
-.sd-log-entry .lr { color: #fbbf24; }
-.sd-log-entry.sd-suspend { color: #f87171; }
-.sd-log-entry.sd-restore { color: #38bdf8; }
+.sd-log-entry .lp { color: var(--color-text-secondary); }
+.sd-log-entry .lk { color: #2563eb; }
+.sd-log-entry .ls { color: #16a34a; }
+.sd-log-entry .ln { color: #c2410c; }
+.sd-log-entry .lr { color: #a16207; }
+.sd-log-entry.sd-suspend { color: #dc2626; }
+.sd-log-entry.sd-restore { color: #0284c7; }
+[data-theme="dark"] .sd-log-entry .lk { color: #82aaff; }
+[data-theme="dark"] .sd-log-entry .ls { color: #c3e88d; }
+[data-theme="dark"] .sd-log-entry .ln { color: #f78c6c; }
+[data-theme="dark"] .sd-log-entry .lr { color: #fbbf24; }
+[data-theme="dark"] .sd-log-entry.sd-suspend { color: #f87171; }
+[data-theme="dark"] .sd-log-entry.sd-restore { color: #38bdf8; }
 
 /* Start overlay */
 .sd-wrapper { position: relative; }
