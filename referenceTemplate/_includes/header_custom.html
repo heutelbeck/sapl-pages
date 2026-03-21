@@ -31,15 +31,9 @@
 
   function notifyEmbeds(theme) {
     var msg = {type: 'sapl-theme', dark: theme === 'dark'};
-    function sendToFrames(root) {
-      root.querySelectorAll('iframe').forEach(function(f) {
-        try { f.contentWindow.postMessage(msg, '*'); } catch(e) {}
-      });
-      root.querySelectorAll('*').forEach(function(el) {
-        if (el.shadowRoot) sendToFrames(el.shadowRoot);
-      });
+    for (var i = 0; i < window.frames.length; i++) {
+      try { window.frames[i].postMessage(msg, '*'); } catch(e) {}
     }
-    sendToFrames(document);
   }
 
   // Notify embeds when iframes appear
