@@ -178,12 +178,25 @@
       if (saved) document.documentElement.setAttribute('data-theme', saved);
     }
 
+    function notifyEmbedsOfTheme(theme) {
+      document.querySelectorAll('iframe').forEach(function(f) {
+        try { f.contentWindow.postMessage({type: 'sapl-theme', dark: theme === 'dark'}, '*'); } catch(e) {}
+      });
+    }
+
     document.querySelector('.theme-toggle').addEventListener('click', function() {
       var current = document.documentElement.getAttribute('data-theme');
       var next = current === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+      notifyEmbedsOfTheme(next);
     });
+
+    // Notify embed iframes of initial theme once they appear
+    new MutationObserver(function() {
+      var theme = document.documentElement.getAttribute('data-theme') || 'light';
+      notifyEmbedsOfTheme(theme);
+    }).observe(document.body, {childList: true, subtree: true});
 
     // Sync theme when returning via back/forward navigation
     window.addEventListener('pageshow', function(e) {

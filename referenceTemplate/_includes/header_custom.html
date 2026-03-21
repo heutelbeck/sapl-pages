@@ -29,12 +29,24 @@
   var current = saved || (prefersDark ? 'dark' : 'light');
   applyTheme(current);
 
+  function notifyEmbeds(theme) {
+    document.querySelectorAll('iframe').forEach(function(f) {
+      try { f.contentWindow.postMessage({type: 'sapl-theme', dark: theme === 'dark'}, '*'); } catch(e) {}
+    });
+  }
+
+  // Notify embeds when iframes appear
+  new MutationObserver(function() { notifyEmbeds(current); })
+    .observe(document.body, {childList: true, subtree: true});
+
   // Toggle on click
   document.querySelector('.jtd-theme-toggle').addEventListener('click', function() {
     var isDark = !document.getElementById('jtd-theme-dark').disabled;
     var next = isDark ? 'light' : 'dark';
+    current = next;
     applyTheme(next);
     localStorage.setItem('theme', next);
+    notifyEmbeds(next);
   });
 })();
 </script>
