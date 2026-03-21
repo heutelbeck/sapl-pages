@@ -60,7 +60,7 @@ graph LR
     PEP -- 6b. Execute Action -- > RAP
     PEP -- 7. Deliver Action Result -- > Subject
 -->
-![ABAC authorization flow: Subject attempts action, PEP builds subscription, PDP retrieves policies from PRP and fetches attributes from PIP, PDP returns decision, PEP enforces by denying or executing and delivering result](/docs/latest/assets/sapl_reference_images/abac-flow.svg)
+![ABAC authorization flow: Subject attempts action, PEP builds subscription, PDP retrieves policies from PRP and fetches attributes from PIP, PDP returns decision, PEP enforces by denying or executing and delivering result](/docs/XXXSAPLVERSIONXXX/assets/sapl_reference_images/abac-flow.svg)
 
 A typical scenario: a subject (e.g., a user or system) attempts to take action (e.g., read or cancel an order) on a protected resource (e.g., a domain object or a file). The system implements a **policy enforcement point (PEP)** protecting its resources. The PEP collects information about the subject, action, resource, and potential other relevant data in an authorization subscription and sends it to a **policy decision point (PDP)** that evaluates SAPL policies to decide if it grants access. The decision is sent back to the PEP, which either grants or denies access. The PDP subscribes to all data sources referenced by the policies, and new decisions are sent to the PEP whenever indicated by the policies and data sources.
 

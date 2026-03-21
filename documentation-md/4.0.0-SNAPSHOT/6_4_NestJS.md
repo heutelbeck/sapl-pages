@@ -495,7 +495,7 @@ sequenceDiagram
         Note over Stream: Events resume
     end
 -->
-![Streaming enforcement sequence: PDP sends PERMIT and data events flow, then DENY triggers one of three strategies - EnforceTillDenied closes the stream, EnforceDropWhileDenied silently drops events and resumes on re-PERMIT, EnforceRecoverableIfDenied sends ACCESS_SUSPENDED and ACCESS_RESTORED signals](/docs/latest/assets/sapl_reference_images/nestjs-streaming.svg)
+![Streaming enforcement sequence: PDP sends PERMIT and data events flow, then DENY triggers one of three strategies - EnforceTillDenied closes the stream, EnforceDropWhileDenied silently drops events and resumes on re-PERMIT, EnforceRecoverableIfDenied sends ACCESS_SUSPENDED and ACCESS_RESTORED signals](/docs/XXXSAPLVERSIONXXX/assets/sapl_reference_images/nestjs-streaming.svg)
 
 ### When to Use Which Strategy
 
