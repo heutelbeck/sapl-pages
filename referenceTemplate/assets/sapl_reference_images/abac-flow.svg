@@ -51,11 +51,11 @@
 
   <!-- 3. PDP -> PRP (right then up, L-shape) -->
   <path d="M 660 125 H 700 V 55 H 735" stroke="#7bbdbc" stroke-width="1.5" fill="none" marker-end="url(#ah-accent)"/>
-  <text x="715" y="90" text-anchor="middle" fill="#929699" font-size="10">3. policies</text>
+  <text x="720" y="90" text-anchor="start" fill="#929699" font-size="10">3. policies</text>
 
   <!-- 4. PDP -> PIP (right then down, L-shape) -->
   <path d="M 660 155 H 700 V 215 H 735" stroke="#7bbdbc" stroke-width="1.5" fill="none" marker-end="url(#ah-accent)"/>
-  <text x="715" y="192" text-anchor="middle" fill="#929699" font-size="10">4. attributes</text>
+  <text x="720" y="192" text-anchor="start" fill="#929699" font-size="10">4. attributes</text>
 
   <!-- 5. PDP -> PEP (horizontal, below forward line) -->
   <line x1="495" y1="155" x2="395" y2="155" stroke="#028392" stroke-width="2" marker-end="url(#ah)"/>
