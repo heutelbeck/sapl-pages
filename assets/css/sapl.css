@@ -1057,19 +1057,20 @@ p + p { margin-top: 1rem; }
 .sd-code-panel .cm-gutters { background: transparent; border-right: none; }
 .sd-code-panel .cm-scroller { overflow: auto; }
 
-/* Flow container — always dark */
+/* Flow container */
 .sd-flow {
   display: grid;
   grid-template-columns: 0.8fr 28px 0.6fr 28px 1.8fr;
   grid-template-rows: 1fr;
+  gap: 1px;
   border: 1px solid var(--color-border);
   border-top: none;
-  background: var(--color-code-bg);
+  background: var(--color-border);
   color: var(--color-code-text);
   height: 240px;
 }
 
-.sd-panel { display: flex; flex-direction: column; overflow: hidden; }
+.sd-panel { display: flex; flex-direction: column; overflow: hidden; background: var(--color-code-bg); }
 
 .sd-panel-header {
   padding: 0.45rem 1rem;
