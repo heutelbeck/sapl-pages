@@ -30,14 +30,24 @@
   applyTheme(current);
 
   function notifyEmbeds(theme) {
-    document.querySelectorAll('iframe').forEach(function(f) {
-      try { f.contentWindow.postMessage({type: 'sapl-theme', dark: theme === 'dark'}, '*'); } catch(e) {}
-    });
+    var msg = {type: 'sapl-theme', dark: theme === 'dark'};
+    function sendToFrames(root) {
+      root.querySelectorAll('iframe').forEach(function(f) {
+        try { f.contentWindow.postMessage(msg, '*'); } catch(e) {}
+      });
+      root.querySelectorAll('*').forEach(function(el) {
+        if (el.shadowRoot) sendToFrames(el.shadowRoot);
+      });
+    }
+    sendToFrames(document);
   }
 
   // Notify embeds when iframes appear
-  new MutationObserver(function() { notifyEmbeds(current); })
-    .observe(document.body, {childList: true, subtree: true});
+  var embedTimer;
+  new MutationObserver(function() {
+    clearTimeout(embedTimer);
+    embedTimer = setTimeout(function() { notifyEmbeds(current); }, 500);
+  }).observe(document.body, {childList: true, subtree: true});
 
   // Toggle on click
   document.querySelector('.jtd-theme-toggle').addEventListener('click', function() {

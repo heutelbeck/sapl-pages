@@ -179,9 +179,16 @@
     }
 
     function notifyEmbedsOfTheme(theme) {
-      document.querySelectorAll('iframe').forEach(function(f) {
-        try { f.contentWindow.postMessage({type: 'sapl-theme', dark: theme === 'dark'}, '*'); } catch(e) {}
-      });
+      var msg = {type: 'sapl-theme', dark: theme === 'dark'};
+      function sendToFrames(root) {
+        root.querySelectorAll('iframe').forEach(function(f) {
+          try { f.contentWindow.postMessage(msg, '*'); } catch(e) {}
+        });
+        root.querySelectorAll('*').forEach(function(el) {
+          if (el.shadowRoot) sendToFrames(el.shadowRoot);
+        });
+      }
+      sendToFrames(document);
     }
 
     document.querySelector('.theme-toggle').addEventListener('click', function() {
@@ -192,10 +199,13 @@
       notifyEmbedsOfTheme(next);
     });
 
-    // Notify embed iframes of initial theme once they appear
+    // Notify embed iframes of theme once they appear
+    var notifyTimer;
     new MutationObserver(function() {
-      var theme = document.documentElement.getAttribute('data-theme') || 'light';
-      notifyEmbedsOfTheme(theme);
+      clearTimeout(notifyTimer);
+      notifyTimer = setTimeout(function() {
+        notifyEmbedsOfTheme(document.documentElement.getAttribute('data-theme') || 'light');
+      }, 500);
     }).observe(document.body, {childList: true, subtree: true});
 
     // Sync theme when returning via back/forward navigation
