@@ -241,7 +241,11 @@
       var cm = await import('/assets/js/codemirror-bundle.min.js');
       var EditorView = cm.EditorView, minimalSetup = cm.minimalSetup,
           StreamLanguage = cm.StreamLanguage, oneDark = cm.oneDark,
-          lineNumbers = cm.lineNumbers;
+          lineNumbers = cm.lineNumbers, Compartment = cm.Compartment;
+
+      var themeCompartment = new Compartment();
+      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      var editors = [];
 
       // SAPL language mode — aligned with SAPLLexer.g4
       var saplLanguage = StreamLanguage.define({
@@ -305,7 +309,7 @@
         var code = pre.querySelector('code').textContent;
         var container = pre.closest('[data-lang]');
         var lang = container ? container.dataset.lang : null;
-        var extensions = [minimalSetup, oneDark, lineNumbers(), EditorView.editable.of(false)];
+        var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : []), lineNumbers(), EditorView.editable.of(false)];
 
         // Check for built-in SAPL/SAPLTest modes first
         var builtinExt = getLangExtension(lang);
@@ -322,8 +326,18 @@
 
         var editorDiv = document.createElement('div');
         pre.replaceWith(editorDiv);
-        new EditorView({ doc: code, extensions: extensions, parent: editorDiv });
+        editors.push(new EditorView({ doc: code, extensions: extensions, parent: editorDiv }));
       });
+
+      // Watch for theme changes and reconfigure all editors
+      new MutationObserver(function() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (dark === isDark) return;
+        isDark = dark;
+        editors.forEach(function(view) {
+          view.dispatch({ effects: themeCompartment.reconfigure(isDark ? oneDark : []) });
+        });
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     })();
 
