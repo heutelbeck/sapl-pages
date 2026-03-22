@@ -1,0 +1,21 @@
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="token-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="inner"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="outer"/>
+      <feColorMatrix in="inner" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" result="innerDim"/>
+      <feColorMatrix in="outer" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.2 0" result="outerDim"/>
+      <feMerge><feMergeNode in="outerDim"/><feMergeNode in="innerDim"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="node-shadow" x="-5%" y="-5%" width="115%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+    <filter id="line-glow" x="-15%" y="-80%" width="130%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="inner"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="outer"/>
+      <feColorMatrix in="inner" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.45 0" result="innerDim"/>
+      <feColorMatrix in="outer" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.2 0" result="outerDim"/>
+      <feMerge><feMergeNode in="outerDim"/><feMergeNode in="innerDim"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>

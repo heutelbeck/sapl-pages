@@ -1,0 +1,86 @@
+<svg id="obl-svg" viewBox="0 0 800 500" width="100%" xmlns="http://www.w3.org/2000/svg"
+     text-rendering="optimizeLegibility" shape-rendering="geometricPrecision"
+     style="display: block; margin: 0 auto; max-width: 800px;">
+  <rect width="800" height="500" rx="12" class="svg-bg"/>
+  <text id="obl-narration" x="400" y="32" text-anchor="middle" class="svg-narration" font-size="16" font-weight="600"></text>
+
+  <!-- Left column -->
+  <rect x="20" y="50" width="180" height="145" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+  <text x="110" y="66" text-anchor="middle" dy="0.35em" class="svg-text-secondary" font-size="10" font-weight="600">Stream Output</text>
+  <text id="obl-s1" x="30" y="84" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s2" x="30" y="96" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s3" x="30" y="108" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s4" x="30" y="120" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s5" x="30" y="132" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s6" x="30" y="144" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s7" x="30" y="156" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s8" x="30" y="168" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+  <text id="obl-s9" x="30" y="180" class="svg-text-secondary" font-size="8" opacity="0" font-family="'JetBrains Mono', monospace"></text>
+
+  <rect x="20" y="220" width="180" height="60" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+  <text x="110" y="244" text-anchor="middle" dy="0.35em" class="svg-text" font-size="13" font-weight="500">Client</text>
+  <text x="110" y="260" text-anchor="middle" dy="0.35em" class="svg-text-secondary" font-size="9">(Nurse)</text>
+
+  <!-- PIP: Severity -->
+  <rect x="20" y="390" width="180" height="55" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+  <text x="110" y="408" text-anchor="middle" dy="0.35em" class="svg-text" font-size="11" font-weight="600">PIP: Severity</text>
+  <rect id="obl-sev-bg" x="55" y="422" width="110" height="18" rx="9" class="svg-state-bg" stroke-width="1"/>
+  <text id="obl-sev-text" x="110" y="431" text-anchor="middle" dy="0.35em" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="500" class="svg-state-initial"></text>
+
+  <!-- Protected Data Source container -->
+  <rect x="260" y="130" width="515" height="200" rx="14" class="svg-container-fill svg-container-stroke" stroke-width="1" stroke-dasharray="6 3"/>
+  <text x="518" y="148" text-anchor="middle" class="svg-container-label" font-size="13" font-weight="500" letter-spacing="0.03em">Protected Data Source</text>
+
+  <!-- PEP -->
+  <rect x="380" y="170" width="150" height="115" rx="10" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+  <text x="455" y="198" text-anchor="middle" dy="0.35em" class="svg-text" font-size="14" font-weight="600">PEP</text>
+  <rect id="obl-state-bg" x="405" y="235" width="100" height="28" rx="14" class="svg-state-bg" stroke-width="1"/>
+  <text id="obl-pep-state" x="455" y="249" text-anchor="middle" dy="0.35em" font-family="'JetBrains Mono', 'Fira Code', 'SF Mono', monospace" font-size="11" font-weight="500" class="svg-state-initial">PENDING</text>
+
+  <!-- Data Source -->
+  <rect x="600" y="220" width="140" height="60" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+  <text x="670" y="250" text-anchor="middle" dy="0.35em" class="svg-text" font-size="12" font-weight="500">Patient Records</text>
+
+  <!-- Obligation Handler (starts above path) -->
+  <g id="obl-handler-group" transform="translate(270, 175)">
+    <rect width="100" height="40" rx="6" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+    <text x="50" y="14" text-anchor="middle" dy="0.35em" class="svg-text-secondary" font-size="9" font-weight="600">blacken</text>
+    <text id="obl-handler-label" x="50" y="28" text-anchor="middle" dy="0.35em" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  </g>
+
+  <!-- PDP -->
+  <rect x="405" y="390" width="100" height="55" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+  <text x="455" y="418" text-anchor="middle" dy="0.35em" class="svg-text" font-size="13" font-weight="500">PDP</text>
+
+  <!-- Obligation JSON text -->
+  <text id="obl-json-1" x="520" y="390" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  <text id="obl-json-2" x="526" y="400" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  <text id="obl-json-3" x="532" y="410" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  <text id="obl-json-4" x="532" y="420" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  <text id="obl-json-5" x="526" y="430" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  <text id="obl-json-6" x="520" y="440" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+
+  <!-- Connection glow layers -->
+  <line id="obl-glow-client-pep" x1="200" y1="250" x2="380" y2="250" stroke-width="8" stroke-linecap="round" opacity="0" class="svg-line-glow"/>
+  <line id="obl-glow-pep-source" x1="530" y1="250" x2="600" y2="250" stroke-width="8" stroke-linecap="round" opacity="0" class="svg-line-glow"/>
+  <line id="obl-glow-pep-pdp" x1="455" y1="285" x2="455" y2="390" stroke-width="8" stroke-linecap="round" opacity="0" class="svg-line-glow"/>
+  <line id="obl-glow-pip-pdp" x1="200" y1="418" x2="405" y2="418" stroke-width="8" stroke-linecap="round" opacity="0" class="svg-line-glow"/>
+
+  <!-- Connection lines -->
+  <line id="obl-line-client-pep" x1="200" y1="250" x2="380" y2="250" class="svg-line" stroke-width="1.5" stroke-linecap="round"/>
+  <line id="obl-line-pep-source" x1="530" y1="250" x2="600" y2="250" class="svg-line" stroke-width="1.5" stroke-linecap="round"/>
+  <line id="obl-line-pep-pdp" x1="455" y1="285" x2="455" y2="390" class="svg-line" stroke-width="1.5" stroke-linecap="round"/>
+  <line id="obl-line-pip-pdp" x1="200" y1="418" x2="405" y2="418" class="svg-line" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Subscription labels -->
+  <text id="obl-lbl-client-pep" x="290" y="266" text-anchor="middle" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
+  <text id="obl-lbl-pep-source" x="565" y="266" text-anchor="middle" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
+  <text id="obl-lbl-pep-pdp" x="475" y="340" text-anchor="start" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
+  <text id="obl-lbl-pip-pdp" x="300" y="434" text-anchor="middle" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
+
+  <!-- Token -->
+  <circle id="obl-token-glow" cx="-20" cy="-20" r="6" opacity="0" filter="url(#token-glow)" class="svg-token-fill"/>
+  <circle id="obl-token" cx="-20" cy="-20" r="3.5" opacity="0" class="svg-token-fill"/>
+  <rect id="obl-token-pill" x="-60" y="-50" width="0" height="18" rx="4" opacity="0" class="svg-token-pill"/>
+  <text id="obl-token-label" x="-20" y="-38" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="500" opacity="0" class="svg-text"></text>
+</svg>
