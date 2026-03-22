@@ -51,6 +51,28 @@ where
 
 ---
 
+## base64Decode
+
+```base64Decode(TEXT data)```: Decodes Base64 standard format to text (lenient).
+
+Decodes data encoded with the standard Base64 alphabet. This function is lenient
+and accepts input with or without proper padding. For strict RFC-compliant
+validation that requires proper padding, use base64DecodeStrict.
+
+The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
+result in an error.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  encoding.base64Decode("aGVsbG8=") == "hello";
+  encoding.base64Decode("aGVsbG8") == "hello";  // lenient: missing padding accepted
+```
+
+
+---
+
 ## base64UrlDecode
 
 ```base64UrlDecode(TEXT data)```: Decodes Base64 URL-safe format to text (lenient).
@@ -293,28 +315,6 @@ permit
   encoding.isValidHex("68_65_6c_6c_6f") == true;
   encoding.isValidHex("xyz") == false;
   encoding.isValidHex("123") == false;  // odd number of characters
-```
-
-
----
-
-## base64Decode
-
-```base64Decode(TEXT data)```: Decodes Base64 standard format to text (lenient).
-
-Decodes data encoded with the standard Base64 alphabet. This function is lenient
-and accepts input with or without proper padding. For strict RFC-compliant
-validation that requires proper padding, use base64DecodeStrict.
-
-The decoded output is validated as proper UTF-8. Invalid UTF-8 sequences will
-result in an error.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  encoding.base64Decode("aGVsbG8=") == "hello";
-  encoding.base64Decode("aGVsbG8") == "hello";  // lenient: missing padding accepted
 ```
 
 
