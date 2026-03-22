@@ -30,7 +30,15 @@ The caller can be a web request, a service method, an AI agent invoking a tool, 
 
 **Post-invocation** handlers transform or filter the method's return value after it executes. The method runs with its original arguments, retrieves the full result, and the PEP applies redaction, field removal, or collection filtering before returning to the caller. When an AI agent calls a patient lookup tool, the response is redacted before the LLM ever sees the data. This is simpler to implement but means the full dataset is retrieved first. For large result sets, this has performance and security implications: the data briefly exists in the application's memory before filtering.
 
-Both interception points use the same policy. The obligation type determines which handler runs.
+Both interception points use the same policy. The obligation type determines which handler runs. The annotation determines which points are available:
+
+| Annotation | PRE (modify arguments) | POST (filter response) |
+|------------|----------------------|----------------------|
+| `@PreEnforce` | Yes | No |
+| `@PostEnforce` | No | Yes |
+| `@QueryEnforce` | Yes (query rewriting) | Yes (result filtering) |
+
+`@PreEnforce` evaluates the policy before the method runs. It can modify arguments but never sees the return value. `@PostEnforce` evaluates the policy after the method runs, using the return value as part of the authorization subscription. It can transform the response but cannot modify the arguments. `@QueryEnforce` does both: it rewrites the query before execution and can filter the result set after.
 
 ### Pre-invocation: modifying arguments
 
