@@ -13,11 +13,19 @@ description: "Authorization decisions that update in real time. SAPL subscribes 
 
 ### What this guide covers
 
-A trader opens a WebSocket connection that streams live market data: prices, volumes, order book updates. Financial regulations require that this data is accessible only from the trading floor. The trader's workstation connects, the authorization check passes, and data flows.
+A trader streams live market data over a WebSocket. Regulations require access only from the trading floor. The trader walks to the cafeteria. The authorization decision changes. The stream suspends. When they return, it resumes. No polling. No reconnection. No stale permissions.
 
-At 2:15 PM, the trader walks to the cafeteria. Their badge location updates. The authorization decision changes. The market data stream suspends. Their terminal shows "access suspended." When they return to the trading floor five minutes later, the stream resumes. No page reload. No reconnection. No polling.
-
-This guide explains how authorization decisions become streams, and what happens when they change.
+<div class="anim-controls">
+  <button id="geo-btn-play" title="Play" aria-label="Play" class="btn-stacked"><span class="btn-icon">&#9654;</span><span class="btn-label">Play</span></button>
+  <button id="geo-btn-step" title="Step" aria-label="Step" class="btn-stacked"><span class="btn-icon" style="font-size:13px"><span style="letter-spacing:-3px">&#9654;&#9616;</span></span><span class="btn-label">Step</span></button>
+  <button id="geo-btn-reset" title="Reset" aria-label="Reset" class="btn-stacked"><span class="btn-icon" style="font-weight:bold">&#8634;</span><span class="btn-label">Reset</span></button>
+  <span class="anim-step-counter" id="geo-step-counter"></span>
+  <span><label for="geo-speed-slider" style="font-size:12px;color:var(--color-text-secondary)">Speed</label>
+  <input type="range" id="geo-speed-slider" min="0.25" max="3" step="0.25" value="1" autocomplete="off" style="width:80px;vertical-align:middle;">
+  <span id="geo-speed-label" style="font-size:12px;color:var(--color-text-secondary);font-variant-numeric:tabular-nums;width:38px;display:inline-block;text-align:right">1x</span></span>
+</div>
+{% include streaming/geo-svg.html %}
+<script src="/assets/js/anim-trader.js"></script>
 
 ### The problem
 
@@ -47,21 +55,9 @@ permit
   geo.within(pos, tradingFloorZone);             // tradingFloorZone is a GEOJson polygon.
 ```
 
-The expression `subject.deviceId.<traccar.position>` does not fetch the trader's location once. It subscribes to it. The [Traccar PIP](/docs/4.0.0-SNAPSHOT/pip_traccar/) pushes GeoJSON position updates whenever the trader's device reports a new position. Every time the location changes, the [`geo.within`](/docs/4.0.0-SNAPSHOT/lib_geo/) check re-evaluates against the trading floor geofence. If the trader walks out, the check fails, the decision changes to DENY, and the PEP suspends the stream.
+The expression `subject.deviceId.<traccar.position>` does not fetch the trader's location once. It subscribes to it. The [Traccar PIP](/docs/4.0.0-SNAPSHOT/pip_traccar/) pushes GeoJSON position updates whenever the trader's device reports a new position. Every time the location changes, the [`geo.within`](/docs/4.0.0-SNAPSHOT/lib_geo/) check re-evaluates against the trading floor geofence. If the trader walks out, the check fails, the decision changes to DENY, and the PEP suspends the stream. The animation above shows this sequence, including the case where the trader moves on the floor and no new decision is emitted because `geo.within` still returns true.
 
 This is why the decision is a stream. Not because the PDP was designed to push updates, but because the policy's inputs are streams. The decision is a reactive function of live data.
-
-<div class="anim-controls">
-  <button id="geo-btn-play" title="Play" aria-label="Play" class="btn-stacked"><span class="btn-icon">&#9654;</span><span class="btn-label">Play</span></button>
-  <button id="geo-btn-step" title="Step" aria-label="Step" class="btn-stacked"><span class="btn-icon" style="font-size:13px"><span style="letter-spacing:-3px">&#9654;&#9616;</span></span><span class="btn-label">Step</span></button>
-  <button id="geo-btn-reset" title="Reset" aria-label="Reset" class="btn-stacked"><span class="btn-icon" style="font-weight:bold">&#8634;</span><span class="btn-label">Reset</span></button>
-  <span class="anim-step-counter" id="geo-step-counter"></span>
-  <span><label for="geo-speed-slider" style="font-size:12px;color:var(--color-text-secondary)">Speed</label>
-  <input type="range" id="geo-speed-slider" min="0.25" max="3" step="0.25" value="1" autocomplete="off" style="width:80px;vertical-align:middle;">
-  <span id="geo-speed-label" style="font-size:12px;color:var(--color-text-secondary);font-variant-numeric:tabular-nums;width:38px;display:inline-block;text-align:right">1x</span></span>
-</div>
-{% include streaming/geo-svg.html %}
-<script src="/assets/js/anim-trader.js"></script>
 
 Three things can cause a decision to change:
 
