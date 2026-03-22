@@ -41,13 +41,6 @@
   <rect x="600" y="220" width="140" height="60" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
   <text x="670" y="250" text-anchor="middle" dy="0.35em" class="svg-text" font-size="12" font-weight="500">Patient Records</text>
 
-  <!-- Obligation Handler (starts above path) -->
-  <g id="obl-handler-group" transform="translate(270, 175)">
-    <rect width="100" height="40" rx="6" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
-    <text x="50" y="14" text-anchor="middle" dy="0.35em" class="svg-text-secondary" font-size="9" font-weight="600">blacken</text>
-    <text id="obl-handler-label" x="50" y="28" text-anchor="middle" dy="0.35em" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
-  </g>
-
   <!-- PDP -->
   <rect x="405" y="390" width="100" height="55" rx="8" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
   <text x="455" y="418" text-anchor="middle" dy="0.35em" class="svg-text" font-size="13" font-weight="500">PDP</text>
@@ -77,6 +70,13 @@
   <text id="obl-lbl-pep-source" x="565" y="266" text-anchor="middle" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
   <text id="obl-lbl-pep-pdp" x="475" y="340" text-anchor="start" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
   <text id="obl-lbl-pip-pdp" x="300" y="434" text-anchor="middle" font-size="10" font-weight="500" class="svg-text-muted" opacity="0"></text>
+
+  <!-- Obligation Handler (between Client and PEP, drawn after lines for z-order) -->
+  <g id="obl-handler-group" transform="translate(270, 175)">
+    <rect width="100" height="40" rx="6" class="svg-node-fill" stroke-width="1.5" filter="url(#node-shadow)"/>
+    <text x="50" y="14" text-anchor="middle" dy="0.35em" class="svg-text-secondary" font-size="9" font-weight="600">blacken</text>
+    <text id="obl-handler-label" x="50" y="28" text-anchor="middle" dy="0.35em" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+  </g>
 
   <!-- Token -->
   <circle id="obl-token-glow" cx="-20" cy="-20" r="6" opacity="0" filter="url(#token-glow)" class="svg-token-fill"/>
