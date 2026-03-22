@@ -37,8 +37,9 @@ Both interception points use the same policy. The obligation type determines whi
 | `@PreEnforce` | Yes | No |
 | `@PostEnforce` | No | Yes |
 | `@QueryEnforce` | Yes (query rewriting) | Yes (result filtering) |
+| `@Enforce*` (streaming) | Yes | Yes |
 
-`@PreEnforce` evaluates the policy before the method runs. It can modify arguments but never sees the return value. `@PostEnforce` evaluates the policy after the method runs, using the return value as part of the authorization subscription. It can transform the response but cannot modify the arguments. `@QueryEnforce` does both: it rewrites the query before execution and can filter the result set after.
+`@PreEnforce` evaluates the policy before the method runs. It can modify arguments but never sees the return value. `@PostEnforce` evaluates the policy after the method runs, using the return value as part of the authorization subscription. It can transform the response but cannot modify the arguments. `@QueryEnforce` does both: it rewrites the query before execution and can filter the result set after. The streaming enforcement annotations (`@EnforceTillDenied`, `@EnforceDropWhileDenied`, `@EnforceRecoverableIfDenied`) also wrap the method and have access to both interception points.
 
 ### Pre-invocation: modifying arguments
 
