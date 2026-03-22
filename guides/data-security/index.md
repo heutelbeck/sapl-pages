@@ -4,8 +4,6 @@ title: "Data-Level Security - SAPL Guides"
 description: "Policies that reshape data, not just allow or deny. SAPL obligations modify method arguments, filter collections, blacken fields, and rewrite database queries before the application sees the result."
 ---
 
-<link rel="stylesheet" href="/assets/css/anim.css">
-
 ## Data-Level Security
 
 ### The policy decides what the data looks like
@@ -22,7 +20,7 @@ The examples in this guide are from the polyglot demo suite: [spring-demo](https
 
 The PEP sits between the caller and the protected method. It enforces obligations at two distinct points in the execution chain:
 
-{% include data-security/execution-chain.html %}
+![Execution chain: Caller to PRE (modify arguments) to Method to POST (filter response), with return path back to caller](/assets/guides/data-security/execution-chain.svg)
 
 The caller can be a web request, a service method, an AI agent invoking a tool, or an MCP client calling a server tool. The PEP does not care. It intercepts the method, evaluates the policy, and applies obligations.
 
