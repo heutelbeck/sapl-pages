@@ -10,6 +10,8 @@ description: "Test your authorization policies like you test your code. SAPL's d
 
 Authorization policies are code. They have conditions, branches, edge cases, and bugs. SAPL has a dedicated test language for them. It follows a decision-based testing approach: requirements describe what decisions the system should produce, scenarios provide concrete authorization subscriptions and verify the expected outcome. You write what a user attempts, what the decision should be, and what obligations it should carry. The test runner evaluates the policy, compares the result, and reports pass or fail. Just the `sapl` binary and your policy files.
 
+The examples in this guide are taken from the [sapl-demos](https://github.com/heutelbeck/sapl-demos) repository (which includes a [CLI test runner script](https://github.com/heutelbeck/sapl-demos/blob/main/run-sapl-tests.sh)) and the [sapl-gitops-demo](https://github.com/heutelbeck/sapl-gitops-demo) with its [live coverage report](https://heutelbeck.github.io/sapl-gitops-demo/).
+
 ```
 sapl test --dir ./policies
 ```
@@ -254,7 +256,7 @@ sapl test --dir ./policies --output ./coverage
 
 Each policy file gets a syntax-highlighted view with covered lines in green, partially covered lines in yellow, and uncovered lines in red. Hovering over a partially covered line shows branch detail.
 
-![Coverage report showing line-by-line highlighting with a "1 of 2 branches covered" tooltip on a partially covered condition](/assets/guides/testing/coverage_example.png)
+<p style="text-align:center"><img src="/assets/guides/testing/coverage_example.png" alt="Coverage report showing line-by-line highlighting with a 1 of 2 branches covered tooltip on a partially covered condition" style="max-width:500px;width:100%;border-radius:8px;box-shadow:var(--shadow-md)"></p>
 
 For CI dashboards, the `--sonar` flag generates a SonarQube generic coverage XML report:
 
