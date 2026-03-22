@@ -148,7 +148,7 @@ The animations above show the recoverable pattern: the PEP signals access change
 
 **EnforceTillDenied** is terminal. The moment authorization is revoked, the stream ends. Use this when partial results are meaningless: a data export that becomes unauthorized mid-transfer should stop, not pause.
 
-**EnforceDropWhileDenied** keeps the stream alive but silently discards data during denied periods. The client sees a gap but receives no notification. Use this for feeds where temporary gaps are acceptable and the client does not need to react.
+**EnforceDropWhileDenied** keeps the stream alive but silently discards data during denied periods. The client sees a gap but receives no notification. Use this for feeds where temporary gaps are acceptable, or where the client should not be informed that data is being withheld. The recoverable mode offers full transparency. This mode offers deliberate opacity.
 
 **EnforceRecoverableIfDenied** is the full pattern shown in the animations. On denial, the PEP sends "access suspended." On recovery, "access restored." The data source stays subscribed throughout. When access returns, data resumes immediately without re-establishing the connection.
 
