@@ -50,58 +50,59 @@ obligation
 
 The method is annotated with `@PreEnforce`, which tells the PEP to evaluate the policy and apply obligations before the method executes:
 
-<div class="tabbed-code" data-tabs="Spring|Python|NestJS">
-
-```java
-// Spring: the PEP annotation on the service method
-@PreEnforce(action = "'transfer'", resource = "'account'")
-public Mono<TransferResult> doTransfer(Double amount, String recipient) {
+<div class="code-tabs">
+  <div class="tab-bar">
+    <button class="tab active" data-tab="pep-spring" data-lang="java">Spring</button>
+    <button class="tab" data-tab="pep-python" data-lang="python">Python</button>
+    <button class="tab" data-tab="pep-nestjs" data-lang="javascript">NestJS</button>
+  </div>
+  <div class="tab-content active" id="tab-pep-spring" data-lang="java">
+<pre class="cm-source"><code>@PreEnforce(action = "'transfer'", resource = "'account'")
+public Mono&lt;TransferResult&gt; doTransfer(Double amount, String recipient) {
     return Mono.just(new TransferResult(amount, recipient, "completed"));
-}
-```
-
-```python
-# Python: the PEP decorator on the endpoint
-@pre_enforce(action="transfer", resource="account")
+}</code></pre>
+  </div>
+  <div class="tab-content" id="tab-pep-python" data-lang="python">
+<pre class="cm-source"><code>@pre_enforce(action="transfer", resource="account")
 def do_transfer(amount: float = 10000.0, recipient: str = "default"):
-    return {"transferred": amount, "recipient": recipient, "status": "completed"}
-```
-
-```typescript
-// NestJS: the PEP decorator on the controller method
-@Post('transfer')
+    return {"transferred": amount, "recipient": recipient, "status": "completed"}</code></pre>
+  </div>
+  <div class="tab-content" id="tab-pep-nestjs" data-lang="javascript">
+<pre class="cm-source"><code>@Post('transfer')
 @PreEnforce({ action: 'transfer', resource: 'account' })
 transfer(@Query('amount') amount: string, @Query('recipient') recipient: string) {
     return { transferred: Number(amount), recipient, status: 'completed' };
-}
-```
-
+}</code></pre>
+  </div>
 </div>
 
 The application registers a constraint handler that the PEP calls when it encounters the `capTransferAmount` obligation. The handler modifies the method's arguments before the method runs. The endpoint function never sees the original value.
 
-<div class="tabbed-code" data-tabs="Spring|Python|NestJS">
-
-```java
-// Spring: MethodInvocationConstraintHandlerProvider
-@Component
+<div class="code-tabs">
+  <div class="tab-bar">
+    <button class="tab active" data-tab="handler-spring" data-lang="java">Spring</button>
+    <button class="tab" data-tab="handler-python" data-lang="python">Python</button>
+    <button class="tab" data-tab="handler-nestjs" data-lang="javascript">NestJS</button>
+  </div>
+  <div class="tab-content active" id="tab-handler-spring" data-lang="java">
+<pre class="cm-source"><code>@Component
 class CapTransferHandler implements MethodInvocationConstraintHandlerProvider {
 
     @Override
     public boolean isResponsible(Value constraint) {
         return constraint instanceof ObjectValue obj
-            && obj.get("type") instanceof TextValue t
-            && "capTransferAmount".equals(t.value());
+            &amp;&amp; obj.get("type") instanceof TextValue t
+            &amp;&amp; "capTransferAmount".equals(t.value());
     }
 
     @Override
-    public Consumer<ReflectiveMethodInvocation> getHandler(Value constraint) {
+    public Consumer&lt;ReflectiveMethodInvocation&gt; getHandler(Value constraint) {
         var maxAmount = ((NumberValue) ((ObjectValue) constraint).get("maxAmount"))
             .value().doubleValue();
-        return invocation -> {
+        return invocation -&gt; {
             var args = invocation.getArguments();
-            for (int i = 0; i < args.length; i++) {
-                if (args[i] instanceof Double d && d > maxAmount) {
+            for (int i = 0; i &lt; args.length; i++) {
+                if (args[i] instanceof Double d &amp;&amp; d &gt; maxAmount) {
                     args[i] = maxAmount;
                     invocation.setArguments(args);
                     return;
@@ -109,12 +110,10 @@ class CapTransferHandler implements MethodInvocationConstraintHandlerProvider {
             }
         };
     }
-}
-```
-
-```python
-# Python: MethodInvocationConstraintHandlerProvider
-class CapTransferHandler:
+}</code></pre>
+  </div>
+  <div class="tab-content" id="tab-handler-python" data-lang="python">
+<pre class="cm-source"><code>class CapTransferHandler:
 
     def is_responsible(self, constraint):
         return isinstance(constraint, dict) \
@@ -126,20 +125,18 @@ class CapTransferHandler:
         def handler(context):
             if "amount" in context.kwargs:
                 requested = float(context.kwargs["amount"])
-                if requested > max_amount:
+                if requested &gt; max_amount:
                     context.kwargs["amount"] = max_amount
                 return
             for i, arg in enumerate(context.args):
-                if isinstance(arg, (int, float)) and arg > max_amount:
+                if isinstance(arg, (int, float)) and arg &gt; max_amount:
                     context.args[i] = max_amount
                     return
 
-        return handler
-```
-
-```typescript
-// NestJS: MethodInvocationConstraintHandlerProvider
-@Injectable()
+        return handler</code></pre>
+  </div>
+  <div class="tab-content" id="tab-handler-nestjs" data-lang="javascript">
+<pre class="cm-source"><code>@Injectable()
 @SaplConstraintHandler('methodInvocation')
 export class CapTransferHandler implements MethodInvocationConstraintHandlerProvider {
 
@@ -147,18 +144,17 @@ export class CapTransferHandler implements MethodInvocationConstraintHandlerProv
     return constraint?.type === 'capTransferAmount';
   }
 
-  getHandler(constraint: any): (context: MethodInvocationContext) => void {
+  getHandler(constraint: any): (context: MethodInvocationContext) =&gt; void {
     const maxAmount = constraint.maxAmount;
-    return (context) => {
+    return (context) =&gt; {
       const requested = Number(context.args[0]);
-      if (requested > maxAmount) {
+      if (requested &gt; maxAmount) {
         context.args[0] = maxAmount;
       }
     };
   }
-}
-```
-
+}</code></pre>
+  </div>
 </div>
 
 The request `POST /api/transfer?amount=8000` reaches the endpoint with `amount = 5000`. The policy capped it. The endpoint processed it. The client received the result. All three frameworks produce the same output from the same policy.
