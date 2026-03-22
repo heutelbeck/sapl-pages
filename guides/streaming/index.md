@@ -81,7 +81,7 @@ geo.within(pos, tradingFloorZone);
 
 **Policy changes.** When you push a new policy bundle (via git, file system, or remote server), the PDP picks it up and re-evaluates all active subscriptions against the new rules. The trader's open stream does not need to reconnect. The same subscription, evaluated against the new policy, might produce a different decision.
 
-**PDP configuration changes.** The combining algorithm or default decision can change at runtime. This is rare but handled uniformly. All active subscriptions are re-evaluated.
+**PDP configuration changes.** Variables, combining algorithms, and default decisions defined in the PDP configuration can change at runtime. When configuration changes, affected policies are re-compiled. The compiler applies constant and function folding based on the new variable values, and all active subscriptions are re-evaluated.
 
 The PDP composes all these input streams internally. When any input changes, it re-evaluates the policy. But it only emits a new decision if the result actually changed. If the trader moves 10 meters within the trading floor, the location PIP emits, the policy re-evaluates, the geofence check still passes, and the PDP emits nothing. The application is not disturbed by irrelevant changes. The animation above shows this: the trader moves on the floor, the PIP sends coordinates, but no new decision arrives because `geo.within` still returns true.
 
