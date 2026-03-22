@@ -16,6 +16,22 @@
 
   <link rel="stylesheet" href="{{ '/assets/css/just-the-docs-dark.css' | relative_url }}" id="jtd-theme-dark">
   <link rel="stylesheet" href="{{ '/assets/css/just-the-docs-light.css' | relative_url }}" id="jtd-theme-light" disabled>
+  <style>
+    :root {
+      --color-code-label-bg: #cbd5e1;
+      --color-code-label-text: #334155;
+      --color-text: #1a1a2e;
+      --color-text-secondary: #4a5568;
+      --color-border: #cbd5e1;
+    }
+    [data-theme="dark"] {
+      --color-code-label-bg: #181825;
+      --color-code-label-text: #6c7086;
+      --color-text: #e3e4e6;
+      --color-text-secondary: #929699;
+      --color-border: rgba(255, 255, 255, 0.10);
+    }
+  </style>
   <script>
     // Shared theme preference with main site (same localStorage key)
     (function() {
