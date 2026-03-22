@@ -338,6 +338,22 @@
     async function() {
       narration.textContent = 'The policy subscribed to live data. The decision followed.';
     },
+    async function() {
+      narration.textContent = 'Client unsubscribes.';
+      await animateToken(pts.clientR, pts.pepL, 'unsubscribe', gd(700));
+      setLine('clientPep', false, '');
+    },
+    async function() {
+      narration.textContent = 'PEP tears down all subscriptions.';
+      await animateToken(pts.pepR, pts.sourceL, 'unsub', gd(600));
+      setLine('pepSource', false, '');
+      await animateToken(pts.pepB, pts.pdpT, 'unsub', gd(600));
+      setLine('pepPdp', false, '');
+      await animateToken(pts.pdpL, pts.pipR, 'unsub', gd(600));
+      setLine('pipPdp', false, '');
+      setState('PENDING');
+      setCondition(null);
+    },
   ];
 
   // --- Controls ---

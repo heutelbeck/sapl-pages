@@ -336,6 +336,25 @@
     async function() {
       narration.textContent = 'Same PERMIT. Different obligations. The data adapted.';
     },
+    async function() {
+      narration.textContent = 'Client unsubscribes.';
+      await animateToken(pts.clientR, pts.pepL, 'unsubscribe', od(700));
+      setLine('clientPep', false, '');
+    },
+    async function() {
+      narration.textContent = 'PEP tears down all subscriptions.';
+      handlerLabel.textContent = '';
+      await moveHandler(pts.handlerOut, od(400));
+      await animateToken(pts.pepR, pts.sourceL, 'unsub', od(600));
+      setLine('pepSource', false, '', false);
+      await animateToken(pts.pepB, pts.pdpT, 'unsub', od(600));
+      setLine('pepPdp', false, '', false);
+      await animateToken(pts.pdpL, pts.pipR, 'unsub', od(600));
+      setLine('pipPdp', false, '', false);
+      setState('PENDING');
+      setSeverity('');
+      setOblJson([]);
+    },
   ];
 
   // --- Controls ---
