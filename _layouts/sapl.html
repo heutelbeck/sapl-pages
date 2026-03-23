@@ -49,6 +49,7 @@
   }
   </script>
   {% endif %}
+  <link rel="preload" href="/assets/css/sapl.css" as="style">
   <link rel="stylesheet" href="/assets/css/sapl.css">
   <link rel="icon" href="/assets/favicon.png">
   <script>
@@ -64,8 +65,8 @@
   <header class="site-header">
     <nav class="nav-container">
       <a href="/" class="logo">
-        <img src="/assets/sapl-icon-light.svg" alt="SAPL" class="logo-light">
-        <img src="/assets/sapl-icon.svg" alt="SAPL" class="logo-dark">
+        <img src="/assets/sapl-icon-light.svg" alt="SAPL" class="logo-light" width="805" height="805">
+        <img src="/assets/sapl-icon.svg" alt="SAPL" class="logo-dark" width="805" height="805">
         <span class="logo-text">SAPL<span class="logo-subtitle">Streaming Attribute Policy Language</span></span>
       </a>
       <div class="nav-links">
@@ -219,6 +220,8 @@
       var thumb = document.createElement('img');
       thumb.src = '/assets/yt-thumbs/' + id + '.webp';
       thumb.alt = '';
+      thumb.width = 480;
+      thumb.height = 360;
       thumb.loading = 'lazy';
       var play = document.createElement('div');
       play.className = 'yt-play';
@@ -319,7 +322,8 @@
         var code = pre.querySelector('code').textContent;
         var container = pre.closest('[data-lang]');
         var lang = container ? container.dataset.lang : null;
-        var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : []), lineNumbers(), EditorView.editable.of(false)];
+        var label = lang ? lang.charAt(0).toUpperCase() + lang.slice(1) + ' code example' : 'Code example';
+        var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : []), lineNumbers(), EditorView.editable.of(false), EditorView.contentAttributes.of({'aria-label': label})];
 
         // Check for built-in SAPL/SAPLTest modes first
         var builtinExt = getLangExtension(lang);

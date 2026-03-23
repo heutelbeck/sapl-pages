@@ -7,8 +7,8 @@ html * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0
 
 :root {
   /* Brand colors from SAPL logo */
-  --color-primary: #028392;        /* teal — logo primary swoosh */
-  --color-primary-hover: #026d79;  /* teal darker */
+  --color-primary: #027080;        /* teal — logo primary swoosh, WCAG AA 4.7:1+ */
+  --color-primary-hover: #025d6b;  /* teal darker */
   --color-primary-light: #7bbdbc;  /* teal light — logo secondary swoosh */
   --color-accent: #8f9cc1;         /* slate blue — logo inner element */
   --color-accent-muted: #799cc1;   /* muted blue — logo connector */
@@ -397,11 +397,13 @@ main .highlight .gu { color: #8290a3; }
 
 main a {
   color: var(--color-primary);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  text-underline-offset: 2px;
 }
 
 main a:hover {
-  text-decoration: underline;
+  text-decoration-color: var(--color-primary);
 }
 
 main > table {
