@@ -355,8 +355,8 @@ main pre code {
 }
 
 /* Rouge syntax highlighting — light mode (aligned with SAPL light theme) */
-main .highlight, main pre.highlight { background: #ffffff; color: #383a42; }
-main .highlight pre { background: #ffffff; }
+main .highlight, main pre.highlight { background: var(--color-code-bg); color: #383a42; }
+main .highlight pre { background: var(--color-code-bg); }
 main .highlight .hll { background: #e8ecf1; }
 main .highlight .c, main .highlight .cm, main .highlight .cp, main .highlight .c1, main .highlight .cs { color: #5c6670; font-style: italic; }
 main .highlight .k, main .highlight .kc, main .highlight .kd, main .highlight .kn, main .highlight .kp, main .highlight .kr, main .highlight .kt { color: #027080; }
