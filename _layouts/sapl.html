@@ -195,9 +195,11 @@
     document.querySelector('.theme-toggle').addEventListener('click', function() {
       var current = document.documentElement.getAttribute('data-theme');
       var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.add('theme-transition');
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
       notifyEmbedsOfTheme(next);
+      setTimeout(function() { document.documentElement.classList.remove('theme-transition'); }, 350);
     });
 
     // Notify embed iframes of theme once they appear
