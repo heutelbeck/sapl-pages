@@ -266,7 +266,31 @@
         import('/assets/js/codemirror-bundle.min.js').then(function(cm) {
           var EditorView = cm.EditorView, minimalSetup = cm.minimalSetup,
               StreamLanguage = cm.StreamLanguage, oneDark = cm.oneDark,
-              lineNumbers = cm.lineNumbers, Compartment = cm.Compartment;
+              lineNumbers = cm.lineNumbers, Compartment = cm.Compartment,
+              HighlightStyle = cm.HighlightStyle, syntaxHighlighting = cm.syntaxHighlighting, t = cm.tags;
+
+          var saplLightHighlightStyle = HighlightStyle.define([
+            { tag: t.keyword, color: '#027080' },
+            { tag: t.variableName, color: '#0070c1' },
+            { tag: [t.special(t.variableName)], color: '#8f5500' },
+            { tag: t.string, color: '#a31515' },
+            { tag: t.number, color: '#076e48' },
+            { tag: t.comment, color: '#5c6670', fontStyle: 'italic' },
+            { tag: t.atom, color: '#076e48' },
+            { tag: t.bool, color: '#076e48' },
+            { tag: t.typeName, color: '#025d6b' },
+            { tag: t.operator, color: '#383a42' },
+            { tag: t.definition(t.variableName), color: '#795e26' },
+            { tag: t.propertyName, color: '#0070c1' },
+          ]);
+          var saplLight = [
+            EditorView.theme({
+              '&': { backgroundColor: '#ffffff', color: '#383a42' },
+              '.cm-gutters': { backgroundColor: '#f5f5f5', color: '#6e7781', borderRight: '1px solid #ddd' },
+              '.cm-cursor, .cm-cursor-primary': { borderLeftColor: '#027080' },
+            }, { dark: false }),
+            syntaxHighlighting(saplLightHighlightStyle),
+          ];
 
           var themeCompartment = new Compartment();
           var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -334,7 +358,7 @@
             var container = pre.closest('[data-lang]');
             var lang = container ? container.dataset.lang : null;
             var label = lang ? lang.charAt(0).toUpperCase() + lang.slice(1) + ' code example' : 'Code example';
-            var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : []), lineNumbers(), EditorView.editable.of(false), EditorView.contentAttributes.of({'aria-label': label})];
+            var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : saplLight), lineNumbers(), EditorView.editable.of(false), EditorView.contentAttributes.of({'aria-label': label})];
 
             var builtinExt = getLangExtension(lang);
             if (builtinExt) {
@@ -358,7 +382,7 @@
             if (dark === isDark) return;
             isDark = dark;
             editors.forEach(function(view) {
-              view.dispatch({ effects: themeCompartment.reconfigure(isDark ? oneDark : []) });
+              view.dispatch({ effects: themeCompartment.reconfigure(isDark ? oneDark : saplLight) });
             });
           }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         });
