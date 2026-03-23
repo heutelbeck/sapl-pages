@@ -502,6 +502,7 @@ main > hr {
 .editor-embed {
   margin: 2rem auto;
   max-width: 800px;
+  min-height: 360px;
   position: relative;
 }
 
@@ -793,8 +794,6 @@ main > hr {
 
 /* Project logos */
 .project-logo {
-  height: 36px;
-  width: auto;
   display: block;
   margin-bottom: 0.5rem;
 }
