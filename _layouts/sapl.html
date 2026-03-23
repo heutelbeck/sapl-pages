@@ -249,113 +249,129 @@
       });
     });
 
-    // CodeMirror for all code blocks — self-hosted bundle (no external CDN)
-    (async function() {
-      var cm = await import('/assets/js/codemirror-bundle.min.js');
-      var EditorView = cm.EditorView, minimalSetup = cm.minimalSetup,
-          StreamLanguage = cm.StreamLanguage, oneDark = cm.oneDark,
-          lineNumbers = cm.lineNumbers, Compartment = cm.Compartment;
+    // CodeMirror for .cm-source code blocks — lazy-loaded on scroll
+    (function() {
+      var targets = document.querySelectorAll('.cm-source');
+      if (!targets.length) return;
 
-      var themeCompartment = new Compartment();
-      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      var editors = [];
+      var loaded = false;
 
-      // SAPL language mode — aligned with SAPLLexer.g4
-      var saplLanguage = StreamLanguage.define({
-        token: function(stream) {
-          if (stream.match(/\/\/.*/)) return 'comment';
-          if (stream.match(/\/\*[\s\S]*?\*\//)) return 'comment';
-          if (stream.match(/"(?:[^"\\]|\\.)*"/)) return 'string';
-          if (stream.match(/-?\d+(\.\d+)?([eE][+-]?\d+)?/)) return 'number';
-          if (stream.match(/\b(policy|set|permit|deny|import|as|var|schema|enforced|advice|obligation|transform|in|each|for)\b/)) return 'keyword';
-          if (stream.match(/\b(subject|action|resource|environment)\b/)) return 'variableName.special';
-          if (stream.match(/\b(true|false|null|undefined)\b/)) return 'atom';
-          if (stream.match(/\b(first|priority|unanimous|strict|unique|or|abstain|errors|propagate)\b/)) return 'keyword';
-          if (stream.match(/[a-zA-Z_$][a-zA-Z_$0-9]*/)) return 'variableName';
-          if (stream.match(/\|\-|::|==|!=|=~|<=|>=|\|\<|\|\||&&/)) return 'operator';
-          if (stream.match(/[+\-*/%<>=!&|^~?:@#]+/)) return 'operator';
-          stream.next();
-          return null;
-        }
-      });
+      function initAllEditors() {
+        if (loaded) return;
+        loaded = true;
+        observer.disconnect();
 
-      // SAPLTest language mode — aligned with SAPLTestLexer.g4
-      var saplTestLanguage = StreamLanguage.define({
-        token: function(stream) {
-          if (stream.match(/\/\/.*/)) return 'comment';
-          if (stream.match(/\/\*[\s\S]*?\*\//)) return 'comment';
-          if (stream.match(/"(?:[^"\\]|\\.)*"/)) return 'string';
-          if (stream.match(/-?\d+(\.\d+)?([eE][+-]?\d+)?/)) return 'number';
-          if (stream.match(/\b(not-applicable|pdp-configuration|null-or-empty|null-or-blank|case-insensitive|virtual-time)\b/)) return 'keyword';
-          if (stream.match(/\b(requirement|scenario|given|when|then|expect|verify)\b/)) return 'keyword';
-          if (stream.match(/\b(permit|deny|indeterminate|decision)\b/)) return 'keyword';
-          if (stream.match(/\b(subject|action|resource|environment|attempts|on)\b/)) return 'variableName.special';
-          if (stream.match(/\b(function|attribute|maps|to|emits|stream|of|is|called|error|next|once|times)\b/)) return 'keyword';
-          if (stream.match(/\b(variables|secrets|configuration|document|documents)\b/)) return 'keyword';
-          if (stream.match(/\b(first|priority|unanimous|strict|unique|or|abstain|errors|propagate)\b/)) return 'keyword';
-          if (stream.match(/\b(matching|any|equals|equal|containing|key|value|where|with|obligation|advice|obligations|and|in)\b/)) return 'keyword';
-          if (stream.match(/\b(blank|empty|compressed|whitespace|regex|starting|ending|length|order)\b/)) return 'keyword';
-          if (stream.match(/\b(null|text|number|boolean|array|object)\b/)) return 'typeName';
-          if (stream.match(/\b(true|false|undefined)\b/)) return 'atom';
-          if (stream.match(/\b(policy|set|policies)\b/)) return 'keyword';
-          if (stream.match(/[a-zA-Z_$][a-zA-Z_$0-9]*/)) return 'variableName';
-          stream.next();
-          return null;
-        }
-      });
+        import('/assets/js/codemirror-bundle.min.js').then(function(cm) {
+          var EditorView = cm.EditorView, minimalSetup = cm.minimalSetup,
+              StreamLanguage = cm.StreamLanguage, oneDark = cm.oneDark,
+              lineNumbers = cm.lineNumbers, Compartment = cm.Compartment;
 
-      // Language modules from self-hosted bundle
-      function getLang(name) {
-        if (name === 'java') return { java: cm.languages.java };
-        if (name === 'python') return { python: cm.languages.python };
-        if (name === 'javascript') return { javascript: cm.languages.javascript };
-        return null;
-      }
+          var themeCompartment = new Compartment();
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          var editors = [];
 
-      function getLangExtension(name) {
-        if (name === 'sapl') return saplLanguage;
-        if (name === 'sapltest') return saplTestLanguage;
-        return null;
-      }
+          // SAPL language mode — aligned with SAPLLexer.g4
+          var saplLanguage = StreamLanguage.define({
+            token: function(stream) {
+              if (stream.match(/\/\/.*/)) return 'comment';
+              if (stream.match(/\/\*[\s\S]*?\*\//)) return 'comment';
+              if (stream.match(/"(?:[^"\\]|\\.)*"/)) return 'string';
+              if (stream.match(/-?\d+(\.\d+)?([eE][+-]?\d+)?/)) return 'number';
+              if (stream.match(/\b(policy|set|permit|deny|import|as|var|schema|enforced|advice|obligation|transform|in|each|for)\b/)) return 'keyword';
+              if (stream.match(/\b(subject|action|resource|environment)\b/)) return 'variableName.special';
+              if (stream.match(/\b(true|false|null|undefined)\b/)) return 'atom';
+              if (stream.match(/\b(first|priority|unanimous|strict|unique|or|abstain|errors|propagate)\b/)) return 'keyword';
+              if (stream.match(/[a-zA-Z_$][a-zA-Z_$0-9]*/)) return 'variableName';
+              if (stream.match(/\|\-|::|==|!=|=~|<=|>=|\|\<|\|\||&&/)) return 'operator';
+              if (stream.match(/[+\-*/%<>=!&|^~?:@#]+/)) return 'operator';
+              stream.next();
+              return null;
+            }
+          });
 
-      document.querySelectorAll('.cm-source').forEach(function(pre) {
-        var code = pre.querySelector('code').textContent;
-        var container = pre.closest('[data-lang]');
-        var lang = container ? container.dataset.lang : null;
-        var label = lang ? lang.charAt(0).toUpperCase() + lang.slice(1) + ' code example' : 'Code example';
-        var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : []), lineNumbers(), EditorView.editable.of(false), EditorView.contentAttributes.of({'aria-label': label})];
+          // SAPLTest language mode — aligned with SAPLTestLexer.g4
+          var saplTestLanguage = StreamLanguage.define({
+            token: function(stream) {
+              if (stream.match(/\/\/.*/)) return 'comment';
+              if (stream.match(/\/\*[\s\S]*?\*\//)) return 'comment';
+              if (stream.match(/"(?:[^"\\]|\\.)*"/)) return 'string';
+              if (stream.match(/-?\d+(\.\d+)?([eE][+-]?\d+)?/)) return 'number';
+              if (stream.match(/\b(not-applicable|pdp-configuration|null-or-empty|null-or-blank|case-insensitive|virtual-time)\b/)) return 'keyword';
+              if (stream.match(/\b(requirement|scenario|given|when|then|expect|verify)\b/)) return 'keyword';
+              if (stream.match(/\b(permit|deny|indeterminate|decision)\b/)) return 'keyword';
+              if (stream.match(/\b(subject|action|resource|environment|attempts|on)\b/)) return 'variableName.special';
+              if (stream.match(/\b(function|attribute|maps|to|emits|stream|of|is|called|error|next|once|times)\b/)) return 'keyword';
+              if (stream.match(/\b(variables|secrets|configuration|document|documents)\b/)) return 'keyword';
+              if (stream.match(/\b(first|priority|unanimous|strict|unique|or|abstain|errors|propagate)\b/)) return 'keyword';
+              if (stream.match(/\b(matching|any|equals|equal|containing|key|value|where|with|obligation|advice|obligations|and|in)\b/)) return 'keyword';
+              if (stream.match(/\b(blank|empty|compressed|whitespace|regex|starting|ending|length|order)\b/)) return 'keyword';
+              if (stream.match(/\b(null|text|number|boolean|array|object)\b/)) return 'typeName';
+              if (stream.match(/\b(true|false|undefined)\b/)) return 'atom';
+              if (stream.match(/\b(policy|set|policies)\b/)) return 'keyword';
+              if (stream.match(/[a-zA-Z_$][a-zA-Z_$0-9]*/)) return 'variableName';
+              stream.next();
+              return null;
+            }
+          });
 
-        // Check for built-in SAPL/SAPLTest modes first
-        var builtinExt = getLangExtension(lang);
-        if (builtinExt) {
-          extensions.push(builtinExt);
-        } else if (lang) {
-          var langMod = getLang(lang);
-          if (langMod) {
-            if (langMod.java) extensions.push(langMod.java());
-            else if (langMod.python) extensions.push(langMod.python());
-            else if (langMod.javascript) extensions.push(langMod.javascript({ typescript: true }));
+          function getLang(name) {
+            if (name === 'java') return { java: cm.languages.java };
+            if (name === 'python') return { python: cm.languages.python };
+            if (name === 'javascript') return { javascript: cm.languages.javascript };
+            return null;
           }
-        }
 
-        var editorDiv = document.createElement('div');
-        pre.replaceWith(editorDiv);
-        editors.push(new EditorView({ doc: code, extensions: extensions, parent: editorDiv }));
-      });
+          function getLangExtension(name) {
+            if (name === 'sapl') return saplLanguage;
+            if (name === 'sapltest') return saplTestLanguage;
+            return null;
+          }
 
-      // Watch for theme changes and reconfigure all editors
-      new MutationObserver(function() {
-        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (dark === isDark) return;
-        isDark = dark;
-        editors.forEach(function(view) {
-          view.dispatch({ effects: themeCompartment.reconfigure(isDark ? oneDark : []) });
+          document.querySelectorAll('.cm-source').forEach(function(pre) {
+            var code = pre.querySelector('code').textContent;
+            var container = pre.closest('[data-lang]');
+            var lang = container ? container.dataset.lang : null;
+            var label = lang ? lang.charAt(0).toUpperCase() + lang.slice(1) + ' code example' : 'Code example';
+            var extensions = [minimalSetup, themeCompartment.of(isDark ? oneDark : []), lineNumbers(), EditorView.editable.of(false), EditorView.contentAttributes.of({'aria-label': label})];
+
+            var builtinExt = getLangExtension(lang);
+            if (builtinExt) {
+              extensions.push(builtinExt);
+            } else if (lang) {
+              var langMod = getLang(lang);
+              if (langMod) {
+                if (langMod.java) extensions.push(langMod.java());
+                else if (langMod.python) extensions.push(langMod.python());
+                else if (langMod.javascript) extensions.push(langMod.javascript({ typescript: true }));
+              }
+            }
+
+            var editorDiv = document.createElement('div');
+            pre.replaceWith(editorDiv);
+            editors.push(new EditorView({ doc: code, extensions: extensions, parent: editorDiv }));
+          });
+
+          new MutationObserver(function() {
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (dark === isDark) return;
+            isDark = dark;
+            editors.forEach(function(view) {
+              view.dispatch({ effects: themeCompartment.reconfigure(isDark ? oneDark : []) });
+            });
+          }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         });
-      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      }
 
+      var observer = new IntersectionObserver(function(entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) { initAllEditors(); return; }
+        }
+      }, { rootMargin: '200px' });
+
+      targets.forEach(function(el) { observer.observe(el); });
     })();
 
   </script>
-  <script src="/assets/js/streaming-demo.js"></script>
+  <script src="/assets/js/streaming-demo.js" defer></script>
 </body>
 </html>
