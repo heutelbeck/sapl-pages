@@ -591,6 +591,14 @@ main > hr {
 
 .feature a:hover { text-decoration: underline; }
 
+.feature p a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  text-underline-offset: 2px;
+}
+
+.feature p a:hover { text-decoration-color: var(--color-primary); }
+
 /* Integration tiers */
 .integration-tiers {
   display: grid;
@@ -712,8 +720,8 @@ main > hr {
 .test-output code { font-family: inherit; background: none; }
 .term-prompt { color: var(--color-code-label-text); }
 .term-bold { color: var(--color-text); font-weight: 700; }
-.test-pass { color: #16a34a; }
-.test-pass-bold { color: #16a34a; font-weight: 700; }
+.test-pass { color: #15803d; }
+.test-pass-bold { color: #15803d; font-weight: 700; }
 .test-dim { color: var(--color-text-secondary); }
 [data-theme="dark"] .test-pass { color: #4ec751; }
 [data-theme="dark"] .test-pass-bold { color: #4ec751; }
