@@ -73,25 +73,25 @@ The following four interactions demonstrate why prompt-level instructions are no
 
 **Accidental doxing without authorization**
 
-![Without SAPL enforcement, a routine analytical question causes the AI to retrieve the participant registry and expose real identities.](/assets/guides/ai-tools/01_accidental_doxing.png)
+![Without SAPL enforcement, a routine analytical question causes the AI to retrieve the participant registry and expose real identities.](/assets/guides/ai-tools/01_accidental_doxing.webp)
 
 SAPL enforcement is switched off. Dr. Emily Crawford, a Site Investigator, asks a routine analytical question: "What are the PHQ-9 scores for P-003?" The AI retrieves the study catalog, then the participant registry, then the PHQ-9 data. It correlates the pseudonym with a real identity and responds with the participant's full name, site assignment, and complete clinical history. No attack occurred. No prompt injection. The AI did exactly what it was designed to do: call the available tools and synthesize an answer. The problem is that it had access to a tool it should not have been able to call in this context.
 
 **Authorization closes the gap**
 
-![With SAPL enforcement active, the same question is answered without accessing the participant registry.](/assets/guides/ai-tools/02_no_access_no_doxing.png)
+![With SAPL enforcement active, the same question is answered without accessing the participant registry.](/assets/guides/ai-tools/02_no_access_no_doxing.webp)
 
 SAPL enforcement is switched on. Same user, same question. The AI attempts to retrieve the participant registry to identify which site P-003 belongs to, but the policy denies the tool call. Without the registry, the AI cannot resolve the pseudonym to a site or identity. It tells the user what information it would need and asks them to provide the site. The data never entered the context window. The model cannot leak what it never received.
 
 **Authorization enables sensitive workflows**
 
-![The Chief Investigator with adverse event handling purpose can access the full participant registry including names and email addresses.](/assets/guides/ai-tools/03_ci_can_handle_adverse_events.png)
+![The Chief Investigator with adverse event handling purpose can access the full participant registry including names and email addresses.](/assets/guides/ai-tools/03_ci_can_handle_adverse_events.webp)
 
 Same policies, different context. Dr. Elena Fischer, the Chief Investigator, selects "Adverse Event Handling" as her purpose. She asks which participants need to be contacted due to adverse events. The AI retrieves adverse event reports from both sites and the participant registry. It produces a prioritized contact list with real names, email addresses, event details, and recommended actions. This is the legitimate use case for the registry. The authorization context (Chief Investigator role combined with adverse event handling purpose) permits access to exactly the data needed for this safety-critical workflow.
 
 **Purpose limitation prevents misuse of privilege**
 
-![The same Chief Investigator with statistical analysis purpose is blocked from the participant registry.](/assets/guides/ai-tools/04_ci_cannot_dox_during_statistical_analysis.png)
+![The same Chief Investigator with statistical analysis purpose is blocked from the participant registry.](/assets/guides/ai-tools/04_ci_cannot_dox_during_statistical_analysis.webp)
 
 Same user, same policies, different purpose. Dr. Fischer switches her declared purpose to "Statistical Analysis" and asks the same question. The AI retrieves the adverse event reports but is blocked from the participant registry. It lists the events by pseudonym and severity, notes which may require follow-up, but cannot provide names or contact details. It directs the user to their study coordinator for participant contact information. The Chief Investigator's role alone is not sufficient. The purpose must match. This is GDPR Article 5(1)(b) purpose limitation enforced at the tool boundary.
 

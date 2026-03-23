@@ -70,25 +70,25 @@ The following four interactions demonstrate how dynamic query rewriting enforces
 
 **Accidental doxing without authorization**
 
-![Without SAPL enforcement, a routine analytical question causes the RAG pipeline to retrieve participant registry data and expose real identities.](/assets/guides/ai-rag/01_accidental_doxing.png)
+![Without SAPL enforcement, a routine analytical question causes the RAG pipeline to retrieve participant registry data and expose real identities.](/assets/guides/ai-rag/01_accidental_doxing.webp)
 
 SAPL enforcement is switched off. Dr. Emily Crawford, a Site Investigator, asks a routine analytical question: "What are the PHQ-9 scores for P-003?" The similarity search returns the most relevant documents without filtering. The participant registry is semantically relevant to any query mentioning a participant ID, so it is retrieved alongside the PHQ-9 data. The LLM correlates the pseudonym with a real identity and responds with the participant's full name and clinical history. No attack occurred. The RAG pipeline did exactly what it was designed to do: return the most relevant documents. The problem is that relevance and authorization are orthogonal.
 
 **Authorization closes the gap**
 
-![With SAPL enforcement active, the same question is answered without retrieving the participant registry.](/assets/guides/ai-rag/02_no_access_no_doxing.png)
+![With SAPL enforcement active, the same question is answered without retrieving the participant registry.](/assets/guides/ai-rag/02_no_access_no_doxing.webp)
 
 SAPL enforcement is switched on. Same user, same question. The policy for a Site Investigator performing statistical analysis attaches two obligations: exclude registry documents and restrict to the user's own site. The similarity search WHERE clause becomes `type != 'registry' AND (site = 'edinburgh' OR site = 'all')`. The participant registry is never retrieved. The PHQ-9 data is scoped to Edinburgh. The LLM answers the question using only the data the user is authorized to see.
 
 **Authorization enables sensitive workflows**
 
-![The Chief Investigator with adverse event handling purpose retrieves the full participant registry including names and email addresses.](/assets/guides/ai-rag/03_ci_can_handle_adverse_events.png)
+![The Chief Investigator with adverse event handling purpose retrieves the full participant registry including names and email addresses.](/assets/guides/ai-rag/03_ci_can_handle_adverse_events.webp)
 
 Same policies, different context. Dr. Elena Fischer, the Chief Investigator, selects "Adverse Event Handling" as her purpose. She asks which participants need to be contacted due to adverse events. The policy for a Chief Investigator with adverse event handling purpose attaches no obligations. The similarity search runs without restrictions. The registry, adverse event reports, and all site data are retrieved. The LLM produces a prioritized contact list with real names, email addresses, and recommended actions. This is the legitimate use case for the registry. The authorization context permits full retrieval.
 
 **Purpose limitation prevents misuse of privilege**
 
-![The same Chief Investigator with statistical analysis purpose cannot retrieve the participant registry.](/assets/guides/ai-rag/04_ci_cannot_dox_during_statistical_analysis.png)
+![The same Chief Investigator with statistical analysis purpose cannot retrieve the participant registry.](/assets/guides/ai-rag/04_ci_cannot_dox_during_statistical_analysis.webp)
 
 Same user, same policies, different purpose. Dr. Fischer switches her declared purpose to "Statistical Analysis" and asks the same question. The policy attaches an obligation to exclude registry documents. The similarity search WHERE clause includes `type != 'registry'`. The LLM retrieves adverse event reports but cannot resolve pseudonyms to real identities. It lists the events by pseudonym and severity but cannot provide names or contact details. The Chief Investigator's role alone is not sufficient. The purpose must match. This is GDPR Article 5(1)(b) purpose limitation enforced at the database query level.
 

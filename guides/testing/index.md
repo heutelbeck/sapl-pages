@@ -256,7 +256,7 @@ sapl test --dir ./policies --output ./coverage
 
 Each policy file gets a syntax-highlighted view with covered lines in green, partially covered lines in yellow, and uncovered lines in red. Hovering over a partially covered line shows branch detail.
 
-<p style="text-align:center"><img src="/assets/guides/testing/coverage_example.png" alt="Coverage report showing line-by-line highlighting with a 1 of 2 branches covered tooltip on a partially covered condition" style="max-width:500px;width:100%;border-radius:8px;box-shadow:var(--shadow-md)"></p>
+<p style="text-align:center"><img src="/assets/guides/testing/coverage_example.webp" alt="Coverage report showing line-by-line highlighting with a 1 of 2 branches covered tooltip on a partially covered condition" style="max-width:500px;width:100%;border-radius:8px;box-shadow:var(--shadow-md)"></p>
 
 For CI dashboards, the `--sonar` flag generates a SonarQube generic coverage XML report:
 

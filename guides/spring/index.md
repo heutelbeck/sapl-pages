@@ -28,7 +28,7 @@ Select Java 21 (or higher) and Spring Boot 4.0.3 (or higher) in the Initializr.
 
  Your Initializr settings should now look something like this:
 
-![Spring Initializr](/assets/guides/spring/spring_initializr.png)
+![Spring Initializr](/assets/guides/spring/spring_initializr.webp)
 
 Now click "GENERATE." Your browser will download the project template as a ".zip" file.
 

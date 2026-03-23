@@ -112,13 +112,13 @@ The video shows two runs of the same protocol. In the first run, the operator ma
 
 **The approval dialog**
 
-![The approval dialog shows the tool name, a human-readable summary of the action, and a countdown timer. The operator approves or denies before the timeout expires.](/assets/guides/ai-hitl/1_HITL_dialogue.png)
+![The approval dialog shows the tool name, a human-readable summary of the action, and a countdown timer. The operator approves or denies before the timeout expires.](/assets/guides/ai-hitl/1_HITL_dialogue.webp)
 
 Each approval dialog shows what the AI wants to do: which tool, what parameters, what the effect will be. The safety officer sees the recipient, the message content, and the clinical context before deciding. A countdown timer auto-denies the action if no response is given within the timeout period. For mandatory approvals, the timeout is configurable per policy (120 seconds for suspension). This prevents the system from blocking indefinitely if the operator steps away.
 
 **Complete protocol output with denial**
 
-![The assistant handled all adverse events with auto-approve enabled. P-003 suspension was denied by the operator. The action log on the right shows the full sequence of executed actions.](/assets/guides/ai-hitl/2_final_output.png)
+![The assistant handled all adverse events with auto-approve enabled. P-003 suspension was denied by the operator. The action log on the right shows the full sequence of executed actions.](/assets/guides/ai-hitl/2_final_output.webp)
 
 The assistant reports what it accomplished and what it could not do. Notifications were sent, safety reports were exported, and participant P-005 was suspended. Participant P-003's suspension was denied by the operator. The assistant treats the denial as a fact, not an error, and notes that the study coordinator should be contacted to complete the authorization manually.
 
