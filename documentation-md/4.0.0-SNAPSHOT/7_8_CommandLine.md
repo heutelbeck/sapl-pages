@@ -26,6 +26,8 @@ SAPL Node PDP server and policy CLI.
     - [`sapl generate basic`](#sapl-generate-basic) -- Generate HTTP Basic Auth credentials with Argon2id-encoded password.
     - [`sapl generate apikey`](#sapl-generate-apikey) -- Generate a Bearer token API key with Argon2id-encoded hash.
   - [`sapl test`](#sapl-test) -- Run SAPL tests and generate coverage reports.
+  - [`sapl benchmark`](#sapl-benchmark) -- Benchmark embedded PDP evaluation performance.
+  - [`sapl loadtest`](#sapl-loadtest) -- Load test a running SAPL PDP server.
 
 ## sapl server
 
@@ -35,18 +37,22 @@ Launches the SAPL Policy Decision Point as an HTTP server. Clients
 send authorization subscriptions via the HTTP API and receive
 decisions as JSON responses or Server-Sent Event streams.
 
+Optionally, a high-performance RSocket endpoint with protobuf
+serialization can be enabled for lower-latency authorization.
+Enable with --sapl.pdp.rsocket.enabled=true (default port: 7000).
+
 The server is configured via `application.yml`. Place it in a config/
 subdirectory of the working directory, or specify a custom location
 with --spring.config.location=file:/path/to/application.yml.
 
 Any Spring Boot property can be overridden on the command line:
   --server.port=9090
-  --io.sapl.pdp.embedded.pdp-config-type=BUNDLES
-  --io.sapl.pdp.embedded.policies-path=/opt/policies
+  --sapl.pdp.rsocket.enabled=true
+  --sapl.pdp.rsocket.port=7000
 
 Key configuration areas: policy source type (DIRECTORY, BUNDLES),
-authentication (no-auth, basic, API key, OAuth2), TLS, and
-observability (health endpoints, Prometheus metrics).
+authentication (no-auth, basic, API key, OAuth2), TLS, RSocket,
+and observability (health endpoints, Prometheus metrics).
 
 
 **Synopsis**
@@ -347,8 +353,9 @@ By default, policies are loaded from ~/.sapl/. Use
 
 ```
 sapl check [-hV] [--json-report] [--text-report] [--trace] [--remote
-                  [--url=<url>] [--insecure] [--basic-auth=<basicAuth> |
-                  --token=<token>]] [--dir=<dir> | --bundle=<bundle>]
+                  [--rsocket] [--url=<url>] [--host=<rsocketHost>]
+                  [--port=<rsocketPort>] [--insecure] [--basic-auth=<basicAuth>
+                  | --token=<token>]] [--dir=<dir> | --bundle=<bundle>]
                   [--public-key=<publicKey> | --no-verify] [-f=<file> |
                   [-s=<subject> -a=<action> -r=<resource> [-e=<environment>]
                   [--secrets=<secrets>]]]
@@ -362,7 +369,10 @@ sapl check [-hV] [--json-report] [--text-report] [--trace] [--remote
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--remote` | Connect to a remote PDP server instead of evaluating locally |  |
-| `--url <url>` | Remote PDP URL (default: http://localhost:8443, env: SAPL_URL) | `http://localhost:8443` |
+| `--rsocket` | Use RSocket/protobuf transport instead of HTTP/JSON |  |
+| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8443, env: SAPL_URL) | `http://localhost:8443` |
+| `--host <rsocketHost>` | RSocket host (default: localhost) | `localhost` |
+| `--port <rsocketPort>` | RSocket port (default: 7000) | `7000` |
 | `--insecure` | Skip TLS certificate verification (development only) |  |
 | `--basic-auth <basicAuth>` | HTTP Basic credentials as user:password (env: SAPL_BASIC_AUTH) |  |
 | `--token <token>` | Bearer token for API key or JWT (env: SAPL_BEARER_TOKEN) |  |
@@ -445,11 +455,12 @@ By default, policies are loaded from ~/.sapl/. Use
 
 ```
 sapl decide [-hV] [--json-report] [--text-report] [--trace] [--remote
-                   [--url=<url>] [--insecure] [--basic-auth=<basicAuth> |
-                   --token=<token>]] [--dir=<dir> | --bundle=<bundle>]
-                   [--public-key=<publicKey> | --no-verify] [-f=<file> |
-                   [-s=<subject> -a=<action> -r=<resource> [-e=<environment>]
-                   [--secrets=<secrets>]]]
+                   [--rsocket] [--url=<url>] [--host=<rsocketHost>]
+                   [--port=<rsocketPort>] [--insecure]
+                   [--basic-auth=<basicAuth> | --token=<token>]] [--dir=<dir> |
+                   --bundle=<bundle>] [--public-key=<publicKey> | --no-verify]
+                   [-f=<file> | [-s=<subject> -a=<action> -r=<resource>
+                   [-e=<environment>] [--secrets=<secrets>]]]
 ```
 
 **Options**
@@ -460,7 +471,10 @@ sapl decide [-hV] [--json-report] [--text-report] [--trace] [--remote
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--remote` | Connect to a remote PDP server instead of evaluating locally |  |
-| `--url <url>` | Remote PDP URL (default: http://localhost:8443, env: SAPL_URL) | `http://localhost:8443` |
+| `--rsocket` | Use RSocket/protobuf transport instead of HTTP/JSON |  |
+| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8443, env: SAPL_URL) | `http://localhost:8443` |
+| `--host <rsocketHost>` | RSocket host (default: localhost) | `localhost` |
+| `--port <rsocketPort>` | RSocket port (default: 7000) | `7000` |
 | `--insecure` | Skip TLS certificate verification (development only) |  |
 | `--basic-auth <basicAuth>` | HTTP Basic credentials as user:password (env: SAPL_BASIC_AUTH) |  |
 | `--token <token>` | Bearer token for API key or JWT (env: SAPL_BEARER_TOKEN) |  |
@@ -535,9 +549,10 @@ By default, policies are loaded from ~/.sapl/. Use
 
 ```
 sapl decide-once [-hV] [--json-report] [--text-report] [--trace]
-                        [--remote [--url=<url>] [--insecure]
-                        [--basic-auth=<basicAuth> | --token=<token>]]
-                        [--dir=<dir> | --bundle=<bundle>]
+                        [--remote [--rsocket] [--url=<url>]
+                        [--host=<rsocketHost>] [--port=<rsocketPort>]
+                        [--insecure] [--basic-auth=<basicAuth> |
+                        --token=<token>]] [--dir=<dir> | --bundle=<bundle>]
                         [--public-key=<publicKey> | --no-verify] [-f=<file> |
                         [-s=<subject> -a=<action> -r=<resource>
                         [-e=<environment>] [--secrets=<secrets>]]]
@@ -551,7 +566,10 @@ sapl decide-once [-hV] [--json-report] [--text-report] [--trace]
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--remote` | Connect to a remote PDP server instead of evaluating locally |  |
-| `--url <url>` | Remote PDP URL (default: http://localhost:8443, env: SAPL_URL) | `http://localhost:8443` |
+| `--rsocket` | Use RSocket/protobuf transport instead of HTTP/JSON |  |
+| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8443, env: SAPL_URL) | `http://localhost:8443` |
+| `--host <rsocketHost>` | RSocket host (default: localhost) | `localhost` |
+| `--port <rsocketPort>` | RSocket port (default: 7000) | `7000` |
 | `--insecure` | Skip TLS certificate verification (development only) |  |
 | `--basic-auth <basicAuth>` | HTTP Basic credentials as user:password (env: SAPL_BASIC_AUTH) |  |
 | `--token <token>` | Bearer token for API key or JWT (env: SAPL_BEARER_TOKEN) |  |
@@ -803,4 +821,185 @@ sapl test --policy-hit-ratio 80
 ```
 
 See Also: [sapl check](#sapl-check), [sapl decide](#sapl-decide)
+
+## sapl benchmark
+
+Benchmark embedded PDP evaluation performance.
+
+Quick assessment of policy evaluation throughput and latency for
+an embedded PDP using a built-in timing harness.
+
+Use `--rbac` for a self-contained benchmark without policy files,
+or provide a policy directory (--dir) or bundle (--bundle).
+
+When `--output` is specified, produces Markdown and CSV reports
+with timestamped filenames.
+
+For rigorous benchmarks with proper JIT isolation,
+use the sapl-benchmark-sapl4 module instead.
+
+For remote server load testing (HTTP or RSocket), use
+'sapl loadtest' instead.
+
+
+**Synopsis**
+
+```
+sapl benchmark [-hV] [--latency] [--machine-readable] [--rbac]
+                      [-b=<benchmark>]
+                      [--measurement-iterations=<measurementIterations>]
+                      [--measurement-time=<measurementTimeSeconds>]
+                      [-o=<output>] [-t=<threads>]
+                      [--warmup-iterations=<warmupIterations>]
+                      [--warmup-time=<warmupTimeSeconds>] [--dir=<dir> |
+                      --bundle=<bundle>] [--public-key=<publicKey> |
+                      --no-verify] [-f=<file> | [-s=<subject> -a=<action>
+                      -r=<resource> [-e=<environment>] [--secrets=<secrets>]]]
+```
+
+**Options**
+
+
+*Policy Source:*
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--dir <dir>` | Directory containing `.sapl` policy files and `pdp.json` |  |
+| `--bundle <bundle>` | Policy bundle file (.saplbundle) |  |
+
+*Bundle Verification:*
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--public-key <publicKey>` | Ed25519 public key file (PEM) for bundle signature verification |  |
+| `--no-verify` | Skip bundle signature verification (development only) |  |
+
+*Subscription Input:*
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-f, --file <file>` | Read authorization subscription from a JSON file. Use - for stdin. |  |
+| `-s, --subject <subject>` | Subject as a JSON value (string, number, object, or array) |  |
+| `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
+| `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
+| `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--rbac` | Use built-in RBAC benchmark (no policy files or subscription needed). |  |
+| `--warmup-iterations <warmupIterations>` | Number of warmup iterations before measurement | `3` |
+| `--warmup-time <warmupTimeSeconds>` | Duration of each warmup iteration in seconds | `45` |
+| `--measurement-iterations <measurementIterations>` | Number of measurement iterations | `5` |
+| `--measurement-time <measurementTimeSeconds>` | Duration of each measurement iteration in seconds | `45` |
+| `-t, --threads <threads>` | Number of concurrent benchmark threads | `1` |
+| `-b, --benchmark <benchmark>` | Benchmark method to run (decideOnceBlocking, decideStreamFirst, noOp) | `decideOnceBlocking` |
+| `--latency` | Run a separate latency measurement pass after throughput | `true` |
+| `-o, --output <output>` | Output directory for benchmark results (JSON, Markdown, CSV) |  |
+| `--machine-readable` | Output single-line parseable results for script integration | `false` |
+| `-h, --help` | Show this help message and exit. |  |
+| `-V, --version` | Print version information and exit. |  |
+
+**Exit Codes**
+
+| Code | Description |
+|------|-------------|
+| 0 | Benchmark completed successfully |
+| 1 | Error during benchmark |
+
+**Examples**
+
+```shell
+# Built-in RBAC benchmark (no files needed)
+sapl benchmark --rbac -o ./results
+
+# Quick benchmark with local policies
+sapl benchmark --dir ./policies -s '"alice"' -a '"read"' -r '"doc"'
+
+# Multi-threaded benchmark with config file
+sapl benchmark --rbac -c configs/standard.json -o ./results
+```
+
+See Also: [sapl loadtest](#sapl-loadtest), [sapl check](#sapl-check), [sapl decide once](#sapl-decide-once)
+
+## sapl loadtest
+
+Load test a running SAPL PDP server.
+
+Measures server throughput and per-request latency distribution
+under controlled concurrency.
+
+HTTP mode uses the JDK HttpClient with async request chaining.
+RSocket mode uses virtual threads with blocking request-response
+on multiplexed connections.
+
+Both modes pre-serialize the request payload to eliminate
+client-side overhead from the measurement.
+
+For embedded PDP benchmarking, use 'sapl benchmark' instead.
+
+
+**Synopsis**
+
+```
+sapl loadtest [-hV] [--machine-readable] [--rsocket]
+                     [--concurrency=<concurrency>]
+                     [--connections=<connections>] [--host=<rsocketHost>]
+                     [--label=<label>] [--measurement-seconds=<measureSeconds>]
+                     [-o=<output>] [--port=<rsocketPort>] [--url=<url>]
+                     [--vt-per-connection=<vtPerConnection>]
+                     [--warmup-seconds=<warmupSeconds>] [-f=<file> |
+                     [-s=<subject> -a=<action> -r=<resource> [-e=<environment>]
+                     [--secrets=<secrets>]]]
+```
+
+**Options**
+
+
+*Subscription Input:*
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-f, --file <file>` | Read authorization subscription from a JSON file. Use - for stdin. |  |
+| `-s, --subject <subject>` | Subject as a JSON value (string, number, object, or array) |  |
+| `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
+| `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
+| `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--url <url>` | HTTP server URL (default: http://localhost:8443) | `http://localhost:8443` |
+| `--rsocket` | Use RSocket/protobuf transport instead of HTTP |  |
+| `--host <rsocketHost>` | RSocket server host (default: localhost) | `localhost` |
+| `--port <rsocketPort>` | RSocket server port (default: 7000) | `7000` |
+| `--concurrency <concurrency>` | Concurrent in-flight requests for HTTP (default: 64) | `64` |
+| `--connections <connections>` | Number of TCP connections for RSocket (default: 8) | `8` |
+| `--vt-per-connection <vtPerConnection>` | Virtual threads per RSocket connection (default: 512) | `512` |
+| `--warmup-seconds <warmupSeconds>` | Warmup duration in seconds (default: 5) | `5` |
+| `--measurement-seconds <measureSeconds>` | Measurement duration in seconds (default: 10) | `10` |
+| `-o, --output <output>` | Output directory for results (Markdown, CSV) |  |
+| `--label <label>` | Label for the report (e.g., 'Server pinned to CPUs 0-7') |  |
+| `--machine-readable` | Output single-line parseable results for script integration | `false` |
+| `-h, --help` | Show this help message and exit. |  |
+| `-V, --version` | Print version information and exit. |  |
+
+**Exit Codes**
+
+| Code | Description |
+|------|-------------|
+| 0 | Load test completed successfully |
+| 1 | Error during load test |
+
+**Examples**
+
+```shell
+# HTTP load test against a running server
+sapl loadtest --url http://localhost:8443 -s '{"role":"admin"}' -a '"read"' -r '"doc"'
+
+# RSocket load test
+sapl loadtest --rsocket --host localhost --port 7000 -s '{"role":"admin"}' -a '"read"' -r '"doc"'
+
+# With custom concurrency and output
+sapl loadtest --url http://localhost:8443 --concurrency 128 --measurement-seconds 30 -o ./results -s '"alice"' -a '"read"' -r '"doc"'
+
+# RSocket with connection tuning
+sapl loadtest --rsocket --connections 8 --vt-per-connection 512 -s '"alice"' -a '"read"' -r '"doc"'
+```
+
+See Also: [sapl benchmark](#sapl-benchmark)
 
