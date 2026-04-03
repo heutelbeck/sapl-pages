@@ -11,34 +11,7 @@ Functions for JSON object manipulation and inspection.
 # Object Function Library (name: object)
 
 This library provides basic functions for inspecting JSON objects in authorization policies.
-Use these functions to extract keys and values, check object size, verify key existence,
-and test for empty objects.
-
-
----
-
-## size
-
-```object.size(OBJECT object)```: Returns the number of key-value pairs in the given object.
-
-## Parameters
-
-- object: JSON object to measure
-
-## Returns
-
-- Integer representing the number of properties in the object
-
-## Example
-
-```sapl
-policy "example"
-permit
-  var user = {"name": "Alice", "role": "admin", "active": true};
-  object.size(user) == 3;
-
-  object.size({}) == 0;
-```
+Use these functions to extract keys and values, check object size.
 
 
 ---
@@ -66,33 +39,6 @@ permit
   // Returns ["Alice", "admin", true]
 
   object.values({}) == [];
-```
-
-
----
-
-## isEmpty
-
-```object.isEmpty(OBJECT object)```: Returns true if the object is empty (has no key-value pairs),
-false otherwise.
-
-## Parameters
-
-- object: JSON object to check
-
-## Returns
-
-- true if the object has zero properties
-- false if the object has one or more properties
-
-## Example
-
-```sapl
-policy "example"
-permit
-  object.isEmpty({});                          // true
-  object.isEmpty({"name": "Alice"});           // false
-  object.isEmpty({"a": 1, "b": 2});            // false
 ```
 
 
@@ -130,52 +76,6 @@ policy "check-admin-access"
 permit
   var permissions = object.keys(subject.permissions);
   "admin:write" in permissions;
-```
-
-
----
-
-## hasKey
-
-```object.hasKey(OBJECT object, TEXT key)```: Returns true if the object contains the specified key,
-false otherwise. Checks for key existence regardless of the associated value.
-
-## Parameters
-
-- object: JSON object to search
-- key: String key name to check for
-
-## Returns
-
-- true if the key exists in the object
-- false if the key does not exist
-
-## Alternative approach
-
-Key existence can also be checked using: ```object["key"] != undefined```
-
-However, hasKey provides better readability and makes intent explicit.
-
-## Example
-
-```sapl
-policy "example"
-permit
-  var user = {"name": "Alice", "role": "admin", "active": null};
-
-  object.hasKey(user, "name");    // true
-  object.hasKey(user, "role");    // true
-  object.hasKey(user, "active");  // true, even though value is null
-  object.hasKey(user, "email");   // false
-```
-
-Check optional attributes before using them:
-
-```sapl
-policy "check-optional-field"
-permit
-  object.hasKey(subject, "department");
-  subject.department == "sales";
 ```
 
 

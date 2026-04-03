@@ -24,18 +24,8 @@ sum of empty returns 0, product of empty returns 1.
 
 ## Access Control Patterns
 
-Check if a user possesses required permissions from a set. Verify that subjects hold
-all mandatory roles before granting access.
-
-```sapl
-policy "require_admin_or_editor"
-permit action == "modify_content";
-    var required = ["admin", "editor"];
-    array.containsAny(subject.roles, required);
-```
-
 Combine permissions from multiple sources when evaluating group memberships or
-inherited roles.
+inherited roles using set operations.
 
 ```sapl
 policy "aggregate_permissions"
@@ -43,7 +33,7 @@ permit
     var direct = subject.directPermissions;
     var inherited = subject.groupPermissions;
     var allOfSubjectsPermissions = array.union(direct, inherited);
-    array.containsAll(allOfSubjectsPermissions, ["read", "write"]);
+    allOfSubjectsPermissions contains each ["read", "write"];
 ```
 
 Find common capabilities between user privileges and resource requirements to
@@ -53,7 +43,7 @@ determine allowed operations.
 policy "intersection_access"
 permit
     var allowed = array.intersect(subject.capabilities, resource.requirements);
-    !array.isEmpty(allowed);
+    standard.length(allowed) > 0;
 obligation
     {
         "type": "limit_operations",
@@ -79,27 +69,6 @@ policy "rate_limit"
 deny action == "api_call";
     var counts = subject.requestsPerMinute;
     array.sum(counts) > 100;
-```
-
-
----
-
-## size
-
-```array.size(ARRAY value)```
-
-Returns the number of elements in the array.
-
-Parameters:
-- value: Array to measure
-
-Returns: Integer count of elements
-
-Example:
-```sapl
-policy "example"
-permit
-    array.size(subject.roles) >= 2;
 ```
 
 
@@ -203,27 +172,6 @@ permit
 
 ---
 
-## isEmpty
-
-```array.isEmpty(ARRAY array)```
-
-Returns true if the array has no elements.
-
-Parameters:
-- array: Array to test
-
-Returns: Boolean indicating whether array is empty
-
-Example:
-```sapl
-policy "example"
-permit
-    !array.isEmpty(subject.permissions);
-```
-
-
----
-
 ## last
 
 ```array.last(ARRAY array)```
@@ -284,30 +232,6 @@ Example - enforce rate limit:
 policy "example"
 deny action == "api_call";
     array.sum(subject.requestCounts) > 1000;
-```
-
-
----
-
-## containsAll
-
-```array.containsAll(ARRAY array, ARRAY elements)```
-
-Returns true if the array contains all elements from the elements array. The elements
-do not need to appear in the same order. Returns true if the elements array is empty.
-
-Parameters:
-- array: Array to search in
-- elements: Elements that must all be present
-
-Returns: Boolean indicating whether all elements were found
-
-Example - verify user has all required permissions:
-```sapl
-policy "example"
-permit action == "publish_article";
-    var required = ["write", "publish", "notify"];
-    array.containsAll(subject.permissions, required);
 ```
 
 
@@ -423,7 +347,7 @@ permit
     var granted = subject.grantedPermissions;
     var revoked = subject.revokedPermissions;
     var effective = array.difference(granted, revoked);
-    array.containsAll(effective, resource.requiredPermissions);
+    effective contains each resource.requiredPermissions;
 ```
 
 
@@ -452,30 +376,6 @@ permit
 
 ---
 
-## containsAny
-
-```array.containsAny(ARRAY array, ARRAY elements)```
-
-Returns true if the array contains at least one element from the elements array.
-Returns false if no elements are found or if the elements array is empty.
-
-Parameters:
-- array: Array to search in
-- elements: Elements to search for
-
-Returns: Boolean indicating whether any element was found
-
-Example - check if user has any admin role:
-```sapl
-policy "example"
-permit action == "admin_panel";
-    var adminRoles = ["superadmin", "admin", "moderator"];
-    array.containsAny(subject.roles, adminRoles);
-```
-
-
----
-
 ## union
 
 ```array.union(ARRAY...arrays)```
@@ -493,7 +393,7 @@ Example - combine permissions from multiple sources:
 policy "example"
 permit
     var all = array.union(subject.directPermissions, subject.groupPermissions);
-    array.containsAll(all, ["read", "write"]);
+    all contains each ["read", "write"];
 ```
 
 
@@ -517,6 +417,28 @@ Example:
 policy "example"
 permit
     array.zip([1, 2, 3], ["a", "b", "c"]) == [[1, "a"], [2, "b"], [3, "c"]];
+```
+
+
+---
+
+## avg
+
+```array.avg(ARRAY array)```
+
+Returns the arithmetic mean (average) of all numeric elements in the array. Returns
+an error for empty arrays. All elements must be numeric.
+
+Parameters:
+- array: Array of numbers to average
+
+Returns: Average value
+
+Example:
+```sapl
+policy "example"
+permit
+    array.avg(subject.performanceScores) >= 8.0;
 ```
 
 
@@ -670,28 +592,6 @@ permit
     var resources = ["doc1", "doc2"];
     var combinations = array.crossProduct(actions, resources);
     combinations == [ ["read" , "doc1"], ["read" , "doc2"], ["write" , "doc1"], ["write" , "doc2"]];
-```
-
-
----
-
-## avg
-
-```array.avg(ARRAY array)```
-
-Returns the arithmetic mean (average) of all numeric elements in the array. Returns
-an error for empty arrays. All elements must be numeric.
-
-Parameters:
-- array: Array of numbers to average
-
-Returns: Average value
-
-Example:
-```sapl
-policy "example"
-permit
-    array.avg(subject.performanceScores) >= 8.0;
 ```
 
 

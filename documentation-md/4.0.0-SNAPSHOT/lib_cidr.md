@@ -158,6 +158,145 @@ Returns: Boolean indicating overlap
 
 ---
 
+## isPrivateIpv4
+
+```cidr.isPrivateIpv4(STRING ipAddress)```
+
+Tests if an IPv4 address falls in RFC 1918 private ranges: 10.0.0.0/8,
+172.16.0.0/12, or 192.168.0.0/16. Returns false for IPv6 addresses.
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating private address
+
+
+---
+
+## isLinkLocal
+
+```cidr.isLinkLocal(STRING ipAddress)```
+
+Tests for link-local addresses: 169.254.0.0/16 (IPv4) or fe80::/10 (IPv6).
+These addresses are only valid on the local network segment.
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating link-local address
+
+
+---
+
+## isMulticast
+
+```cidr.isMulticast(STRING ipAddress)```
+
+Tests for multicast addresses: 224.0.0.0/4 (IPv4) or ff00::/8 (IPv6).
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating multicast address
+
+
+---
+
+## isDocumentation
+
+```cidr.isDocumentation(STRING ipAddress)```
+
+Tests if an address is in ranges reserved for documentation and examples.
+IPv4: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24
+IPv6: 2001:db8::/32
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating documentation range
+
+
+---
+
+## isBenchmark
+
+```cidr.isBenchmark(STRING ipAddress)```
+
+Tests if an IPv4 address is in the benchmarking range (198.18.0.0/15).
+Reserved for network testing. Returns false for IPv6.
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating benchmark range
+
+
+---
+
+## isReserved
+
+```cidr.isReserved(STRING ipAddress)```
+
+Tests if an address is in ranges reserved for future use or special purposes.
+IPv4: 240.0.0.0/4
+IPv6: ::/128, ::ffff:0:0/96, 100::/64, 2001::/23, 2001:db8::/32
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating reserved range
+
+
+---
+
+## isBroadcast
+
+```cidr.isBroadcast(STRING ipAddress)```
+
+Tests if an IPv4 address is the broadcast address (255.255.255.255).
+Returns false for IPv6.
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating broadcast address
+
+
+---
+
+## anonymizeIp
+
+```cidr.anonymizeIp(STRING ipAddress, INT prefixLength)```
+
+Anonymizes an IP by zeroing host bits beyond the prefix length. All addresses
+in the same subnet produce identical results. Enables GDPR-compliant logging
+while maintaining geographic or organizational context.
+
+The prefix determines granularity. For IPv4, /24 preserves organization-level
+context (254 hosts), while /16 preserves city-level (65534 hosts). For IPv6,
+/48 represents a site and /64 represents a subnet.
+
+Parameters:
+- ipAddress: IP address to anonymize
+- prefixLength: Network bits to preserve
+
+Returns: Anonymized IP address string
+
+Example - log client access with privacy protection:
+
+```sapl
+policy "privacy_log"
+permit
+obligation
+    {
+        "type": "log",
+        "subnet": cidr.anonymizeIp(subject.ipAddress, 24)
+    }
+```
+
+
+---
+
 ## containsMatches
 
 ```cidr.containsMatches(ARRAY cidrs, ARRAY cidrsOrIps)```
@@ -376,66 +515,6 @@ Returns: Boolean indicating subdivision possibility
 
 ---
 
-## isPrivateIpv4
-
-```cidr.isPrivateIpv4(STRING ipAddress)```
-
-Tests if an IPv4 address falls in RFC 1918 private ranges: 10.0.0.0/8,
-172.16.0.0/12, or 192.168.0.0/16. Returns false for IPv6 addresses.
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating private address
-
-
----
-
-## isLinkLocal
-
-```cidr.isLinkLocal(STRING ipAddress)```
-
-Tests for link-local addresses: 169.254.0.0/16 (IPv4) or fe80::/10 (IPv6).
-These addresses are only valid on the local network segment.
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating link-local address
-
-
----
-
-## isMulticast
-
-```cidr.isMulticast(STRING ipAddress)```
-
-Tests for multicast addresses: 224.0.0.0/4 (IPv4) or ff00::/8 (IPv6).
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating multicast address
-
-
----
-
-## isDocumentation
-
-```cidr.isDocumentation(STRING ipAddress)```
-
-Tests if an address is in ranges reserved for documentation and examples.
-IPv4: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24
-IPv6: 2001:db8::/32
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating documentation range
-
-
----
-
 ## isCgnat
 
 ```cidr.isCgnat(STRING ipAddress)```
@@ -447,85 +526,6 @@ Parameters:
 - ipAddress: IP address to test
 
 Returns: Boolean indicating CGNAT range
-
-
----
-
-## isBenchmark
-
-```cidr.isBenchmark(STRING ipAddress)```
-
-Tests if an IPv4 address is in the benchmarking range (198.18.0.0/15).
-Reserved for network testing. Returns false for IPv6.
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating benchmark range
-
-
----
-
-## isReserved
-
-```cidr.isReserved(STRING ipAddress)```
-
-Tests if an address is in ranges reserved for future use or special purposes.
-IPv4: 240.0.0.0/4
-IPv6: ::/128, ::ffff:0:0/96, 100::/64, 2001::/23, 2001:db8::/32
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating reserved range
-
-
----
-
-## isBroadcast
-
-```cidr.isBroadcast(STRING ipAddress)```
-
-Tests if an IPv4 address is the broadcast address (255.255.255.255).
-Returns false for IPv6.
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating broadcast address
-
-
----
-
-## anonymizeIp
-
-```cidr.anonymizeIp(STRING ipAddress, INT prefixLength)```
-
-Anonymizes an IP by zeroing host bits beyond the prefix length. All addresses
-in the same subnet produce identical results. Enables GDPR-compliant logging
-while maintaining geographic or organizational context.
-
-The prefix determines granularity. For IPv4, /24 preserves organization-level
-context (254 hosts), while /16 preserves city-level (65534 hosts). For IPv6,
-/48 represents a site and /64 represents a subnet.
-
-Parameters:
-- ipAddress: IP address to anonymize
-- prefixLength: Network bits to preserve
-
-Returns: Anonymized IP address string
-
-Example - log client access with privacy protection:
-
-```sapl
-policy "privacy_log"
-permit
-obligation
-    {
-        "type": "log",
-        "subnet": cidr.anonymizeIp(subject.ipAddress, 24)
-    }
-```
 
 
 ---
