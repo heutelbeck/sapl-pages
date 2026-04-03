@@ -849,8 +849,8 @@ sapl benchmark [-hV] [--latency] [--machine-readable] [--rbac]
                       [-b=<benchmark>]
                       [--measurement-iterations=<measurementIterations>]
                       [--measurement-time=<measurementTimeSeconds>]
-                      [-o=<output>] [-t=<threads>]
-                      [--warmup-iterations=<warmupIterations>]
+                      [-o=<output>] [--output-prefix=<outputPrefix>]
+                      [-t=<threads>] [--warmup-iterations=<warmupIterations>]
                       [--warmup-time=<warmupTimeSeconds>] [--dir=<dir> |
                       --bundle=<bundle>] [--public-key=<publicKey> |
                       --no-verify] [-f=<file> | [-s=<subject> -a=<action>
@@ -894,6 +894,7 @@ sapl benchmark [-hV] [--latency] [--machine-readable] [--rbac]
 | `--latency` | Run a separate latency measurement pass after throughput | `true` |
 | `-o, --output <output>` | Output directory for benchmark results (JSON, Markdown, CSV) |  |
 | `--machine-readable` | Output single-line parseable results for script integration | `false` |
+| `--output-prefix <outputPrefix>` | Filename prefix for output files (e.g., scenario_indexing) |  |
 | `-h, --help` | Show this help message and exit. |  |
 | `-V, --version` | Print version information and exit. |  |
 
