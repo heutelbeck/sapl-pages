@@ -944,7 +944,8 @@ sapl loadtest [-hV] [--machine-readable] [--rsocket]
                      [--concurrency=<concurrency>]
                      [--connections=<connections>] [--host=<rsocketHost>]
                      [--label=<label>] [--measurement-seconds=<measureSeconds>]
-                     [-o=<output>] [--port=<rsocketPort>] [--url=<url>]
+                     [-o=<output>] [--port=<rsocketPort>]
+                     [--socket-path=<socketPath>] [--url=<url>]
                      [--vt-per-connection=<vtPerConnection>]
                      [--warmup-seconds=<warmupSeconds>] [-f=<file> |
                      [-s=<subject> -a=<action> -r=<resource> [-e=<environment>]
@@ -968,6 +969,7 @@ sapl loadtest [-hV] [--machine-readable] [--rsocket]
 | `--rsocket` | Use RSocket/protobuf transport instead of HTTP |  |
 | `--host <rsocketHost>` | RSocket server host (default: localhost) | `localhost` |
 | `--port <rsocketPort>` | RSocket server port (default: 7000) | `7000` |
+| `--socket-path <socketPath>` | Unix domain socket path for RSocket (alternative to host/port) |  |
 | `--concurrency <concurrency>` | Concurrent in-flight requests for HTTP (default: 64) | `64` |
 | `--connections <connections>` | Number of TCP connections for RSocket (default: 8) | `8` |
 | `--vt-per-connection <vtPerConnection>` | Virtual threads per RSocket connection (default: 512) | `512` |
