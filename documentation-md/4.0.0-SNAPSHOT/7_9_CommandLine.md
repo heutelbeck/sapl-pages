@@ -2,7 +2,7 @@
 layout: default
 title: Command Line
 parent: SAPL Node
-nav_order: 708
+nav_order: 709
 ---
 
 # Command Line
@@ -925,14 +925,13 @@ See Also: [sapl loadtest](#sapl-loadtest), [sapl check](#sapl-check), [sapl deci
 Load test a running SAPL PDP server.
 
 Measures server throughput and per-request latency distribution
-under controlled concurrency.
+under controlled concurrency. Supports saturation mode (as fast
+as possible) and paced mode (--rate) with coordinated omission
+correction for accurate latency measurement under controlled load.
 
-HTTP mode uses the JDK HttpClient with async request chaining.
-RSocket mode uses virtual threads with blocking request-response
-on multiplexed connections.
-
-Both modes pre-serialize the request payload to eliminate
-client-side overhead from the measurement.
+Both HTTP and RSocket modes use reactive request pipelines and
+pre-serialize the request payload to eliminate client-side
+overhead from the measurement.
 
 For embedded PDP benchmarking, use 'sapl benchmark' instead.
 
@@ -944,7 +943,7 @@ sapl loadtest [-hV] [--machine-readable] [--rsocket]
                      [--concurrency=<concurrency>]
                      [--connections=<connections>] [--host=<rsocketHost>]
                      [--label=<label>] [--measurement-seconds=<measureSeconds>]
-                     [-o=<output>] [--port=<rsocketPort>]
+                     [-o=<output>] [--port=<rsocketPort>] [--rate=<rate>]
                      [--socket-path=<socketPath>] [--url=<url>]
                      [--vt-per-connection=<vtPerConnection>]
                      [--warmup-seconds=<warmupSeconds>] [-f=<file> |
@@ -973,6 +972,7 @@ sapl loadtest [-hV] [--machine-readable] [--rsocket]
 | `--concurrency <concurrency>` | Concurrent in-flight requests for HTTP (default: 64) | `64` |
 | `--connections <connections>` | Number of TCP connections for RSocket (default: 8) | `8` |
 | `--vt-per-connection <vtPerConnection>` | Virtual threads per RSocket connection (default: 512) | `512` |
+| `--rate <rate>` | Target request rate in req/s (0 = saturation, default: 0) | `0` |
 | `--warmup-seconds <warmupSeconds>` | Warmup duration in seconds (default: 5) | `5` |
 | `--measurement-seconds <measureSeconds>` | Measurement duration in seconds (default: 10) | `10` |
 | `-o, --output <output>` | Output directory for results (Markdown, CSV) |  |
