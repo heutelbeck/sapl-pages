@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAPL Authorization Engine Performance - Throughput, Latency, and Scaling Benchmarks</title>
+<meta name="description" content="Performance benchmarks for the SAPL authorization engine: 2M decisions/sec over RSocket, 35 microsecond latency, near-constant scaling to 10,000 policies. JVM and native image compared across HTTP, RSocket, and embedded deployment modes.">
+<meta name="keywords" content="SAPL, authorization, performance, benchmark, ABAC, policy engine, latency, throughput, RSocket, OPA alternative, Cedar alternative">
+<script src="chart.umd.min.js"></script>
+<style>
+  :root { --bg: #fafafa; --fg: #1a1a2e; --accent: #0066cc; --muted: #666; --border: #ddd; --card: #fff; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.5rem; margin: 2.5rem 0 1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.3rem; }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+  p, li { margin-bottom: 0.8rem; }
+  ul { padding-left: 1.5rem; }
+  .subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 2rem; }
+  .tldr { background: var(--card); border-left: 4px solid var(--accent); padding: 1.2rem 1.5rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .tldr h3 { margin-top: 0; color: var(--accent); }
+  .tldr .num { font-size: 1.3rem; font-weight: 700; color: var(--fg); }
+  .chart-card { background: var(--card); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .chart-card h3 { margin-top: 0; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.5rem 0.8rem; text-align: right; border-bottom: 1px solid var(--border); }
+  th { background: var(--card); font-weight: 600; }
+  th:first-child, td:first-child { text-align: left; }
+  .env { background: var(--card); padding: 1rem 1.5rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; margin: 1rem 0; }
+  .note { background: #fff8e1; border-left: 4px solid #ffc107; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 0 6px 6px 0; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>SAPL Performance</h1>
+<p class="subtitle">Authorization decision throughput, latency, and scaling characteristics</p>
+
+<p>
+<a href="https://sapl.io">SAPL</a> is an attribute-based access control (ABAC)
+policy engine with streaming authorization support. This page documents SAPL's
+performance characteristics across deployment modes (embedded, HTTP, RSocket),
+runtimes (JVM, native image), and policy set sizes (1 to 10,000 policies).
+All numbers are from automated, reproducible benchmarks on controlled hardware.
+</p>
+
+<p>
+SAPL ships as a single native binary (<code>sapl</code>) and as a JVM application
+(<code>sapl-node.jar</code>). Both provide the same functionality. Choose based on
+your deployment model.
+</p>
+
+<div class="tldr">
+  <h3>JVM Runtime</h3>
+  <p>
+  Running on the JVM with HotSpot C2 JIT unlocks peak throughput for
+  extreme-scale deployments. The JIT compiler optimizes the hot evaluation
+  path at runtime, achieving roughly 2x the throughput of the native binary
+  for sustained workloads.
+  </p>
+  <ul>
+    <li><span class="num">2M</span> RSocket decisions/sec (8 P-cores, 9905 policies)</li>
+    <li><span class="num">35 &#956;s</span> p50 server latency at typical load</li>
+    <li><span class="num">15M</span> embedded in-process decisions/sec (single thread)</li>
+    <li><span class="num">179-374 ns</span> embedded p50 per-decision latency (RBAC to 9905 policies)</li>
+  </ul>
+  <p>
+  Choose JVM when you need maximum throughput per node, when embedding the
+  PDP directly into a Spring application, or when the application already
+  runs on the JVM.
+  </p>
+</div>
+
+<div class="tldr">
+  <h3>Native Binary</h3>
+  <p>
+  The native binary is a self-contained executable compiled with GraalVM
+  ahead-of-time. No JVM, no runtime dependencies, no classpath. Install via
+  <code>deb</code>, <code>rpm</code>, or copy the binary.
+  Ideal for sidecar containers, CLI tooling, and environments where a JVM
+  is not available or not desired.
+  </p>
+  <ul>
+    <li><span class="num">900K</span> RSocket decisions/sec (8 P-cores, 9905 policies)</li>
+    <li><span class="num">45 &#956;s</span> p50 server latency at typical load</li>
+  </ul>
+  <p>
+  For context: at 900K decisions/sec, a single SAPL instance can authorize
+  every request for hundreds of concurrent applications without becoming
+  a bottleneck. The native binary is the recommended deployment for most
+  use cases.
+  </p>
+</div>
+
+<div class="tldr">
+  <h3>Policy Scaling</h3>
+  <ul>
+    <li><span class="num">1.6x</span> throughput degradation from 38 to 9905 policies in the hospital scenario</li>
+  </ul>
+  <p>
+  The SMTDD index exploits structural overlap in policy sets. When policies
+  share common attribute checks (e.g. role, department, resource type), the
+  index collapses them into multi-way HashMap lookups. This is the common
+  case for real-world deployments where policies are organized around
+  a finite set of attributes.
+  </p>
+  <p>
+  The near-flat scaling shown here is not guaranteed for all policy
+  structures. Policies with entirely disjoint predicates or complex
+  non-equality conditions will fall back to standard binary decision
+  nodes with less favorable scaling. The AUTO index mode selects the
+  best strategy for the given policy set automatically.
+  </p>
+</div>
+
+<h2>Test Environment</h2>
+<div class="env">
+CPU: Intel Core i9-13900KS (8 P-cores + 16 E-cores, 32 logical)<br>
+Clock: All P-cores pinned to 4.0 GHz (constant frequency, no turbo/throttle noise)<br>
+JVM: OpenJDK 25.0.2 (HotSpot C2)<br>
+Native: GraalVM native-image (same JDK base)<br>
+OS: NixOS Linux 6.18.19<br>
+Pinning: Server on P-cores (taskset), client on E-cores<br>
+Thermal: Cool-down between runs to prevent frequency scaling
+</div>
+
+<p class="note">
+Quick-profile results (10s measurement, 2 forks). Full-profile numbers with longer
+measurement windows and convergence checking are being collected.
+</p>
+
+<h2>Benchmark Scenarios</h2>
+<p>
+All scenarios use realistic policy structures. The <b>hospital</b> scenarios model
+a healthcare access control system where policies guard patient records by
+role (doctor, nurse, admin), resource type (record, lab result), department,
+and action. The number of departments scales linearly, producing 33N+5
+policies for N departments. This provides a controlled policy scaling curve
+from 38 to 9905 policies. Hospital-300 with 9905 policies is a deliberate
+stress test; typical production deployments use far fewer policies.
+</p>
+<p>
+The <b>github</b>, <b>gdrive</b>, and <b>tinytodo</b> scenarios are SAPL
+equivalents of the Cedar OOPSLA 2024 benchmark suite
+(<a href="https://arxiv.org/abs/2403.04651">Cutler et al., 2024</a>,
+Section 5, Figure 14). In these scenarios, the scaling factor N refers to
+the number of <i>entities per type</i> (users, teams, repos, etc.), not the
+number of policies. The policies are a small fixed set; the entity graph
+grows with N. Cedar uses templates to encode per-entity permissions;
+SAPL uses compile-time constant folding to achieve equivalent performance
+with static policies.
+</p>
+
+<table>
+  <tr><th>Scenario</th><th>Scale</th><th>Policies</th><th>Description</th></tr>
+  <tr><td>baseline</td><td>-</td><td>1</td><td>Single unconditional deny policy</td></tr>
+  <tr><td>rbac</td><td>-</td><td>1</td><td>Role-based access with IN-operator permission lookup</td></tr>
+  <tr><td>hospital-N</td><td>N departments</td><td>33N+5</td><td>Hospital ABAC: role, resource type, department, and action guards</td></tr>
+  <tr><td>hospital-1</td><td>1 dept</td><td>38</td><td></td></tr>
+  <tr><td>hospital-5</td><td>5 depts</td><td>170</td><td></td></tr>
+  <tr><td>hospital-50</td><td>50 depts</td><td>1655</td><td></td></tr>
+  <tr><td>hospital-100</td><td>100 depts</td><td>3305</td><td></td></tr>
+  <tr><td>hospital-300</td><td>300 depts</td><td>9905</td><td></td></tr>
+  <tr><td colspan="4" style="text-align:left; padding-top:0.8rem"><b>Cedar OOPSLA equivalents</b> (N = entities per type, e.g. users, teams, repos)</td></tr>
+  <tr><td>github-N</td><td>N entities/type</td><td>8</td><td>GitHub repository permissions: users, teams, repos, orgs (Cedar Fig. 14b)</td></tr>
+  <tr><td>gdrive-N</td><td>N entities/type</td><td>5</td><td>Google Drive file sharing: users, groups, docs, folders (Cedar Fig. 14a)</td></tr>
+  <tr><td>tinytodo-N</td><td>N entities/type</td><td>4</td><td>Todo app with team sharing: users, teams, lists (Cedar Fig. 14c)</td></tr>
+</table>
+
+<h2>Embedded Throughput &amp; Latency</h2>
+<p>
+In-process policy evaluation with no network overhead. The PDP is embedded directly
+in the application JVM. This represents the pure evaluation cost.
+</p>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>JVM - Throughput by Scenario and Threads</h3>
+    <canvas id="embeddedJvmChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Native - Throughput by Scenario and Threads</h3>
+    <canvas id="embeddedNativeChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>JVM - Per-Decision Latency, single thread (JMH SampleTime)</h3>
+    <canvas id="embeddedLatencyJvmChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Native - Per-Decision Latency, single thread</h3>
+    <canvas id="embeddedLatencyNativeChart"></canvas>
+  </div>
+</div>
+
+<h2>Index Strategy Comparison (single thread, embedded)</h2>
+<p>
+Three indexing strategies: NAIVE (linear scan), CANONICAL (predicate-based), and
+SMTDD (semantic multi-terminal decision diagram). SMTDD collapses equality
+predicates into HashMap lookups for near-constant cost regardless of policy count.
+</p>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>Hospital Scaling: Throughput vs Policy Count (JVM)</h3>
+    <canvas id="hospitalScalingJvmChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Hospital Scaling: Throughput vs Policy Count (Native)</h3>
+    <canvas id="hospitalScalingNativeChart"></canvas>
+  </div>
+</div>
+
+<h2>Server Throughput</h2>
+<p>
+Server deployment over HTTP/JSON and RSocket/protobuf. RSocket provides
+significantly higher throughput due to binary framing, connection multiplexing,
+and zero-copy payload handling.
+</p>
+
+<div class="chart-card">
+  <h3>Server Throughput: HTTP vs RSocket, JVM vs Native (8 P-cores)</h3>
+  <canvas id="serverComparisonChart"></canvas>
+</div>
+
+<h2>Server Latency at Load</h2>
+<p>
+RSocket latency at controlled load fractions. The load generator sends requests at
+1%, 10%, 50%, and 90% of measured saturation throughput and records per-request
+service time. At typical load (1-10% of capacity), p50 latency is 35-37 &#956;s
+regardless of policy count.
+</p>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>Hospital-300 (9905 policies) - JVM</h3>
+    <canvas id="latencyHospitalJvmChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Hospital-300 (9905 policies) - Native</h3>
+    <canvas id="latencyHospitalNativeChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>GitHub-10 (Cedar equivalent) - JVM</h3>
+    <canvas id="latencyGithubJvmChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>GitHub-10 (Cedar equivalent) - Native</h3>
+    <canvas id="latencyGithubNativeChart"></canvas>
+  </div>
+</div>
+
+<h2>JVM vs Native Image</h2>
+<p>
+GraalVM native image provides sub-second startup but loses HotSpot C2 JIT
+optimizations for sustained throughput. JVM is approximately 2x faster for
+embedded evaluation across all scenarios.
+</p>
+
+<div class="chart-card">
+  <h3>Embedded Throughput: JVM vs Native (1 thread)</h3>
+  <canvas id="jvmVsNativeChart"></canvas>
+</div>
+
+<h2>Methodology</h2>
+<h3>Measurement</h3>
+<ul>
+  <li><b>Embedded:</b> JMH (JVM) and custom timing loops (native) with convergence-based fork count.</li>
+  <li><b>Server throughput:</b> wrk2 with constant-rate saturation (HTTP) and reactive load generator (RSocket).</li>
+  <li><b>Server latency:</b> Rate-limited reactive load generator (Flux.interval) at percentages of measured saturation. Per-request service time (send-to-response).</li>
+</ul>
+<h3>CPU Isolation</h3>
+<ul>
+  <li>All P-cores frequency-locked to 4.0 GHz to eliminate turbo boost variance and thermal throttling</li>
+  <li>Server pinned to P-cores via taskset (1, 4, or 8 P-cores)</li>
+  <li>Client pinned to E-cores to prevent contention</li>
+  <li>Thermal cool-down between runs to prevent frequency scaling artifacts</li>
+</ul>
+<h3>Statistics</h3>
+<ul>
+  <li>95% confidence intervals via t-distribution</li>
+  <li>Coefficient of variation (CoV) for convergence detection</li>
+  <li>Latency percentiles: p50, p90, p99, p99.9, max</li>
+</ul>
+
+<h3>Reproducing These Results</h3>
+<p>
+All benchmark code, scenario generators, runner scripts, and analysis tools are
+open source in the
+<a href="https://github.com/heutelbeck/sapl-policy-engine">sapl-policy-engine</a>
+repository:
+</p>
+<ul>
+  <li><code>sapl-benchmark/</code> - JMH benchmark harness and scenario generators</li>
+  <li><code>sapl-benchmark/scripts/</code> - Runner scripts for all benchmark types</li>
+  <li><code>sapl-benchmark/scripts/lib/bench.py</code> - Statistics, convergence, and data aggregation</li>
+  <li><code>sapl-benchmark/scripts/lib/profiles/</code> - Quality (quick/full) and experiment profiles</li>
+</ul>
+<p>
+To run the full benchmark suite:
+</p>
+<pre style="background:var(--card);padding:1rem;border-radius:6px;overflow-x:auto;font-size:0.85rem">./sapl-benchmark/scripts/build.sh
+./sapl-benchmark/scripts/run-all.sh ./results</pre>
+
+</div>
+
+<script>
+const CL = {
+  blue: '#2196F3', red: '#f44336', green: '#4CAF50', orange: '#FF9800',
+  purple: '#9C27B0', teal: '#009688', grey: '#9E9E9E', pink: '#E91E63'
+};
+const THREAD_COLORS = [CL.blue, CL.red, CL.green, CL.orange, CL.purple, CL.teal, CL.grey, CL.pink];
+const INDEX_COLORS = { NAIVE: CL.grey, CANONICAL: CL.orange, SMTDD: CL.blue };
+const PCORE_COLORS = { 1: CL.blue, 4: CL.green, 8: CL.red };
+
+const SCENARIO_ORDER = ['baseline', 'rbac', 'hospital-1', 'hospital-5', 'hospital-50', 'hospital-100', 'hospital-300',
+  'github-10', 'github-100', 'gdrive-10', 'gdrive-50', 'tinytodo-10', 'tinytodo-50'];
+
+function sortScenarios(list) {
+  return list.sort((a, b) => {
+    const ia = SCENARIO_ORDER.indexOf(a);
+    const ib = SCENARIO_ORDER.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+}
+
+function fmtOps(v) {
+  if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+  if (v >= 1e3) return (v / 1e3).toFixed(0) + 'K';
+  return v.toFixed(0);
+}
+
+async function load(path) {
+  const r = await fetch('data/' + path);
+  return r.json();
+}
+
+async function main() {
+  const [ejvm, enat, ijvm, inat, lljvm, llnat, shjvm, shnat, srjvm, srnat] = await Promise.all([
+    load('embedded-jvm.json'), load('embedded-native.json'),
+    load('index-jvm.json'), load('index-native.json'),
+    load('latency-at-load-jvm.json'), load('latency-at-load-native.json'),
+    load('server-http-jvm.json'), load('server-http-native.json'),
+    load('server-rsocket-jvm.json'), load('server-rsocket-native.json'),
+  ]);
+
+  // --- Embedded throughput ---
+  function embeddedChart(id, data) {
+    const fork = data.filter(d => d.type === 'fork');
+    const scenarios = sortScenarios([...new Set(fork.map(d => d.scenario))]);
+    const threads = [...new Set(fork.map(d => parseInt(d.threads)))].sort((a, b) => a - b);
+    new Chart(document.getElementById(id), {
+      type: 'bar',
+      data: {
+        labels: scenarios,
+        datasets: threads.map((t, i) => ({
+          label: t + 't',
+          data: scenarios.map(s => { const d = fork.find(r => r.scenario === s && parseInt(r.threads) === t); return d ? d.mean_ops_s : 0; }),
+          backgroundColor: THREAD_COLORS[i],
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: { y: { title: { display: true, text: 'ops/s' }, ticks: { callback: fmtOps } } } }
+    });
+  }
+  embeddedChart('embeddedJvmChart', ejvm);
+  embeddedChart('embeddedNativeChart', enat);
+
+  // --- Embedded latency (single thread, JMH SampleTime) ---
+  function embeddedLatencyChart(id, data) {
+    const fork = data.filter(d => d.type === 'fork' && parseInt(d.threads) === 1 && d.p50_ns > 0);
+    const scenarios = sortScenarios([...new Set(fork.map(d => d.scenario))]);
+    new Chart(document.getElementById(id), {
+      type: 'bar',
+      data: {
+        labels: scenarios,
+        datasets: [
+          { label: 'p50', data: scenarios.map(s => { const d = fork.find(r => r.scenario === s); return d ? d.p50_ns : 0; }), backgroundColor: CL.blue },
+          { label: 'p99', data: scenarios.map(s => { const d = fork.find(r => r.scenario === s); return d ? d.p99_ns : 0; }), backgroundColor: CL.orange },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: { y: { title: { display: true, text: 'ns/decision' }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + ' \u03BCs' : v + ' ns' } } } }
+    });
+  }
+  embeddedLatencyChart('embeddedLatencyJvmChart', ejvm);
+  embeddedLatencyChart('embeddedLatencyNativeChart', enat);
+
+  // --- Hospital scaling (numeric x-axis proportional to policy count) ---
+  function hospitalScalingChart(id, data) {
+    const fork = data.filter(d => d.type === 'fork');
+    const policyMap = { 'hospital-1': 38, 'hospital-5': 170, 'hospital-50': 1655, 'hospital-100': 3305, 'hospital-300': 9905 };
+    const hospitals = ['hospital-1', 'hospital-5', 'hospital-50', 'hospital-100', 'hospital-300'];
+    const strategies = ['NAIVE', 'CANONICAL', 'SMTDD'];
+    new Chart(document.getElementById(id), {
+      type: 'scatter',
+      data: {
+        datasets: strategies.map(s => ({
+          label: s,
+          data: hospitals.map(h => { const d = fork.find(r => r.scenario === h && r.indexing === s); return d ? { x: policyMap[h], y: d.mean_ops_s } : null; }).filter(Boolean),
+          borderColor: INDEX_COLORS[s], backgroundColor: INDEX_COLORS[s], showLine: true, tension: 0.3, pointRadius: 5,
+        }))
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: {
+          x: { type: 'logarithmic', title: { display: true, text: 'Policies' }, ticks: { callback: fmtOps } },
+          y: { type: 'logarithmic', title: { display: true, text: 'ops/s (log)' }, ticks: { callback: fmtOps } }
+        } }
+    });
+  }
+  hospitalScalingChart('hospitalScalingJvmChart', ijvm);
+  hospitalScalingChart('hospitalScalingNativeChart', inat);
+
+  // --- Server throughput ---
+  // --- Server comparison (best config per scenario) ---
+  {
+    function bestPerScenario(data) {
+      const fork = data.filter(d => d.type === 'fork');
+      const scenarios = sortScenarios([...new Set(fork.map(d => d.scenario))]);
+      const result = {};
+      for (const s of scenarios) {
+        const points = fork.filter(d => d.scenario === s);
+        const best = points.reduce((a, b) => a.mean_ops_s > b.mean_ops_s ? a : b);
+        result[s] = best.mean_ops_s;
+      }
+      return result;
+    }
+    const httpJvm = bestPerScenario(shjvm);
+    const httpNat = bestPerScenario(shnat);
+    const rsJvm = bestPerScenario(srjvm);
+    const rsNat = bestPerScenario(srnat);
+    const scenarios = sortScenarios([...new Set([...Object.keys(httpJvm), ...Object.keys(rsJvm)])]);
+
+    new Chart(document.getElementById('serverComparisonChart'), {
+      type: 'bar',
+      data: {
+        labels: scenarios,
+        datasets: [
+          { label: 'HTTP JVM', data: scenarios.map(s => httpJvm[s] || 0), backgroundColor: CL.blue },
+          { label: 'HTTP Native', data: scenarios.map(s => httpNat[s] || 0), backgroundColor: CL.teal },
+          { label: 'RSocket JVM', data: scenarios.map(s => rsJvm[s] || 0), backgroundColor: CL.red },
+          { label: 'RSocket Native', data: scenarios.map(s => rsNat[s] || 0), backgroundColor: CL.orange },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: { y: { title: { display: true, text: 'req/s (best config)' }, ticks: { callback: fmtOps } } } }
+    });
+  }
+
+  // --- Latency at load ---
+  function latencyChart(id, data, scenario) {
+    const points = data.filter(d => d.type === 'loadtest' && d.label.startsWith(scenario + '_'));
+    const pcoresSet = [...new Set(points.map(d => {
+      const m = d.label.match(/_(\d+)p_/); return m ? parseInt(m[1]) : 0;
+    }))].filter(p => p > 0).sort((a, b) => a - b);
+
+    const datasets = [];
+    for (const pc of pcoresSet) {
+      const pcPoints = points.filter(d => d.label.includes('_' + pc + 'p_')).sort((a, b) => a.mean_ops_s - b.mean_ops_s);
+      datasets.push({
+        label: pc + 'P p50', data: pcPoints.map(p => ({ x: p.mean_ops_s, y: p.p50_ns / 1000 })),
+        borderColor: PCORE_COLORS[pc] || CL.grey, backgroundColor: 'transparent', pointRadius: 5, showLine: true, tension: 0.3,
+      });
+      datasets.push({
+        label: pc + 'P p99', data: pcPoints.map(p => ({ x: p.mean_ops_s, y: p.p99_ns / 1000 })),
+        borderColor: PCORE_COLORS[pc] || CL.grey, borderDash: [5, 5], backgroundColor: 'transparent', pointRadius: 3, showLine: true, tension: 0.3,
+      });
+    }
+    new Chart(document.getElementById(id), {
+      type: 'scatter', data: { datasets },
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: {
+          x: { type: 'logarithmic', title: { display: true, text: 'Throughput (req/s)' }, ticks: { callback: fmtOps } },
+          y: { type: 'logarithmic', title: { display: true, text: 'Latency' },
+            ticks: { callback: v => v >= 1000 ? (v / 1000).toFixed(0) + ' ms' : v.toFixed(0) + ' \u03BCs' } }
+        } }
+    });
+  }
+  latencyChart('latencyHospitalJvmChart', lljvm, 'hospital-300');
+  latencyChart('latencyHospitalNativeChart', llnat, 'hospital-300');
+  latencyChart('latencyGithubJvmChart', lljvm, 'github-10');
+  latencyChart('latencyGithubNativeChart', llnat, 'github-10');
+
+  // --- JVM vs Native ---
+  {
+    const jvm1t = ejvm.filter(d => d.type === 'fork' && parseInt(d.threads) === 1);
+    const nat1t = enat.filter(d => d.type === 'fork' && parseInt(d.threads) === 1);
+    const scenarios = sortScenarios([...new Set(jvm1t.map(d => d.scenario))]);
+    new Chart(document.getElementById('jvmVsNativeChart'), {
+      type: 'bar',
+      data: {
+        labels: scenarios,
+        datasets: [
+          { label: 'JVM', data: scenarios.map(s => { const d = jvm1t.find(r => r.scenario === s); return d ? d.mean_ops_s : 0; }), backgroundColor: CL.blue },
+          { label: 'Native', data: scenarios.map(s => { const d = nat1t.find(r => r.scenario === s); return d ? d.mean_ops_s : 0; }), backgroundColor: CL.red },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: { y: { title: { display: true, text: 'ops/s' }, ticks: { callback: fmtOps } } } }
+    });
+  }
+}
+
+main();
+</script>
+</body>
+</html>
