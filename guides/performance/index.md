@@ -18,7 +18,7 @@ description: "Performance benchmarks for the SAPL authorization engine: 2M decis
 
 ## Performance
 
-[SAPL](https://sapl.io) is an attribute-based access control (ABAC) policy engine with streaming authorization support. This page documents SAPL's performance characteristics across deployment modes (embedded, HTTP, RSocket), runtimes (JVM, native image), and policy set sizes (1 to 10,000 policies). All numbers are from automated, reproducible benchmarks on controlled hardware.
+[SAPL](https://sapl.io) is an attribute-based access control (ABAC) policy engine with streaming authorization support. This page documents SAPL's performance characteristics across deployment modes (embedded, HTTP, RSocket), runtimes (JVM, native image), and numbers of policies (1 to 10,000 policies). All numbers are from automated, reproducible benchmarks on controlled hardware.
 
 SAPL ships as a single native binary (`sapl`) and as a JVM application (`sapl-node.jar`). Both provide the same functionality. Choose based on your deployment model.
 
@@ -54,7 +54,7 @@ SAPL ships as a single native binary (`sapl`) and as a JVM application (`sapl-no
   </p>
   <ul>
     <li><span class="num">900K</span> RSocket decisions/sec (8 P-cores, 9905 policies)</li>
-    <li><span class="num">45 &#956;s</span> p50 server latency at typical load</li>
+    <li><span class="num">45 &#956;s</span> p50 server latency at a typical load</li>
   </ul>
   <p>
   For context: at 900K decisions/sec, a single SAPL instance can authorize
