@@ -455,7 +455,19 @@ const observer = new MutationObserver(() => {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
   Chart.defaults.color = dark ? '#e0e0e0' : '#333';
   Chart.defaults.borderColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-  Object.values(Chart.instances).forEach(c => c.update());
+  const color = dark ? '#e0e0e0' : '#333';
+  const border = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  Object.values(Chart.instances).forEach(c => {
+    c.options.color = color;
+    c.options.scales && Object.values(c.options.scales).forEach(s => {
+      if (s.ticks) s.ticks.color = color;
+      if (s.title) s.title.color = color;
+      s.grid = s.grid || {};
+      s.grid.color = border;
+    });
+    if (c.options.plugins && c.options.plugins.legend) c.options.plugins.legend.labels = { ...(c.options.plugins.legend.labels || {}), color };
+    c.update();
+  });
 });
 observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
