@@ -107,7 +107,7 @@ The Cedar paper's original claim: "Cedar is 28.7x to 35.2x faster than OpenFGA a
 </div>
 
 <div class="cmp-note">
-For SAPL's standalone performance (embedded throughput, server throughput over HTTP and RSocket, policy scaling to 10,000 policies, JVM vs native image), see the <a href="/guides/performance/">full performance benchmarks</a>.
+The occasional spikes in SAPL's p99 line are JVM garbage collection pauses. The median is unaffected, confirming that GC events are rare and do not impact typical request latency. For SAPL's standalone performance (embedded throughput, server throughput over HTTP and RSocket, policy scaling to 10,000 policies, JVM vs native image), see the <a href="/guides/performance/">full performance benchmarks</a>.
 </div>
 
 ### Benchmark Environment
@@ -116,7 +116,7 @@ For SAPL's standalone performance (embedded throughput, server throughput over H
 CPU: Intel Core i9-13900KS (8 P-cores + 16 E-cores, 32 logical)<br>
 Clock: All P-cores pinned to 4.0 GHz (constant frequency, no turbo/throttle noise)<br>
 JVM: OpenJDK 25.0.2 (HotSpot C2) for SAPL<br>
-Cedar: v3.x (Rust), OPA: Rego v0.61.0 (Go), OpenFGA: latest (Go in-memory store)<br>
+Cedar: v4.10 and v3.0.1 (Rust), OPA: Rego v0.61.0 (Go), OpenFGA: latest (Go in-memory store)<br>
 OS: NixOS Linux 6.18.19<br>
 Protocol: 200 entity stores per data point, 500 requests per store (100,000 total)<br>
 Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
@@ -152,9 +152,9 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
 <tr>
   <td>ReBAC</td>
   <td>Yes</td>
-  <td>Yes (entity hierarchy)</td>
-  <td>Yes (graph.reachable)</td>
-  <td>Yes (core model)</td>
+  <td>Yes</td>
+  <td>Yes</td>
+  <td>Yes</td>
   <td>No</td>
 </tr>
 <tr>
@@ -200,24 +200,16 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
   <td>Yes (YAML)</td>
 </tr>
 <tr>
-  <td>Policy templates</td>
-  <td>Yes (parameterized)</td>
-  <td>Yes (template-linked)</td>
-  <td>No</td>
-  <td>No</td>
-  <td>Derived roles, scoped policies</td>
-</tr>
-<tr>
   <td>Hot-reload policies</td>
   <td>Yes (active subscriptions re-evaluate)</td>
-  <td>Yes (via API/Verified Permissions)</td>
+  <td>Manual (reconstruct authorizer with new policy set)</td>
   <td>Yes (bundles)</td>
   <td>N/A (API-driven)</td>
   <td>Yes (file watch)</td>
 </tr>
 <tr>
   <td>Custom functions</td>
-  <td>Yes (hot-loadable)</td>
+  <td>Yes</td>
   <td>No (extension types only)</td>
   <td>Yes (Rego + Go plugins)</td>
   <td>No</td>
@@ -243,11 +235,11 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
 </tr>
 <tr>
   <td>External data during evaluation</td>
-  <td>Yes (HTTP, MQTT, clock, JWT, custom PIPs)</td>
+  <td>Yes (HTTP, MQTT, clock, custom PIPs)</td>
   <td>No (pre-loaded entity store)</td>
   <td>Yes (http.send, bundles)</td>
   <td>No (pre-loaded tuples)</td>
-  <td>Yes (external API sources)</td>
+  <td>No (pre-loaded data)</td>
 </tr>
 <tr>
   <td>Data filtering / query rewriting</td>
@@ -304,9 +296,9 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
 <tr>
   <td>Embeddable library</td>
   <td>Yes (JVM)</td>
-  <td>Yes (Rust, Go, Java via JNI)</td>
+  <td>Yes (Rust, Java via JNI, community Go/WASM)</td>
   <td>Yes (Go)</td>
-  <td>Yes (Go)</td>
+  <td>Server-oriented (Go library exists)</td>
   <td>No</td>
 </tr>
 <tr>
@@ -337,11 +329,11 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
 <tr><td class="cmp-section" colspan="6">SDKs and Integrations</td></tr>
 <tr>
   <td>Language SDKs</td>
-  <td>Java, Python, JS, .NET</td>
+  <td>Java, Python, JS, C#</td>
   <td>Rust, Go, Java, JS</td>
-  <td>Go, Java, JS, Swift</td>
-  <td>Java, JS, Go, Python, .NET</td>
-  <td>Go, Java, JS, .NET, PHP, Python, Ruby, Rust</td>
+  <td>Go, Java, JS, C#</td>
+  <td>Java, JS, Go, Python, C#</td>
+  <td>Go, Java, JS, C#, PHP, Python, Ruby, Rust</td>
 </tr>
 <tr>
   <td>Framework integrations</td>
@@ -361,37 +353,38 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
 </tr>
 
 <tr><td class="cmp-section" colspan="6">AI and Agent Authorization</td></tr>
+<tr><td colspan="6" style="font-size:0.82rem;font-style:italic;border-left:none">All engines can authorize AI operations via their standard APIs. This section compares dedicated integrations and documented patterns.</td></tr>
 <tr>
   <td>Tool call authorization</td>
-  <td>Yes (via SAPL Spring Boot starter)</td>
-  <td>No</td>
-  <td>No</td>
-  <td>No</td>
-  <td>No</td>
+  <td>Dedicated (Spring AI integration)</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
 </tr>
 <tr>
   <td>RAG pipeline authorization</td>
-  <td>Yes (via obligation-driven query rewriting)</td>
-  <td>No</td>
-  <td>No</td>
-  <td>Yes (documentation)</td>
-  <td>Yes (recipe)</td>
+  <td>Dedicated (obligation-driven query rewriting)</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
+  <td>Documented patterns</td>
+  <td>Documented recipe</td>
 </tr>
 <tr>
   <td>Human-in-the-loop</td>
-  <td>Yes (via obligation-driven approval workflows)</td>
-  <td>No</td>
-  <td>No</td>
-  <td>No</td>
-  <td>No</td>
+  <td>Dedicated (obligation-driven approval workflows)</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
+  <td>Via standard API</td>
 </tr>
 <tr>
   <td>MCP server authorization</td>
-  <td>Yes (FastMCP SDK, decorators)</td>
-  <td>Yes (schema generation, analysis server)</td>
-  <td>No</td>
-  <td>Yes (documentation)</td>
-  <td>No</td>
+  <td>Dedicated (FastMCP SDK, decorators)</td>
+  <td>Dedicated (schema generation, analysis server)</td>
+  <td>Via standard API</td>
+  <td>Documented patterns</td>
+  <td>Via standard API</td>
 </tr>
 
 </tbody>
@@ -418,44 +411,44 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
 <tr>
   <td>Spring</td>
   <td>@PreEnforce and @PostEnforce annotations with Spring Security integration</td>
-  <td>3 modes (terminal, recoverable, signal-based) with multi-subscription</td>
-  <td>JPA, R2DBC, MongoDB (automatic via obligations)</td>
+  <td>Yes</td>
+  <td>R2DBC, MongoDB (deep query language integration) JPA and others (Obligation-driven parameter rewriting)</td>
 </tr>
 <tr>
   <td>Django</td>
-  <td>Decorators and middleware</td>
-  <td>SSE streaming</td>
-  <td>Django ORM (via obligations)</td>
+  <td>Full SDK with decorators and middleware</td>
+  <td>Yes</td>
+  <td>Obligation-driven parameter rewriting</td>
 </tr>
 <tr>
   <td>FastAPI</td>
-  <td>Decorators</td>
-  <td>SSE streaming</td>
-  <td>No</td>
+  <td>Full SDK with decorators</td>
+  <td>Yes</td>
+  <td>Obligation-driven parameter rewriting</td>
 </tr>
 <tr>
   <td>Flask</td>
-  <td>Decorators</td>
-  <td>No</td>
-  <td>No</td>
+  <td>Full SDK with decorators</td>
+  <td>Yes</td>
+  <td>Obligation-driven parameter rewriting</td>
 </tr>
 <tr>
   <td>NestJS</td>
-  <td>Guards and decorators</td>
-  <td>No</td>
-  <td>No</td>
+  <td>Full SDK with guards and decorators</td>
+  <td>Yes</td>
+  <td>Obligation-driven parameter rewriting</td>
 </tr>
 <tr>
   <td>.NET</td>
-  <td>Middleware</td>
-  <td>No</td>
-  <td>No</td>
+  <td>Full SDK with middleware</td>
+  <td>Yes</td>
+  <td>Obligation-driven parameter rewriting</td>
 </tr>
 <tr>
   <td>FastMCP (Python)</td>
-  <td>Decorators for tools, resources, prompts</td>
+  <td>Full SDK with decorators for tools, resources, prompts</td>
   <td>No</td>
-  <td>No</td>
+  <td>Obligation-driven parameter rewriting</td>
 </tr>
 
 <tr><td class="cmp-section" colspan="4">Cedar</td></tr>
@@ -506,7 +499,7 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
   <td>ListObjects / ListUsers API</td>
 </tr>
 <tr>
-  <td>JS, Python, Java, .NET, Go</td>
+  <td>JS, Python, Java, C#, Go</td>
   <td>API client only</td>
   <td>No</td>
   <td>No</td>
@@ -514,7 +507,7 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
 
 <tr><td class="cmp-section" colspan="4">Cerbos</td></tr>
 <tr>
-  <td>Go, Java, JS, .NET, PHP, Python, Ruby, Rust</td>
+  <td>Go, Java, JS, C#, PHP, Python, Ruby, Rust</td>
   <td>API client only</td>
   <td>No</td>
   <td>Prisma, SQLAlchemy, Drizzle (query plan adapters)</td>
@@ -531,7 +524,7 @@ Constraint handling (automatic execution of obligations like data filtering, fie
 
 ### Methodology and Sources
 
-**Benchmark code.** All benchmark code, scenario generators, and analysis tools are open source. The Cedar OOPSLA benchmark harness is at [cedar-policy/cedar-examples](https://github.com/cedar-policy/cedar-examples). The SAPL integration and extended runner are in the [sapl-policy-engine](https://github.com/heutelbeck/sapl-policy-engine) repository.
+**Benchmark code.** All benchmark code, scenario generators, and analysis tools are open source. The Cedar OOPSLA benchmark harness is at [cedar-policy/cedar-examples](https://github.com/cedar-policy/cedar-examples). Our fork with the SAPL engine integration is at [heutelbeck/cedar-benchmarks](https://github.com/heutelbeck/cedar-benchmarks) (branches `sapl-engine` for Cedar 3.0 and `sapl-engine-4.10` for Cedar 4.10).
 
 **Engine documentation.** Feature claims are based on official documentation: [SAPL](https://sapl.io), [Cedar](https://www.cedarpolicy.com/), [OPA](https://www.openpolicyagent.org/), [OpenFGA](https://openfga.dev/), [Cerbos](https://www.cerbos.dev/).
 
@@ -579,7 +572,7 @@ function buildChart(canvasId, data, xLabel) {
       datasets: [
         ds('sapl', 'SAPL', 'median'), ds('sapl', 'SAPL', 'p99'),
         ds('cedar', 'Cedar 4.10', 'median'), ds('cedar', 'Cedar 4.10', 'p99'),
-        ds('cedar3', 'Cedar 3.x', 'median'), ds('cedar3', 'Cedar 3.x', 'p99'),
+        ds('cedar3', 'Cedar 3.0', 'median'), ds('cedar3', 'Cedar 3.0', 'p99'),
         ds('rego', 'OPA/Rego', 'median'), ds('rego', 'OPA/Rego', 'p99'),
         ds('openfga', 'OpenFGA', 'median'), ds('openfga', 'OpenFGA', 'p99'),
       ]
@@ -589,11 +582,13 @@ function buildChart(canvasId, data, xLabel) {
       plugins: { legend: { position: 'top' } },
       scales: {
         x: { type: 'linear', title: { display: true, text: xLabel },
-             ticks: { stepSize: 10 } },
-        y: { type: 'logarithmic', title: { display: true, text: 'Latency (microseconds)' },
+             min: data[0].n, ticks: { callback: function(v) { return v; },
+             autoSkip: false, stepSize: 1 },
+             afterBuildTicks: function(axis) { axis.ticks = data.map(d => ({ value: d.n })); } },
+        y: { type: 'logarithmic', title: { display: true, text: 'Latency (\u00B5s)' },
              ticks: { callback: function(v) {
                if (v >= 1000) return (v / 1000).toFixed(0) + ' ms';
-               if (v >= 1) return v.toFixed(0) + ' us';
+               if (v >= 1) return v.toFixed(0) + ' \u00B5s';
                return (v * 1000).toFixed(0) + ' ns';
              }}}
       }
