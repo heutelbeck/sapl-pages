@@ -135,6 +135,8 @@ jobs:
               done
             fi
           done
+      - name: Generate llms-full.txt
+        run: python3 generate-llms-full.py
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
         run: |
