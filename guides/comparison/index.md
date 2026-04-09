@@ -65,11 +65,11 @@ Every engine in this comparison is a serious, maintained open-source project. Ea
   </div>
   <div>
     <h4>OPA / Rego</h4>
-    <p>Broadest cloud-native ecosystem. First-class Kubernetes (Gatekeeper), Envoy, Terraform, Docker, and Kafka integrations. CNCF graduated. Domain-agnostic: policies beyond just authorization.</p>
+    <p>Broadest cloud-native ecosystem. CNCF graduated project. First-class Kubernetes (Gatekeeper), Envoy, Terraform, Docker, and Kafka integrations. Domain-agnostic: policies beyond just authorization.</p>
   </div>
   <div>
     <h4>OpenFGA</h4>
-    <p>Google Zanzibar model for relationship-based access control at scale. Purpose-built for ReBAC with transitive relationship traversal. CNCF incubating. Used in production by Auth0, Grafana Labs, Docker.</p>
+    <p>Google Zanzibar model for relationship-based access control at scale. CNCF incubating project. Purpose-built for ReBAC with transitive relationship traversal. Horizontally scalable. Used in production by Auth0, Grafana Labs, Docker.</p>
   </div>
   <div>
     <h4>Cerbos</h4>
@@ -85,7 +85,7 @@ These benchmarks reproduce the experimental setup from the [Cedar OOPSLA 2024 pa
 Each data point represents 100,000 authorization requests across 200 randomly generated entity stores. Evaluation time measures the core `is_authorized()` operation: no parsing, no entity loading. SAPL, Cedar, and OPA are evaluated as embedded libraries. OpenFGA is evaluated over HTTP to a local in-memory server, as in the original Cedar paper.
 
 <div class="cmp-note">
-The Cedar paper's original claim: "Cedar is 28.7x to 35.2x faster than OpenFGA and 42.8x to 80.8x faster than Rego." Adding SAPL to the same benchmark, SAPL is 8 to 10x faster than Cedar.
+The Cedar paper's original claim: "Cedar is 28.7x to 35.2x faster than OpenFGA and 42.8x to 80.8x faster than Rego." Adding SAPL to the same benchmark, SAPL is 8-10x faster than Cedar 3.0 and 10-18x faster than Cedar 4.10. All engines use Cedar's own <a href="https://github.com/heutelbeck/cedar-benchmarks">benchmark suite</a> and entity generators.
 </div>
 
 <div class="cmp-chart">
@@ -440,7 +440,7 @@ All information based on official documentation and public repositories as of Ap
 
 ### Integration Depth
 
-Raw SDK counts are misleading. A client library that sends HTTP requests to a PDP is fundamentally different from a framework integration with enforcement annotations, streaming support, or database query rewriting. This table shows what each engine's integrations actually provide.
+SDK integration depth varies significantly across engines. A client library that sends HTTP requests is different from a framework integration with enforcement annotations, streaming support, or database query rewriting. This table shows what each integration actually provides.
 
 <div class="cmp-table-wrap">
 <table class="cmp-table">
@@ -663,9 +663,9 @@ document.querySelectorAll('.cmp-table td').forEach(td => {
   if (td.classList.contains('cmp-section')) return;
   if (td === td.parentElement.firstElementChild) return;
   const t = td.textContent.trim().toLowerCase();
-  if (t === 'no' || t === '\u2014' || t === '\u2013' || t === '-' || t === '') {
+  if (t === 'no' || t.startsWith('no ') || t === '\u2014' || t === '\u2013' || t === '-' || t === '') {
     td.classList.add('cmp-no');
-  } else if (t.startsWith('partial') || t.startsWith('limited') || t.includes('only') || t.includes('via ') || t.includes('deprecated')) {
+  } else if (t.startsWith('partial') || t.startsWith('limited') || t.startsWith('via standard') || t.startsWith('server-oriented') || t.includes('deprecated')) {
     td.classList.add('cmp-partial');
   } else if (t.startsWith('yes') || t.length > 0) {
     td.classList.add('cmp-yes');
