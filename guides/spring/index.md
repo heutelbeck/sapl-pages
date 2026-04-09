@@ -36,24 +36,6 @@ Now unzip the project and import it into your preferred IDE.
 
 ### Adding SAPL Dependencies
 
-This tutorial uses the `4.0.0-SNAPSHOT` version of SAPL. To enable Maven to download the respective libraries, add the central snapshot repository to your `pom.xml` file:
-
-```xml
-    <repositories>
-      <repository>
-        <name>Central Portal Snapshots</name>
-        <id>central-portal-snapshots</id>
-        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-```
-
 SAPL provides a bill of materials module to help you to use compatible versions of SAPL modules. By adding the following to your `pom.xml`, you do not need to declare the `<version>` of each SAPL dependency:
 
 ```xml
@@ -62,7 +44,7 @@ SAPL provides a bill of materials module to help you to use compatible versions 
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>4.0.0-SNAPSHOT</version>
+                <version>4.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

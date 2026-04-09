@@ -55,7 +55,7 @@ permit
   geo.within(pos, tradingFloorZone);             // tradingFloorZone is a GEOJson polygon.
 ```
 
-The expression `subject.deviceId.<traccar.position>` does not fetch the trader's location once. It subscribes to it. The [Traccar PIP](/docs/4.0.0-SNAPSHOT/pip_traccar/) pushes GeoJSON position updates whenever the trader's device reports a new position. Every time the location changes, the [`geo.within`](/docs/4.0.0-SNAPSHOT/lib_geo/) check re-evaluates against the trading floor geofence. If the trader walks out, the check fails, the decision changes to DENY, and the PEP suspends the stream. The animation above shows this sequence, including the case where the trader moves on the floor and no new decision is emitted because `geo.within` still returns true.
+The expression `subject.deviceId.<traccar.position>` does not fetch the trader's location once. It subscribes to it. The [Traccar PIP](/docs/4.0.0/pip_traccar/) pushes GeoJSON position updates whenever the trader's device reports a new position. Every time the location changes, the [`geo.within`](/docs/4.0.0/lib_geo/) check re-evaluates against the trading floor geofence. If the trader walks out, the check fails, the decision changes to DENY, and the PEP suspends the stream. The animation above shows this sequence, including the case where the trader moves on the floor and no new decision is emitted because `geo.within` still returns true.
 
 This is why the decision is a stream. Not because the PDP was designed to push updates, but because the policy's inputs are streams. The decision is a reactive function of live data.
 
