@@ -82,7 +82,7 @@ Every engine in this comparison is a serious, maintained open-source project. Ea
 
 These benchmarks reproduce the experimental setup from the [Cedar OOPSLA 2024 paper](https://arxiv.org/abs/2403.04651) (Cutler et al., Section 5, Figure 14), adding SAPL to the original comparison of Cedar, OPA, and OpenFGA. The same three application scenarios, the same entity generators, the same request distributions. All engines evaluate equivalent authorization models and produce identical allow/deny decisions for every request.
 
-Each data point represents 100,000 authorization requests across 200 randomly generated entity stores. Evaluation time measures the core `is_authorized()` operation: no network, no parsing, no entity loading. This isolates the policy evaluation cost.
+Each data point represents 100,000 authorization requests across 200 randomly generated entity stores. Evaluation time measures the core `is_authorized()` operation: no parsing, no entity loading. SAPL, Cedar, and OPA are evaluated as embedded libraries. OpenFGA is evaluated over HTTP to a local in-memory server, as in the original Cedar paper.
 
 <div class="cmp-note">
 The Cedar paper's original claim: "Cedar is 28.7x to 35.2x faster than OpenFGA and 42.8x to 80.8x faster than Rego." Adding SAPL to the same benchmark, SAPL is 8 to 10x faster than Cedar.
@@ -326,6 +326,48 @@ Metric: Core is_authorized() time, excluding I/O, parsing, and entity loading
   <td>Go</td>
 </tr>
 
+<tr><td class="cmp-section" colspan="6">Operations</td></tr>
+<tr>
+  <td>Health / readiness probes</td>
+  <td>Yes (Actuator: liveness, readiness, startup)</td>
+  <td>No (library)</td>
+  <td>Yes (/health endpoint)</td>
+  <td>Yes (gRPC + HTTP probes)</td>
+  <td>Yes (/_cerbos/health + CLI)</td>
+</tr>
+<tr>
+  <td>Decision logging</td>
+  <td>Yes (structured JSON with subscription, decision, obligations)</td>
+  <td>No (library)</td>
+  <td>Yes (remote HTTP, console, custom plugins)</td>
+  <td>Yes (changelog API + structured logs)</td>
+  <td>Yes (File, Kafka, Local DB, Hub)</td>
+</tr>
+<tr>
+  <td>Prometheus metrics</td>
+  <td>Yes (decisions, latency, active subscriptions)</td>
+  <td>No (library)</td>
+  <td>Yes (bundle loading, request latency)</td>
+  <td>Yes</td>
+  <td>Yes (+ OTLP push)</td>
+</tr>
+<tr>
+  <td>Signed policy bundles</td>
+  <td>Yes (Ed25519)</td>
+  <td>No</td>
+  <td>Yes (JWT + HMAC/RSA/ECDSA)</td>
+  <td>No</td>
+  <td>No (Git-based versioning)</td>
+</tr>
+<tr>
+  <td>Evaluation diagnostics</td>
+  <td>Yes (full trace, JSON report, text report)</td>
+  <td>Determining policies + error details</td>
+  <td>Yes (explain modes, OpenTelemetry)</td>
+  <td>OpenTelemetry tracing</td>
+  <td>Yes (matched policy, AST, OpenTelemetry)</td>
+</tr>
+
 <tr><td class="cmp-section" colspan="6">SDKs and Integrations</td></tr>
 <tr>
   <td>Language SDKs</td>
@@ -410,9 +452,9 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
 <tr><td class="cmp-section" colspan="4">SAPL</td></tr>
 <tr>
   <td>Spring</td>
-  <td>@PreEnforce and @PostEnforce annotations with Spring Security integration</td>
-  <td>Yes</td>
-  <td>R2DBC, MongoDB (deep query language integration) JPA and others (Obligation-driven parameter rewriting)</td>
+  <td>AOP annotations + AuthorizationManager with automatic obligation handling</td>
+  <td>Yes (streaming annotations)</td>
+  <td>R2DBC, MongoDB (deep query language integration), JPA and others (obligation-driven parameter rewriting)</td>
 </tr>
 <tr>
   <td>Django</td>
@@ -468,7 +510,7 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
 <tr><td class="cmp-section" colspan="4">OPA / Rego</td></tr>
 <tr>
   <td>Spring Boot</td>
-  <td>OPAAuthorizationManager (HTTP-level enforcement via Spring Security)</td>
+  <td>AuthorizationManager (Spring Security)</td>
   <td>No</td>
   <td>No</td>
 </tr>
@@ -494,7 +536,7 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
 <tr><td class="cmp-section" colspan="4">OpenFGA</td></tr>
 <tr>
   <td>Spring Boot</td>
-  <td>@PreAuthorize + @openFga.check() (method-level via Spring Security)</td>
+  <td>AOP annotations (Spring Security)</td>
   <td>No</td>
   <td>ListObjects / ListUsers API</td>
 </tr>
@@ -518,7 +560,7 @@ Raw SDK counts are misleading. A client library that sends HTTP requests to a PD
 </div>
 
 <div class="cmp-note">
-Constraint handling (automatic execution of obligations like data filtering, field redaction, audit logging) is unique to SAPL. Other engines return permit/deny; the application is responsible for acting on the decision.
+SAPL is the only engine with first-class constraint handling (obligations and advice that drive data filtering, field redaction, audit logging). Cerbos offers output expressions and OPA can return structured data, but enforcement remains application-side. SAPL SDKs execute constraints automatically.
 </div>
 
 
