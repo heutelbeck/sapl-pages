@@ -22,7 +22,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 #baseurl: "/mySaplReference" # the subpath of your site, e.g. /blog
 baseurl: "" # the subpath of your site, e.g. /blog
 #url: "https://haal2023.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-url: ""
+url: "https://sapl.io"
 repository: heutelbeck/sapl-policy-engine # for github-metadata
 
 permalink: pretty
