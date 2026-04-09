@@ -4,9 +4,17 @@ title: SAPL - The Open Source Streaming Attribute Policy Language
 description: "SAPL is an open-source policy language and authorization engine for web apps, APIs, and AI agents. Streaming decisions, MCP tool authorization, readable policies, built-in testing. Spring, Python, Node.js, .NET."
 ---
 
+<style>
+.perf-highlights { text-align: center; }
+.perf-stats { display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+.perf-stat { display: flex; flex-direction: column; align-items: center; }
+.perf-stat-number { font-size: 2.2rem; font-weight: 700; color: var(--color-primary); line-height: 1.2; }
+.perf-stat-label { font-size: 0.9rem; color: var(--color-text-muted, #666); margin-top: 0.3rem; }
+</style>
+
 <section class="hero">
   <h1>Dynamic authorization for your<br>applications and agents</h1>
-  <p class="subtitle">Policies you can read, test, and trust. Streaming decisions that adapt when context changes. One tool to protect your APIs, your AI agents, and your MCP servers.</p>
+  <p class="subtitle">Sub-&#181;s evaluation latency. Millions of decisions per second. Policies you can read, test, and trust. Streaming decisions that adapt when context changes. One engine for your APIs, your AI agents, and your MCP servers.</p>
   <div class="cta-group">
     <a href="/docs/latest/1_2_GettingStarted/" class="btn btn-primary">Get Started</a>
     <a href="https://playground.sapl.io/" class="btn btn-secondary">Try in Playground</a>
@@ -52,6 +60,28 @@ obligation {
 </div>
 
 <script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
+
+<section class="section perf-highlights">
+  <div class="perf-stats">
+    <div class="perf-stat">
+      <span class="perf-stat-number">&lt; 1 &#181;s</span>
+      <span class="perf-stat-label">Median evaluation latency</span>
+    </div>
+    <div class="perf-stat">
+      <span class="perf-stat-number">2M+</span>
+      <span class="perf-stat-label">Decisions per second (8 cores)</span>
+    </div>
+    <div class="perf-stat">
+      <span class="perf-stat-number">10,000</span>
+      <span class="perf-stat-label">Policies, stable latency scaling</span>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:1.2rem;font-size:0.95rem">Reproducible benchmarks on pinned CPU cores. Open source methodology.</p>
+  <div class="cta-group" style="justify-content:center;margin-top:1rem">
+    <a href="/guides/comparison/" class="btn btn-secondary">Engine Comparison</a>
+    <a href="/guides/performance/" class="btn btn-secondary">Full Benchmarks</a>
+  </div>
+</section>
 
 <section class="section">
   <h2>Authorization for AI agents and MCP</h2>
