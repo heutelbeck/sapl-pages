@@ -285,7 +285,7 @@ function fmtOps(v) {
 
 // Detect dark mode for chart defaults
 const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-Chart.defaults.color = isDark ? '#c0c0c0' : '#333';
+Chart.defaults.color = isDark ? '#e0e0e0' : '#333';
 Chart.defaults.borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
 async function load(path) {
@@ -453,8 +453,9 @@ async function main() {
 // Re-render on theme change
 const observer = new MutationObserver(() => {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  Chart.defaults.color = dark ? '#c0c0c0' : '#333';
+  Chart.defaults.color = dark ? '#e0e0e0' : '#333';
   Chart.defaults.borderColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  Object.values(Chart.instances).forEach(c => c.update());
 });
 observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
