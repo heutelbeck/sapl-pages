@@ -158,36 +158,6 @@ Returns: Boolean indicating overlap
 
 ---
 
-## isMulticast
-
-```cidr.isMulticast(STRING ipAddress)```
-
-Tests for multicast addresses: 224.0.0.0/4 (IPv4) or ff00::/8 (IPv6).
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating multicast address
-
-
----
-
-## isDocumentation
-
-```cidr.isDocumentation(STRING ipAddress)```
-
-Tests if an address is in ranges reserved for documentation and examples.
-IPv4: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24
-IPv6: 2001:db8::/32
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating documentation range
-
-
----
-
 ## isCgnat
 
 ```cidr.isCgnat(STRING ipAddress)```
@@ -526,6 +496,36 @@ Parameters:
 - ipAddress: IP address to test
 
 Returns: Boolean indicating link-local address
+
+
+---
+
+## isMulticast
+
+```cidr.isMulticast(STRING ipAddress)```
+
+Tests for multicast addresses: 224.0.0.0/4 (IPv4) or ff00::/8 (IPv6).
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating multicast address
+
+
+---
+
+## isDocumentation
+
+```cidr.isDocumentation(STRING ipAddress)```
+
+Tests if an address is in ranges reserved for documentation and examples.
+IPv4: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24
+IPv6: 2001:db8::/32
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating documentation range
 
 
 ---
