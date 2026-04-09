@@ -1,0 +1,93 @@
+[
+  {
+    "n": 5,
+    "sapl_med": 0.26,
+    "sapl_p99": 1.3,
+    "cedar_med": 5.07,
+    "cedar_p99": 9.98,
+    "rego_med": 26.64,
+    "rego_p99": 194.32,
+    "openfga_med": 44.22,
+    "openfga_p99": 163.93,
+    "cedar3_med": 2.97,
+    "cedar3_p99": 4.47
+  },
+  {
+    "n": 10,
+    "sapl_med": 0.27,
+    "sapl_p99": 0.75,
+    "cedar_med": 5.12,
+    "cedar_p99": 9.17,
+    "rego_med": 40.46,
+    "rego_p99": 218.13,
+    "openfga_med": 45.97,
+    "openfga_p99": 206.43,
+    "cedar3_med": 3.01,
+    "cedar3_p99": 5.77
+  },
+  {
+    "n": 15,
+    "sapl_med": 0.31,
+    "sapl_p99": 0.87,
+    "cedar_med": 5.21,
+    "cedar_p99": 8.36,
+    "rego_med": 58.8,
+    "rego_p99": 247.6,
+    "openfga_med": 48.96,
+    "openfga_p99": 252.08,
+    "cedar3_med": 3.09,
+    "cedar3_p99": 5.52
+  },
+  {
+    "n": 20,
+    "sapl_med": 0.32,
+    "sapl_p99": 0.98,
+    "cedar_med": 5.26,
+    "cedar_p99": 8.23,
+    "rego_med": 80.75,
+    "rego_p99": 287.02,
+    "openfga_med": 52.9,
+    "openfga_p99": 313.54,
+    "cedar3_med": 3.14,
+    "cedar3_p99": 8.2
+  },
+  {
+    "n": 30,
+    "sapl_med": 0.34,
+    "sapl_p99": 0.96,
+    "cedar_med": 5.43,
+    "cedar_p99": 8.23,
+    "rego_med": 134.85,
+    "rego_p99": 426.91,
+    "openfga_med": 86.05,
+    "openfga_p99": 528.55,
+    "cedar3_med": 3.21,
+    "cedar3_p99": 5.99
+  },
+  {
+    "n": 40,
+    "sapl_med": 0.36,
+    "sapl_p99": 1.1,
+    "cedar_med": 5.59,
+    "cedar_p99": 9.1,
+    "rego_med": 204.65,
+    "rego_p99": 613.35,
+    "openfga_med": 105.99,
+    "openfga_p99": 994.02,
+    "cedar3_med": 3.3,
+    "cedar3_p99": 5.34
+  },
+  {
+    "n": 50,
+    "sapl_med": 0.34,
+    "sapl_p99": 1.0,
+    "cedar_med": 5.74,
+    "cedar_p99": 10.41,
+    "rego_med": 290.46,
+    "rego_p99": 823.95,
+    "openfga_med": 132.78,
+    "openfga_p99": 1756.95,
+    "cedar3_med": 3.39,
+    "cedar3_p99": 5.47
+  }
+]
