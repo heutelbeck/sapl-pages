@@ -1,7 +1,7 @@
 ---
 layout: sapl
 title: "SAPL Performance - Throughput, Latency, and Scaling Benchmarks"
-description: "Performance benchmarks for the SAPL authorization engine: 2M decisions/sec over RSocket, 35 microsecond latency, near-constant scaling to 10,000 policies. JVM and native image compared across HTTP, RSocket, and embedded deployment modes."
+description: "SAPL authorization engine performance benchmarks: 2M decisions/sec over RSocket, sub-microsecond embedded evaluation latency, stable scaling to 10,000 policies. JVM and GraalVM native image compared across HTTP, RSocket, and embedded deployment modes."
 ---
 
 <style>

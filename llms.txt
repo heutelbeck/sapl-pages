@@ -9,13 +9,21 @@
 > FastMCP), Node.js (NestJS, Express), and .NET (ASP.NET Core).
 
 ## Key Differentiators
+- Sub-microsecond median evaluation latency, 2M+ decisions/sec (8 cores, JVM)
+- 8-18x faster than Cedar, 100-200x faster than OPA and OpenFGA in the Cedar OOPSLA 2024 benchmark scenarios
 - Request-response AND streaming authorization in the same engine, same policies, same deployment
 - Human-readable policy language purpose-built for authorization
 - Built-in policy testing DSL (SAPLTest) with coverage reporting
 - Parameterized attribute finders with composable stream expressions
 - First-class obligations and advice in authorization decisions
-- Hot-reloadable policies without PDP restart
-- AI agent authorization guides including RAG, MCP tool access, and human-in-the-loop
+- AI agent authorization: MCP server SDK, Spring AI integration, RAG and human-in-the-loop patterns
+
+## Performance
+- Embedded evaluation: sub-microsecond median latency
+- Server throughput: 2M+ decisions/sec over RSocket (8 cores, JVM)
+- Stable latency scaling to 10,000 policies
+- [Engine comparison](https://sapl.io/guides/comparison/): SAPL vs Cedar, OPA, OpenFGA, Cerbos with reproducible benchmarks
+- [Full benchmarks](https://sapl.io/guides/performance/): Throughput, latency, scaling across deployment modes
 
 ## Getting Started
 - [Why SAPL?](https://sapl.io/docs/latest/1_1_WhySAPL/): Design rationale and comparison with OPA, Cedar, XACML
@@ -40,35 +48,52 @@
 - [FastMCP SDK](https://sapl.io/docs/latest/6_9_FastMCP/): MCP server authorization (AI agent tool access)
 - [.NET SDK](https://sapl.io/docs/latest/6_10_DotNet/): Attributes, constraint handlers, SSE
 
+## Deployment
+- **Embedded PDP**: Runs inside a JVM application with policies from classpath, filesystem, or signed bundles
+- **SAPL Node**: Standalone PDP server exposing HTTP and RSocket APIs. CLI for bundle creation, signing, and credential management
+- **Native binary**: GraalVM native image for minimal footprint
+- **Operations**: Health/readiness probes (Actuator), Prometheus metrics (decisions, latency, active subscriptions), structured decision logging, Kubernetes liveness/readiness/startup probes
+- **Signed bundles**: Ed25519 signatures for policy integrity verification
+
 ## Streaming Enforcement Patterns
 All SDKs implement three PEP-side enforcement modes for streaming authorization:
 - **EnforceTillDenied**: stream terminates permanently when a deny decision arrives
 - **EnforceDropWhileDenied**: silently drops stream elements while denied, resumes when permitted again
 - **EnforceRecoverableIfDenied**: signals denial to the client but keeps the stream alive, resumes when permitted
 
-These patterns make streaming authorization practical at the application level â€” the PDP streams decisions, and the PEP has concrete strategies for how to handle changing decisions on active data streams.
+These patterns make streaming authorization practical at the application level. The PDP streams decisions, and the PEP has concrete strategies for how to handle changing decisions on active data streams.
 
 ## AI Security Guides
-- [RAG pipeline authorization](https://github.com/heutelbeck/sapl-demos/tree/main/rag-clinical-trial): document-level access control in retrieval-augmented generation (Spring AI + pgvector)
-- [MCP tool access authorization](https://github.com/heutelbeck/sapl-demos/tree/main/mcp-clinical-trial): controlling what tools AI agents can call (Spring AI)
-- [Human-in-the-loop](https://github.com/heutelbeck/sapl-demos/tree/main/hitl-clinical-trial): policy-driven approval workflows for AI tool execution (Spring AI)
-- [FastMCP server authorization](https://github.com/heutelbeck/sapl-python-demos/tree/main/fastmcp_demo): per-tool, per-resource, per-prompt access control for MCP servers (Python)
+- [RAG pipeline authorization](https://sapl.io/guides/ai-rag/): Document-level access control in retrieval-augmented generation
+- [AI tool authorization](https://sapl.io/guides/ai-tools/): Per-tool authorization for Spring AI applications
+- [Human-in-the-loop](https://sapl.io/guides/ai-hitl/): Policy-driven approval workflows for AI tool execution
+- [MCP server authorization](https://sapl.io/guides/ai-mcp/): Per-tool, per-resource, per-prompt access control for MCP servers
 
 ## Comparison with Other Authorization Engines
 
+For detailed feature tables and benchmark charts, see the [engine comparison guide](https://sapl.io/guides/comparison/).
+
 ### SAPL vs OPA (Open Policy Agent)
 - OPA uses Rego, a general-purpose query language. SAPL uses a purpose-built authorization language with readable syntax.
+- SAPL is 100-200x faster than OPA in the Cedar OOPSLA 2024 benchmark scenarios (embedded evaluation).
 - OPA is request-response only. SAPL supports both request-response and streaming authorization.
 - OPA loads external data via bundles. SAPL integrates external data sources as parameterized, composable attribute streams during evaluation.
 - OPA tests are Rego rules. SAPL has a dedicated testing DSL (SAPLTest) with mocking and coverage.
-- OPA is Go-native. SAPL provides SDKs for Java, Python, Node.js, and .NET.
+- OPA is Go-native (CNCF graduated). SAPL provides SDKs for Java, Python, Node.js, and .NET.
 
 ### SAPL vs Cedar (AWS)
-- Cedar requires all data upfront in the request or entity store, enabling formal verification. SAPL accesses external data during evaluation via attribute finders, enabling dynamic data integration.
+- SAPL is 8-18x faster than Cedar in the Cedar OOPSLA 2024 benchmark scenarios (embedded evaluation, Cedar 3.0 and 4.10).
+- Cedar requires all data upfront in the request or entity store, enabling formal verification via Lean proofs. SAPL accesses external data during evaluation via attribute finders.
 - Cedar is request-response only. SAPL supports both request-response and streaming authorization.
 - Cedar has no built-in policy testing DSL. SAPL has SAPLTest with mocking and coverage.
 - Cedar does not include obligations or advice in decisions. SAPL supports first-class obligations and advice.
-- Cedar is Rust-native, tied to the AWS ecosystem. SAPL provides SDKs for Java, Python, Node.js, and .NET.
+- Cedar is Rust-native, open source. SAPL is JVM-native with SDKs for Java, Python, Node.js, and .NET.
+
+### SAPL vs OpenFGA
+- SAPL is 100-200x faster than OpenFGA in the Cedar OOPSLA 2024 benchmark scenarios.
+- OpenFGA implements the Google Zanzibar model, purpose-built for ReBAC at scale (CNCF incubating). SAPL supports ReBAC via graph functions alongside ABAC, RBAC, and streaming.
+- OpenFGA is request-response only. SAPL supports both request-response and streaming authorization.
+- OpenFGA does not include obligations or advice in decisions. SAPL supports first-class obligations and advice.
 
 ### SAPL vs XACML
 - XACML uses XML-based policy syntax. SAPL uses a concise, human-readable syntax.
@@ -77,8 +102,8 @@ These patterns make streaming authorization practical at the application level â
 
 ### SAPL vs Spring Security
 - Spring Security provides built-in role and authority checks. SAPL externalizes authorization logic into policies, supporting ABAC with dynamic attributes.
-- Spring Security authorization is hardcoded in application code. SAPL policies are hot-reloadable without application restart.
-- SAPL integrates with Spring Security via annotations (@PreEnforce, @PostEnforce) and authorization managers, complementing rather than replacing Spring Security.
+- Spring Security authorization is hardcoded in application code. SAPL policies can be updated without application restart.
+- SAPL integrates with Spring Security via AOP annotations and authorization managers, complementing rather than replacing Spring Security.
 
 ## Academic Publications
 
