@@ -6,15 +6,19 @@ description: "SAPL is an open-source policy language and authorization engine fo
 
 <style>
 .perf-highlights { text-align: center; }
-.perf-stats { display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+.perf-modes { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+.perf-mode { display: flex; flex-direction: column; align-items: center; min-width: 240px; }
+.perf-mode-title { font-size: 0.95rem; font-weight: 600; margin: 0 0 1rem; color: var(--color-text-secondary, #444); text-transform: uppercase; letter-spacing: 0.05em; }
+.perf-mode-stats { display: flex; gap: 2rem; }
 .perf-stat { display: flex; flex-direction: column; align-items: center; }
 .perf-stat-number { font-size: 2.2rem; font-weight: 700; color: var(--color-primary); line-height: 1.2; }
 .perf-stat-label { font-size: 0.9rem; color: var(--color-text-muted, #666); margin-top: 0.3rem; }
+.perf-mode-context { font-size: 0.85rem; color: var(--color-text-muted, #666); margin: 0.9rem 0 0; font-style: italic; }
 </style>
 
 <section class="hero">
   <h1>Dynamic authorization for your<br>applications and agents</h1>
-  <p class="subtitle">Sub-&#181;s evaluation latency. Millions of decisions per second. Policies you can read, test, and trust. Streaming decisions that adapt when context changes. One engine for your APIs, your AI agents, and your MCP servers.</p>
+  <p class="subtitle">Policies you can read, test, and trust. Streaming decisions that adapt when context changes. One engine for your APIs, your AI agents, and your MCP servers.</p>
   <div class="cta-group">
     <a href="/docs/latest/1_2_GettingStarted/" class="btn btn-primary">Get Started</a>
     <a href="https://playground.sapl.io/" class="btn btn-secondary">Try in Playground</a>
@@ -62,18 +66,34 @@ obligation {
 <script type="module" src="https://playground.sapl.io/embed/sapl-embed.js"></script>
 
 <section class="section perf-highlights">
-  <div class="perf-stats">
-    <div class="perf-stat">
-      <span class="perf-stat-number">&lt; 1 &#181;s</span>
-      <span class="perf-stat-label">Median evaluation latency</span>
+  <div class="perf-modes">
+    <div class="perf-mode">
+      <h3 class="perf-mode-title">Embedded (in-process JVM)</h3>
+      <div class="perf-mode-stats">
+        <div class="perf-stat">
+          <span class="perf-stat-number">&lt; 1 &#181;s</span>
+          <span class="perf-stat-label">p50 latency</span>
+        </div>
+        <div class="perf-stat">
+          <span class="perf-stat-number">17M+</span>
+          <span class="perf-stat-label">decisions/sec</span>
+        </div>
+      </div>
+      <p class="perf-mode-context">8 threads, 9,905 policies</p>
     </div>
-    <div class="perf-stat">
-      <span class="perf-stat-number">2M+</span>
-      <span class="perf-stat-label">Decisions per second (8 cores)</span>
-    </div>
-    <div class="perf-stat">
-      <span class="perf-stat-number">10,000</span>
-      <span class="perf-stat-label">Policies, stable latency scaling</span>
+    <div class="perf-mode">
+      <h3 class="perf-mode-title">Server (over the wire)</h3>
+      <div class="perf-mode-stats">
+        <div class="perf-stat">
+          <span class="perf-stat-number">35 &#181;s</span>
+          <span class="perf-stat-label">p50 latency</span>
+        </div>
+        <div class="perf-stat">
+          <span class="perf-stat-number">2M+</span>
+          <span class="perf-stat-label">decisions/sec</span>
+        </div>
+      </div>
+      <p class="perf-mode-context">8 cores, 9,905 policies</p>
     </div>
   </div>
   <p style="text-align:center;margin-top:1.2rem;font-size:0.95rem">Reproducible benchmarks. Open source methodology.</p>
