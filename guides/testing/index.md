@@ -297,6 +297,6 @@ The `.sapltest` files are identical to the CLI approach. The plugin discovers th
 ### Related
 
 - [Policy Operations](/guides/policy-ops/): CI/CD pipeline with testing, signing, and deployment
-- [SDK Integrations](/docs/latest/6_0_Integrations/): enforcement annotations and streaming modes
+- [SDK Integrations](/docs/latest/6_0_SDKsAndAPIs/): enforcement annotations and streaming modes
 - [Testing Reference](/docs/latest/5_0_TestingSAPLPolicies/): complete DSL reference, matchers, Java fixture API
 - [sapl-demos](https://github.com/heutelbeck/sapl-demos): 14 demo projects with `.sapltest` files and a CLI test runner script

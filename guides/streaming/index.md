@@ -163,7 +163,7 @@ The PEP never guesses. The PEP never caches a stale PERMIT across a connection f
 
 ### Related
 
-- [SDK Integrations](/docs/latest/6_0_Integrations/): enforcement annotations and streaming modes across all supported frameworks
+- [SDK Integrations](/docs/latest/6_0_SDKsAndAPIs/): enforcement annotations and streaming modes across all supported frameworks
 - [Multi-Framework Authorization](/guides/multi-framework/): recoverable SSE streaming across 7 frameworks
 - [Human-in-the-Loop Approval](/guides/ai-hitl/): obligations that pause execution for human confirmation
 - [Policy Operations](/guides/policy-ops/): live policy updates via streaming bundles

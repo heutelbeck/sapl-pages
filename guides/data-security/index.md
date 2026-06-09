@@ -352,7 +352,7 @@ All seven are available in Spring, Python (Flask, FastAPI, Django, Tornado), Nes
 
 ### Related
 
-- [SDK Integrations](/docs/latest/6_0_Integrations/): handler registration and lifecycle for each framework
+- [SDK Integrations](/docs/latest/6_0_SDKsAndAPIs/): handler registration and lifecycle for each framework
 - [Streaming Authorization](/guides/streaming/): obligations that change mid-stream as conditions change
 - [Multi-Framework Authorization](/guides/multi-framework/): the same 28 endpoints across 7 frameworks
 - [spring-demo](https://github.com/heutelbeck/sapl-demos/tree/main/spring-demo): all handler implementations in Java
