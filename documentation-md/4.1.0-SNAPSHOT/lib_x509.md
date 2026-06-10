@@ -92,24 +92,6 @@ permit action == "api.call";
 
 ---
 
-## extractSerialNumber
-
-```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
-
-Returns the serial number as a decimal string. Use this for certificate revocation
-checking or tracking specific certificates in audit logs.
-
-Example - Block revoked certificates:
-```sapl
-policy "check revocation list"
-deny
-  var serial = x509.extractSerialNumber(request.clientCertificate);
-  serial in data.revokedSerials;
-```
-
-
----
-
 ## extractNotBefore
 
 ```extractNotBefore(TEXT certPem)```: Extracts the certificate validity start date.
@@ -312,6 +294,24 @@ policy "service-to-service auth"
 permit action == "invoke";
   var serviceName = x509.extractCommonName(request.clientCertificate);
   serviceName in resource.allowedServices;
+```
+
+
+---
+
+## extractSerialNumber
+
+```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
+
+Returns the serial number as a decimal string. Use this for certificate revocation
+checking or tracking specific certificates in audit logs.
+
+Example - Block revoked certificates:
+```sapl
+policy "check revocation list"
+deny
+  var serial = x509.extractSerialNumber(request.clientCertificate);
+  serial in data.revokedSerials;
 ```
 
 
