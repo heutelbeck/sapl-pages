@@ -55,6 +55,22 @@ obligation
 
 ---
 
+## jsonToVal
+
+```jsonToVal(TEXT json)```: Converts a well-formed JSON document into a SAPL value
+representing the content of the JSON document. Returns an error if the JSON is malformed.
+
+**Example:**
+```sapl
+policy "check-embedded-role"
+permit action.method == "read";
+  var userMetadata = json.jsonToVal(subject.metadataJson);
+  userMetadata.role == "admin";
+```
+
+
+---
+
 ## valToJson
 
 ```valToJson(value)```: Converts a SAPL value into a JSON string representation.
@@ -69,22 +85,6 @@ obligation
     "type": "audit",
     "context": json.valToJson(subject)
   }
-```
-
-
----
-
-## jsonToVal
-
-```jsonToVal(TEXT json)```: Converts a well-formed JSON document into a SAPL value
-representing the content of the JSON document. Returns an error if the JSON is malformed.
-
-**Example:**
-```sapl
-policy "check-embedded-role"
-permit action.method == "read";
-  var userMetadata = json.jsonToVal(subject.metadataJson);
-  userMetadata.role == "admin";
 ```
 
 

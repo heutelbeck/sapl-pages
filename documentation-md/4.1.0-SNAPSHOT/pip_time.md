@@ -221,6 +221,39 @@ permit action == "work";
 
 ---
 
+## weekdayIn
+
+```<time.weekdayIn(ARRAY days)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.weekdayIn(days)>``` emits ```true``` if the current day of the week (in the clock's configured timezone)
+is contained in the ```days``` array and ```false``` otherwise. The array contains day names as strings
+(e.g., ```["MONDAY", "WEDNESDAY", "FRIDAY"]```). The attribute automatically re-evaluates at midnight boundaries.
+
+Example:
+```sapl
+policy "weekday access"
+permit action == "work";
+  <time.weekdayIn(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])>;
+```
+
+
+---
+
+## weekdayIn
+
+```<time.weekdayIn(ARRAY days, TEXT timezone)>``` is an environment attribute stream and takes no left-hand arguments.
+```<time.weekdayIn(days, timezone)>``` emits ```true``` if the current day of the week in the given
+```timezone``` (e.g., "Europe/Berlin") is contained in the ```days``` array and ```false``` otherwise.
+
+Example:
+```sapl
+policy "weekday access"
+permit action == "work";
+  <time.weekdayIn(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "Europe/Berlin")>;
+```
+
+
+---
+
 ## nowIsBefore
 
 ```<time.nowIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
@@ -261,39 +294,6 @@ Example:
 policy "time example"
 permit action == "work";
   <time.nowIsBetween(subject.employmentStarts, subject.employmentEnds)>;
-```
-
-
----
-
-## weekdayIn
-
-```<time.weekdayIn(ARRAY days, TEXT timezone)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.weekdayIn(days, timezone)>``` emits ```true``` if the current day of the week in the given
-```timezone``` (e.g., "Europe/Berlin") is contained in the ```days``` array and ```false``` otherwise.
-
-Example:
-```sapl
-policy "weekday access"
-permit action == "work";
-  <time.weekdayIn(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "Europe/Berlin")>;
-```
-
-
----
-
-## weekdayIn
-
-```<time.weekdayIn(ARRAY days)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.weekdayIn(days)>``` emits ```true``` if the current day of the week (in the clock's configured timezone)
-is contained in the ```days``` array and ```false``` otherwise. The array contains day names as strings
-(e.g., ```["MONDAY", "WEDNESDAY", "FRIDAY"]```). The attribute automatically re-evaluates at midnight boundaries.
-
-Example:
-```sapl
-policy "weekday access"
-permit action == "work";
-  <time.weekdayIn(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])>;
 ```
 
 

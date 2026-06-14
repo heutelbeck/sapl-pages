@@ -64,7 +64,7 @@ Configure through policy variables in `pdp.json`:
       "secretsKey": "jwt",
       "clockSkewSeconds": 60,
       "publicKeyServer": {
-        "uri": "http://authz-server:9000/public-key/{kid}",
+        "uri": "https://authz-server:9000/public-key/{kid}",
         "method": "GET",
         "keyCachingTtlMillis": 300000
       },
@@ -75,6 +75,12 @@ Configure through policy variables in `pdp.json`:
   }
 }
 ```
+
+The `publicKeyServer` field configures a remote endpoint that serves public keys on demand,
+keyed by the token's key ID. Always use an `https` URI. Keys fetched over plain `http` can be
+substituted by a network attacker, who could then forge tokens this PIP would accept as trusted.
+TLS authenticates the key server and protects the keys in transit. Keys in the `whitelist` are
+configured locally and are not affected.
 
 The `secretsKey` field specifies which key in subscription secrets holds the JWT token.
 Defaults to `"jwt"` if omitted.
@@ -121,6 +127,23 @@ exceeds this value, the token is treated as `NEVER_VALID`. Defaults to 0 (disabl
 
 ## token
 
+```<jwt.token(TEXT secretsKeyName)>``` reads a JWT from subscription secrets using the specified
+key name and returns an object containing the decoded token data and its current validity state.
+
+This overload allows reading tokens stored under a custom key in subscription secrets.
+
+Example:
+```sapl
+policy "access token check"
+permit
+  <jwt.token("accessToken")>.valid;
+```
+
+
+---
+
+## token
+
 ```<jwt.token>``` reads a JWT from subscription secrets using the configured default secrets key
 and returns an object containing the decoded token data and its current validity state.
 
@@ -151,23 +174,6 @@ Example with claims:
 policy "admin access"
 permit action == "admin:action";
   "admin" in <jwt.token>.payload.roles;
-```
-
-
----
-
-## token
-
-```<jwt.token(TEXT secretsKeyName)>``` reads a JWT from subscription secrets using the specified
-key name and returns an object containing the decoded token data and its current validity state.
-
-This overload allows reading tokens stored under a custom key in subscription secrets.
-
-Example:
-```sapl
-policy "access token check"
-permit
-  <jwt.token("accessToken")>.valid;
 ```
 
 
