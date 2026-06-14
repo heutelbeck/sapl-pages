@@ -92,6 +92,61 @@ permit action == "api.call";
 
 ---
 
+## extractIssuerDn
+
+```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
+
+Returns the full issuer DN string in RFC 2253 format. Use this to verify
+certificates were issued by trusted CAs.
+
+Example - Require certificates from internal CA:
+```sapl
+policy "internal ca only"
+permit
+  var issuerDn = x509.extractIssuerDn(request.clientCertificate);
+  issuerDn =~ "CN=Acme Internal CA,O=Acme Corp";
+```
+
+
+---
+
+## extractCommonName
+
+```extractCommonName(TEXT certPem)```: Extracts the Common Name from the subject.
+
+Returns just the CN field from the certificate subject, which typically contains
+the hostname or entity name. This is simpler than parsing the full DN when only
+the CN is needed.
+
+Example - Verify service identity in mTLS:
+```sapl
+policy "service-to-service auth"
+permit action == "invoke";
+  var serviceName = x509.extractCommonName(request.clientCertificate);
+  serviceName in resource.allowedServices;
+```
+
+
+---
+
+## extractSerialNumber
+
+```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
+
+Returns the serial number as a decimal string. Use this for certificate revocation
+checking or tracking specific certificates in audit logs.
+
+Example - Block revoked certificates:
+```sapl
+policy "check revocation list"
+deny
+  var serial = x509.extractSerialNumber(request.clientCertificate);
+  serial in data.revokedSerials;
+```
+
+
+---
+
 ## extractNotBefore
 
 ```extractNotBefore(TEXT certPem)```: Extracts the certificate validity start date.
@@ -257,61 +312,6 @@ policy "allow hr department only"
 permit action == "read" && resource.type == "personnel-records"
   var subjectDn = x509.extractSubjectDn(request.clientCertificate);
   subjectDn =~ "OU=Human Resources,O=Acme Corp";
-```
-
-
----
-
-## extractIssuerDn
-
-```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
-
-Returns the full issuer DN string in RFC 2253 format. Use this to verify
-certificates were issued by trusted CAs.
-
-Example - Require certificates from internal CA:
-```sapl
-policy "internal ca only"
-permit
-  var issuerDn = x509.extractIssuerDn(request.clientCertificate);
-  issuerDn =~ "CN=Acme Internal CA,O=Acme Corp";
-```
-
-
----
-
-## extractCommonName
-
-```extractCommonName(TEXT certPem)```: Extracts the Common Name from the subject.
-
-Returns just the CN field from the certificate subject, which typically contains
-the hostname or entity name. This is simpler than parsing the full DN when only
-the CN is needed.
-
-Example - Verify service identity in mTLS:
-```sapl
-policy "service-to-service auth"
-permit action == "invoke";
-  var serviceName = x509.extractCommonName(request.clientCertificate);
-  serviceName in resource.allowedServices;
-```
-
-
----
-
-## extractSerialNumber
-
-```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
-
-Returns the serial number as a decimal string. Use this for certificate revocation
-checking or tracking specific certificates in audit logs.
-
-Example - Block revoked certificates:
-```sapl
-policy "check revocation list"
-deny
-  var serial = x509.extractSerialNumber(request.clientCertificate);
-  serial in data.revokedSerials;
 ```
 
 
