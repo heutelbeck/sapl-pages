@@ -566,6 +566,23 @@ permit
 
 ---
 
+## trimStart
+
+```trimStart(TEXT str)```: Removes leading whitespace only.
+
+Useful when trailing whitespace is significant but leading whitespace should be ignored.
+
+**Examples:**
+```sapl
+policy "trim_leading"
+permit
+  var cleanInput = string.trimStart(resource.input);
+  string.startsWith(cleanInput, "valid-prefix");
+```
+
+
+---
+
 ## trimEnd
 
 ```trimEnd(TEXT str)```: Removes trailing whitespace only.
@@ -603,23 +620,6 @@ policy "middle_segment"
 permit
   var segment = string.substringRange(resource.path, 5, 15);
   segment == "authorized";
-```
-
-
----
-
-## trimStart
-
-```trimStart(TEXT str)```: Removes leading whitespace only.
-
-Useful when trailing whitespace is significant but leading whitespace should be ignored.
-
-**Examples:**
-```sapl
-policy "trim_leading"
-permit
-  var cleanInput = string.trimStart(resource.input);
-  string.startsWith(cleanInput, "valid-prefix");
 ```
 
 
