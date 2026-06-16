@@ -244,6 +244,24 @@ permit
 
 ---
 
+## isUndefined
+
+```reflect.isUndefined(ANY value)```: Returns ```true``` if the value is ```undefined```, ```false``` otherwise.
+This is distinct from ```null``` or an error.
+
+**Example:**
+```sapl
+policy "check_missing_attribute"
+permit
+  var attribute = subject.optionalAttr;
+  reflect.isUndefined(attribute);    // true if attribute not present
+  reflect.isUndefined(undefined);    // true
+  reflect.isUndefined(null);         // false
+```
+
+
+---
+
 ## typeOf
 
 ```reflect.typeOf(ANY value)```: Returns a text string describing the type of the value.
@@ -260,24 +278,6 @@ permit
   reflect.typeOf(data.name) == "STRING";
   reflect.typeOf(data.version) == "NUMBER";
   reflect.typeOf(data.enabled) == "BOOLEAN";
-```
-
-
----
-
-## isUndefined
-
-```reflect.isUndefined(ANY value)```: Returns ```true``` if the value is ```undefined```, ```false``` otherwise.
-This is distinct from ```null``` or an error.
-
-**Example:**
-```sapl
-policy "check_missing_attribute"
-permit
-  var attribute = subject.optionalAttr;
-  reflect.isUndefined(attribute);    // true if attribute not present
-  reflect.isUndefined(undefined);    // true
-  reflect.isUndefined(null);         // false
 ```
 
 

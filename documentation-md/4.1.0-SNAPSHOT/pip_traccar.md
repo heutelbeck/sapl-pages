@@ -221,6 +221,87 @@ This may return a value like:
 
 ---
 
+## device
+
+```deviceEntityId.<traccar.device(traccarConfig)>``` is an attribute that fetches detailed metadata for a specific device from
+the Traccar server.
+The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
+not the device's `uniqueId` in the database.
+It uses the provided `traccarConfig` parameter to connect to the server.
+
+ **Parameters:**
+ - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+ - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
+
+**Example:**
+
+```
+"12345".<traccar.device({
+                  "baseUrl": "https://demo.traccar.org"
+                })>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "name": "string",
+    "uniqueId": "string",
+    "status": "string",
+    "disabled": true,
+    "lastUpdate": "2019-08-24T14:15:22Z",
+    "positionId": 0,
+    "groupId": 0,
+    "phone": "string",
+    "model": "string",
+    "contact": "string",
+    "category": "string",
+    "attributes": {}
+}
+```
+
+
+---
+
+## device
+
+```deviceEntityId.<traccar.device>``` is an attribute that fetches detailed metadata for a specific device from
+the Traccar server.
+The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
+not the device's `uniqueId` in the database.
+This method uses the environment variable `TRACCAR_CONFIG` to retrieve the server connection configuration.
+
+ **Parameters:**
+ - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+
+**Example:**
+
+```
+"12345".<traccar.device>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "name": "string",
+    "uniqueId": "string",
+    "status": "string",
+    "disabled": true,
+    "lastUpdate": "2019-08-24T14:15:22Z",
+    "positionId": 0,
+    "groupId": 0,
+    "phone": "string",
+    "model": "string",
+    "contact": "string",
+    "category": "string",
+    "attributes": {}
+}
+```
+
+
+---
+
 ## server
 
 ```<traccar.server>``` is an environment attribute that retrieves server metadata from the
@@ -505,21 +586,17 @@ This may return a value like:
 
 ## geofenceGeometry
 
-```geofenceEntityId.<traccar.geofenceGeometry(traccarConfig)>``` is an attribute that converts geofence metadata into
-GeoJSON format for geometric representation. It uses the provided `traccarConfig` parameter to connect to the
-Traccar server.
+```geofenceEntityId.<traccar.geofenceGeometry>``` is an attribute that converts geofence metadata into GeoJSON format
+for geometric representation. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
+server connection configuration.
 
 **Parameters:**
-
 - `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
-- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.geofenceGeometry({
-    "baseUrl": "https://demo.traccar.org"
-})>
+"12345".<traccar.geofenceGeometry>
 ```
 
 This may return a value like:
@@ -543,17 +620,21 @@ This may return a value like:
 
 ## geofenceGeometry
 
-```geofenceEntityId.<traccar.geofenceGeometry>``` is an attribute that converts geofence metadata into GeoJSON format
-for geometric representation. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
-server connection configuration.
+```geofenceEntityId.<traccar.geofenceGeometry(traccarConfig)>``` is an attribute that converts geofence metadata into
+GeoJSON format for geometric representation. It uses the provided `traccarConfig` parameter to connect to the
+Traccar server.
 
 **Parameters:**
+
 - `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
+- `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.geofenceGeometry>
+"12345".<traccar.geofenceGeometry({
+    "baseUrl": "https://demo.traccar.org"
+})>
 ```
 
 This may return a value like:
@@ -647,87 +728,6 @@ This may return a value like:
     "speed": 0,
     "course": 0,
     "address": "string",
-    "attributes": {}
-}
-```
-
-
----
-
-## device
-
-```deviceEntityId.<traccar.device(traccarConfig)>``` is an attribute that fetches detailed metadata for a specific device from
-the Traccar server.
-The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
-not the device's `uniqueId` in the database.
-It uses the provided `traccarConfig` parameter to connect to the server.
-
- **Parameters:**
- - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
- - `traccarConfig` *(Object)*: A JSON object containing the configuration to connect to the Traccar server.
-
-**Example:**
-
-```
-"12345".<traccar.device({
-                  "baseUrl": "https://demo.traccar.org"
-                })>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "name": "string",
-    "uniqueId": "string",
-    "status": "string",
-    "disabled": true,
-    "lastUpdate": "2019-08-24T14:15:22Z",
-    "positionId": 0,
-    "groupId": 0,
-    "phone": "string",
-    "model": "string",
-    "contact": "string",
-    "category": "string",
-    "attributes": {}
-}
-```
-
-
----
-
-## device
-
-```deviceEntityId.<traccar.device>``` is an attribute that fetches detailed metadata for a specific device from
-the Traccar server.
-The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
-not the device's `uniqueId` in the database.
-This method uses the environment variable `TRACCAR_CONFIG` to retrieve the server connection configuration.
-
- **Parameters:**
- - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
-
-**Example:**
-
-```
-"12345".<traccar.device>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "name": "string",
-    "uniqueId": "string",
-    "status": "string",
-    "disabled": true,
-    "lastUpdate": "2019-08-24T14:15:22Z",
-    "positionId": 0,
-    "groupId": 0,
-    "phone": "string",
-    "model": "string",
-    "contact": "string",
-    "category": "string",
     "attributes": {}
 }
 ```

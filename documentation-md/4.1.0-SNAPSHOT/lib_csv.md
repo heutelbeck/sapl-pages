@@ -114,6 +114,15 @@ permit
     array.containsAll(subject.permissions, [requiredPermissions]);
 ```
 
+## Limits
+
+To bound memory and computation on untrusted input, the following limits apply:
+
+- The input is limited to 1 MB.
+- Parsing is bounded to a maximum nesting depth of 500 and a maximum number length of 1000 characters.
+
+These limits apply because this input may originate from the authorization subscription or from policy information points, which are not vetted to the same degree as the policies and variables shipped with the PDP configuration.
+
 
 ---
 
@@ -124,6 +133,9 @@ permit
 Parses a CSV document with headers into a SAPL array of objects. The first row is
 treated as column headers, and each subsequent row becomes an object with properties
 named after those headers. All values are parsed as strings.
+
+Input longer than 1 MB (1048576 characters) is rejected with an error, so a hostile
+attribute value cannot exhaust the evaluation thread.
 
 Parameters:
 - csv: CSV text with headers in first row
@@ -150,6 +162,10 @@ permit
 Converts a SAPL array of objects into a CSV string with headers. The keys of the
 first object determine the column headers. Subsequent objects should have the same
 keys for consistent output. Returns an empty string for empty arrays.
+
+To prevent CSV formula injection, a cell whose text begins with =, +, -, @, a tab,
+or a carriage return is prefixed with a single quote, so a spreadsheet that opens
+the output treats it as text rather than a formula.
 
 Parameters:
 - array: Array of objects to convert

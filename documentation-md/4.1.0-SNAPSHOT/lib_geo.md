@@ -45,6 +45,21 @@ The library is suitable for:
 - The library assumes all geometries are in GeoJSON format.
 - Methods operate seamlessly with input data using JSON processing.
 
+## Resource Limits
+Geographic inputs may come from untrusted sources such as attribute finders or the
+authorization subscription, so every parse boundary (GeoJSON, WKT, GML, KML) is bounded
+and fails closed to an error value when a limit is exceeded:
+- Input size is capped at 4 MB.
+- A single geometry may contain at most 100,000 vertices.
+- A geometry collection may contain at most 50,000 members.
+- The collection comparisons `subset` and `atLeastOneMemberOf` are quadratic, so they are
+  additionally capped at 1,000,000 pairwise checks.
+
+These limits comfortably accommodate detailed real-world boundaries. They apply because
+this input may originate from the authorization subscription or from policy information
+points, which are not vetted to the same degree as the policies and variables shipped
+with the PDP configuration.
+
 For more details, refer to individual function documentation.
 
 

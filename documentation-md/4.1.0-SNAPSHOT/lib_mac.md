@@ -54,28 +54,13 @@ where an attacker could determine the correct MAC by measuring comparison time.
 Never use string equality or standard comparison operators to verify MACs in
 authorization decisions.
 
+## Limits
 
----
+To bound memory and computation on untrusted input, the following limits apply:
 
-## hmacSha256
+- The message and the key are each capped at 10000000 characters (10 MB). This applies to the HMAC functions hmacSha256, hmacSha384, hmacSha512, and to isValidHmac, which computes an HMAC internally. A function returns an error when either the message or the key exceeds this length.
 
-```hmacSha256(TEXT message, TEXT key)```: Computes HMAC-SHA256 authentication code.
-
-Generates a keyed-hash message authentication code using SHA-256. The key should
-be provided as a hexadecimal or Base64 string. Returns the MAC as a lowercase
-hexadecimal string.
-
-Commonly used for webhook signatures (GitHub, Stripe) and API authentication.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  var message = "hello world";
-  var key = "secret";
-  var mac = mac.hmacSha256(message, key);
-  mac == "734cc62f32841568f45715aeb9f4d7891324e6d948e4c6c60c0621cdac48623a";
-```
+These limits apply because this input may originate from the authorization subscription or from policy information points, which are not vetted to the same degree as the policies and variables shipped with the PDP configuration.
 
 
 ---
@@ -97,6 +82,29 @@ permit
   var receivedMac = "abc123";
   var computedMac = "abc123";
   mac.timingSafeEquals(receivedMac, computedMac);
+```
+
+
+---
+
+## hmacSha256
+
+```hmacSha256(TEXT message, TEXT key)```: Computes HMAC-SHA256 authentication code.
+
+Generates a keyed-hash message authentication code using SHA-256. The key should
+be provided as a hexadecimal or Base64 string. Returns the MAC as a lowercase
+hexadecimal string.
+
+Commonly used for webhook signatures (GitHub, Stripe) and API authentication.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  var message = "hello world";
+  var key = "secret";
+  var mac = mac.hmacSha256(message, key);
+  mac == "734cc62f32841568f45715aeb9f4d7891324e6d948e4c6c60c0621cdac48623a";
 ```
 
 

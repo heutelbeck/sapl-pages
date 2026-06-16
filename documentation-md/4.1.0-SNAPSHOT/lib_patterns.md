@@ -49,6 +49,27 @@ All regex functions include protection against Regular Expression Denial of Serv
 Patterns containing dangerous constructs like nested quantifiers `(a+)+`, excessive alternations,
 or nested wildcards are rejected before evaluation.
 
+## Limits
+
+To bound memory and computation on untrusted input, the following limits apply:
+
+- The pattern or template argument may be at most 1000 characters. This applies to glob patterns,
+  regular expressions, and templates.
+- The input value being matched, searched, replaced, or split may be at most 100000 characters.
+- Match-returning functions return at most 10000 matches. This caps `findMatches`, `findMatchesLimited`,
+  `findAllSubmatch`, and `findAllSubmatchLimited`, and it caps the number of segments produced by `split`.
+  A larger explicit limit is reduced to 10000.
+- Glob patterns may nest alternative groups at most 50 levels deep, and a single glob pattern may contain
+  at most 30 alternative groups.
+- Regular expressions may contain at most 100 top-level alternations. Patterns above this are rejected
+  as part of the denial-of-service protection.
+- The output of `replaceAll` may be at most 10000000 characters. Replacement stops with an error once the
+  accumulated result exceeds this length.
+
+These limits apply because this input may originate from the authorization subscription or from policy
+information points, which are not vetted to the same degree as the policies and variables shipped with the
+PDP configuration.
+
 
 ---
 
