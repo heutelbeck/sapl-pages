@@ -135,24 +135,6 @@ permit
 
 ---
 
-## hasDnsName
-
-```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
-
-Checks both the subject CN and all Subject Alternative Names for the specified DNS
-name. This is simpler than extracting SANs and checking manually, and handles
-wildcard certificates correctly.
-
-Example - Verify certificate is valid for accessed domain:
-```sapl
-policy "validate domain match"
-permit action == "connect";
-  x509.hasDnsName(request.serverCertificate, resource.domain);
-```
-
-
----
-
 ## extractCommonName
 
 ```extractCommonName(TEXT certPem)```: Extracts the Common Name from the subject.
@@ -283,6 +265,24 @@ policy "allow san-based routing"
 permit action == "route";
   var sans = x509.extractSubjectAltNames(request.clientCertificate);
   resource.hostname in sans[*].value;
+```
+
+
+---
+
+## hasDnsName
+
+```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
+
+Checks both the subject CN and all Subject Alternative Names for the specified DNS
+name. This is simpler than extracting SANs and checking manually, and handles
+wildcard certificates correctly.
+
+Example - Verify certificate is valid for accessed domain:
+```sapl
+policy "validate domain match"
+permit action == "connect";
+  x509.hasDnsName(request.serverCertificate, resource.domain);
 ```
 
 
