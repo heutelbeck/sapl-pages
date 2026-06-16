@@ -306,6 +306,22 @@ permit
 
 ---
 
+## areDisjoint
+
+```areDisjoint(LONG permissions1, LONG permissions2)```: Checks if two permission sets have no common bits.
+
+Returns true if no bits are set in both permission sets simultaneously.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  permissions.areDisjoint(subject.permissions, resource.forbiddenPermissions);
+```
+
+
+---
+
 ## unixOwner
 
 ```unixOwner(LONG mode)```: Extracts the owner permission bits from a Unix file mode.
@@ -319,22 +335,6 @@ policy "example"
 permit
   var mode = numeral.fromOctal("755");
   var ownerPerms = permissions.unixOwner(mode);  // Returns 7 (rwx)
-```
-
-
----
-
-## areDisjoint
-
-```areDisjoint(LONG permissions1, LONG permissions2)```: Checks if two permission sets have no common bits.
-
-Returns true if no bits are set in both permission sets simultaneously.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  permissions.areDisjoint(subject.permissions, resource.forbiddenPermissions);
 ```
 
 
