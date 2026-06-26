@@ -262,7 +262,7 @@ Returns: Boolean indicating benchmark range
 
 Tests if an address is in ranges reserved for future use or special purposes.
 IPv4: 240.0.0.0/4
-IPv6: ::/128, ::ffff:0:0/96, 100::/64, 2001::/23, 2001:db8::/32
+IPv6: ::/128, ::ffff:0:0/96, 100::/64, 2001::/23, 2001:db8::/32, fc00::/7
 
 Parameters:
 - ipAddress: IP address to test

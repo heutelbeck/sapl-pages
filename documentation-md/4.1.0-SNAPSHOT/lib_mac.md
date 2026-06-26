@@ -65,6 +65,28 @@ These limits apply because this input may originate from the authorization subsc
 
 ---
 
+## isValidHmac
+
+```isValidHmac(TEXT message, TEXT expectedMac, TEXT key, TEXT algorithm)```: Verifies an HMAC signature.
+
+Computes the HMAC of the message using the provided key and algorithm, then
+performs a timing-safe comparison with the expected MAC. Returns true if they match.
+
+Supported algorithms: "HmacSHA256", "HmacSHA384", "HmacSHA512"
+
+**Examples:**
+```sapl
+policy "verify webhook signature"
+permit
+  var payload = "webhook payload";
+  var signature = "expected_signature_from_header";
+  var secret = "webhook_secret";
+  mac.isValidHmac(payload, signature, secret, "HmacSHA256");
+```
+
+
+---
+
 ## timingSafeEquals
 
 ```timingSafeEquals(TEXT mac1, TEXT mac2)```: Compares two MACs using constant-time comparison.
@@ -147,28 +169,6 @@ permit
   var key = "secret";
   var mac = mac.hmacSha512(message, key);
   mac == "fef74d78b1e0d9180258835c7e855f0c9aa53d07d2a84088d62cef0218df0a3de20e69936a13b9ba0d36fb208aef0c6df6e00bf3a28f936f48faad8e6e8e2e39";
-```
-
-
----
-
-## isValidHmac
-
-```isValidHmac(TEXT message, TEXT expectedMac, TEXT key, TEXT algorithm)```: Verifies an HMAC signature.
-
-Computes the HMAC of the message using the provided key and algorithm, then
-performs a timing-safe comparison with the expected MAC. Returns true if they match.
-
-Supported algorithms: "HmacSHA256", "HmacSHA384", "HmacSHA512"
-
-**Examples:**
-```sapl
-policy "verify webhook signature"
-permit
-  var payload = "webhook payload";
-  var signature = "expected_signature_from_header";
-  var secret = "webhook_secret";
-  mac.isValidHmac(payload, signature, secret, "HmacSHA256");
 ```
 
 

@@ -60,6 +60,10 @@ this input may originate from the authorization subscription or from policy info
 points, which are not vetted to the same degree as the policies and variables shipped
 with the PDP configuration.
 
+KML and GML inputs are parsed with external entity and remote schema resolution disabled,
+so a document cannot make the PDP fetch an external entity or schema (no server-side
+request forgery); only the schemas bundled locally with the engine are used.
+
 For more details, refer to individual function documentation.
 
 

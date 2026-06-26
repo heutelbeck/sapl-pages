@@ -13,6 +13,10 @@ Permission and access control functions for checking and manipulating permission
 Functions for checking and manipulating permission bitmasks. Supports both
 custom permission schemes and POSIX/Unix file permissions.
 
+Permission values and masks are integers in the 64-bit range. A value with a
+fractional part or outside that range yields an error rather than being silently
+truncated, so an invalid permission input is never treated as a different value.
+
 ## Function Categories
 
 | Category        | Functions                                          |

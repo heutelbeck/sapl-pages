@@ -378,11 +378,11 @@ sapl check [-hV] [--json-report] [--text-report] [--trace] [--remote
 |--------|-------------|---------|
 | `--remote` | Connect to a remote PDP server instead of evaluating locally |  |
 | `--rsocket` | Use RSocket/protobuf transport instead of HTTP/JSON |  |
-| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8080, env: SAPL_URL) | `http://localhost:8080` |
+| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8080, env: SAPL_URL) |  |
 | `--host <rsocketHost>` | RSocket host (default: localhost) | `localhost` |
 | `--port <rsocketPort>` | RSocket port (default: 7000) | `7000` |
 | `--rsocket-tls` | Enable TLS for the RSocket transport (use with --rsocket) |  |
-| `--insecure` | Skip TLS certificate verification (development only) |  |
+| `--insecure` | Accept insecure transport (skip TLS certificate verification and allow credentials over plaintext). Development only |  |
 | `--basic-auth <basicAuth>` | HTTP Basic credentials as user:password (env: SAPL_BASIC_AUTH) |  |
 | `--token <token>` | Bearer token for API key or JWT (env: SAPL_BEARER_TOKEN) |  |
 
@@ -482,11 +482,11 @@ sapl decide [-hV] [--json-report] [--text-report] [--trace] [--remote
 |--------|-------------|---------|
 | `--remote` | Connect to a remote PDP server instead of evaluating locally |  |
 | `--rsocket` | Use RSocket/protobuf transport instead of HTTP/JSON |  |
-| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8080, env: SAPL_URL) | `http://localhost:8080` |
+| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8080, env: SAPL_URL) |  |
 | `--host <rsocketHost>` | RSocket host (default: localhost) | `localhost` |
 | `--port <rsocketPort>` | RSocket port (default: 7000) | `7000` |
 | `--rsocket-tls` | Enable TLS for the RSocket transport (use with --rsocket) |  |
-| `--insecure` | Skip TLS certificate verification (development only) |  |
+| `--insecure` | Accept insecure transport (skip TLS certificate verification and allow credentials over plaintext). Development only |  |
 | `--basic-auth <basicAuth>` | HTTP Basic credentials as user:password (env: SAPL_BASIC_AUTH) |  |
 | `--token <token>` | Bearer token for API key or JWT (env: SAPL_BEARER_TOKEN) |  |
 
@@ -578,11 +578,11 @@ sapl decide-once [-hV] [--json-report] [--text-report] [--trace]
 |--------|-------------|---------|
 | `--remote` | Connect to a remote PDP server instead of evaluating locally |  |
 | `--rsocket` | Use RSocket/protobuf transport instead of HTTP/JSON |  |
-| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8080, env: SAPL_URL) | `http://localhost:8080` |
+| `--url <url>` | Remote PDP URL for HTTP (default: http://localhost:8080, env: SAPL_URL) |  |
 | `--host <rsocketHost>` | RSocket host (default: localhost) | `localhost` |
 | `--port <rsocketPort>` | RSocket port (default: 7000) | `7000` |
 | `--rsocket-tls` | Enable TLS for the RSocket transport (use with --rsocket) |  |
-| `--insecure` | Skip TLS certificate verification (development only) |  |
+| `--insecure` | Accept insecure transport (skip TLS certificate verification and allow credentials over plaintext). Development only |  |
 | `--basic-auth <basicAuth>` | HTTP Basic credentials as user:password (env: SAPL_BASIC_AUTH) |  |
 | `--token <token>` | Bearer token for API key or JWT (env: SAPL_BEARER_TOKEN) |  |
 
@@ -669,7 +669,8 @@ Generate HTTP Basic Auth credentials with Argon2id-encoded password.
 
 Creates a random username and password, encodes the password
 with Argon2id, and prints the credentials along with an
-`application.yml` configuration snippet and a curl usage example.
+`application.yml` configuration snippet and ready-to-paste curl
+usage examples for the common shells (bash and PowerShell).
 
 Store the plaintext password securely. Only the Argon2id hash
 goes into server configuration.
@@ -704,7 +705,7 @@ sapl generate basic [-hV] [-i=<userId>] [-p=<pdpId>]
 sapl generate basic
 
 # Generate with custom ID and PDP routing
-sapl generate basic --id my-client --pdp-id production
+sapl generate basic --id service-a --pdp-id production
 ```
 
 See Also: [sapl generate apikey](#sapl-generate-apikey), [sapl server](#sapl-server)

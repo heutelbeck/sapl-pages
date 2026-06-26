@@ -315,9 +315,10 @@ The expression ```time.dayOfWeek("2021-11-08T13:00:00Z")``` returns ```"MONDAY"`
 
 ## weekOfYear
 
-```weekOfYear(TEXT utcDateTime)```: Returns the calendar week number (1-52) for the given date.
+```weekOfYear(TEXT utcDateTime)```: Returns the ISO 8601 / DIN 1355 calendar week number (1-53) for the given date.
 
-utcDateTime must be an ISO 8601 string at UTC.
+utcDateTime must be an ISO 8601 string at UTC. Weeks near a year boundary may belong to the
+adjacent year per ISO 8601 (e.g. 2021-01-01 is week 53 of 2020).
 
 **Example:**
 

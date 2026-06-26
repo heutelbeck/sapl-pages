@@ -299,6 +299,32 @@ permit
 
 ---
 
+## leadingZeros
+
+```bitwise.leadingZeros(LONG value)```
+
+Returns the number of zero bits preceding the highest-order (leftmost) one-bit in
+the two's complement binary representation. Returns 64 if the value is zero (all
+bits are leading zeros). Useful for determining the position of the most significant
+set bit.
+
+Parameters:
+- value: Value to analyze
+
+Returns: Number of leading zero bits
+
+Example:
+```sapl
+policy "example"
+permit
+    bitwise.leadingZeros(0) == 64;
+    bitwise.leadingZeros(1) == 63;
+    bitwise.leadingZeros(8) == 60;
+```
+
+
+---
+
 ## bitwiseAnd
 
 ```bitwise.bitwiseAnd(LONG left, LONG right)```
@@ -516,32 +542,6 @@ permit
     bitwise.isPowerOfTwo(1024);
     !bitwise.isPowerOfTwo(0);
     !bitwise.isPowerOfTwo(7);
-```
-
-
----
-
-## leadingZeros
-
-```bitwise.leadingZeros(LONG value)```
-
-Returns the number of zero bits preceding the highest-order (leftmost) one-bit in
-the two's complement binary representation. Returns 64 if the value is zero (all
-bits are leading zeros). Useful for determining the position of the most significant
-set bit.
-
-Parameters:
-- value: Value to analyze
-
-Returns: Number of leading zero bits
-
-Example:
-```sapl
-policy "example"
-permit
-    bitwise.leadingZeros(0) == 64;
-    bitwise.leadingZeros(1) == 63;
-    bitwise.leadingZeros(8) == 60;
 ```
 
 

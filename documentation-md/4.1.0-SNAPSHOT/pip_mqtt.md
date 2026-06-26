@@ -20,7 +20,9 @@ The `mqtt.messages` attribute accepts up to three parameters:
 | `topic.<mqtt.messages>` | Subscribe with QoS 0, using the default broker. |
 | `topic.<mqtt.messages(qos)>` | Subscribe with the given QoS level, using the default broker. |
 | `topic.<mqtt.messages(qos, "staging")>` | Subscribe with the given QoS, selecting the broker named `"staging"` from the `brokerConfig` array. |
-| `topic.<mqtt.messages(qos, { ... })>` | Subscribe with the given QoS, using the inline object as broker configuration. |
+
+A policy selects a broker only by name or uses the default. A policy may not
+supply an inline broker configuration object.
 
 The topic can be a single topic string or an array of topic strings.
 
@@ -92,9 +94,8 @@ When the policy specifies a broker name (e.g. `topic.<mqtt.messages(1, "staging"
 1. The `brokerConfig` array is searched for a broker whose `name` matches `"staging"`.
 2. If no match is found, an error is returned.
 
-When the policy provides an inline broker object
-(e.g. `topic.<mqtt.messages(1, { "brokerAddress": "...", ... })>`):
-1. The inline object is used directly as the broker configuration.
+A policy may only select a broker by name or use the default. Supplying an inline
+broker configuration object from a policy is rejected with an error value.
 
 ## Secrets Configuration
 
@@ -160,8 +161,6 @@ With this configuration:
   (default broker is `"production"`).
 * `"sensors/#".<mqtt.messages(1, "staging")>` connects to `mqtt-staging.example.com`
   as `staging-user`.
-* `"sensors/#".<mqtt.messages(1, { "brokerAddress": "other.host", "brokerPort": 1883, "clientId": "custom" })>`
-  connects to `other.host` with flat secrets fallback (or anonymous if no flat secrets).
 
 ## Message Format
 
@@ -231,15 +230,12 @@ permit
 
 ## messages
 
-Subscribes to MQTT topics with custom broker configuration.
+Subscribes to MQTT topics on an operator-configured broker selected by name.
 
-Reference a specific broker by name or provide an inline configuration. Supports
-multi-broker scenarios and per-subscription broker overrides.
-
-The `mqttPipConfig` parameter accepts:
-* A string referencing a broker configuration by name
-* A broker configuration object with properties: `brokerAddress`, `brokerPort`, `clientId`
-* An array of broker configuration objects for multi-broker subscriptions
+The `mqttPipConfig` parameter is the name of a broker from the operator-configured
+`brokerConfig`. A policy may only select a broker by name or use the default. A
+policy may not supply an inline broker configuration object; doing so yields an
+error value.
 
 Example referencing a broker by name:
 ```sapl
@@ -247,39 +243,6 @@ policy "staging_environment_monitoring"
 permit
   var topics = ["sensors/data", "actuators/status"];
   topics.<mqtt.messages(1, "staging")>.operational == true;
-```
-
-Example with inline broker configuration:
-```sapl
-policy "custom_broker_connection"
-permit
-  var brokerConfig = {
-      "brokerAddress": "mqtt.internal.example.com",
-      "brokerPort": 1883,
-      "clientId": "policy-specific-client"
-  };
-  "devices/status".<mqtt.messages(1, brokerConfig)>.online == true;
-```
-
-Example with multiple brokers:
-```sapl
-policy "distributed_mqtt_network"
-permit
-  var brokers = [
-      {
-          "name": "datacenter1",
-          "brokerAddress": "mqtt-dc1.example.com",
-          "brokerPort": 1883,
-          "clientId": "sapl-dc1"
-      },
-      {
-          "name": "datacenter2",
-          "brokerAddress": "mqtt-dc2.example.com",
-          "brokerPort": 1883,
-          "clientId": "sapl-dc2"
-      }
-  ];
-  "sensors/#".<mqtt.messages(2, brokers)>.status == "OK";
 ```
 
 

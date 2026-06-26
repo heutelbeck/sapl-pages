@@ -261,13 +261,13 @@ permit
            "B" : { "x" : 1, "y" : 2, "z" : 3 },
            "C" : { "x" : 1, "y" : 2, "z" : 3 }
         };
-  isCompliantWithExternalSchemas(valid, schema, externals) == true;
+  isCompliantWithExternalSchemas(valid, schema, [externals]) == true;
   var invalid = {
            "A" : { "x" : "I AM NOT A NUMBER I AM A FREE MAN", "y" : 2, "z" : 3 },
            "B" : { "x" : 1, "y" : 2, "z" : 3 },
            "C" : { "x" : 1, "y" : 2, "z" : 3 }
         };
-  isCompliantWithExternalSchemas(invalid, schema, externals) == false;
+  isCompliantWithExternalSchemas(invalid, schema, [externals]) == false;
 ```
 
 

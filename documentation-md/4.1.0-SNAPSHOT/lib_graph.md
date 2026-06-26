@@ -130,7 +130,9 @@ var perms = graph.transitiveClosureProjection(roleEntities, "children", "permiss
 ## reachable_paths
 
 ```graph.reachable_paths(OBJECT graph, STRING|ARRAY initial)```: Single-source shortest
-paths via BFS. O(V + E). Returns array of paths (each an array of node IDs).
+paths via BFS. O(V + E). Returns array of paths (each an array of node IDs). The total
+emitted path steps are capped at 1000000 and an error value is returned above that, since
+paths can grow to O(V^2) on a large or runtime-supplied graph.
 
 
 ---

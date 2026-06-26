@@ -154,6 +154,16 @@ permit action == "execute";
   !("ssn" in gql.fields);
 ```
 
+## Multiple operations
+
+A document may declare several named operations; the one executed is chosen at request time by the
+`operationName` parameter, which this analysis does not observe. The security metrics (`depth`, `fields`,
+`complexity`, `security.*`) therefore describe the worst case across every operation in the document: the
+maximum depth and pagination limit, the union of all field names, and the logical OR of the introspection
+and circular-fragment flags. The descriptive `operation`, `ast.operationName` and `ast.variables` fields
+reflect the first operation in source order. When a document may carry more than one operation, gate on the
+aggregate security metrics rather than on the descriptive operation fields.
+
 ## Error Handling
 
 Invalid queries set `valid` to false with errors in `errors` array. Check `valid` before using other metrics.

@@ -139,6 +139,21 @@ endpoints result in an error value.
 
 ## get
 
+```(TEXT resourceUrl).<get>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP GET request with default settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.get>.status == "HEALTHY";
+```
+
+
+---
+
+## get
+
 ```(TEXT resourceUrl).<get(OBJECT requestSettings)>``` is an attribute of the resource identified by
 the ```resourceUrl```.
 This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP GET
@@ -156,20 +171,11 @@ permit
 
 ## get
 
-```(TEXT resourceUrl).<get>``` is an attribute of the resource identified by the ```resourceUrl```.
-Performs an HTTP GET request with default settings.
-
-Example:
-```sapl
-policy "http example"
-permit
-  "https://example.com/resources/123".<http.get>.status == "HEALTHY";
-```
 
 
 ---
 
-## get
+## put
 
 
 
@@ -200,8 +206,10 @@ permit
 
 ---
 
-## put
+## delete
 
+```(TEXT resourceUrl).<delete>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP DELETE request with default settings.
 
 
 ---
@@ -225,14 +233,6 @@ permit
 
 ## delete
 
-
-
----
-
-## delete
-
-```(TEXT resourceUrl).<delete>``` is an attribute of the resource identified by the ```resourceUrl```.
-Performs an HTTP DELETE request with default settings.
 
 
 ---
@@ -270,12 +270,6 @@ Performs an HTTP PATCH request with default settings.
 
 ## post
 
-
-
----
-
-## post
-
 ```(TEXT resourceUrl).<post(OBJECT requestSettings)>``` is an attribute of the resource identified by
 the ```resourceUrl```.
 This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP POST
@@ -293,22 +287,14 @@ permit
 
 ## post
 
+
+
+---
+
+## post
+
 ```(TEXT resourceUrl).<post>``` is an attribute of the resource identified by the ```resourceUrl```.
 Performs an HTTP POST request with default settings.
-
-
----
-
-## websocket
-
-```(TEXT resourceUrl).<websocket>``` is an attribute of the resource identified by the ```resourceUrl```.
-Connects to a WebSocket with default settings.
-
-
----
-
-## websocket
-
 
 
 ---
@@ -327,6 +313,20 @@ permit
   var request = { "body": "message" };
   "https://example.com/status".<http.websocket(request)>.health == "GOOD";
 ```
+
+
+---
+
+## websocket
+
+```(TEXT resourceUrl).<websocket>``` is an attribute of the resource identified by the ```resourceUrl```.
+Connects to a WebSocket with default settings.
+
+
+---
+
+## websocket
+
 
 
 ---
