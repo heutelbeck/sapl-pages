@@ -185,25 +185,6 @@ permit action == "work";
 
 ## localTimeIsBetween
 
-```<time.localTimeIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
-arguments.
-```<time.localTimeIsBetween(startTime, endTime)>``` ```true```, if the current time in the clock's configured
-timezone is between the ```startTime``` and the ```endTime``` and ```false``` otherwise.
-If the time of the first parameter is after the time of the second parameter, the interval is considered to be the
-one between the two times, crossing the midnight border of the days.
-
-Example:
-```sapl
-policy "time example"
-permit action == "work";
-  <time.localTimeIsBetween(subject.shiftStarts, subject.shiftEnds)>;
-```
-
-
----
-
-## localTimeIsBetween
-
 ```<time.localTimeIsBetween(TEXT startTime, TEXT endTime, TEXT timezone)>``` is an environment attribute stream
 and takes no left-hand arguments.
 ```<time.localTimeIsBetween(startTime, endTime, timezone)>``` ```true```, if the current time in the given
@@ -216,6 +197,25 @@ Example:
 policy "time example"
 permit action == "work";
   <time.localTimeIsBetween(subject.shiftStarts, subject.shiftEnds, "Europe/Berlin")>;
+```
+
+
+---
+
+## localTimeIsBetween
+
+```<time.localTimeIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
+arguments.
+```<time.localTimeIsBetween(startTime, endTime)>``` ```true```, if the current time in the clock's configured
+timezone is between the ```startTime``` and the ```endTime``` and ```false``` otherwise.
+If the time of the first parameter is after the time of the second parameter, the interval is considered to be the
+one between the two times, crossing the midnight border of the days.
+
+Example:
+```sapl
+policy "time example"
+permit action == "work";
+  <time.localTimeIsBetween(subject.shiftStarts, subject.shiftEnds)>;
 ```
 
 
@@ -299,42 +299,6 @@ permit action == "work";
 
 ---
 
-## dayOfWeekBetween
-
-```<time.dayOfWeekBetween(TEXT startDay, TEXT endDay, TEXT timezone)>``` is an environment attribute stream and
-takes no left-hand arguments.
-```<time.dayOfWeekBetween(startDay, endDay, timezone)>``` emits ```true``` if the current day of the week in the
-given ```timezone``` is within the range from ```startDay``` to ```endDay``` (inclusive), and ```false```
-otherwise. The range wraps around: ```("FRIDAY", "MONDAY")``` means Friday through Monday.
-
-Example:
-```sapl
-policy "weekend access"
-permit action == "relax";
-  <time.dayOfWeekBetween("SATURDAY", "SUNDAY", "America/New_York")>;
-```
-
-
----
-
-## dayOfWeekBetween
-
-```<time.dayOfWeekBetween(TEXT startDay, TEXT endDay)>``` is an environment attribute stream and takes no left-hand
-arguments.
-```<time.dayOfWeekBetween(startDay, endDay)>``` emits ```true``` if the current day of the week (in the clock's
-configured timezone) is within the range from ```startDay``` to ```endDay``` (inclusive), and ```false```
-otherwise. The range wraps around: ```("FRIDAY", "MONDAY")``` means Friday through Monday.
-
-Example:
-```sapl
-policy "weekend access"
-permit action == "relax";
-  <time.dayOfWeekBetween("SATURDAY", "SUNDAY")>;
-```
-
-
----
-
 ## monthIn
 
 ```<time.monthIn(ARRAY months, TEXT timezone)>``` is an environment attribute stream and takes no left-hand arguments.
@@ -364,6 +328,42 @@ Example:
 policy "summer access"
 permit action == "vacation";
   <time.monthIn(["JUNE", "JULY", "AUGUST"])>;
+```
+
+
+---
+
+## dayOfWeekBetween
+
+```<time.dayOfWeekBetween(TEXT startDay, TEXT endDay)>``` is an environment attribute stream and takes no left-hand
+arguments.
+```<time.dayOfWeekBetween(startDay, endDay)>``` emits ```true``` if the current day of the week (in the clock's
+configured timezone) is within the range from ```startDay``` to ```endDay``` (inclusive), and ```false```
+otherwise. The range wraps around: ```("FRIDAY", "MONDAY")``` means Friday through Monday.
+
+Example:
+```sapl
+policy "weekend access"
+permit action == "relax";
+  <time.dayOfWeekBetween("SATURDAY", "SUNDAY")>;
+```
+
+
+---
+
+## dayOfWeekBetween
+
+```<time.dayOfWeekBetween(TEXT startDay, TEXT endDay, TEXT timezone)>``` is an environment attribute stream and
+takes no left-hand arguments.
+```<time.dayOfWeekBetween(startDay, endDay, timezone)>``` emits ```true``` if the current day of the week in the
+given ```timezone``` is within the range from ```startDay``` to ```endDay``` (inclusive), and ```false```
+otherwise. The range wraps around: ```("FRIDAY", "MONDAY")``` means Friday through Monday.
+
+Example:
+```sapl
+policy "weekend access"
+permit action == "relax";
+  <time.dayOfWeekBetween("SATURDAY", "SUNDAY", "America/New_York")>;
 ```
 
 

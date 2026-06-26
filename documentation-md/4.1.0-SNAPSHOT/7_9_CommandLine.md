@@ -452,7 +452,8 @@ Stream authorization decisions as NDJSON.
 Subscribes to the policy decision point and prints each decision as
 a JSON line to stdout (Newline Delimited JSON). When policies change,
 attributes update, or the subscription context evolves, a new
-decision line is emitted automatically.
+decision line is emitted automatically. Each decision is one compact
+line; `--pretty` indents them for reading but breaks the NDJSON format.
 
 Runs until interrupted (Ctrl+C) or the decision stream completes.
 
@@ -464,8 +465,8 @@ By default, policies are loaded from ~/.sapl/. Use
 **Synopsis**
 
 ```
-sapl decide [-hV] [--json-report] [--text-report] [--trace] [--remote
-                   [--rsocket] [--url=<url>] [--host=<rsocketHost>]
+sapl decide [-hV] [--json-report] [--pretty] [--text-report] [--trace]
+                   [--remote [--rsocket] [--url=<url>] [--host=<rsocketHost>]
                    [--port=<rsocketPort>] [--rsocket-tls] [--insecure]
                    [--basic-auth=<basicAuth> | --token=<token>]] [--dir=<dir> |
                    --bundle=<bundle>] [--public-key=<publicKey> | --no-verify]
@@ -517,6 +518,7 @@ sapl decide [-hV] [--json-report] [--text-report] [--trace] [--remote
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
+| `--pretty` | Indent each decision for readability. This breaks the NDJSON one-decision-per-line format. |  |
 | `-h, --help` | Show this help message and exit. |  |
 | `-V, --version` | Print version information and exit. |  |
 
@@ -549,7 +551,8 @@ Evaluate a single authorization decision and print the result as JSON.
 Evaluates the authorization subscription against policies once and
 prints the full decision to stdout as a JSON object containing the
 decision (PERMIT, DENY, SUSPEND, NOT_APPLICABLE, INDETERMINATE), any
-obligations, advice, and resource transformations.
+obligations, advice, and resource transformations. The JSON is compact
+by default; pass `--pretty` for an indented, human-readable form.
 
 By default, policies are loaded from ~/.sapl/. Use
 `--dir` for a different directory, `--bundle` for a bundle file, or
@@ -559,8 +562,8 @@ By default, policies are loaded from ~/.sapl/. Use
 **Synopsis**
 
 ```
-sapl decide-once [-hV] [--json-report] [--text-report] [--trace]
-                        [--remote [--rsocket] [--url=<url>]
+sapl decide-once [-hV] [--json-report] [--pretty] [--text-report]
+                        [--trace] [--remote [--rsocket] [--url=<url>]
                         [--host=<rsocketHost>] [--port=<rsocketPort>]
                         [--rsocket-tls] [--insecure] [--basic-auth=<basicAuth>
                         | --token=<token>]] [--dir=<dir> | --bundle=<bundle>]
@@ -613,6 +616,7 @@ sapl decide-once [-hV] [--json-report] [--text-report] [--trace]
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
+| `--pretty` | Indent the decision JSON for readability instead of compact single-line output. |  |
 | `-h, --help` | Show this help message and exit. |  |
 | `-V, --version` | Print version information and exit. |  |
 
