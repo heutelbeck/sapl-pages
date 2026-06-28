@@ -61,6 +61,8 @@ permit action == "create_subnet";
 To bound memory and computation on untrusted input, the following limits apply:
 
 - `expand` rejects a CIDR range that contains more than 65535 addresses, returning an error.
+- `containsMatches` rejects more than 1000000 pairwise comparisons or more than 65535 emitted match tuples.
+- `merge` rejects more than 1000 input addresses, returning an error.
 
 These limits apply because this input may originate from the authorization subscription or from policy information points, which are not vetted to the same degree as the policies and variables shipped with the PDP configuration.
 

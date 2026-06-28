@@ -174,6 +174,8 @@ To bound memory and computation on untrusted input, the following limits apply:
 
 - Reported query depth is capped at 100. The `depth` metric never exceeds this value regardless of how
   deeply the query or its operations nest, so depth comparisons in policies saturate at 100.
+- A query passed to `validateQuery` or `analyzeQuery` may be at most 512 KB (524288 bytes). A larger query
+  is rejected with an error before GraphQL parsing.
 - A schema passed to `validateQuery` or `parseSchema` may be at most 512 KB (524288 bytes). A larger schema
   is rejected with an error.
 

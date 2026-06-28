@@ -29,9 +29,11 @@ which do not materialize a closure.
 ## Limits
 
 The transitive closure functions are capped at 1000000 output entries and return an error
-value above that. This limit applies because the input may originate from the authorization
-subscription or from policy information points, which are not vetted to the same degree as
-the policies and variables shipped with the PDP configuration.
+value above that. `transitiveClosureProjection` additionally caps flattened projected
+attribute values at 1000000 across the whole returned object. These limits apply because
+the input may originate from the authorization subscription or from policy information points,
+which are not vetted to the same degree as the policies and variables shipped with the PDP
+configuration.
 
 
 ---

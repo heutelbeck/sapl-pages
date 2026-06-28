@@ -103,6 +103,7 @@ At the same time, it allows apostrophes in names (O'Brien, D'Angelo), SQL keywor
 (Portland OR Seattle), and contractions (What's your name?).
 
 Takes a TEXT value and returns it unchanged if clean, or an error if injection patterns are detected.
+Inputs longer than 1,048,576 characters return an error before Unicode normalization.
 
 These inputs pass through:
 ```
@@ -151,6 +152,7 @@ operators (OR, AND, NOT), and URL-encoded characters. Only safe for structured i
 contain SQL syntax.
 
 Takes a TEXT value and returns it unchanged if clean, or an error if any SQL syntax is found.
+Inputs longer than 1,048,576 characters return an error before Unicode normalization.
 
 These inputs pass through:
 ```

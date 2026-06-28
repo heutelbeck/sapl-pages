@@ -20,6 +20,7 @@ To bound memory and computation on untrusted input, the following limits apply:
 
 - The input is limited to 1 MB.
 - Parsing is bounded to a maximum nesting depth of 500 and a maximum number length of 1000 characters.
+- Serialization output is limited to 10000000 characters.
 
 DTD processing and external entity resolution are disabled, so XXE and entity-expansion payloads are rejected with an error.
 

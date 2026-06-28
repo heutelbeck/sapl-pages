@@ -476,6 +476,38 @@ permit
 
 ---
 
+## touches
+
+```touches(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
+Tests whether two geometries touch at their boundaries but do not overlap.
+
+**Inputs:**
+
+- `thisGeometry`: A geometry object in GeoJSON format.
+- `thatGeometry`: Another geometry object in GeoJSON format.
+
+**Output:**
+
+- Returns `true` if the geometries share at least one boundary point but no interior points.
+- Returns `false` otherwise.
+
+**Example:**
+
+```sapl
+policy "example"
+permit
+    var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
+    var polygon2 = { "type": "Polygon", "coordinates": [[[10,0], [10,10], [20,10], [20,0], [10,0]]] };
+    geo.touches(polygon1, polygon2) == true;
+```
+
+**Notes:**
+
+- Use this function to determine adjacency without overlap.
+
+
+---
+
 ## equalsExact
 
 ```equalsExact(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
@@ -505,38 +537,6 @@ permit
 
 - Only exact matches are considered equal; differences in precision or coordinate order will result in `false`.
 - Suitable for testing identical geometries in scenarios requiring strict equality.
-
-
----
-
-## touches
-
-```touches(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
-Tests whether two geometries touch at their boundaries but do not overlap.
-
-**Inputs:**
-
-- `thisGeometry`: A geometry object in GeoJSON format.
-- `thatGeometry`: Another geometry object in GeoJSON format.
-
-**Output:**
-
-- Returns `true` if the geometries share at least one boundary point but no interior points.
-- Returns `false` otherwise.
-
-**Example:**
-
-```sapl
-policy "example"
-permit
-    var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    var polygon2 = { "type": "Polygon", "coordinates": [[[10,0], [10,10], [20,10], [20,0], [10,0]]] };
-    geo.touches(polygon1, polygon2) == true;
-```
-
-**Notes:**
-
-- Use this function to determine adjacency without overlap.
 
 
 ---
@@ -1089,6 +1089,7 @@ permit
 **Output:**
 
 - Returns a geometry collection containing all geometries from the input array.
+- Returns an error if the array exceeds the geometry collection member limit.
 
 **Example:**
 
@@ -1245,6 +1246,7 @@ permit
 **Notes:**
 
 - Useful for converting WKT geometries into GeoJSON for processing.
+- The WKT input is bounded by size and nesting depth before parsing.
 
 
 ---

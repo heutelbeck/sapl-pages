@@ -25,8 +25,7 @@ Restrict a client to topics within their assigned namespace:
 ```sapl
 policy "client can only publish to own topics"
 permit
-    action == "publish"
-where
+    action == "publish";
     mqtt.isMatchingAllTopics("clients/" + subject.clientId + "/#", resource.topic);
 ```
 
@@ -35,10 +34,16 @@ Allow subscription if at least one requested topic is in an allowed set:
 ```sapl
 policy "subscriber has partial access"
 permit
-    action == "subscribe"
-where
+    action == "subscribe";
     mqtt.isMatchingAtLeastOneTopic("public/#", resource.topics);
 ```
+
+## Resource Limits
+
+Topic arrays are capped at 32 entries and 8192 total UTF-8 bytes before
+any topic is parsed. This mirrors the default MQTT PIP topic filter
+limits and keeps policy evaluation bounded when request-controlled
+arrays are supplied.
 
 
 ---
@@ -64,6 +69,8 @@ permit
   mqtt.isMatchingAllTopics(resource, "first/second/third");
 ```
 
+Topic arrays over 32 entries or 8192 total UTF-8 bytes return an error.
+
 
 ---
 
@@ -87,6 +94,8 @@ permit
   subject == "secondSubject";
   mqtt.isMatchingAtLeastOneTopic(resource, "first/second/third");
 ```
+
+Topic arrays over 32 entries or 8192 total UTF-8 bytes return an error.
 
 
 ---
