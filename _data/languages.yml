@@ -2,27 +2,34 @@ en:
   code: en
   name: English
   short: EN
+  flag: "🇬🇧"
 de:
   code: de
   name: Deutsch
   short: DE
+  flag: "🇩🇪"
 es:
   code: es
   name: Español
   short: ES
+  flag: "🇪🇸"
 fr:
   code: fr
   name: Francais
   short: FR
+  flag: "🇫🇷"
 it:
   code: it
   name: Italiano
   short: IT
+  flag: "🇮🇹"
 ja:
   code: ja
   name: 日本語
   short: 日本語
+  flag: "🇯🇵"
 zh:
   code: zh
   name: 中文
   short: 中文
+  flag: "🇨🇳"

@@ -202,26 +202,39 @@
         <a href="/support/">{{ t.nav.support }}</a>
         <a href="https://github.com/heutelbeck/sapl-policy-engine">{{ t.nav.github }}</a>
         <a href="https://discord.gg/pRXEVWm3xM">{{ t.nav.discord }}</a>
-        {% if translations.size > 1 %}
-        <div class="language-switcher" aria-label="{{ t.language_switcher.label }}">
-          {% for available_lang in site.languages %}
-            {% assign matching_translation_pages = translations | where: "lang", available_lang %}
-            {% assign matching_translation = matching_translation_pages | first %}
-            {% assign language = site.data.languages[available_lang] %}
-            {% if matching_translation and language %}
-              {% if available_lang == lang %}
-          <span class="language-switcher-current" aria-current="page">{{ language.short }}</span>
-              {% else %}
-          <a href="{{ matching_translation.url }}" lang="{{ available_lang }}" hreflang="{{ available_lang }}" data-language-option="{{ available_lang }}">{{ language.short }}</a>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        </div>
-        {% endif %}
         <button class="theme-toggle" aria-label="{{ t.theme.toggle }}" title="{{ t.theme.toggle }}">
           <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
+        {% if translations.size > 1 %}
+        {% assign current_language = site.data.languages[lang] %}
+        <div class="language-switcher">
+          <button class="language-switcher-trigger" type="button" aria-label="{{ t.language_switcher.label }}" aria-haspopup="true" aria-expanded="false" title="{{ current_language.name }}">
+            <span class="language-flag" aria-hidden="true">{{ current_language.flag }}</span>
+            <span class="language-switcher-code">{{ current_language.short }}</span>
+          </button>
+          <div class="language-switcher-menu" role="menu" aria-label="{{ t.language_switcher.label }}">
+            {% for available_lang in site.languages %}
+              {% assign matching_translation_pages = translations | where: "lang", available_lang %}
+              {% assign matching_translation = matching_translation_pages | first %}
+              {% assign language = site.data.languages[available_lang] %}
+              {% if matching_translation and language %}
+                {% if available_lang == lang %}
+            <span class="language-switcher-option language-switcher-current" role="menuitem" aria-current="page">
+              <span class="language-flag" aria-hidden="true">{{ language.flag }}</span>
+              <span>{{ language.name }}</span>
+            </span>
+                {% else %}
+            <a class="language-switcher-option" href="{{ matching_translation.url }}" lang="{{ available_lang }}" hreflang="{{ available_lang }}" data-language-option="{{ available_lang }}" role="menuitem">
+              <span class="language-flag" aria-hidden="true">{{ language.flag }}</span>
+              <span>{{ language.name }}</span>
+            </a>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
       </div>
     </nav>
   </header>
@@ -250,6 +263,29 @@
       document.querySelectorAll('[data-language-option]').forEach(function(link) {
         link.addEventListener('click', function() {
           localStorage.setItem('sapl-lang', link.getAttribute('data-language-option'));
+        });
+      });
+
+      document.querySelectorAll('.language-switcher').forEach(function(switcher) {
+        var trigger = switcher.querySelector('.language-switcher-trigger');
+        if (!trigger) return;
+
+        function setOpen(open) {
+          switcher.classList.toggle('is-open', open);
+          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        trigger.addEventListener('click', function(event) {
+          event.stopPropagation();
+          setOpen(!switcher.classList.contains('is-open'));
+        });
+
+        document.addEventListener('click', function(event) {
+          if (!switcher.contains(event.target)) setOpen(false);
+        });
+
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'Escape') setOpen(false);
         });
       });
 
