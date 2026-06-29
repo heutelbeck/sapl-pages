@@ -117,12 +117,17 @@
         <img src="/assets/sapl-icon.svg" alt="SAPL" class="logo-dark" width="805" height="805">
         <span class="logo-text">SAPL<span class="logo-subtitle">Streaming Attribute Policy Language</span></span>
       </a>
-      <div class="nav-links">
+      <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav-links">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <div class="nav-links" id="site-nav-links">
         <a href="/">{{ t.nav.home }}</a>
         <a href="/docs/latest/1_2_GettingStarted/">{{ t.nav.get_started }}</a>
         <a href="/docs/latest/">{{ t.nav.docs }}</a>
         <div class="nav-dropdown">
-          <a href="/guides/" class="nav-dropdown-trigger">{{ t.nav.guides }}</a>
+          <a href="/guides/" class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">{{ t.nav.guides }}</a>
           <div class="nav-dropdown-menu">
             <div class="nav-dropdown-menu-inner">
               <div class="nav-dropdown-scroll">
@@ -211,7 +216,6 @@
         <div class="language-switcher">
           <button class="language-switcher-trigger" type="button" aria-label="{{ t.language_switcher.label }}" aria-haspopup="true" aria-expanded="false" title="{{ current_language.name }}">
             <span class="language-flag" aria-hidden="true">{{ current_language.flag }}</span>
-            <span class="language-switcher-code">{{ current_language.short }}</span>
           </button>
           <div class="language-switcher-menu" role="menu" aria-label="{{ t.language_switcher.label }}">
             {% for available_lang in site.languages %}
@@ -273,6 +277,10 @@
         function setOpen(open) {
           switcher.classList.toggle('is-open', open);
           trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open && window.matchMedia('(max-width: 1120px)').matches) {
+            var menu = switcher.querySelector('.language-switcher-menu');
+            if (menu) menu.scrollIntoView({ block: 'nearest' });
+          }
         }
 
         trigger.addEventListener('click', function(event) {
@@ -311,6 +319,61 @@
       }
     })();
     {% endif %}
+
+    (function() {
+      var nav = document.querySelector('.nav-container');
+      var trigger = document.querySelector('.nav-toggle');
+      if (!nav || !trigger) return;
+
+      function setOpen(open) {
+        nav.classList.toggle('nav-open', open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (!open) {
+          nav.querySelectorAll('.nav-dropdown.is-open').forEach(function(dropdown) {
+            var dropdownTrigger = dropdown.querySelector('.nav-dropdown-trigger');
+            dropdown.classList.remove('is-open');
+            if (dropdownTrigger) dropdownTrigger.setAttribute('aria-expanded', 'false');
+          });
+          nav.querySelectorAll('.language-switcher.is-open').forEach(function(switcher) {
+            var languageTrigger = switcher.querySelector('.language-switcher-trigger');
+            switcher.classList.remove('is-open');
+            if (languageTrigger) languageTrigger.setAttribute('aria-expanded', 'false');
+          });
+        }
+      }
+
+      trigger.addEventListener('click', function(event) {
+        event.stopPropagation();
+        setOpen(!nav.classList.contains('nav-open'));
+      });
+
+      document.addEventListener('click', function(event) {
+        if (!nav.contains(event.target)) setOpen(false);
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') setOpen(false);
+      });
+
+      var mobileNavigation = window.matchMedia('(max-width: 1120px)');
+      nav.querySelectorAll('.nav-dropdown').forEach(function(dropdown) {
+        var dropdownTrigger = dropdown.querySelector('.nav-dropdown-trigger');
+        if (!dropdownTrigger) return;
+
+        dropdownTrigger.addEventListener('click', function(event) {
+          if (!mobileNavigation.matches) return;
+          event.preventDefault();
+          event.stopPropagation();
+          var open = !dropdown.classList.contains('is-open');
+          dropdown.classList.toggle('is-open', open);
+          dropdownTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      });
+
+      mobileNavigation.addEventListener('change', function(event) {
+        if (!event.matches) setOpen(false);
+      });
+    })();
 
     // Email obfuscation — XOR-encoded, assembled at click time only
     (function() {
