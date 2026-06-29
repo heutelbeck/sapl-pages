@@ -1,0 +1,24 @@
+en:
+  code: en
+  name: English
+  short: EN
+de:
+  code: de
+  name: Deutsch
+  short: DE
+fr:
+  code: fr
+  name: Francais
+  short: FR
+it:
+  code: it
+  name: Italiano
+  short: IT
+ja:
+  code: ja
+  name: 日本語
+  short: 日本語
+zh:
+  code: zh
+  name: 中文
+  short: 中文

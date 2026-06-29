@@ -1,5 +1,7 @@
 ---
 layout: sapl
+lang: en
+ref: spring-guide
 title: "Spring Security with SAPL: SAPL Guides"
 description: "Secure a Spring Boot application with attribute-based access control using SAPL. Method-level authorization, age-based policies, content transformation, obligations, and policy sets."
 ---

@@ -166,6 +166,44 @@ html[data-theme="dark"] .logo img.logo-light { display: none; }
 
 .nav-links a:hover { color: var(--color-primary); }
 
+.language-switcher {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.language-switcher a,
+.language-switcher-current {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 1.85rem;
+  padding: 0 0.35rem;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.language-switcher a:hover {
+  color: var(--color-primary);
+}
+
+.language-switcher-current {
+  color: var(--color-bg-card);
+  background: var(--color-primary);
+}
+
+.language-switcher a + a,
+.language-switcher a + .language-switcher-current,
+.language-switcher-current + a {
+  border-left: 1px solid var(--color-border);
+}
+
 /* Nav dropdown */
 .nav-dropdown {
   position: relative;
@@ -379,6 +417,8 @@ main .highlight .gu { color: #5c6670; }
 
 /* Rouge syntax highlighting — dark mode */
 [data-theme="dark"] main pre { border-color: var(--color-code-border); }
+[data-theme="dark"] main .highlight, [data-theme="dark"] main pre.highlight { background: var(--color-code-bg); color: var(--color-code-text); }
+[data-theme="dark"] main .highlight pre { background: var(--color-code-bg); color: var(--color-code-text); }
 [data-theme="dark"] main .highlight .hll { background: #313340; }
 [data-theme="dark"] main .highlight .c, [data-theme="dark"] main .highlight .cm, [data-theme="dark"] main .highlight .cp, [data-theme="dark"] main .highlight .c1, [data-theme="dark"] main .highlight .cs { color: #63677e; }
 [data-theme="dark"] main .highlight .k, [data-theme="dark"] main .highlight .kc, [data-theme="dark"] main .highlight .kd, [data-theme="dark"] main .highlight .kn, [data-theme="dark"] main .highlight .kp, [data-theme="dark"] main .highlight .kr, [data-theme="dark"] main .highlight .kt { color: #c792ea; }

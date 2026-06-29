@@ -1,0 +1,52 @@
+nav:
+  home: Start
+  get_started: Einstieg
+  docs: Doku
+  guides: Guides
+  media: Medien
+  playground: Playground
+  support: Support
+  github: GitHub
+  discord: Discord
+  view_all_guides: Alle Guides anzeigen
+  performance: Performance
+  engine_comparison: Engine Vergleich
+  engine_comparison_desc: SAPL vs Cedar, OPA, OpenFGA, Cerbos
+  benchmarks: Benchmarks
+  benchmarks_desc: Durchsatz, Latenz und Skalierung auf 10.000 Policies
+  ai_security: KI Sicherheit
+  rag_pipeline: RAG Pipeline
+  rag_pipeline_desc: Dokumentbasierte Zugriffskontrolle fuer Retrieval Augmented Generation
+  ai_tool_authorization: KI Tool Autorisierung
+  ai_tool_authorization_desc: Autorisierung einzelner Tools fuer Spring AI Anwendungen
+  human_in_the_loop: Human in the Loop
+  human_in_the_loop_desc: Policy gesteuerte Freigabeprozesse fuer sensible Aktionen
+  mcp_server_authorization: MCP Server Autorisierung
+  mcp_server_authorization_desc: Tools, Ressourcen und Prompts in MCP Servern autorisieren
+  spring_security: Spring Security
+  spring_boot_abac: Spring Boot ABAC
+  spring_boot_abac_desc: Methodenschutz mit @PreEnforce und @PostEnforce
+  streaming_authorization: Streaming Autorisierung
+  streaming_decisions: Streaming Entscheidungen
+  streaming_decisions_desc: Echtzeit Autorisierung mit PIPs, dynamischen Obligations und Enforcement Modi
+  policy_testing: Policy Testing
+  sapltest_dsl: SAPLTest DSL
+  sapltest_dsl_desc: Entscheidungsbasierte Tests, Coverage Reports und CI/CD Quality Gates
+  policy_operations: Policy Betrieb
+  ship_policies_like_code: Policies wie Code ausliefern
+  ship_policies_like_code_desc: Git, CI, Signaturen, Remote Bundles, Prometheus und strukturierte Logs
+  data_level_security: Sicherheit auf Datenebene
+  data_level_security_desc: Argumenttransformation, Content Filtering und Datenbank Query Rewriting
+  multi_framework: Multi Framework
+  spring_python_node_dotnet: Spring, Python, Node.js, .NET
+  spring_python_node_dotnet_desc: Gleiche Policies, gleiche Testsuite, 7 Frameworks
+footer:
+  imprint: Impressum
+  privacy: Datenschutz
+language_switcher:
+  label: Sprache
+theme:
+  toggle: Dark Mode umschalten
+llms:
+  context: LLM Kontext
+  full_context: Vollstaendiger LLM Kontext

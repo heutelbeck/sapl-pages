@@ -1,13 +1,42 @@
+{% assign lang = page.lang | default: site.default_lang | default: "en" %}
+{% assign t = site.data.i18n[lang] | default: site.data.i18n[site.default_lang] | default: site.data.i18n.en %}
+{% assign translations = "" | split: "" %}
+{% if page.ref %}
+  {% assign translations = site.pages | where: "ref", page.ref | sort: "lang" %}
+{% endif %}
+{% assign spring_guide_url = "/guides/spring/" %}
+{% assign localized_spring_guide_pages = site.pages | where: "ref", "spring-guide" | where: "lang", lang %}
+{% assign localized_spring_guide = localized_spring_guide_pages | first %}
+{% if localized_spring_guide %}
+  {% assign spring_guide_url = localized_spring_guide.url %}
+{% endif %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="msvalidate.01" content="4E6F53D2455AF1415A60F4830B85F639" />
   <title>{{ page.title }}{% unless page.title contains 'SAPL' %} - SAPL{% endunless %}</title>
+  {% if page.robots %}
+  <meta name="robots" content="{{ page.robots }}">
+  {% elsif page.noindex %}
+  <meta name="robots" content="noindex,nofollow">
+  {% endif %}
   {% seo %}
-  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM context">
-  <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM full context">
+  {% if translations.size > 1 %}
+    {% for translation in translations %}
+      {% if translation.lang %}
+  <link rel="alternate" hreflang="{{ translation.lang }}" href="{{ site.url }}{{ translation.url }}">
+      {% endif %}
+    {% endfor %}
+    {% assign default_translation_pages = translations | where: "lang", site.default_lang %}
+    {% assign default_translation = default_translation_pages | first %}
+    {% if default_translation %}
+  <link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ default_translation.url }}">
+    {% endif %}
+  {% endif %}
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="{{ t.llms.context }}">
+  <link rel="alternate" type="text/plain" href="/llms-full.txt" title="{{ t.llms.full_context }}">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -89,91 +118,107 @@
         <span class="logo-text">SAPL<span class="logo-subtitle">Streaming Attribute Policy Language</span></span>
       </a>
       <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/docs/latest/1_2_GettingStarted/">Get Started</a>
-        <a href="/docs/latest/">Docs</a>
+        <a href="/">{{ t.nav.home }}</a>
+        <a href="/docs/latest/1_2_GettingStarted/">{{ t.nav.get_started }}</a>
+        <a href="/docs/latest/">{{ t.nav.docs }}</a>
         <div class="nav-dropdown">
-          <a href="/guides/" class="nav-dropdown-trigger">Guides</a>
+          <a href="/guides/" class="nav-dropdown-trigger">{{ t.nav.guides }}</a>
           <div class="nav-dropdown-menu">
             <div class="nav-dropdown-menu-inner">
               <div class="nav-dropdown-scroll">
 
-              <div class="nav-dropdown-group-label">Performance</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.performance }}</div>
               <a href="/guides/comparison/" class="nav-dropdown-item">
-                <strong>Engine Comparison</strong>
-                <span>SAPL vs Cedar, OPA, OpenFGA, Cerbos</span>
+                <strong>{{ t.nav.engine_comparison }}</strong>
+                <span>{{ t.nav.engine_comparison_desc }}</span>
               </a>
               <a href="/guides/performance/" class="nav-dropdown-item">
-                <strong>Benchmarks</strong>
-                <span>Throughput, latency, and scaling to 10,000 policies</span>
+                <strong>{{ t.nav.benchmarks }}</strong>
+                <span>{{ t.nav.benchmarks_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">AI Security</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.ai_security }}</div>
               <a href="/guides/ai-rag/" class="nav-dropdown-item">
-                <strong>RAG Pipeline</strong>
-                <span>Document-level access control for retrieval-augmented generation</span>
+                <strong>{{ t.nav.rag_pipeline }}</strong>
+                <span>{{ t.nav.rag_pipeline_desc }}</span>
               </a>
               <a href="/guides/ai-tools/" class="nav-dropdown-item">
-                <strong>AI Tool Authorization</strong>
-                <span>Per-tool authorization for Spring AI applications</span>
+                <strong>{{ t.nav.ai_tool_authorization }}</strong>
+                <span>{{ t.nav.ai_tool_authorization_desc }}</span>
               </a>
               <a href="/guides/ai-hitl/" class="nav-dropdown-item">
-                <strong>Human-in-the-Loop</strong>
-                <span>Policy-driven approval workflows for sensitive operations</span>
+                <strong>{{ t.nav.human_in_the_loop }}</strong>
+                <span>{{ t.nav.human_in_the_loop_desc }}</span>
               </a>
               <a href="/guides/ai-mcp/" class="nav-dropdown-item">
-                <strong>MCP Server Authorization</strong>
-                <span>Authorize tools, resources, and prompts in MCP servers</span>
+                <strong>{{ t.nav.mcp_server_authorization }}</strong>
+                <span>{{ t.nav.mcp_server_authorization_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">Spring Security</div>
-              <a href="/guides/spring/" class="nav-dropdown-item">
-                <strong>Spring Boot ABAC</strong>
-                <span>Method-level enforcement with @PreEnforce and @PostEnforce</span>
+              <div class="nav-dropdown-group-label">{{ t.nav.spring_security }}</div>
+              <a href="{{ spring_guide_url }}" class="nav-dropdown-item">
+                <strong>{{ t.nav.spring_boot_abac }}</strong>
+                <span>{{ t.nav.spring_boot_abac_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">Streaming Authorization</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.streaming_authorization }}</div>
               <a href="/guides/streaming/" class="nav-dropdown-item">
-                <strong>Streaming Decisions</strong>
-                <span>Real-time authorization with PIPs, dynamic obligations, enforcement modes</span>
+                <strong>{{ t.nav.streaming_decisions }}</strong>
+                <span>{{ t.nav.streaming_decisions_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">Policy Testing</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.policy_testing }}</div>
               <a href="/guides/testing/" class="nav-dropdown-item">
-                <strong>SAPLTest DSL</strong>
-                <span>Decision-based testing, coverage reports, CI/CD quality gates</span>
+                <strong>{{ t.nav.sapltest_dsl }}</strong>
+                <span>{{ t.nav.sapltest_dsl_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">Policy Operations</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.policy_operations }}</div>
               <a href="/guides/policy-ops/" class="nav-dropdown-item">
-                <strong>Ship Policies Like Code</strong>
-                <span>Git, CI, signing, remote bundles, Prometheus, structured logging</span>
+                <strong>{{ t.nav.ship_policies_like_code }}</strong>
+                <span>{{ t.nav.ship_policies_like_code_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">Data-Level Security</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.data_level_security }}</div>
               <a href="/guides/data-security/" class="nav-dropdown-item">
-                <strong>Data-Level Security</strong>
-                <span>Argument transformation, content filtering, database query rewriting</span>
+                <strong>{{ t.nav.data_level_security }}</strong>
+                <span>{{ t.nav.data_level_security_desc }}</span>
               </a>
 
-              <div class="nav-dropdown-group-label">Multi-Framework</div>
+              <div class="nav-dropdown-group-label">{{ t.nav.multi_framework }}</div>
               <a href="/guides/multi-framework/" class="nav-dropdown-item">
-                <strong>Spring, Python, Node.js, .NET</strong>
-                <span>Same policies, same test suite, 7 frameworks</span>
+                <strong>{{ t.nav.spring_python_node_dotnet }}</strong>
+                <span>{{ t.nav.spring_python_node_dotnet_desc }}</span>
               </a>
 
-              <a href="/guides/" class="nav-dropdown-footer">View all guides</a>
+              <a href="/guides/" class="nav-dropdown-footer">{{ t.nav.view_all_guides }}</a>
 
               </div>
             </div>
           </div>
         </div>
-        <a href="/media/">Media</a>
-        <a href="https://playground.sapl.io/">Playground</a>
-        <a href="/support/">Support</a>
-        <a href="https://github.com/heutelbeck/sapl-policy-engine">GitHub</a>
-        <a href="https://discord.gg/pRXEVWm3xM">Discord</a>
-        <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <a href="/media/">{{ t.nav.media }}</a>
+        <a href="https://playground.sapl.io/">{{ t.nav.playground }}</a>
+        <a href="/support/">{{ t.nav.support }}</a>
+        <a href="https://github.com/heutelbeck/sapl-policy-engine">{{ t.nav.github }}</a>
+        <a href="https://discord.gg/pRXEVWm3xM">{{ t.nav.discord }}</a>
+        {% if translations.size > 1 %}
+        <div class="language-switcher" aria-label="{{ t.language_switcher.label }}">
+          {% for available_lang in site.languages %}
+            {% assign matching_translation_pages = translations | where: "lang", available_lang %}
+            {% assign matching_translation = matching_translation_pages | first %}
+            {% assign language = site.data.languages[available_lang] %}
+            {% if matching_translation and language %}
+              {% if available_lang == lang %}
+          <span class="language-switcher-current" aria-current="page">{{ language.short }}</span>
+              {% else %}
+          <a href="{{ matching_translation.url }}" lang="{{ available_lang }}" hreflang="{{ available_lang }}" data-language-option="{{ available_lang }}">{{ language.short }}</a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+        <button class="theme-toggle" aria-label="{{ t.theme.toggle }}" title="{{ t.theme.toggle }}">
           <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
@@ -187,10 +232,50 @@
 
   <footer class="site-footer">
     <div class="footer-container">
-      <p><a href="/imprint">Imprint</a> &middot; <a href="/privacy">Privacy Policy</a></p>
+      <p><a href="/imprint">{{ t.footer.imprint }}</a> &middot; <a href="/privacy">{{ t.footer.privacy }}</a></p>
     </div>
   </footer>
   <script>
+    {% if translations.size > 1 %}
+    (function() {
+      var currentLang = '{{ lang }}';
+      var defaultLang = '{{ site.default_lang | default: "en" }}';
+      var translations = {};
+      {% for translation in translations %}
+        {% if translation.lang %}
+      translations['{{ translation.lang }}'] = '{{ translation.url }}';
+        {% endif %}
+      {% endfor %}
+
+      document.querySelectorAll('[data-language-option]').forEach(function(link) {
+        link.addEventListener('click', function() {
+          localStorage.setItem('sapl-lang', link.getAttribute('data-language-option'));
+        });
+      });
+
+      function preferredBrowserLang() {
+        var languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || navigator.userLanguage || ''];
+        for (var i = 0; i < languages.length; i++) {
+          var code = String(languages[i]).toLowerCase().split('-')[0];
+          if (translations[code]) return code;
+        }
+        return null;
+      }
+
+      var targetLang = localStorage.getItem('sapl-lang');
+      if (!targetLang && currentLang === defaultLang) {
+        targetLang = preferredBrowserLang();
+      }
+      if (targetLang && translations[targetLang] && targetLang !== currentLang) {
+        var redirectKey = 'sapl-lang-redirect:' + window.location.pathname;
+        if (!sessionStorage.getItem(redirectKey)) {
+          sessionStorage.setItem(redirectKey, '1');
+          window.location.replace(translations[targetLang]);
+        }
+      }
+    })();
+    {% endif %}
+
     // Email obfuscation — XOR-encoded, assembled at click time only
     (function() {
       var k = 0x5A;
