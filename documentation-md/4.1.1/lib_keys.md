@@ -156,59 +156,6 @@ These limits apply because this input may originate from the authorization subsc
 
 ---
 
-## publicKeyFromPem
-
-```publicKeyFromPem(TEXT keyPem)```: Parses a PEM-encoded public key.
-
-Accepts RSA, EC (Elliptic Curve), and EdDSA public keys in PEM format.
-Returns a structured object with key type, algorithm, and format information.
-
-**Examples:**
-```sapl
-policy "parse key"
-permit
-  var key = keys.publicKeyFromPem(publicKeyPem);
-  key.algorithm == "RSA";
-  key.format == "X.509";
-```
-
-
----
-
-## publicKeyFromCertificate
-
-```publicKeyFromCertificate(TEXT certPem)```: Extracts the public key from an X.509 certificate.
-
-Parses the certificate and returns the embedded public key in PEM format.
-The returned key can be used with signature verification functions.
-
-**Examples:**
-```sapl
-policy "extract key from cert"
-permit
-  var publicKey = keys.publicKeyFromCertificate(clientCert);
-  signature.verifyRsaSha256(message, sig, publicKey);
-```
-
-
----
-
-## algorithmFromKey
-
-```algorithmFromKey(TEXT keyPem)```: Extracts the algorithm name from a public key.
-
-Returns the key algorithm as a string: "RSA", "EC", or "EdDSA".
-
-**Examples:**
-```sapl
-policy "check key type"
-permit
-  keys.algorithmFromKey(publicKey) == "RSA";
-```
-
-
----
-
 ## sizeFromKey
 
 ```sizeFromKey(TEXT keyPem)```: Extracts the key size in bits.
@@ -289,6 +236,59 @@ permit action == "api.access";
   var publicKey = keys.publicKeyFromJwk(resource.jwks.keys[0]);
   var publicKey = keys.publicKeyFromJwk(jwk);
   jwt.verify(request.token, publicKey);
+```
+
+
+---
+
+## publicKeyFromPem
+
+```publicKeyFromPem(TEXT keyPem)```: Parses a PEM-encoded public key.
+
+Accepts RSA, EC (Elliptic Curve), and EdDSA public keys in PEM format.
+Returns a structured object with key type, algorithm, and format information.
+
+**Examples:**
+```sapl
+policy "parse key"
+permit
+  var key = keys.publicKeyFromPem(publicKeyPem);
+  key.algorithm == "RSA";
+  key.format == "X.509";
+```
+
+
+---
+
+## publicKeyFromCertificate
+
+```publicKeyFromCertificate(TEXT certPem)```: Extracts the public key from an X.509 certificate.
+
+Parses the certificate and returns the embedded public key in PEM format.
+The returned key can be used with signature verification functions.
+
+**Examples:**
+```sapl
+policy "extract key from cert"
+permit
+  var publicKey = keys.publicKeyFromCertificate(clientCert);
+  signature.verifyRsaSha256(message, sig, publicKey);
+```
+
+
+---
+
+## algorithmFromKey
+
+```algorithmFromKey(TEXT keyPem)```: Extracts the algorithm name from a public key.
+
+Returns the key algorithm as a string: "RSA", "EC", or "EdDSA".
+
+**Examples:**
+```sapl
+policy "check key type"
+permit
+  keys.algorithmFromKey(publicKey) == "RSA";
 ```
 
 
