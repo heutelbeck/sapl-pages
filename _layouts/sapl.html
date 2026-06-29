@@ -110,21 +110,21 @@
   <!-- End Matomo Code -->
 </head>
 <body>
-  <header class="site-header">
-    <nav class="nav-container">
-      <a href="/" class="logo">
-        <img src="/assets/sapl-icon-light.svg" alt="SAPL" class="logo-light" width="805" height="805">
-        <img src="/assets/sapl-icon.svg" alt="SAPL" class="logo-dark" width="805" height="805">
-        <span class="logo-text">SAPL<span class="logo-subtitle">Streaming Attribute Policy Language</span></span>
-      </a>
-      <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav-links">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </button>
-      <div class="nav-links" id="site-nav-links">
-        <a href="/">{{ t.nav.home }}</a>
-        <a href="/docs/latest/1_2_GettingStarted/">{{ t.nav.get_started }}</a>
+	  <header class="site-header">
+	    <nav class="nav-container">
+	      <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav-links">
+	        <span aria-hidden="true"></span>
+	        <span aria-hidden="true"></span>
+	        <span aria-hidden="true"></span>
+	      </button>
+	      <a href="/" class="logo">
+	        <img src="/assets/sapl-icon-light.svg" alt="SAPL" class="logo-light" width="805" height="805">
+	        <img src="/assets/sapl-icon.svg" alt="SAPL" class="logo-dark" width="805" height="805">
+	        <span class="logo-text">SAPL<span class="logo-subtitle">Streaming Attribute Policy Language</span></span>
+	      </a>
+	      <div class="nav-links" id="site-nav-links">
+	        <a href="/">{{ t.nav.home }}</a>
+	        <a href="/docs/latest/1_2_GettingStarted/">{{ t.nav.get_started }}</a>
         <a href="/docs/latest/">{{ t.nav.docs }}</a>
         <div class="nav-dropdown">
           <a href="/guides/" class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">{{ t.nav.guides }}</a>
@@ -204,12 +204,14 @@
         </div>
         <a href="/media/">{{ t.nav.media }}</a>
         <a href="https://playground.sapl.io/">{{ t.nav.playground }}</a>
-        <a href="/support/">{{ t.nav.support }}</a>
-        <a href="https://github.com/heutelbeck/sapl-policy-engine">{{ t.nav.github }}</a>
-        <a href="https://discord.gg/pRXEVWm3xM">{{ t.nav.discord }}</a>
-        <button class="theme-toggle" aria-label="{{ t.theme.toggle }}" title="{{ t.theme.toggle }}">
-          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+	        <a href="/support/">{{ t.nav.support }}</a>
+	        <a href="https://github.com/heutelbeck/sapl-policy-engine">{{ t.nav.github }}</a>
+	        <a href="https://discord.gg/pRXEVWm3xM">{{ t.nav.discord }}</a>
+	      </div>
+	      <div class="nav-utilities">
+	        <button class="theme-toggle" aria-label="{{ t.theme.toggle }}" title="{{ t.theme.toggle }}">
+	          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+	          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
         {% if translations.size > 1 %}
         {% assign current_language = site.data.languages[lang] %}
@@ -237,10 +239,10 @@
               {% endif %}
             {% endfor %}
           </div>
-        </div>
-        {% endif %}
-      </div>
-    </nav>
+	        </div>
+	        {% endif %}
+	      </div>
+	    </nav>
   </header>
 
   <main>
@@ -274,14 +276,10 @@
         var trigger = switcher.querySelector('.language-switcher-trigger');
         if (!trigger) return;
 
-        function setOpen(open) {
-          switcher.classList.toggle('is-open', open);
-          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-          if (open && window.matchMedia('(max-width: 1120px)').matches) {
-            var menu = switcher.querySelector('.language-switcher-menu');
-            if (menu) menu.scrollIntoView({ block: 'nearest' });
-          }
-        }
+	        function setOpen(open) {
+	          switcher.classList.toggle('is-open', open);
+	          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+	        }
 
         trigger.addEventListener('click', function(event) {
           event.stopPropagation();
