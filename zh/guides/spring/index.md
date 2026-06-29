@@ -45,7 +45,7 @@ SAPL 提供了 Bill of Materials 模块。使用它之后，不需要为每个 S
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>4.1.0</version>
+                <version>4.1.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -64,7 +64,7 @@ SAPL 提供了 Bill of Materials 模块。使用它之后，不需要为每个 S
 
 已发布的 SAPL 版本可从 Maven Central 获取。对于尚未发布的构建，可以添加 Central Portal snapshots repository，并使用匹配的 `x.y.z-SNAPSHOT` 版本。
 
-本示例使用 Spring Boot 4.1.0 和 SAPL 4.1.0。两个版本号相同只是当前的巧合。Spring Boot 和 SAPL 的版本并不绑定。
+本示例使用 Spring Boot 4.1.0 和 SAPL 4.1.1。Spring Boot 和 SAPL 的版本并不绑定。
 
 为了使用 Argon2 Password Encoder，还需要添加 Bouncy Castle:
 

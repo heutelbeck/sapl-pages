@@ -45,7 +45,7 @@ SAPL fournit un module Bill of Materials. Il permet de ne pas declarer separemen
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>4.1.0</version>
+                <version>4.1.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -64,7 +64,7 @@ Ajoutez ensuite le starter Spring Boot de SAPL:
 
 Les versions publiees de SAPL sont disponibles sur Maven Central. Pour les builds non publies, vous pouvez ajouter le repository Central Portal snapshots et utiliser la version `x.y.z-SNAPSHOT` correspondante.
 
-Cet exemple utilise Spring Boot 4.1.0 et SAPL 4.1.0. Le fait que les numeros de version correspondent est accidentel. Les versions de Spring Boot et de SAPL ne sont pas couplees.
+Cet exemple utilise Spring Boot 4.1.0 et SAPL 4.1.1. Les versions de Spring Boot et de SAPL ne sont pas couplees.
 
 Pour utiliser l Argon2 Password Encoder, ajoutez aussi Bouncy Castle:
 
