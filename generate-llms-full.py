@@ -26,12 +26,18 @@ STRIP_PATTERN = re.compile(
 FRONTMATTER_PATTERN = re.compile(r"\A---\s*\n.*?\n---\s*\n", re.DOTALL)
 
 
+SNAPSHOT_SUFFIX = "-SNAPSHOT"
+
+
+def is_snapshot_version(name):
+    return name.endswith(SNAPSHOT_SUFFIX)
+
+
 def semver_key(name):
-    """Sort key for semver directories. Release > SNAPSHOT of same version."""
-    base = name.replace("-SNAPSHOT", "")
+    """Sort key for semver directory names."""
+    base = name.removesuffix(SNAPSHOT_SUFFIX)
     parts = [int(p) for p in base.split(".") if p.isdigit()]
-    is_release = "-SNAPSHOT" not in name
-    return (parts, is_release)
+    return parts
 
 
 def find_latest_docs():
@@ -40,7 +46,11 @@ def find_latest_docs():
     if not versions:
         print("No documentation versions found", file=sys.stderr)
         sys.exit(1)
-    latest = max(versions, key=semver_key)
+    release_versions = [d for d in versions if not is_snapshot_version(d)]
+    if not release_versions:
+        print("No release documentation versions found", file=sys.stderr)
+        sys.exit(1)
+    latest = max(release_versions, key=semver_key)
     print(f"Using documentation version: {latest}")
     return os.path.join(docs_dir, latest)
 

@@ -1,6 +1,6 @@
 ---
 layout: sapl
-title: "Spring Security with SAPL - SAPL Guides"
+title: "Spring Security with SAPL: SAPL Guides"
 description: "Secure a Spring Boot application with attribute-based access control using SAPL. Method-level authorization, age-based policies, content transformation, obligations, and policy sets."
 ---
 
@@ -24,7 +24,7 @@ First, you will implement a simple Spring Boot application. Go to [Spring Initia
 
 We will use Maven as our build tool and Java as our language for this tutorial.
 
-Select Java 21 (or higher) and Spring Boot 4.0.6 (or higher) in the Initializr.
+Select Java 21 and Spring Boot 4.1.0 or newer in the Initializr.
 
  Your Initializr settings should now look something like this:
 
@@ -60,6 +60,10 @@ To develop an application using SAPL, you need two components. First, you need a
         <artifactId>sapl-spring-boot-starter</artifactId>
     </dependency>
 ```
+
+Released SAPL versions are available from Maven Central. For unreleased builds, add the Central Portal snapshots repository and use the matching `x.y.z-SNAPSHOT` version.
+
+The current example uses Spring Boot 4.1.0 and SAPL 4.1.0, but the matching version numbers are incidental. Spring Boot and SAPL versions are not coupled.
 
 To use the Argon2 Password Encoder, add the following dependency:
 
@@ -209,9 +213,9 @@ public class LibraryUserDetailsService implements UserDetailsService {
 }
 ```
 
-### Create a Configurations class
+### Create a Configuration class
 
-Create a `SecurityConfiguration` class with the Lombok annotations `@Configuration` and `@EnableWebSecurity`. This class provides methods that are automatically processed in the context of Spring Security.
+Create a `SecurityConfiguration` class with the Spring annotations `@Configuration` and `@EnableWebSecurity`. This class provides methods that are automatically processed in the context of Spring Security.
 
 ```java
 @Configuration
@@ -334,7 +338,7 @@ public class SecurityConfiguration {
 
 ### Adding the first PEP
 
-The SAPL Spring Boot integration uses annotations to add PEPs to methods and classes. The scope of this tutorial covers the two variants `@PreEnforce` and `@PostEnforce`. Depending on which annotation is selected, the PEP is placed before or after the method execution. As a first example, add the `@PreEnforce` annotation to the `findById`method of the `BookRepository` interface:
+The SAPL Spring Boot integration uses annotations to add PEPs to methods and classes. The scope of this tutorial covers the two variants `@PreEnforce` and `@PostEnforce`. Depending on which annotation is selected, the PEP is placed before or after the method execution. As a first example, add the `@PreEnforce` annotation to the `findById` method of the `BookRepository` interface:
 
 ```java
 public interface BookRepository {
@@ -443,7 +447,7 @@ Note: Spring Security 7 automatically adds a `FACTOR_PASSWORD` authority to the 
 
 As you can see, without any specific configuration, the subscription is a massive object with significant redundancies. This is because the SAPL Engine and Spring integration do not have any domain knowledge regarding the application. Thus, the PEP gathers any information it can find that could reasonably describe the three required objects (subject, action, resource) for an authorization subscription.
 
-By default, the PEP attempts to marshal the `Authentication` object from Spring's `SecurityContext` directly into a JSON object for the `subject`. This is a reasonable approach in most cases, and as you can see, `subject.principal.birthday` contains the data you previously defined for the custom `LibraryUser`class and is made available to the PDP.
+By default, the PEP attempts to marshal the `Authentication` object from Spring's `SecurityContext` directly into a JSON object for the `subject`. This is a reasonable approach in most cases, and as you can see, `subject.principal.birthday` contains the data you previously defined for the custom `LibraryUser` class and is made available to the PDP.
 
 The `action` and `resource` objects are almost identical. Consider where one can find information from the application context to describe these objects. Without any domain knowledge, the PEP can only gather technical information.
 
@@ -480,13 +484,13 @@ The stored policy documents must adhere to some rules:
 
 A SAPL policy document contains the following minimum elements:
 
-* The *keyword* `policy`, declaring that the document contains a policy (as opposed to a policy set; You will learn about policy sets later)
+* The *keyword* `policy`, declaring that the document contains a policy. You will learn about policy sets later.
 * A unique policy *name* so that the PDP can distinguish them
 * The *entitlement*, which is the decision result the PDP should return if the policy is successfully evaluated, i.e., `permit` or `deny`
 
 Other optional elements will be explained later.
 
-### First SAPL Policies - Permit All or Deny All
+### First SAPL Policies: Permit All or Deny All
 
 The most basic policies are the policies to either permit or deny all actions without further inspection of any attributes.
 
@@ -549,7 +553,7 @@ The application denies access. The log shows both policies matched, but the `PRI
 [...] :   deny all -> DENY
 ```
 
-This is the secure-by-default behavior: when both permit and deny are present, deny wins. The SAPL engine implements several combining algorithms to resolve conflicting decisions (see [SAPL Documentation - Combining Algorithms](https://sapl.io/docs/latest/2_5_CombiningAlgorithms/)).
+This is the secure-by-default behavior: when both permit and deny are present, deny wins. The SAPL engine implements several combining algorithms to resolve conflicting decisions (see [SAPL Documentation: Combining Algorithms](https://sapl.io/docs/latest/2_5_CombiningAlgorithms/)).
 
 The three fields in the `pdp.json` algorithm configuration control orthogonal concerns: `votingMode` determines priority between permit and deny, `defaultDecision` is the fallback when no policy matches, and `errorHandling` controls whether evaluation errors propagate or are silently absorbed.
 
@@ -721,13 +725,13 @@ The policy then defines a local attribute variable named `birthday` and assigns 
 
 The next line assigns the current date to the variable `today`. In SAPL, angled brackets `<ATTRIBUTE_IDENTIFIER>` always denotes an attribute stream, a subscription to an external attribute source, using a Policy Information Point (PIP). In this case, the identifier `time.now` is used to access the current time in UTC from the system clock.
 
-In this guide, we do not need the streaming nature of the time, and we are only interested in the first event in the attribute stream. Prepending the pipe symbol to the angled brackets `|<>` only takes the head element, i.e., the first event in the attribute stream, and then unsubscribes from the PIP. The time libraries in SAPL use ISO 8601 strings to represent time. The function `time.dateOF` is then used to extract the date component of the timestamp retrieved from the PIP.
+In this guide, we do not need the streaming nature of the time, and we are only interested in the first event in the attribute stream. Prepending the pipe symbol to the angled brackets `|<>` only takes the head element, i.e., the first event in the attribute stream, and then unsubscribes from the PIP. The time libraries in SAPL use ISO 8601 strings to represent time. The function `time.dateOf` is then used to extract the date component of the timestamp retrieved from the PIP.
 
 The policy calculates the subject's age in years using the `time.timeBetween` function and the defined variables. The `ageRating` of the book is stored in the matching variable.
 
 Note that the engine evaluates variable assignment rules from top to bottom. And each rule has access to variables defined above it. Also, these assignment rules always evaluate to `true` unless an error occurs during evaluation.
 
-Finally, the `age` is compared with the `ageRating` and the policy returns `true`if the subject's age is above the book's age rating.
+Finally, the `age` is compared with the `ageRating` and the policy returns `true` if the subject's age is above the book's age rating.
 
 For example, if you log in as Zoe and access the first book, the logs will show:
 
@@ -895,7 +899,7 @@ Access will be denied, and the logs look as follows:
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
 [...] : Obligations: [{"type"="logAccess", "message"="Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]
-[...] : Resource: {"id"=2, "name"="The Rescue Mission: (Pokemon: Kalos Reader #1)", "ageRating"=4, "content"="Got████████████████████"}
+[...] : Resource: {"id"=2, "name"="The Rescue Mission: (Pokemon: Kalos Reader #1)", "ageRating"=4, "content"="Got█████████████████"}
 [...] : Documents:
 [...] :   check age transform -> PERMIT
 [...] :   check age -> NOT_APPLICABLE
@@ -990,8 +994,8 @@ obligation
                 "type" : "<=",
                 "value" : timeBetween(subject.birthday, dateOf(|<time.now>), "years")
             }
-      ]
-}
+        ]
+    }
 ```
 
 We use the `ContentFilterPredicateProvider` class that is already provided in the SAPL engine. This class can be used to filter a JSON object and extract nodes that match the specified conditions.
@@ -1070,7 +1074,7 @@ Now log in as Bob, and you will see the following list of books:
 
 A SAPL policy set allows a group of policies to be viewed separately and evaluated using a selected combining algorithm. The result is passed to the PDP and evaluated with the remaining policies (sets). The same algorithms are available as for final conflict resolution, including the `first or abstain errors propagate` algorithm.
 
-**Note**: In contrast to the `pdp.json` file, the algorithms in policy sets must be written in lowercase and with `-`.
+**Note**: In contrast to the `pdp.json` file, the algorithms in policy sets must be written in lowercase natural language form.
 
 A SAPL policy set consists of the following elements:
 

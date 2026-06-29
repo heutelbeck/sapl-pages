@@ -184,10 +184,14 @@ jobs:
           cat ./_site/sitemap-index.xml
       - name: Create symlink
         run: |
-          latest_doc=$(ls -1d ./_site/docs/*/ | sort | tail -n 1)
-          echo $latest_doc
-          ln -s $(basename $latest_doc) ./_site/docs/latest
-          ls -hal docs/
+          latest_release=$(find ./_site/docs -mindepth 1 -maxdepth 1 -type d ! -name "*-SNAPSHOT" -printf "%f\n" | sort -V | tail -n 1)
+          if [ -z "$latest_release" ]; then
+            echo "No release documentation folders found"
+            exit 1
+          fi
+          echo "$latest_release"
+          ln -s "$latest_release" ./_site/docs/latest
+          ls -hal ./_site/docs/
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v4
