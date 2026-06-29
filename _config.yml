@@ -24,15 +24,6 @@ description: >- # this means to ignore newlines until "baseurl:"
   SAPL is a policy language and authorization engine for Attribute-Based Access Control (ABAC).
   It provides development tooling for testing and policy authoring, standalone authorization servers,
   and framework integrations for Spring, NestJS, Axon, and Vaadin that offer flexible policy enforcement points in your application.
-default_lang: en
-languages:
-  - en
-  - de
-  - es
-  - fr
-  - it
-  - ja
-  - zh
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://sapl.io"
 #twitter_username: jekyllrb

@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cwebp -version)",
+      "Bash(convert --version)",
+      "Bash(magick --version)",
+      "Bash(find /home/dominic/git/sapl-pages/assets -type f \\\\\\(-name *.png -o -name *.jpg -o -name *.jpeg \\\\\\))",
+      "Bash(find /home/dominic/git/sapl-pages/guides -type f \\\\\\(-name *.png -o -name *.jpg -o -name *.jpeg \\\\\\) ! -path */referenceTemplate/*)",
+      "Bash(magick identify:*)",
+      "Bash(magick /home/dominic/git/sapl-pages/assets/favicon.png -resize 48x48 /home/dominic/git/sapl-pages/assets/favicon.png)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:codemirror.net)",
+      "Bash(cp /tmp/cm-minimal-entry.js /home/dominic/git/sapl-policy-engine/sapl-playground/src/main/resources/META-INF/resources/embed/cm-minimal-entry.js)",
+      "Bash(rm src/main/resources/META-INF/resources/embed/cm-minimal-entry.js)",
+      "WebFetch(domain:sapl.io)",
+      "Read(//tmp/**)",
+      "Bash(jar tf:*)",
+      "Bash(jar xf:*)",
+      "Bash(pandoc --version)",
+      "Bash(xargs basename *)"
+    ]
+  }
+}

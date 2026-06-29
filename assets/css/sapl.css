@@ -215,86 +215,6 @@ html[data-theme="dark"] .logo img.logo-light { display: none; }
   flex: 0 0 auto;
 }
 
-.language-switcher {
-  position: relative;
-  display: inline-flex;
-  flex: 0 0 auto;
-}
-
-.language-switcher-trigger {
-  width: 2.15rem;
-  min-width: 2.15rem;
-  min-height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  padding: 0 0.45rem;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
-}
-
-.language-switcher-trigger:hover,
-.language-switcher-trigger:focus-visible,
-.language-switcher.is-open .language-switcher-trigger {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-  background: var(--color-surface);
-}
-
-.language-flag {
-  font-size: 1.05rem;
-  line-height: 1;
-}
-
-.language-switcher-menu {
-  display: none;
-  position: absolute;
-  top: calc(100% + 0.45rem);
-  right: 0;
-  min-width: 10.5rem;
-  padding: 0.35rem;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-bg-card);
-  box-shadow: var(--shadow-lg);
-  z-index: 120;
-}
-
-.language-switcher.is-open .language-switcher-menu {
-  display: block;
-}
-
-.language-switcher-option {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.45rem 0.55rem;
-  border-radius: 5px;
-  color: var(--color-text-secondary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1.2;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.language-switcher-option:hover {
-  color: var(--color-primary);
-  background: var(--color-surface);
-}
-
-.language-switcher-current {
-  color: var(--color-text);
-  background: var(--color-surface);
-}
-
 /* Nav dropdown */
 .nav-dropdown {
   position: relative;
@@ -1600,10 +1520,6 @@ p + p { margin-top: 1rem; }
 
   .nav-dropdown-item {
     flex: 1 1 auto;
-  }
-
-  .language-switcher-option {
-    white-space: normal;
   }
 }
 
