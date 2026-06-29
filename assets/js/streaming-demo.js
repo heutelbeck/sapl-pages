@@ -72,7 +72,7 @@
     } else if (type === 'sd-suspend') {
       el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_SUSPENDED","message":"Critical threat - access denied"}';
     } else if (type === 'sd-restore') {
-      el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_RESTORED","message":"Threat level changed - access restored"}';
+      el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_GRANTED","message":"Threat level changed - access granted"}';
     }
     log.insertBefore(el, log.firstChild);
     while (log.children.length > 50) log.removeChild(log.lastChild);

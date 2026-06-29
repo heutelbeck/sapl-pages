@@ -24,7 +24,7 @@ First, you will implement a simple Spring Boot application. Go to [Spring Initia
 
 We will use Maven as our build tool and Java as our language for this tutorial.
 
-Select Java 21 (or higher) and Spring Boot 4.0.3 (or higher) in the Initializr.
+Select Java 21 (or higher) and Spring Boot 4.0.6 (or higher) in the Initializr.
 
  Your Initializr settings should now look something like this:
 
@@ -44,7 +44,7 @@ SAPL provides a bill of materials module to help you to use compatible versions 
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>4.0.0</version>
+                <version>4.1.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -67,7 +67,7 @@ To use the Argon2 Password Encoder, add the following dependency:
     <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcpkix-jdk18on</artifactId>
-        <version>1.83</version>
+        <version>1.84</version>
     </dependency>
 ```
 
@@ -124,7 +124,7 @@ Now, define a matching repository interface. For now, only include a `findAll`, 
 
 ```java
 public interface BookRepository {
-    Iterable<Book> findAll();
+    List<Book> findAll();
     Optional<Book> findById(Long id);
     Book save(Book entity);
 }
@@ -134,9 +134,11 @@ Also, define a matching repository bean to have Spring Data automatically instan
 
 ```java
 @Repository
-// Attention: here order of interface matters for detecting SAPL annotations. 
-public interface JpaBookRepository extends BookRepository, CrudRepository<Book, Long>  { }
+// Attention: here order of interface matters for detecting SAPL annotations.
+public interface JpaBookRepository extends BookRepository, ListCrudRepository<Book, Long>  { }
 ```
+
+We use `ListCrudRepository` (not `CrudRepository`) so that `findAll()` returns a `List<Book>` rather than `Iterable<Book>`. The constraint handler we will write later for filtering collections needs a recognisable container type to operate on.
 
 ### Expose the Books using a REST Controller
 
@@ -150,7 +152,7 @@ public class BookController {
     private final BookRepository repository;
 
     @GetMapping("/api/books")
-    Iterable<Book> findAll() {
+    List<Book> findAll() {
         return repository.findAll();
     }
 
@@ -319,7 +321,7 @@ So far, this tutorial has not used any features of SAPL, and you just created a 
 
 ### <a name="Method-Security"></a> Setting Up Method Security
 
-SAPL extends the Spring Security framework's method security features. To activate SAPL's method security for single decisions, add the `@EnableSaplMethodSecurity` Lombok annotation to your `SecurityConfiguration` class.
+SAPL extends the Spring Security framework's method security features. To activate SAPL's method security for single decisions, add the `@EnableSaplMethodSecurity` annotation to your `SecurityConfiguration` class.
 
 ```java
 @Configuration
@@ -336,7 +338,7 @@ The SAPL Spring Boot integration uses annotations to add PEPs to methods and cla
 
 ```java
 public interface BookRepository {
-    Iterable<Book> findAll();
+    List<Book> findAll();
 
     @PreEnforce
     Optional<Book> findById(Long id);
@@ -352,9 +354,9 @@ Add `io.sapl.pdp.embedded.print-text-report=true` to your `application.propertie
 The text report output looks like this:
 
 ```text
-[...] : --- PDP Decision ---
-[...] : Timestamp      : 2026-03-18T20:43:19.327+01:00
-[...] : Subscription Id: 46d7ff56-...
+[...] : === PDP Decision ===
+[...] : Timestamp      : 2026-05-18T12:37:50.445117683+02:00
+[...] : Subscription Id: 75372bed-5eb6-5560-0d86-bcaf2f6f2ed1
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
@@ -362,7 +364,7 @@ The text report output looks like this:
 [...] :   policy-name -> PERMIT
 ```
 
-For each decision, you see which documents were evaluated and their individual outcomes. For policy sets, sub-policy results are listed under the set name. If PIPs are involved, their attribute values appear in the trace. Obligations and advice are listed when present in the decision.
+For each decision, you see which documents were evaluated and their individual outcomes. For policy sets, sub-policy results are listed under the set name. If a policy resolved attributes from Policy Information Points during evaluation, those values appear under an `Attributes:` block per document. Obligations and advice are listed when present in the decision.
 
 For additional debug output, e.g., which policy documents are loaded at startup, you can use `logging.level.io.sapl=DEBUG` in your `application.properties`.
 
@@ -371,9 +373,9 @@ Restart the application, log in, and navigate to <http://localhost:8080/api/book
 Inspect the console, and you will find out what happened behind the scenes. The logs should contain statements similar to the following:
 
 ```text
-[...] : --- PDP Decision ---
-[...] : Timestamp      : 2026-03-18T20:43:19.327+01:00
-[...] : Subscription Id: 46d7ff56-11c5-f628-6d6a-952bb1425558
+[...] : === PDP Decision ===
+[...] : Timestamp      : 2026-05-18T12:36:42.66151139+02:00
+[...] : Subscription Id: ebd3533d-853e-3b48-de3e-0f2af18cc21a
 [...] : Subscription   : { ... large JSON object ... }
 [...] : Decision       : DENY
 [...] : PDP ID         : default
@@ -388,15 +390,19 @@ The subscription is not very readable in the log. Let us apply some formatting t
     "subject": {
         "authenticated": true,
         "authorities": [
-            { "authority": "FACTOR_PASSWORD", "issuedAt": "..." }
+            { "authority": "FACTOR_PASSWORD", "issuedAt": "2026-05-18T10:36:34.779859396Z" }
         ],
+        "details": {
+            "remoteAddress": "0:0:0:0:0:0:0:1",
+            "sessionId": "BF0DB11C0B258C8E83E01D8367A2D323"
+        },
         "name": "zoe",
         "principal": {
             "username": "zoe",
-            "birthday": "2009-02-26",
-            "authorities": [],
+            "birthday": "2009-04-28",
             "accountNonExpired": true,
             "accountNonLocked": true,
+            "authorities": [],
             "credentialsNonExpired": true,
             "enabled": true
         }
@@ -404,12 +410,19 @@ The subscription is not very readable in the log. Let us apply some formatting t
     "action": {
         "http": {
             "method": "GET",
-            "requestedURI": "/api/books/1",
-            "requestURL": "http://localhost:8080/api/books/1",
-            "serverName": "localhost",
-            "serverPort": 8080,
-            "headers": { ... },
-            "cookies": [ ... ]
+            "url": "http://localhost:8080/api/books/1",
+            "scheme": "http",
+            "host": "localhost",
+            "port": 8080,
+            "path": "/api/books/1",
+            "contextPath": "",
+            "applicationPath": "/api/books/1",
+            "isSecure": false,
+            "client": { "address": "0:0:0:0:0:0:0:1", "host": "0:0:0:0:0:0:0:1", "port": 54408 },
+            "server": { "address": "0:0:0:0:0:0:0:1", "host": "localhost", "port": 8080 },
+            "headers": { "host": ["localhost:8080"], "user-agent": ["curl/8.18.0"], "accept": ["*/*"], "cookie": ["JSESSIONID=..."] },
+            "cookies": [ { "name": "JSESSIONID", "value": "..." } ],
+            "characterEncoding": "UTF-8"
         },
         "java": {
             "name": "findById",
@@ -504,7 +517,7 @@ Now you should get the data for book 1:
 And your log should look like this:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
@@ -527,7 +540,7 @@ Restart the application, authenticate with any user and access <http://localhost
 The application denies access. The log shows both policies matched, but the `PRIORITY_DENY` combining algorithm gives precedence to the `deny` decision:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : DENY
 [...] : PDP ID         : default
@@ -554,7 +567,7 @@ First, add a `@PreEnforce` PEP to the `findAll` method of the `BookRepository`:
 public interface BookRepository {
 
     @PreEnforce
-    Iterable<Book> findAll();
+    List<Book> findAll();
 
     @PreEnforce
     Optional<Book> findById(Long id);
@@ -577,7 +590,7 @@ Now rebuild with `mvn clean compile` (clean is needed to remove any previously c
 Now access an individual book directly at <http://localhost:8080/api/books/1>. Access will be granted, and the log looks like this:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
@@ -590,7 +603,7 @@ Now go to <http://localhost:8080/logout> and log out. Then log in as Zoe and try
 The application denies access:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : DENY
 [...] : PDP ID         : default
@@ -628,12 +641,12 @@ Consider the age rating of the book. This information is not known to the PEP be
 
 ```java
 public interface BookRepository {
-    
-    @PreEnforce
-    Iterable<Book> findAll();
 
-    @PostEnforce(subject  = "authentication.getPrincipal()", 
-                 action   = "'read book'", 
+    @PreEnforce
+    List<Book> findAll();
+
+    @PostEnforce(subject  = "authentication.getPrincipal()",
+                 action   = "'read book'",
                  resource = "returnObject")
     Optional<Book> findById(Long id);
 
@@ -664,7 +677,7 @@ The resulting authorization subscription will look similar to this:
 {
     "subject": {
         "username": "zoe",
-        "birthday": "2009-02-26",
+        "birthday": "2009-04-28",
         "password": null,
         "accountNonExpired": true,
         "accountNonLocked": true,
@@ -678,8 +691,7 @@ The resulting authorization subscription will look similar to this:
         "name": "Clifford: It's Pool Time!",
         "ageRating": 0,
         "content": "*Woof*"
-    },
-    "environment": null
+    }
 }
 ```
 
@@ -720,23 +732,29 @@ Finally, the `age` is compared with the `ageRating` and the policy returns `true
 For example, if you log in as Zoe and access the first book, the logs will show:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
 [...] : Documents:
 [...] :   check age -> PERMIT
+[...] :     Attributes:
+[...] :       <time.now> = "2026-05-18T10:39:42.599004238Z" @ 2026-05-18T12:39:42.601684543+02:00
 ```
+
+Below each policy that resolved an external attribute, the report lists the attribute value the PDP saw during evaluation. This is part of the `print-text-report` output and is independent of `print-trace`.
 
 However, if Alice attempts to access book four, access will be denied because the age condition evaluates to `false` and the policy becomes not applicable:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : DENY
 [...] : PDP ID         : default
 [...] : Documents:
 [...] :   check age -> NOT_APPLICABLE
+[...] :     Attributes:
+[...] :       <time.now> = "2026-05-18T10:39:43.777712367Z" @ 2026-05-18T12:39:43.778336567+02:00
 ```
 
 The policy can be written more compactly using an `import` statement:
@@ -823,13 +841,18 @@ But of course, because Alice is only three years old, the content of the age-ina
 The logs for this access attempt look like this:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
+[...] : Resource: {"id"=4, "name"="The Three-Body Problem", "ageRating"=14, "content"="Spa████████████"}
 [...] : Documents:
-[...] :   check age -> NOT_APPLICABLE
 [...] :   check age transform -> PERMIT
+[...] :     Attributes:
+[...] :       <time.now> = "2026-05-18T10:40:26.725343696Z" @ 2026-05-18T12:40:26.72610141+02:00
+[...] :   check age -> NOT_APPLICABLE
+[...] :     Attributes:
+[...] :       <time.now> = "2026-05-18T10:40:26.725343696Z" @ 2026-05-18T12:40:26.72610141+02:00
 ```
 
 Both policies match the subscription. The `check age` policy evaluates to `NOT_APPLICABLE` because Alice is not old enough to read "The Three-Body Problem". The `check age transform` policy evaluates to `PERMIT` with a transformed resource. As a result, the PEP replaces the original resource with the one from the decision, containing the blackened content.
@@ -867,14 +890,15 @@ Now log in as Alice and attempt to access <http://localhost:8080/api/books/2>.
 Access will be denied, and the logs look as follows:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
-[...] : Obligations: [{"type"="logAccess", "message"="Attention, alice accessed the book '...'"}]
 [...] : PDP ID         : default
+[...] : Obligations: [{"type"="logAccess", "message"="Attention, alice accessed the book 'The Rescue Mission: (Pokemon: Kalos Reader #1)'."}]
+[...] : Resource: {"id"=2, "name"="The Rescue Mission: (Pokemon: Kalos Reader #1)", "ageRating"=4, "content"="Got████████████████████"}
 [...] : Documents:
-[...] :   check age -> NOT_APPLICABLE
 [...] :   check age transform -> PERMIT
+[...] :   check age -> NOT_APPLICABLE
 ```
 
 Despite the PDP's decision to permit access, it was still denied due to the obligation to log the access in the authorization decision. This is because SAPL expresses obligations and advice as arbitrary JSON objects and does not know which of them might be relevant in an application domain or how policies decide to describe them. Thus, the PEP was unable to understand and enforce the logging obligation, resulting in the denial of access.
@@ -884,42 +908,40 @@ To support the logging obligation, implement a so-called *constraint handler pro
 ```java
 @Slf4j
 @Service
-public class LoggingConstraintHandlerProvider implements RunnableConstraintHandlerProvider {
+public class LoggingConstraintHandlerProvider implements ConstraintHandlerProvider {
+
+    private static final String CONSTRAINT_TYPE  = "logAccess";
+    private static final int    DEFAULT_PRIORITY = 50;
 
     @Override
-    public Signal getSignal() {
-        return Signal.ON_DECISION;
+    public List<ScopedConstraintHandler> getConstraintHandlers(Value constraint, Set<SignalType> supportedSignals) {
+        var signalOpt = ConstraintHandlerProvider.constraintTypeAndSignal(constraint, CONSTRAINT_TYPE,
+                supportedSignals, DecisionSignal.SIGNAL_TYPE);
+        if (signalOpt.isEmpty()) {
+            return List.of();
+        }
+        Runner runner = runnerFor(constraint);
+        return List.of(new ScopedConstraintHandler(runner, signalOpt.get(), DEFAULT_PRIORITY));
     }
 
-    @Override
-    public boolean isResponsible(Value constraint) {
-        if (!(constraint instanceof ObjectValue obj)) {
-            return false;
-        }
-        return obj.get("type") instanceof TextValue type && "logAccess".equals(type.value());
-    }
-
-    @Override
-    public Runnable getHandler(Value constraint) {
-        if (constraint instanceof ObjectValue obj && obj.get("message") instanceof TextValue message) {
-            return () -> log.info(message.value());
-        }
-        return () -> log.info("Access logged");
+    private static Runner runnerFor(Value constraint) {
+        var message = ConstraintHandlerProvider.stringField(constraint, "message").orElse("Access logged");
+        return () -> log.info(message);
     }
 }
 ```
 
-The SAPL Spring integration offers different hooks in the execution path where applications can add constraint handlers. Depending on the annotation and if the underlying method returns a value synchronously or uses reactive datatypes like `Flux<>` different hooks are available.
+The SAPL Spring integration delivers constraint handlers by *signals* fired at well-defined points in the PEP lifecycle. Examples of signals are `DecisionSignal` (the moment the decision arrives at the PEP), `OutputSignal` (per emitted result of the protected method), and a few HTTP-specific signals if the PEP is sitting on an HTTP path. Each provider declares which signal(s) its handlers attach to and at what priority.
 
-For each of these hooks, the constraint handlers can influence the execution differently. E.g., for `@PreEnforce` the constraint handler may attempt to change the arguments handed over to the method. The different hooks map to interfaces a service bean can implement to provide the capability of enforcing different types of constraints. You can find a full list of the potential interfaces in the `sapl-spring-boot-starter` module.
+A `ConstraintHandlerProvider` is the single interface every provider implements. Its only method, `getConstraintHandlers`, receives the constraint value and the set of signal types the deployed PEP actually fires. The provider returns an empty list when it does not recognise the constraint, or a non-empty list of `ScopedConstraintHandler` entries when it does. Each entry pairs a handler with the signal type it attaches to and a priority that orders execution. A single provider may return several entries against different signals if one obligation drives coordinated handlers across the lifecycle.
 
-In the case of logging, the constraint handler triggers a side effect by logging the message contained in the obligation to the console. Therefore, the `RunnableConstraintHandlerProvider` is the appropriate interface to implement.
+The handler itself comes in three flavours, expressed as sealed sub-interfaces of `ConstraintHandler`:
 
-This interface requires three methods:
+* `Runner` is a `Runnable` for fire-and-forget side effects (logging, audit emission).
+* `Consumer<T>` observes a typed signal value without changing it (inspect the decision, peek at an emitted item).
+* `Mapper<T>` is a `UnaryOperator<T>` that transforms a signal value (rewrite a response body, filter a returned collection).
 
-* `isResponsible` returns `true` if the handlers provided can fulfil the constraint.
-* `getSignal` returns when the `Runnable` should be executed. Here, the PEP immediately executes the `Runnable`  after it receives the decision from the PDP. Most other signals are primarily relevant for reactive data types and are out of the scope of this tutorial.
-* `getHandler` returns the `Runnable` enforcing the constraint.
+In the case of logging, the handler is a side effect attached to the `DecisionSignal`. The static helper `ConstraintHandlerProvider.constraintTypeAndSignal` is a one-liner combining "this constraint is of the expected type" and "the deployed PEP fires the expected signal". The provider hands back a `Runner` that prints the obligation's `message` field through SLF4J.
 
 When logging in as Alice and attempting to access <http://localhost:8080/api/books/2> access will be granted, and the logs now contain the following line:
 
@@ -935,13 +957,13 @@ First, complete the `@PreEnforce` on `findAll` in the `BookRepository` as follow
 
 ```java
 public interface BookRepository {
-    
-    @PreEnforce(subject = "authentication.getPrincipal()",
-                action="'list books'")
-    Iterable<Book> findAll();
 
-    @PostEnforce(subject  = "authentication.getPrincipal()", 
-                 action   = "'read book'", 
+    @PreEnforce(subject = "authentication.getPrincipal()",
+                action  = "'list books'")
+    List<Book> findAll();
+
+    @PostEnforce(subject  = "authentication.getPrincipal()",
+                 action   = "'read book'",
                  resource = "returnObject")
     Optional<Book> findById(Long id);
 
@@ -980,38 +1002,44 @@ Instead of using the provided class, we can again implement our own *constraint 
 
 ```java
 @Service
-public class FilterByAgeProvider implements FilterPredicateConstraintHandlerProvider {
+public class FilterByAgeProvider implements ConstraintHandlerProvider {
+
+    private static final String CONSTRAINT_TYPE  = "filterBooksByAge";
+    private static final int    DEFAULT_PRIORITY = 10;
 
     @Override
-    public boolean isResponsible(Value constraint) {
-        if (!(constraint instanceof ObjectValue obj)) {
-            return false;
+    public List<ScopedConstraintHandler> getConstraintHandlers(Value constraint, Set<SignalType> supportedSignals) {
+        if (!ConstraintHandlerProvider.constraintIsOfType(constraint, CONSTRAINT_TYPE)) {
+            return List.of();
         }
-        return obj.get("type") instanceof TextValue type
-                && "filterBooksByAge".equals(type.value())
-                && obj.get("age") instanceof NumberValue;
+        if (!(constraint instanceof ObjectValue obj) || !(obj.get("age") instanceof NumberValue ageValue)) {
+            return List.of();
+        }
+        final int maxAge = ageValue.value().intValue();
+        return SignalType.findIn(supportedSignals, Signal.OutputSignal.class).map(outputSignal -> {
+            Mapper<Object> mapper = books -> filterBooks(books, maxAge);
+            return List.of(new ScopedConstraintHandler(mapper, outputSignal, DEFAULT_PRIORITY));
+        }).orElseGet(List::of);
     }
 
-    @Override
-    public Predicate<Object> getHandler(Value constraint) {
-        return o -> {
-            if (constraint instanceof ObjectValue obj && obj.get("age") instanceof NumberValue age) {
-                if (o instanceof Book book) {
-                    return age.value().intValue() >= book.getAgeRating();
-                }
+    private static Object filterBooks(Object value, int maxAge) {
+        if (!(value instanceof Iterable<?> iterable)) {
+            return value;
+        }
+        var result = new ArrayList<Book>();
+        for (var item : iterable) {
+            if (item instanceof Book book && book.getAgeRating() <= maxAge) {
+                result.add(book);
             }
-            return true;
-        };
+        }
+        return result;
     }
 }
 ```
 
-Here, we implement the `FilterPredicateConstraintHandlerProvider` interface.
+The shape mirrors the logging provider but the handler is now a `Mapper<Object>` attached to the `OutputSignal`. `OutputSignal` is the per-result signal the PEP fires once the protected method has produced its return value; a `Mapper` transforms that value before the PEP releases it. `SignalType.findIn` searches the deployed PEP's signal set for an `OutputSignal` of any value type. Because `findAll` returns `List<Book>` (see the `JpaBookRepository` change earlier in the tutorial), the deployed PEP fires an `OutputSignal` whose value type is the list, and our `Mapper` receives the populated list at runtime.
 
-This interface requires two methods:
-
-* `isResponsible` returns `true` if the handlers provided can fulfil the constraint.
-* `getHandler` returns a `Predicate` what is a boolean-valued function of one argument for testing.
+The mapper applies the age predicate and returns a new `ArrayList<Book>` containing only the entries the subject is permitted to see. Returning an empty `List<Book>` and leaving the original list unmodified is acceptable here because the policy on `findAll` already permitted access; the only remaining instruction in the obligation is "filter the result set".
 
 Now log in as Bob, and you will see the following list of books:
 
@@ -1093,14 +1121,16 @@ Now, log in as Bob and access <http://localhost:8080/api/books/3>.
 Your logs look as follows:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
 [...] : PDP ID         : default
 [...] : Documents:
 [...] :   check age set -> PERMIT
-[...] :   check age compact set -> PERMIT
+[...] :     Attributes:
+[...] :       <time.now> = "2026-05-18T10:44:28.892195674Z" @ 2026-05-18T12:44:28.893957875+02:00
 [...] :   check age transform set -> NOT_APPLICABLE
+[...] :   check age compact set -> PERMIT
 ```
 
 The policy set evaluates both sub-policies. The `check age compact set` matches (Bob is old enough), while `check age transform set` does not apply. The set uses `first or abstain errors propagate`, so the first applicable sub-policy determines the outcome.
@@ -1108,13 +1138,16 @@ The policy set evaluates both sub-policies. The `check age compact set` matches 
 Now access <http://localhost:8080/api/books/4>, you will get:
 
 ```text
-[...] : --- PDP Decision ---
+[...] : === PDP Decision ===
 [...] : Subscription   : { ... }
 [...] : Decision       : PERMIT
-[...] : Obligations: [{"type"="logAccess", "message"="Attention, bob accessed the book 'The Three-Body Problem'."}]
 [...] : PDP ID         : default
+[...] : Obligations: [{"type"="logAccess", "message"="Attention, bob accessed the book 'The Three-Body Problem'."}]
+[...] : Resource: {"id"=4, "name"="The Three-Body Problem", "ageRating"=14, "content"="Spa████████████"}
 [...] : Documents:
 [...] :   check age set -> PERMIT
+[...] :     Attributes:
+[...] :       <time.now> = "2026-05-18T10:44:30.035236624Z" @ 2026-05-18T12:44:30.03640877+02:00
 [...] :   check age transform set -> PERMIT
 [...] : Attention, bob accessed the book 'The Three-Body Problem'.
 ```
