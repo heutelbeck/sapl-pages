@@ -1,0 +1,52 @@
+nav:
+  home: Inicio
+  get_started: Empezar
+  docs: Documentación
+  guides: Guías
+  media: Medios
+  playground: Playground
+  support: Soporte
+  github: GitHub
+  discord: Discord
+  view_all_guides: Ver todas las guías
+  performance: Rendimiento
+  engine_comparison: Comparación de motores
+  engine_comparison_desc: SAPL frente a Cedar, OPA, OpenFGA y Cerbos
+  benchmarks: Benchmarks
+  benchmarks_desc: Throughput, latencia y escalado hasta 10.000 policies
+  ai_security: Seguridad de IA
+  rag_pipeline: Pipeline RAG
+  rag_pipeline_desc: Control de acceso a nivel de documento para generación aumentada por recuperación
+  ai_tool_authorization: Autorización de herramientas de IA
+  ai_tool_authorization_desc: Autorización por herramienta para aplicaciones Spring AI
+  human_in_the_loop: Human in the Loop
+  human_in_the_loop_desc: Flujos de aprobación dirigidos por policies para operaciones sensibles
+  mcp_server_authorization: Autorización de servidores MCP
+  mcp_server_authorization_desc: Autorizar herramientas, recursos y prompts en servidores MCP
+  spring_security: Spring Security
+  spring_boot_abac: Spring Boot ABAC
+  spring_boot_abac_desc: "Enforcement a nivel de método con @PreEnforce y @PostEnforce"
+  streaming_authorization: Autorización en streaming
+  streaming_decisions: Decisiones en streaming
+  streaming_decisions_desc: Autorización en tiempo real con PIPs, obligations dinámicas y modos de enforcement
+  policy_testing: Pruebas de policies
+  sapltest_dsl: DSL SAPLTest
+  sapltest_dsl_desc: Pruebas basadas en decisiones, informes de cobertura y quality gates de CI/CD
+  policy_operations: Operación de policies
+  ship_policies_like_code: Entregar policies como código
+  ship_policies_like_code_desc: Git, CI, firmas, bundles remotos, Prometheus y logs estructurados
+  data_level_security: Seguridad a nivel de datos
+  data_level_security_desc: Transformación de argumentos, filtrado de contenido y reescritura de consultas de base de datos
+  multi_framework: Multi Framework
+  spring_python_node_dotnet: Spring, Python, Node.js, .NET
+  spring_python_node_dotnet_desc: Mismas policies, misma suite de pruebas, 7 frameworks
+footer:
+  imprint: Aviso legal
+  privacy: Política de privacidad
+language_switcher:
+  label: Idioma
+theme:
+  toggle: Cambiar modo oscuro
+llms:
+  context: Contexto LLM
+  full_context: Contexto LLM completo

@@ -28,6 +28,7 @@ default_lang: en
 languages:
   - en
   - de
+  - es
   - fr
   - it
   - ja

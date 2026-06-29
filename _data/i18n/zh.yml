@@ -25,7 +25,7 @@ nav:
   mcp_server_authorization_desc: 在 MCP 服务器中授权工具、资源和 prompt
   spring_security: Spring Security
   spring_boot_abac: Spring Boot ABAC
-  spring_boot_abac_desc: 使用 @PreEnforce 和 @PostEnforce 进行方法级 enforcement
+  spring_boot_abac_desc: "使用 @PreEnforce 和 @PostEnforce 进行方法级 enforcement"
   streaming_authorization: 流式授权
   streaming_decisions: 流式决策
   streaming_decisions_desc: 使用 PIP、动态 obligation 和 enforcement 模式实现实时授权

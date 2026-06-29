@@ -25,7 +25,7 @@ nav:
   mcp_server_authorization_desc: Autoriser les outils, ressources et prompts dans les serveurs MCP
   spring_security: Spring Security
   spring_boot_abac: Spring Boot ABAC
-  spring_boot_abac_desc: Enforcement au niveau methode avec @PreEnforce et @PostEnforce
+  spring_boot_abac_desc: "Enforcement au niveau methode avec @PreEnforce et @PostEnforce"
   streaming_authorization: Autorisation en streaming
   streaming_decisions: Decisions en streaming
   streaming_decisions_desc: Autorisation en temps reel avec PIPs, obligations dynamiques et modes d enforcement

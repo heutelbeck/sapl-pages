@@ -6,6 +6,10 @@ de:
   code: de
   name: Deutsch
   short: DE
+es:
+  code: es
+  name: Español
+  short: ES
 fr:
   code: fr
   name: Francais

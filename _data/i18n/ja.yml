@@ -25,7 +25,7 @@ nav:
   mcp_server_authorization_desc: MCP サーバー内のツール、リソース、prompt を認可
   spring_security: Spring Security
   spring_boot_abac: Spring Boot ABAC
-  spring_boot_abac_desc: @PreEnforce と @PostEnforce によるメソッド単位の enforcement
+  spring_boot_abac_desc: "@PreEnforce と @PostEnforce によるメソッド単位の enforcement"
   streaming_authorization: ストリーミング認可
   streaming_decisions: ストリーミング決定
   streaming_decisions_desc: PIP、動的 obligation、enforcement モードによるリアルタイム認可
