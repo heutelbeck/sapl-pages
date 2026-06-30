@@ -1,7 +1,10 @@
 ---
 layout: sapl
-title: "Authorization Engine Comparison - SAPL vs Cedar, OPA, OpenFGA, Cerbos"
-description: "Feature and performance comparison of open-source authorization engines. SAPL, Cedar, OPA, OpenFGA, and Cerbos compared on access control models, streaming, obligations, testing, deployment, framework integration, AI support, and evaluation latency."
+title: "Authorization Engine Comparison (SAPL 4.0.0, historical)"
+description: "Archived authorization engine comparison benchmarks for SAPL 4.0.0. See the current comparison page for up-to-date numbers."
+noindex: true
+sitemap: false
+data_version: "4.0.0"
 ---
 
 <style>
@@ -84,7 +87,7 @@ These benchmarks reproduce the experimental setup from the [Cedar OOPSLA 2024 pa
 
 Each data point represents 100,000 authorization requests across 200 randomly generated entity stores. Evaluation time measures the core `is_authorized()` operation: no parsing, no entity loading. SAPL, Cedar, and OPA are evaluated as embedded libraries. OpenFGA is evaluated over HTTP to a local in-memory server, as in the original Cedar paper.
 
-<strong>What changed since 4.0.0.</strong> SAPL 4.1.2 is about 10% faster than 4.0.0 at the median, and up to 1.3x faster on some workloads, from continued engine optimization. See the archived <a href="/guides/comparison/4.0.0/">4.0.0 numbers</a> for the baseline.
+<strong>Historical snapshot: SAPL 4.0.0.</strong> These are the archived 4.0.0 comparison numbers, kept for reference. For the current release see the <a href="/guides/comparison/">latest comparison page</a>.
 
 <div class="cmp-note">
 The Cedar paper's original claim: "Cedar is 28.7x to 35.2x faster than OpenFGA and 42.8x to 80.8x faster than Rego." Adding SAPL to the same benchmark, SAPL is 8-10x faster than Cedar 3.0 and 10-18x faster than Cedar 4.10. All engines use Cedar's own <a href="https://github.com/heutelbeck/cedar-benchmarks">benchmark suite</a> and entity generators.
