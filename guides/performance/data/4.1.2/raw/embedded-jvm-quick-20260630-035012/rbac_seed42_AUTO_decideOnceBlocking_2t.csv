@@ -1,0 +1,24 @@
+# SAPL 4.0 Benchmark Results
+# Command: --scenario=rbac --method=decideOnceBlocking --indexing=AUTO -t 2 --warmup-iterations=1 --warmup-time=3 --measurement-time=10 --convergence-threshold=10 --convergence-window=2 --max-forks=2 --latency=true --heap=32g -o /home/dominic/git/sapl-policy-engine/sapl-benchmark/scripts/../results/embedded-jvm-quick-20260630-035012
+# JVM: 25.0.4 (OpenJDK 64-Bit Server VM)
+# GC: default
+# Scenario: rbac
+# Seed: 42
+# Method: decideOnceBlocking
+# Threads: 2
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence: CoV < 10.0% over 2 forks
+# Virtual threads: false
+# Latency p50 (ns): 166
+# Latency p90 (ns): 201
+# Latency p99 (ns): 347
+# Latency p99.9 (ns): 3796
+# Latency max (ns): 3297280
+# Decisions PERMIT: 6
+# Decisions DENY: 10
+# Decisions INDETERMINATE: 0
+# Decisions NOT_APPLICABLE: 0
+fork,throughput_ops_s
+1,10772893.59
+2,11205582.01

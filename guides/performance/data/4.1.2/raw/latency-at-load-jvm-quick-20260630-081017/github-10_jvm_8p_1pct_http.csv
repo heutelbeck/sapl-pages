@@ -1,0 +1,7 @@
+# Label: github-10_jvm_8p_1pct_http
+# Protocol: HTTP
+# Connections: 256
+# Concurrency: 256
+# Measurement: 10s
+method,threads,mean_ops_s,ci95,median_ops_s,stddev,cv_pct,min_ops_s,max_ops_s,p5_ops_s,p95_ops_s,mean_ns_op,latency_p50_ns,latency_p90_ns,latency_p99_ns,latency_p999_ns,latency_max_ns
+github-10_jvm_8p_1pct_http,16,5645.20,0,0,0,0,0,0,0,0,0,791000,1390000,1950000,6310000,14290000

@@ -44,7 +44,7 @@ SAPL provides a bill of materials module that keeps SAPL module versions compati
             <dependency>
                 <groupId>io.sapl</groupId>
                 <artifactId>sapl-bom</artifactId>
-                <version>4.1.1</version>
+                <version>4.1.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -63,7 +63,7 @@ An application using SAPL needs a Policy Decision Point (PDP) and one or more Po
 
 Released SAPL versions are available from Maven Central. For unreleased builds, add the Central Portal snapshots repository and use the matching `x.y.z-SNAPSHOT` version.
 
-The current example uses Spring Boot 4.1.0 and SAPL 4.1.1. Spring Boot and SAPL versions are not coupled.
+The current example uses Spring Boot 4.1.0 and SAPL 4.1.2. Spring Boot and SAPL versions are not coupled.
 
 To use the Argon2 Password Encoder, add the following dependency:
 

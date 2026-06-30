@@ -1,0 +1,18 @@
+[
+    {
+        "primaryMetric": {
+            "score": 2364443.39,
+            "scoreUnit": "req/s"
+        },
+        "params": {
+            "scenarioName": "hospital-1"
+        },
+        "benchmark": "rsocket-decide-once",
+        "mode": "thrpt",
+        "transport": "rsocket-tcp",
+        "cores": 8,
+        "connections": 32,
+        "vtPerConnection": 256,
+        "measurementTime": "10 s"
+    }
+]

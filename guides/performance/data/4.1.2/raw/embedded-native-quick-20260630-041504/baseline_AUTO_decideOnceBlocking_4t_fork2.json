@@ -1,0 +1,18 @@
+[
+    {
+        "primaryMetric": {
+            "score": 20118701.1,
+            "scoreUnit": "ops/s"
+        },
+        "params": {
+            "scenarioName": "baseline"
+        },
+        "benchmark": "decideOnceBlocking",
+        "mode": "thrpt",
+        "threads": 4,
+        "runtime": "native",
+        "warmupIterations": 1,
+        "warmupTime": "3 s",
+        "measurementTime": "10 s"
+    }
+]

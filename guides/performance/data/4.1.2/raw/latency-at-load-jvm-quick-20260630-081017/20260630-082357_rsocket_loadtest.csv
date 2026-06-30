@@ -1,0 +1,11 @@
+# Protocol: RSocket
+# Target: localhost:7000
+# Concurrency: 4096
+# Connections: 8
+# VT/connection: 512
+# Warmup: convergence-based
+# Measurement: 10 s
+# Timestamp: 20260630-082357
+# Label: hospital-300_jvm_8p_90pct
+method,threads,mean_ops_s,ci95,median_ops_s,stddev,cv_pct,min_ops_s,max_ops_s,p5_ops_s,p95_ops_s,mean_ns_op,latency_p50_ns,latency_p90_ns,latency_p99_ns,latency_p999_ns,latency_max_ns
+rsocket-8c-512w-1806711r,1,1193752.04,0.00,1193752.04,0.00,0.00,1193752.04,1193752.04,1193752.04,1193752.04,837.69,3102927,3319046,4968655,9850947,48433150

@@ -1,0 +1,21 @@
+# SAPL 4.0 Native Benchmark Results
+# Scenario: gdrive-10
+# Method: decideOnceBlocking
+# Threads: 1
+# Runtime: native
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence Threshold: 10
+# Convergence Window: 2
+# Mean: 1591280.40 throughput/ops/s
+# StdDev: 49720.64
+# CoV: 3.12%
+# Forks: 2
+# Latency p50 (ns): 552
+# Latency p90 (ns): 761
+# Latency p99 (ns): 1502
+# Latency p99.9 (ns): 3255
+# Latency max (ns): 4755455
+fork,throughput_ops_s
+1,1626438.20
+2,1556122.60

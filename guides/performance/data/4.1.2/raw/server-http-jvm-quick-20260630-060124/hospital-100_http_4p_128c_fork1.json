@@ -1,0 +1,17 @@
+[
+    {
+        "primaryMetric": {
+            "score": 319229.19,
+            "scoreUnit": "req/s"
+        },
+        "params": {
+            "scenarioName": "hospital-100"
+        },
+        "benchmark": "http-decide-once",
+        "mode": "thrpt",
+        "transport": "http",
+        "cores": 4,
+        "connections": 128,
+        "measurementTime": "10 s"
+    }
+]

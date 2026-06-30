@@ -1,0 +1,20 @@
+# SAPL 4.0 Server RSocket Benchmark
+# Scenario: hospital-100
+# Cores: 1
+# Connections: 64
+# Vt Per Connection: 256
+# Measurement: 10s
+# Convergence Threshold: 10
+# Convergence Window: 2
+# Mean: 364431.54 throughput/req/s
+# StdDev: 221.71
+# CoV: 0.06%
+# Forks: 2
+# Latency p50 (ns): 36988974
+# Latency p90 (ns): 76477452
+# Latency p99 (ns): 141859732
+# Latency p99.9 (ns): 518888234
+# Latency max (ns): 537693833
+fork,throughput_req_s
+1,364588.31
+2,364274.76

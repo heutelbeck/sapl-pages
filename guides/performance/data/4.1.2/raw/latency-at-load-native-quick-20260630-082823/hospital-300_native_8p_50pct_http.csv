@@ -1,0 +1,7 @@
+# Label: hospital-300_native_8p_50pct_http
+# Protocol: HTTP
+# Connections: 256
+# Concurrency: 256
+# Measurement: 10s
+method,threads,mean_ops_s,ci95,median_ops_s,stddev,cv_pct,min_ops_s,max_ops_s,p5_ops_s,p95_ops_s,mean_ns_op,latency_p50_ns,latency_p90_ns,latency_p99_ns,latency_p999_ns,latency_max_ns
+hospital-300_native_8p_50pct_http,16,119694.54,0,0,0,0,0,0,0,0,0,845000,1760000,48160000,72060000,99330000

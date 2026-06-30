@@ -1,0 +1,60 @@
+[
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.sapl.benchmark.sapl4.EmbeddedPdpBenchmark.decideOnceBlocking",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/nix/store/67pf27q7r7qdyp4cwj4ka2bgiilg9d2g-jetbrains-jdk-jcef-25.0.2-b432.48/lib/openjdk/bin/java",
+        "jvmArgs" : [
+            "-Dawt.toolkit.name=XToolkit",
+            "-Xmx32g",
+            "-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+        ],
+        "jdkVersion" : "25.0.4",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.0.4+1-b432.48",
+        "warmupIterations" : 1,
+        "warmupTime" : "3 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 1,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "indexingStrategy" : "CANONICAL",
+            "scenarioName" : "hospital-50",
+            "seed" : "42",
+            "unrollInOperator" : "false"
+        },
+        "primaryMetric" : {
+            "score" : 129765.81737743314,
+            "scoreError" : "NaN",
+            "scoreConfidence" : [
+                "NaN",
+                "NaN"
+            ],
+            "scorePercentiles" : {
+                "0.0" : 129765.81737743314,
+                "50.0" : 129765.81737743314,
+                "90.0" : 129765.81737743314,
+                "95.0" : 129765.81737743314,
+                "99.0" : 129765.81737743314,
+                "99.9" : 129765.81737743314,
+                "99.99" : 129765.81737743314,
+                "99.999" : 129765.81737743314,
+                "99.9999" : 129765.81737743314,
+                "100.0" : 129765.81737743314
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    129765.81737743314
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

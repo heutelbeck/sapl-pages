@@ -1,0 +1,21 @@
+# SAPL 4.0 Native Benchmark Results
+# Scenario: hospital-300
+# Method: decideOnceBlocking
+# Threads: 1
+# Runtime: native
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence Threshold: 10
+# Convergence Window: 2
+# Mean: 964.25 throughput/ops/s
+# StdDev: 1.91
+# CoV: 0.20%
+# Forks: 2
+# Latency p50 (ns): 954367
+# Latency p90 (ns): 1260543
+# Latency p99 (ns): 1812479
+# Latency p99.9 (ns): 5185535
+# Latency max (ns): 45678591
+fork,throughput_ops_s
+1,962.90
+2,965.60

@@ -1,0 +1,21 @@
+# SAPL 4.0 Native Benchmark Results
+# Scenario: tinytodo-10
+# Method: decideOnceBlocking
+# Threads: 1
+# Runtime: native
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence Threshold: 10
+# Convergence Window: 2
+# Mean: 1909747.70 throughput/ops/s
+# StdDev: 856.87
+# CoV: 0.04%
+# Forks: 2
+# Latency p50 (ns): 482
+# Latency p90 (ns): 602
+# Latency p99 (ns): 1341
+# Latency p99.9 (ns): 2911
+# Latency max (ns): 4399103
+fork,throughput_ops_s
+1,1909141.80
+2,1910353.60

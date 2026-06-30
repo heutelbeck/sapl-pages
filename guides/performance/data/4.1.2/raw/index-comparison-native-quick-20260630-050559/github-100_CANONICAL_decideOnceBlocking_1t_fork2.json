@@ -1,0 +1,18 @@
+[
+    {
+        "primaryMetric": {
+            "score": 497906.0,
+            "scoreUnit": "ops/s"
+        },
+        "params": {
+            "scenarioName": "github-100"
+        },
+        "benchmark": "decideOnceBlocking",
+        "mode": "thrpt",
+        "threads": 1,
+        "runtime": "native",
+        "warmupIterations": 1,
+        "warmupTime": "3 s",
+        "measurementTime": "10 s"
+    }
+]

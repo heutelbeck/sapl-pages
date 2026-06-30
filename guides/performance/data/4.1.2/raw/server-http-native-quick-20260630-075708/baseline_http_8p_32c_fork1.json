@@ -1,0 +1,17 @@
+[
+    {
+        "primaryMetric": {
+            "score": 301531.64,
+            "scoreUnit": "req/s"
+        },
+        "params": {
+            "scenarioName": "baseline"
+        },
+        "benchmark": "http-decide-once",
+        "mode": "thrpt",
+        "transport": "http",
+        "cores": 8,
+        "connections": 32,
+        "measurementTime": "10 s"
+    }
+]

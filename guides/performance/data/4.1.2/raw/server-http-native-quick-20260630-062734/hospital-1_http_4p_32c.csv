@@ -1,0 +1,17 @@
+# SAPL 4.0 Server HTTP Benchmark
+# Scenario: hospital-1
+# Cores: 4
+# Connections: 32
+# Measurement: 10s
+# Convergence Threshold: 10
+# Convergence Window: 2
+# Mean: 157920.94 throughput/req/s
+# StdDev: 837.88
+# CoV: 0.53%
+# Forks: 2
+# Latency p50 (ns): 0
+# Latency p90 (ns): 9900000000
+# Latency p99 (ns): 9900000000
+fork,throughput_req_s
+1,157328.47
+2,158513.41

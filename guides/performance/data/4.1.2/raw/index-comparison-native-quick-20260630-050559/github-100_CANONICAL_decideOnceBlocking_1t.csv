@@ -1,0 +1,21 @@
+# SAPL 4.0 Native Benchmark Results
+# Scenario: github-100
+# Method: decideOnceBlocking
+# Threads: 1
+# Runtime: native
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence Threshold: 10
+# Convergence Window: 2
+# Mean: 498243.60 throughput/ops/s
+# StdDev: 477.44
+# CoV: 0.10%
+# Forks: 2
+# Latency p50 (ns): 1897
+# Latency p90 (ns): 2591
+# Latency p99 (ns): 3621
+# Latency p99.9 (ns): 8167
+# Latency max (ns): 7618559
+fork,throughput_ops_s
+1,498581.20
+2,497906.00

@@ -1,0 +1,24 @@
+# SAPL 4.0 Benchmark Results
+# Command: --scenario=hospital-1 --method=decideOnceBlocking --indexing=CANONICAL -t 1 --warmup-iterations=1 --warmup-time=3 --measurement-time=10 --convergence-threshold=10 --convergence-window=2 --max-forks=2 --latency=true --heap=32g -o /home/dominic/git/sapl-policy-engine/sapl-benchmark/scripts/../results/index-comparison-jvm-quick-20260630-043713
+# JVM: 25.0.4 (OpenJDK 64-Bit Server VM)
+# GC: default
+# Scenario: hospital-1
+# Seed: 42
+# Method: decideOnceBlocking
+# Threads: 1
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence: CoV < 10.0% over 2 forks
+# Virtual threads: false
+# Latency p50 (ns): 1140
+# Latency p90 (ns): 1328
+# Latency p99 (ns): 2404
+# Latency p99.9 (ns): 6297
+# Latency max (ns): 980992
+# Decisions PERMIT: 138
+# Decisions DENY: 362
+# Decisions INDETERMINATE: 0
+# Decisions NOT_APPLICABLE: 0
+fork,throughput_ops_s
+1,876063.01
+2,869801.19

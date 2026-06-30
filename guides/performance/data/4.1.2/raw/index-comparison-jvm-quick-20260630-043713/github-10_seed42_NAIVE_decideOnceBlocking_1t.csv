@@ -1,0 +1,24 @@
+# SAPL 4.0 Benchmark Results
+# Command: --scenario=github-10 --method=decideOnceBlocking --indexing=NAIVE -t 1 --warmup-iterations=1 --warmup-time=3 --measurement-time=10 --convergence-threshold=10 --convergence-window=2 --max-forks=2 --latency=true --heap=32g -o /home/dominic/git/sapl-policy-engine/sapl-benchmark/scripts/../results/index-comparison-jvm-quick-20260630-043713
+# JVM: 25.0.4 (OpenJDK 64-Bit Server VM)
+# GC: default
+# Scenario: github-10
+# Seed: 42
+# Method: decideOnceBlocking
+# Threads: 1
+# Warmup: 1 x 3s
+# Measurement: 10s
+# Convergence: CoV < 10.0% over 2 forks
+# Virtual threads: false
+# Latency p50 (ns): 591
+# Latency p90 (ns): 873
+# Latency p99 (ns): 1700
+# Latency p99.9 (ns): 5335
+# Latency max (ns): 926720
+# Decisions PERMIT: 48
+# Decisions DENY: 452
+# Decisions INDETERMINATE: 0
+# Decisions NOT_APPLICABLE: 0
+fork,throughput_ops_s
+1,1517465.61
+2,1577032.63

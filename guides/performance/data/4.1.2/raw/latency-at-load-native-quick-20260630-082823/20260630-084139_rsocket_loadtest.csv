@@ -1,0 +1,11 @@
+# Protocol: RSocket
+# Target: localhost:7000
+# Concurrency: 4096
+# Connections: 8
+# VT/connection: 512
+# Warmup: convergence-based
+# Measurement: 10 s
+# Timestamp: 20260630-084139
+# Label: github-10_native_8p_10pct
+method,threads,mean_ops_s,ci95,median_ops_s,stddev,cv_pct,min_ops_s,max_ops_s,p5_ops_s,p95_ops_s,mean_ns_op,latency_p50_ns,latency_p90_ns,latency_p99_ns,latency_p999_ns,latency_max_ns
+rsocket-8c-512w-104047r,1,100825.54,0.00,100825.54,0.00,0.00,100825.54,100825.54,100825.54,100825.54,9918.12,37614,45316,38124014,263467191,307804793

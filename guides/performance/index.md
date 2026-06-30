@@ -85,6 +85,10 @@ SAPL ships as a single native binary (`sapl`) and as a JVM application (`sapl-no
   </p>
 </div>
 
+<div class="perf-note">
+<strong>What changed since 4.0.0.</strong> SAPL 4.1.2 is faster than 4.0.0 across the board (measured quick-vs-quick; 4.0.0 ran on an earlier toolchain, so these deltas reflect engine plus toolchain, except HTTP which is an architectural change): embedded evaluation about +10% median (single thread up to 1.9x), RSocket throughput about +20%, and HTTP throughput about 5.8x faster from the move to a Jetty plus virtual-threads stack. See the archived <a href="/guides/performance/4.0.0/">4.0.0 numbers</a> for the baseline.
+</div>
+
 ### Test Environment
 
 <div class="perf-env">
@@ -289,7 +293,7 @@ Chart.defaults.color = isDark ? '#e0e0e0' : '#333';
 Chart.defaults.borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
 async function load(path) {
-  const r = await fetch('/guides/performance/data/' + path);
+  const r = await fetch('/guides/performance/data/{{ page.data_version | default: "4.1.2" }}/' + path);
   return r.json();
 }
 

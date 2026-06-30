@@ -1,0 +1,17 @@
+[
+    {
+        "primaryMetric": {
+            "score": 160883.68,
+            "scoreUnit": "req/s"
+        },
+        "params": {
+            "scenarioName": "rbac"
+        },
+        "benchmark": "http-decide-once",
+        "mode": "thrpt",
+        "transport": "http",
+        "cores": 4,
+        "connections": 32,
+        "measurementTime": "10 s"
+    }
+]

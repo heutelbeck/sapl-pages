@@ -1,0 +1,18 @@
+[
+    {
+        "primaryMetric": {
+            "score": 2579551.79,
+            "scoreUnit": "req/s"
+        },
+        "params": {
+            "scenarioName": "baseline"
+        },
+        "benchmark": "rsocket-decide-once",
+        "mode": "thrpt",
+        "transport": "rsocket-tcp",
+        "cores": 8,
+        "connections": 32,
+        "vtPerConnection": 256,
+        "measurementTime": "10 s"
+    }
+]
