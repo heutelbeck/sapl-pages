@@ -1,0 +1,40 @@
+---
+layout: default
+title: Policy Sources
+parent: SAPL Node
+nav_order: 703
+---
+
+## Policy Administration Point (PAP)
+
+The PAP manages the policies in the policy store. How policies are authored, reviewed, and deployed depends on the policy source type configured for the PDP.
+
+### Policy Source Types
+
+The PDP supports five policy source types, configured via `io.sapl.pdp.embedded.pdp-config-type`:
+
+| Source Type       | Description                                                                                                        | Hot-Reload | Multi-Tenant |
+|-------------------|--------------------------------------------------------------------------------------------------------------------|------------|--------------|
+| `RESOURCES`       | Loads policies from the Java classpath (`src/main/resources/policies`). Fixed at build time.                       | No         | No           |
+| `DIRECTORY`       | Monitors a filesystem directory for `.sapl` files and `pdp.json`. Changes are detected and reloaded automatically. | Yes        | No           |
+| `MULTI_DIRECTORY` | Monitors subdirectories within a base directory. Each subdirectory name becomes a tenant ID.                       | Yes        | Yes          |
+| `BUNDLES`         | Monitors a directory for `.saplbundle` files (signed ZIP archives). Each bundle filename becomes a tenant ID.      | Yes        | Yes          |
+| `REMOTE_BUNDLES`  | Fetches `.saplbundle` files from a remote HTTP server using ETag-based polling or long-polling.                    | Yes        | Yes          |
+
+For the `RESOURCES` source, the policy store is part of the application build. Policies are authored alongside the application code and deployed together. This is suitable for applications where policies change infrequently and are tested as part of the build process.
+
+For filesystem-based sources (`DIRECTORY`, `MULTI_DIRECTORY`, `BUNDLES`), the PDP monitors the configured path and automatically reloads policies when files change. Any tool that modifies files in the monitored directory acts as a PAP: a text editor, a Git checkout, a CI/CD pipeline, or a management script.
+
+The `DIRECTORY` and `MULTI_DIRECTORY` sources load plain, unsigned `.sapl` files and are intended for development and experimentation. They provide no signing, integrity, or write-atomicity guarantees, so a file edited in place can be observed mid-write. Enterprise and production deployments should use signed bundles (`BUNDLES` or `REMOTE_BUNDLES`).
+
+Publish a `.saplbundle` file into a `BUNDLES` directory atomically: write it to a temporary file and then atomically move or rename it into the watched directory. Writing a bundle in place lets the watcher observe a partial file, which is rejected as a broken bundle and briefly marks the tenant `STALE` until the write completes. An atomic publish is observed as a single complete replacement.
+
+For `REMOTE_BUNDLES`, the PDP periodically fetches bundles from an HTTP server. The server can be any HTTP endpoint that serves `.saplbundle` files at the expected paths. This enables centralized policy management where a dedicated policy server distributes bundles to multiple PDP instances.
+
+### Bundle Security
+
+The `BUNDLES` and `REMOTE_BUNDLES` source types support Ed25519 signature verification. Bundles can be signed with `sapl bundle sign` and verified against a configured public key or per-tenant key catalogue. By default, signature verification is mandatory. Unsigned bundles are only accepted in development environments with an explicit opt-in (`allow-unsigned: true`).
+
+The unsigned escape hatches (`allow-unsigned` and `unsigned-tenants`) must never be combined with `REMOTE_BUNDLES`. A network-fetched unsigned bundle can be replaced in transit to inject arbitrary policy, so these opt-ins are safe only with local, trusted sources.
+
+See [Getting Started](../7_1_GettingStarted/) for a quickstart with the `DIRECTORY` source, [Remote Bundles](../7_4_RemoteBundles/) for remote bundle configuration, and [Security](../7_6_Security/) for bundle signing.
