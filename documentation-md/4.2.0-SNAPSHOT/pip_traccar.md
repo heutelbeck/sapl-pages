@@ -225,85 +225,6 @@ This may return a value like:
 
 ---
 
-## device
-
-```deviceEntityId.<traccar.device(serverName)>``` is an attribute that fetches detailed metadata for a specific device from
-the Traccar server.
-The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
-not the device's `uniqueId` in the database.
-It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
-
- **Parameters:**
- - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
- - `serverName` *(Text)*: The name of the operator-configured Traccar server.
-
-**Example:**
-
-```
-"12345".<traccar.device("prod")>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "name": "string",
-    "uniqueId": "string",
-    "status": "string",
-    "disabled": true,
-    "lastUpdate": "2019-08-24T14:15:22Z",
-    "positionId": 0,
-    "groupId": 0,
-    "phone": "string",
-    "model": "string",
-    "contact": "string",
-    "category": "string",
-    "attributes": {}
-}
-```
-
-
----
-
-## device
-
-```deviceEntityId.<traccar.device>``` is an attribute that fetches detailed metadata for a specific device from
-the Traccar server.
-The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
-not the device's `uniqueId` in the database.
-This method uses the environment variable `TRACCAR_CONFIG` to retrieve the server connection configuration.
-
- **Parameters:**
- - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
-
-**Example:**
-
-```
-"12345".<traccar.device>
-```
-
-This may return a value like:
-```json
-{
-    "id": 0,
-    "name": "string",
-    "uniqueId": "string",
-    "status": "string",
-    "disabled": true,
-    "lastUpdate": "2019-08-24T14:15:22Z",
-    "positionId": 0,
-    "groupId": 0,
-    "phone": "string",
-    "model": "string",
-    "contact": "string",
-    "category": "string",
-    "attributes": {}
-}
-```
-
-
----
-
 ## server
 
 ```<traccar.server>``` is an environment attribute that retrieves server metadata from the
@@ -390,6 +311,34 @@ This attribute may return a value like:
 
 ## traccarGeofence
 
+```geofenceEntityId.<traccar.traccarGeofence>``` is an attribute that retrieves metadata for a specific geofence from
+the Traccar server using the provided geofence identifier. This method uses the environment variable
+`TRACCAR_CONFIG` to retrieve the server connection configuration.
+
+**Parameters:**
+- `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
+
+**Example:**
+
+```
+"12345".<traccar.traccarGeofence>
+```
+
+This may return a value like:
+```json
+{
+    "id": 12345,
+    "name": "Geofence A",
+    "area": "Polygon",
+    "attributes": {}
+}
+```
+
+
+---
+
+## traccarGeofence
+
 ```geofenceEntityId.<traccar.traccarGeofence(serverName)>``` is an attribute that retrieves metadata for a specific
 geofence from the Traccar server using the provided geofence identifier.
 It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
@@ -417,47 +366,21 @@ This may return a value like:
 
 ---
 
-## traccarGeofence
-
-```geofenceEntityId.<traccar.traccarGeofence>``` is an attribute that retrieves metadata for a specific geofence from
-the Traccar server using the provided geofence identifier. This method uses the environment variable
-`TRACCAR_CONFIG` to retrieve the server connection configuration.
-
-**Parameters:**
-- `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
-
-**Example:**
-
-```
-"12345".<traccar.traccarGeofence>
-```
-
-This may return a value like:
-```json
-{
-    "id": 12345,
-    "name": "Geofence A",
-    "area": "Polygon",
-    "attributes": {}
-}
-```
-
-
----
-
 ## traccarPosition
 
-```deviceEntityId.<traccar.traccarPosition>``` is an attribute that retrieves the most recent position of a specific
-device from the Traccar server. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
-server connection configuration.
+```deviceEntityId.<traccar.traccarPosition(serverName)>``` is an attribute that retrieves the most recent position of
+a specific device from the Traccar server.
+It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
 
 **Parameters:**
+
 - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+- `serverName` *(Text)*: The name of the operator-configured Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.traccarPosition>
+"12345".<traccar.traccarPosition("prod")>
 ```
 
 This may return a value like:
@@ -485,19 +408,17 @@ This may return a value like:
 
 ## traccarPosition
 
-```deviceEntityId.<traccar.traccarPosition(serverName)>``` is an attribute that retrieves the most recent position of
-a specific device from the Traccar server.
-It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
+```deviceEntityId.<traccar.traccarPosition>``` is an attribute that retrieves the most recent position of a specific
+device from the Traccar server. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
+server connection configuration.
 
 **Parameters:**
-
 - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
-- `serverName` *(Text)*: The name of the operator-configured Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.traccarPosition("prod")>
+"12345".<traccar.traccarPosition>
 ```
 
 This may return a value like:
@@ -595,6 +516,42 @@ This may return a value like:
 
 ## devices
 
+```<traccar.devices>``` is an environment attribute that retrieves a list of devices from the
+[Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Devices/paths/~1devices/get).
+It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+
+ **Example:**
+
+```
+<traccar.devices>
+```
+
+This attribute may return a value like:
+```json
+[
+  {
+    "id": 0,
+    "name": "string",
+    "uniqueId": "string",
+    "status": "string",
+    "disabled": true,
+    "lastUpdate": "2019-08-24T14:15:22Z",
+    "positionId": 0,
+    "groupId": 0,
+    "phone": "string",
+    "model": "string",
+    "contact": "string",
+    "category": "string",
+    "attributes": {}
+  }
+]
+```
+
+
+---
+
+## devices
+
 ```<traccar.devices(serverName)>``` is an environment attribute that retrieves a list of devices from the
 [Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Devices/paths/~1devices/get).
 It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
@@ -633,36 +590,27 @@ This attribute may return a value like:
 
 ---
 
-## devices
+## geofences
 
-```<traccar.devices>``` is an environment attribute that retrieves a list of devices from the
-[Traccar server endpoint](https://www.traccar.org/api-reference/#tag/Devices/paths/~1devices/get).
+```<traccar.geofences>``` is an environment attribute that retrieves a list of all geofences from the Traccar server.
 It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
 
- **Example:**
+**Example:**
 
 ```
-<traccar.devices>
+<traccar.geofences>
 ```
 
-This attribute may return a value like:
+This may return a value like:
 ```json
 [
-  {
-    "id": 0,
-    "name": "string",
-    "uniqueId": "string",
-    "status": "string",
-    "disabled": true,
-    "lastUpdate": "2019-08-24T14:15:22Z",
-    "positionId": 0,
-    "groupId": 0,
-    "phone": "string",
-    "model": "string",
-    "contact": "string",
-    "category": "string",
-    "attributes": {}
-  }
+    {
+        "id": 0,
+        "name": "string",
+        "description": "string",
+        "area": "string",
+        "attributes": {}
+    }
 ]
 ```
 
@@ -700,28 +648,80 @@ This may return a value like:
 
 ---
 
-## geofences
+## device
 
-```<traccar.geofences>``` is an environment attribute that retrieves a list of all geofences from the Traccar server.
-It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+```deviceEntityId.<traccar.device(serverName)>``` is an attribute that fetches detailed metadata for a specific device from
+the Traccar server.
+The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
+not the device's `uniqueId` in the database.
+It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
+
+ **Parameters:**
+ - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+ - `serverName` *(Text)*: The name of the operator-configured Traccar server.
 
 **Example:**
 
 ```
-<traccar.geofences>
+"12345".<traccar.device("prod")>
 ```
 
 This may return a value like:
 ```json
-[
-    {
-        "id": 0,
-        "name": "string",
-        "description": "string",
-        "area": "string",
-        "attributes": {}
-    }
-]
+{
+    "id": 0,
+    "name": "string",
+    "uniqueId": "string",
+    "status": "string",
+    "disabled": true,
+    "lastUpdate": "2019-08-24T14:15:22Z",
+    "positionId": 0,
+    "groupId": 0,
+    "phone": "string",
+    "model": "string",
+    "contact": "string",
+    "category": "string",
+    "attributes": {}
+}
+```
+
+
+---
+
+## device
+
+```deviceEntityId.<traccar.device>``` is an attribute that fetches detailed metadata for a specific device from
+the Traccar server.
+The device is identified using the `deviceEntityId` parameter, which is the identifier of the device in Traccar,
+not the device's `uniqueId` in the database.
+This method uses the environment variable `TRACCAR_CONFIG` to retrieve the server connection configuration.
+
+ **Parameters:**
+ - `deviceEntityId` *(Text)*: The identifier of the device in the Traccar system.
+
+**Example:**
+
+```
+"12345".<traccar.device>
+```
+
+This may return a value like:
+```json
+{
+    "id": 0,
+    "name": "string",
+    "uniqueId": "string",
+    "status": "string",
+    "disabled": true,
+    "lastUpdate": "2019-08-24T14:15:22Z",
+    "positionId": 0,
+    "groupId": 0,
+    "phone": "string",
+    "model": "string",
+    "contact": "string",
+    "category": "string",
+    "attributes": {}
+}
 ```
 
 
