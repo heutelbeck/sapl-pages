@@ -21,8 +21,8 @@
     svg.querySelectorAll('.svg-state-initial').forEach(function(el) { el.setAttribute('fill', v('--d-state-initial')); });
     svg.querySelectorAll('.svg-drop-text').forEach(function(el) { el.setAttribute('fill', v('--d-drop-color')); });
     svg.querySelectorAll('.svg-token-pill').forEach(function(el) { el.setAttribute('fill', v('--d-surface')); el.setAttribute('stroke', v('--d-line')); });
+    refreshDynamic();
   }
-  requestAnimationFrame(applyTheme);
   new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   // --- Speed ---
@@ -53,6 +53,15 @@
   var tkLabel = document.getElementById('obl-token-label');
   var tkPill = document.getElementById('obl-token-pill');
   var counter = document.getElementById('obl-step-counter');
+  var polActive = document.getElementById('obl-pol-active');
+  var polVerbs = [null];
+  var polConds = [null];
+  var polNotes = [null];
+  for (var p = 1; p <= 2; p++) {
+    polVerbs.push(document.getElementById('obl-pol-verb-' + p));
+    polConds.push(document.getElementById('obl-pol-cond-' + p));
+    polNotes.push(document.getElementById('obl-pol-note-' + p));
+  }
 
   var lines = {
     clientPep: document.getElementById('obl-line-client-pep'),
@@ -95,18 +104,27 @@
     return {
       permit: s.getPropertyValue('--d-permit').trim(),
       deny: s.getPropertyValue('--d-deny').trim(),
+      suspend: s.getPropertyValue('--d-suspend').trim(),
       stateInitial: s.getPropertyValue('--d-state-initial').trim(),
       lineActive: s.getPropertyValue('--d-line-active').trim(),
       line: s.getPropertyValue('--d-line').trim(),
+      text: s.getPropertyValue('--d-text').trim(),
       textMuted: s.getPropertyValue('--d-text-muted').trim(),
       token: s.getPropertyValue('--d-token').trim(),
     };
   }
 
+  // --- PEP state ---
+  var currentState = 'PENDING';
+
   function setState(state) {
+    currentState = state;
     var c = getC();
     pepState.textContent = state;
-    var color = state === 'PERMITTED' ? c.permit : state === 'DENIED' ? c.deny : c.stateInitial;
+    var color = state === 'PERMITTING' ? c.permit
+              : state === 'SUSPENDED' ? c.suspend
+              : state === 'TERMINATED' ? c.deny
+              : c.stateInitial;
     pepState.setAttribute('fill', color);
     stateBgEl.setAttribute('stroke', color);
     pepState.animate([{ opacity: 1 }, { opacity: 0.4 }, { opacity: 1 }],
@@ -115,7 +133,11 @@
       { duration: 400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
   }
 
+  // --- Severity PIP ---
+  var currentSeverity = '';
+
   function setSeverity(level) {
+    currentSeverity = level;
     var c = getC();
     sevText.textContent = level;
     var color = level === 'CRITICAL' ? c.deny : level === 'ROUTINE' ? c.permit : c.stateInitial;
@@ -123,8 +145,35 @@
     sevBg.setAttribute('stroke', color);
   }
 
+  // --- Policy table ---
+  var activeRow = 0;
+  var rowY = [0, 480, 500];
+
+  function setPolicyRow(n) {
+    activeRow = n;
+    var c = getC();
+    for (var i = 1; i <= 2; i++) {
+      var active = i === n;
+      polVerbs[i].setAttribute('fill', active ? c.permit : c.textMuted);
+      polConds[i].setAttribute('fill', active ? c.text : c.textMuted);
+      polVerbs[i].setAttribute('opacity', active || n === 0 ? '1' : '0.55');
+      polConds[i].setAttribute('opacity', active || n === 0 ? '1' : '0.55');
+      polNotes[i].setAttribute('opacity', active || n === 0 ? '1' : '0.55');
+    }
+    if (n === 0) { polActive.setAttribute('opacity', '0'); return; }
+    polActive.setAttribute('y', String(rowY[n]));
+    polActive.setAttribute('stroke', c.permit);
+    polActive.setAttribute('opacity', '1');
+  }
+
   function setOblJson(arr) {
     oblJsonEls.forEach(function(el, idx) { el.textContent = arr[idx] || ''; });
+  }
+
+  function refreshDynamic() {
+    setState(currentState);
+    setSeverity(currentSeverity);
+    setPolicyRow(activeRow);
   }
 
   function setLine(key, active, text, quiet) {
@@ -231,7 +280,8 @@
       await animateToken(pts.pipR, pts.pdpL, 'routine', od(800));
     },
     async function() {
-      narration.textContent = 'PDP emits PERMIT with obligation: blacken address and phone';
+      narration.textContent = 'The redaction policy wins. PERMIT with obligation: blacken address and phone.';
+      setPolicyRow(2);
       setOblJson([
         'obligations: [{',
         '"type": "filterJsonContent",',
@@ -241,7 +291,7 @@
         ']}]',
       ]);
       await animateToken(pts.pdpT, pts.pepB, 'PERMIT', od(800));
-      setState('PERMITTED');
+      setState('PERMITTING');
     },
     async function() {
       narration.textContent = 'Constraint handler slides into the data path';
@@ -276,13 +326,13 @@
       await animateToken(pts.pipR, pts.pdpL, 'critical', od(800));
     },
     async function() {
-      narration.textContent = 'PDP emits new PERMIT with no obligations. Full access.';
+      narration.textContent = 'Now the full access policy wins. PERMIT with no obligations.';
+      setPolicyRow(1);
       setOblJson(['obligations: []']);
       await animateToken(pts.pdpT, pts.pepB, 'PERMIT', od(800));
-      setState('PERMITTED');
     },
     async function() {
-      narration.textContent = 'Handler slides out. Data flows unfiltered.';
+      narration.textContent = 'Handler slides out. Data flows unfiltered. Still PERMITTING.';
       handlerLabel.textContent = '';
       labels.clientPep.animate([{ opacity: 0 }, { opacity: 1 }],
         { duration: 500, easing: 'ease-out', fill: 'forwards' });
@@ -309,7 +359,8 @@
       await animateToken(pts.pipR, pts.pdpL, 'routine', od(800));
     },
     async function() {
-      narration.textContent = 'PDP emits PERMIT with filter obligation restored.';
+      narration.textContent = 'The redaction policy wins again. Filter obligation restored.';
+      setPolicyRow(2);
       setOblJson([
         'obligations: [{',
         '"type": "filterJsonContent",',
@@ -351,9 +402,13 @@
       setLine('pepPdp', false, '', false);
       await animateToken(pts.pdpL, pts.pipR, 'unsub', od(600));
       setLine('pipPdp', false, '', false);
-      setState('PENDING');
+      setState('TERMINATED');
       setSeverity('');
       setOblJson([]);
+      setPolicyRow(0);
+    },
+    async function() {
+      narration.textContent = 'The client ended this stream. In the animation above, the policy did.';
     },
   ];
 
@@ -378,6 +433,7 @@
     setSeverity('');
     narration.textContent = '';
     setOblJson([]);
+    setPolicyRow(0);
     handlerLabel.textContent = '';
     handlerGroup.setAttribute('transform', 'translate(' + pts.handlerOut.x + ',' + pts.handlerOut.y + ')');
     tk.setAttribute('opacity','0'); tkGlow.setAttribute('opacity','0');
@@ -409,5 +465,6 @@
   });
   btnStep.addEventListener('click', function() { if (!playing) runStep(); });
   btnReset.addEventListener('click', reset);
-  updateCounter();
+
+  requestAnimationFrame(function() { applyTheme(); reset(); });
 })();

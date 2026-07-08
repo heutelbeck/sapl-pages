@@ -13,6 +13,7 @@
   --d-token: #028392;
   --d-permit: #16a34a;
   --d-deny: #dc2626;
+  --d-suspend: #d97706;
   --d-state-initial: #4a5568;
   --d-container-stroke: #028392;
   --d-container-fill: #e4eaf1;
@@ -35,6 +36,7 @@
   --d-token: #3fa09e;
   --d-permit: #4ec751;
   --d-deny: #ef4444;
+  --d-suspend: #f59e0b;
   --d-state-initial: #b0b4b8;
   --d-container-stroke: #3fa09e;
   --d-container-fill: #272b2e;

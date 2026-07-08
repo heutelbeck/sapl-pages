@@ -13,7 +13,7 @@ description: "Authorization decisions that update in real time. SAPL subscribes 
 
 ### What this guide covers
 
-A trader streams live market data over a WebSocket. Regulations require access only from the trading floor. The trader walks to the cafeteria. The authorization decision changes. The stream suspends. When they return, it resumes. No polling. No reconnection. No stale permissions.
+A trader streams live market data over a WebSocket. Regulations require access only from the trading floor. The trader walks to the cafeteria. The decision changes to SUSPEND and the stream pauses. When they return, a fresh PERMIT resumes it. When the market closes, a DENY ends it for good. No polling. No reconnection. No stale permissions.
 
 <div class="anim-controls">
   <button id="geo-btn-play" title="Play" aria-label="Play" class="btn-stacked"><span class="btn-icon">&#9654;</span><span class="btn-label">Play</span></button>
@@ -55,7 +55,7 @@ permit
   geo.within(pos, tradingFloorZone);             // tradingFloorZone is a GEOJson polygon.
 ```
 
-The expression `subject.deviceId.<traccar.position>` does not fetch the trader's location once. It subscribes to it. The [Traccar PIP](/docs/4.0.0/pip_traccar/) pushes GeoJSON position updates whenever the trader's device reports a new position. Every time the location changes, the [`geo.within`](/docs/4.0.0/lib_geo/) check re-evaluates against the trading floor geofence. If the trader walks out, the check fails, the decision changes to DENY, and the PEP suspends the stream. The animation above shows this sequence, including the case where the trader moves on the floor and no new decision is emitted because `geo.within` still returns true.
+The expression `subject.deviceId.<traccar.position>` does not fetch the trader's location once. It subscribes to it. The [Traccar PIP](/docs/latest/pip_traccar/) pushes GeoJSON position updates whenever the trader's device reports a new position. Every time the location changes, the [`geo.within`](/docs/latest/lib_geo/) check re-evaluates against the trading floor geofence. If the trader walks out, the check fails and a new decision reaches the PEP. What that decision should be is itself a policy question. The next section introduces the vocabulary for answering it. The animation above shows the sequence, including the case where the trader moves on the floor and no new decision is emitted because `geo.within` still returns true.
 
 This is why the decision is a stream. Not because the PDP was designed to push updates, but because the policy's inputs are streams. The decision is a reactive function of live data.
 
@@ -81,9 +81,49 @@ geo.within(pos, tradingFloorZone);
 
 The PDP composes all these input streams internally. When any input changes, it re-evaluates the policy. But it only emits a new decision if the result actually changed. If the trader moves 10 meters within the trading floor, the location PIP emits, the policy re-evaluates, the geofence check still passes, and the PDP emits nothing. The application is not disturbed by irrelevant changes. The animation above shows this: the trader moves on the floor, the PIP sends coordinates, but no new decision arrives because `geo.within` still returns true.
 
-### Decisions carry more than permit or deny
+### Permit, suspend, deny
 
-A decision is more than PERMIT or DENY. It carries obligations: machine-readable instructions that the PEP must fulfill before the decision takes effect. If the PEP cannot fulfill an obligation, the PERMIT becomes a DENY. This is enforced by the framework, not by application logic.
+Think about what should happen when the trader steps off the floor. Terminating the WebSocket feels wrong. The trader has done nothing that ends their entitlement. They will be back in five minutes, and forcing the client to reconnect and renegotiate its session buys no security. But leaving the stream running would leak data the trader must not see right now. A model that only knows PERMIT and DENY forces a choice between these two bad options.
+
+SAPL has a third verb. A policy votes `permit`, `deny`, or `suspend`:
+
+| Verb | Meaning | Effect on a stream |
+|------|---------|--------------------|
+| `permit` | Access is granted | Data flows |
+| `suspend` | Access is paused | Data stops flowing, the subscription stays alive, the next PERMIT resumes it |
+| `deny` | Access has ended | The stream terminates |
+
+DENY is terminal. SUSPEND is temporary. Whether losing access is the end of the story or a pause in it depends on who is asking, what they are asking for, and the situation they are in. That knowledge lives in the policies, not in the application code. So SAPL puts the choice where the knowledge is. The policy author decides, rule by rule.
+
+Here is the complete rule set for the trader:
+
+```sapl
+set "market data access"
+first or deny
+for action == "stream_market_data"
+
+policy "deny outside trading hours"
+deny
+    !<time.localTimeIsBetween("08:00", "18:00")>;
+
+policy "permit on the trading floor"
+permit
+    var pos = subject.deviceId.<traccar.position>;
+    geo.within(pos, tradingFloorZone);
+
+policy "suspend while off the floor"
+suspend
+```
+
+The set uses `first or deny`. Policies are evaluated top to bottom and the first one that applies wins. The last policy has no condition, so it applies whenever the two above it do not. It is the fallback.
+
+Follow the trader through a day. The market opens at 08:00 and the trader is on the floor. The deny policy does not apply, the permit policy does. Data flows. At 11:30 the trader walks to the cafeteria. The geofence check fails, evaluation falls through to the fallback, and the PDP emits SUSPEND. The PEP stops forwarding market data but keeps every connection open. Ten minutes later the trader is back on the floor. The geofence check passes, the PDP emits PERMIT, and data resumes on the same WebSocket. At 18:00 the trading day ends. The deny policy now applies. The stream terminates, because after hours there is nothing to wait for.
+
+One property makes the new verb safe to adopt everywhere. A PEP that cannot pause, such as a request-response endpoint that gets one decision and acts on it, treats SUSPEND exactly like DENY. The same policy set protects a REST endpoint and a WebSocket without modification.
+
+### Decisions carry more than a verb
+
+A decision is more than its verb. It carries obligations: machine-readable instructions that the PEP must fulfill before the decision takes effect. If the PEP cannot fulfill an obligation, the PERMIT becomes a DENY. This is enforced by the framework, not by application logic.
 
 In a streaming context, obligations can change without the decision changing. The decision stays PERMIT, but what the data looks like when it reaches the client adapts in real time.
 
@@ -132,39 +172,51 @@ The stream never paused. The decision never changed to DENY. But the data reachi
 {% include streaming/obl-svg.html %}
 <script src="/assets/js/anim-obligation.js"></script>
 
-### Three enforcement modes
+### How the PEP enforces the stream
 
-The animations above show the recoverable pattern: the PEP signals access changes to the client and resumes when access returns. SAPL provides three modes that cover all practical scenarios:
+On the application side, a single annotation wraps the data source. In Spring:
 
-| Mode | On DENY | Client awareness | Recovery | Use case |
-|------|---------|-----------------|----------|----------|
-| **EnforceTillDenied** | Stream terminates | Yes (error signal) | None | Atomic operations, data exports |
-| **EnforceDropWhileDenied** | Data silently dropped | No (just a gap) | Automatic, silent | Real-time feeds, monitoring |
-| **EnforceRecoverableIfDenied** | Data dropped, signal sent | Yes (suspend/restore signals) | Automatic, with notification | Interactive UIs, dashboards |
+```java
+@StreamEnforce(signalTransitions = true)
+public Flux<MarketData> marketData() {
+    return marketDataSource.stream();
+}
+```
 
-**EnforceTillDenied** is terminal. The moment authorization is revoked, the stream ends. Use this when partial results are meaningless: a data export that becomes unauthorized mid-transfer should stop, not pause.
+The PEP behind `@StreamEnforce` is a small state machine with four states. It starts in Pending and does not touch the data source until the first decision arrives. PERMIT moves it to Permitting and data flows. SUSPEND moves it to Suspended and data stops. DENY moves it to Terminated and the stream ends. Four states are easy to reason about, easy to test, and easy to verify, and the decision verb from the PDP drives every transition:
 
-**EnforceDropWhileDenied** keeps the stream alive but silently discards data during denied periods. The client sees a gap but receives no notification. Use this for feeds where temporary gaps are acceptable, or where the client should not be informed that data is being withheld. The recoverable mode offers full transparency. This mode offers deliberate opacity.
+| PDP decision | Effect on the stream |
+|------|---------|
+| PERMIT | Items flow to the client |
+| SUSPEND | Items are dropped silently, the subscription stays open, the next PERMIT resumes the flow |
+| DENY | The stream terminates with an access denied error |
+| INDETERMINATE, NOT_APPLICABLE | The stream terminates, fail closed |
 
-**EnforceRecoverableIfDenied** is the full pattern shown in the animations. On denial, the PEP sends "access suspended." On recovery, "access restored." The data source stays subscribed throughout. When access returns, data resumes immediately without re-establishing the connection.
+Two flags on the annotation cover the choices that genuinely belong to the application. Both default to `false`.
 
-The choice of mode is a deployment decision, not a code change. The same data source, the same policy, the same constraint handlers work with any mode.
+**signalTransitions** decides whether the client hears about suspend and resume boundaries. Left at the default, the client sees data while permitted and silence while suspended. Set to `true`, the PEP emits a signal at every boundary: access suspended when the stream pauses, access granted when it resumes. Dashboards and interactive UIs opt in so they can tell the user why the data stopped. A helper class, `TransitionSignals`, turns these signals into plain callbacks.
+
+**pauseRapDuringSuspend** decides what happens upstream during a suspension. Left at the default, the data source stays subscribed and the PEP discards items before they reach the client. Resuming is instant. Set to `true`, the PEP unsubscribes from the data source when the stream suspends and resubscribes when it resumes. That stops upstream side effects during the pause and pays for it with resubscription latency.
+
+If you know SAPL 4.0, this replaces the three enforcement annotations. `@EnforceTillDenied` is the default behavior. `@EnforceDropWhileDenied` is a policy that says `suspend` instead of `deny`. `@EnforceRecoverableIfDenied` is that same policy plus `signalTransitions = true`. The enforcement mode moved out of the code and into the policy, where it can depend on who is asking and why.
 
 ### Fail-closed by design
 
-Every edge case resolves to denial:
+Every edge case resolves to a terminal denial:
 
-- PDP unreachable: INDETERMINATE (deny). Retry with exponential backoff.
-- Obligation has no registered handler: deny. The PEP cannot fulfill what it does not understand.
-- Obligation handler throws an exception: deny the current item (or terminate, depending on mode).
-- PDP connection drops mid-stream: emit INDETERMINATE, suspend, reconnect.
+- The PDP is unreachable or the connection drops mid-stream: the stream terminates.
+- The PDP reports an evaluation error (INDETERMINATE) or finds no matching policy (NOT_APPLICABLE): the stream terminates.
+- An obligation arrives that no registered handler understands: the stream terminates. The PEP cannot fulfill what it does not understand.
+- An obligation handler fails while processing an item: the stream terminates.
+
+Only an explicit SUSPEND from the PDP pauses the stream instead of ending it. Suspension is a deliberate policy decision, never a fallback for something going wrong. Operators who want subscriptions without policy coverage to pause rather than terminate can set the default decision to `suspend` in the PDP configuration. That produces a real SUSPEND decision, so the behavior stays visible in the policy layer instead of hiding in PEP settings.
 
 The PEP never guesses. The PEP never caches a stale PERMIT across a connection failure. The PEP never silently ignores an obligation it cannot handle. The default is closed. Access requires active, continuous confirmation.
 
 ### Related
 
 - [SDK Integrations](/docs/latest/6_0_SDKsAndAPIs/): enforcement annotations and streaming modes across all supported frameworks
-- [Multi-Framework Authorization](/guides/multi-framework/): recoverable SSE streaming across 7 frameworks
+- [Multi-Framework Authorization](/guides/multi-framework/): suspend-aware SSE streaming across 7 frameworks
 - [Human-in-the-Loop Approval](/guides/ai-hitl/): obligations that pause execution for human confirmation
 - [Policy Operations](/guides/policy-ops/): live policy updates via streaming bundles
 - [AI Tool Authorization](/guides/ai-tools/): per-tool authorization for AI agents

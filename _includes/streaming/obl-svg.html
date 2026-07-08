@@ -1,7 +1,7 @@
-<svg id="obl-svg" viewBox="0 0 800 500" width="100%" xmlns="http://www.w3.org/2000/svg"
+<svg id="obl-svg" viewBox="0 0 800 560" width="100%" xmlns="http://www.w3.org/2000/svg"
      text-rendering="optimizeLegibility" shape-rendering="geometricPrecision"
      style="display: block; margin: 0 auto; max-width: 800px;">
-  <rect width="800" height="500" rx="12" class="svg-bg"/>
+  <rect width="800" height="560" rx="12" class="svg-bg"/>
   <text id="obl-narration" x="400" y="32" text-anchor="middle" class="svg-narration" font-size="16" font-weight="600"></text>
 
   <!-- Left column -->
@@ -52,6 +52,16 @@
   <text id="obl-json-4" x="532" y="420" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
   <text id="obl-json-5" x="526" y="430" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
   <text id="obl-json-6" x="520" y="440" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="7"></text>
+
+  <!-- Policy table -->
+  <text x="310" y="470" text-anchor="start" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="9">set "patient records"  first or deny</text>
+  <rect id="obl-pol-active" x="302" y="480" width="346" height="18" rx="6" class="svg-state-bg" stroke-width="1.2" opacity="0"/>
+  <text id="obl-pol-verb-1" x="310" y="493" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">permit</text>
+  <text id="obl-pol-cond-1" x="368" y="493" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="9">severity == "critical";</text>
+  <text id="obl-pol-note-1" x="640" y="493" text-anchor="end" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="8">full access</text>
+  <text id="obl-pol-verb-2" x="310" y="513" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">permit</text>
+  <text id="obl-pol-cond-2" x="368" y="513" text-anchor="start" font-family="'JetBrains Mono', monospace" font-size="9">severity == "routine";</text>
+  <text id="obl-pol-note-2" x="640" y="513" text-anchor="end" font-family="'JetBrains Mono', monospace" class="svg-text-muted" font-size="8">blacken addr, phone</text>
 
   <!-- Connection glow layers -->
   <line id="obl-glow-client-pep" x1="200" y1="250" x2="380" y2="250" stroke-width="8" stroke-linecap="round" opacity="0" class="svg-line-glow"/>
