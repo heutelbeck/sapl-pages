@@ -1190,11 +1190,9 @@ p + p { margin-top: 1rem; }
   background: linear-gradient(90deg, transparent, #059669, transparent);
   animation: sdFlow 1.2s linear infinite;
 }
-.sd-pulse-warn { background: linear-gradient(90deg, transparent, #d97706, transparent); }
-.sd-pulse-deny { background: linear-gradient(90deg, transparent, #dc2626, transparent); animation: none; opacity: 0.4; left: 30%; }
+.sd-pulse-suspend { background: linear-gradient(90deg, transparent, #d97706, transparent); animation: none; opacity: 0.4; left: 30%; }
 [data-theme="dark"] .sd-pulse { background: linear-gradient(90deg, transparent, #34d399, transparent); }
-[data-theme="dark"] .sd-pulse-warn { background: linear-gradient(90deg, transparent, #fbbf24, transparent); }
-[data-theme="dark"] .sd-pulse-deny { background: linear-gradient(90deg, transparent, #f87171, transparent); }
+[data-theme="dark"] .sd-pulse-suspend { background: linear-gradient(90deg, transparent, #fbbf24, transparent); }
 
 @keyframes sdFlow { from { left: -40%; } to { left: 100%; } }
 
@@ -1208,11 +1206,9 @@ p + p { margin-top: 1rem; }
   transition: border-color 300ms, color 300ms;
   color: #059669;
 }
-.sd-arrow-warn  { border-color: #d97706; color: #d97706; }
-.sd-arrow-deny  { border-color: #dc2626; color: #dc2626; }
+.sd-arrow-suspend { border-color: #d97706; color: #d97706; }
 [data-theme="dark"] .sd-arrow { border-color: #34d399; color: #34d399; }
-[data-theme="dark"] .sd-arrow-warn { border-color: #fbbf24; color: #fbbf24; }
-[data-theme="dark"] .sd-arrow-deny { border-color: #f87171; color: #f87171; }
+[data-theme="dark"] .sd-arrow-suspend { border-color: #fbbf24; color: #fbbf24; }
 .sd-arrow svg { width: 10px; height: 10px; }
 
 /* Source panel */
@@ -1276,11 +1272,9 @@ p + p { margin-top: 1rem; }
 .sd-badge-sub svg { width: 11px; height: 11px; flex-shrink: 0; }
 
 .sd-badge-permit { background: rgba(5,150,105,0.08); color: #059669; box-shadow: 0 0 0 1px #059669, 0 0 12px rgba(5,150,105,0.25); }
-.sd-badge-warn   { background: rgba(217,119,6,0.08); color: #d97706; box-shadow: 0 0 0 1px #d97706, 0 0 12px rgba(217,119,6,0.25); }
-.sd-badge-deny   { background: rgba(220,38,38,0.08); color: #dc2626; box-shadow: 0 0 0 1px #dc2626, 0 0 12px rgba(220,38,38,0.25); }
+.sd-badge-suspend { background: rgba(217,119,6,0.08); color: #d97706; box-shadow: 0 0 0 1px #d97706, 0 0 12px rgba(217,119,6,0.25); }
 [data-theme="dark"] .sd-badge-permit { color: #34d399; box-shadow: 0 0 0 1px #34d399, 0 0 12px rgba(52,211,153,0.2); background: rgba(52,211,153,0.1); }
-[data-theme="dark"] .sd-badge-warn   { color: #fbbf24; box-shadow: 0 0 0 1px #fbbf24, 0 0 12px rgba(251,191,36,0.2); background: rgba(251,191,36,0.1); }
-[data-theme="dark"] .sd-badge-deny   { color: #f87171; box-shadow: 0 0 0 1px #f87171, 0 0 12px rgba(248,113,113,0.2); background: rgba(248,113,113,0.1); }
+[data-theme="dark"] .sd-badge-suspend { color: #fbbf24; box-shadow: 0 0 0 1px #fbbf24, 0 0 12px rgba(251,191,36,0.2); background: rgba(251,191,36,0.1); }
 
 .sd-dot {
   width: 10px; height: 10px; border-radius: 50%;
@@ -1331,16 +1325,19 @@ p + p { margin-top: 1rem; }
 }
 .sd-overlay.active { opacity: 1; pointer-events: auto; }
 .sd-overlay-icon {
-  width: 36px; height: 36px; border: 2.5px solid #dc2626; border-radius: 50%;
+  width: 36px; height: 36px; border: 2.5px solid #d97706; border-radius: 50%;
   position: relative; opacity: 0.85; margin-bottom: 0.25rem;
 }
+.sd-overlay-icon::before,
 .sd-overlay-icon::after {
-  content: ''; position: absolute; top: 50%; left: 50%;
-  width: 65%; height: 2.5px; background: #dc2626;
-  transform: translate(-50%, -50%) rotate(-45deg);
+  content: ''; position: absolute; top: 50%; width: 2.5px; height: 40%;
+  background: #d97706; transform: translateY(-50%);
 }
-[data-theme="dark"] .sd-overlay-icon { border-color: #f87171; }
-[data-theme="dark"] .sd-overlay-icon::after { background: #f87171; }
+.sd-overlay-icon::before { left: 38%; }
+.sd-overlay-icon::after { left: 55%; }
+[data-theme="dark"] .sd-overlay-icon { border-color: #fbbf24; }
+[data-theme="dark"] .sd-overlay-icon::before,
+[data-theme="dark"] .sd-overlay-icon::after { background: #fbbf24; }
 .sd-overlay-title { font-weight: 600; font-size: 0.85rem; color: #fff; }
 .sd-overlay-msg { font-size: 0.75rem; color: rgba(255,255,255,0.65); }
 

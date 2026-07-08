@@ -34,10 +34,9 @@ Both interception points use the same policy. The obligation type determines whi
 |------------|----------------------|----------------------|
 | `@PreEnforce` | Yes | No |
 | `@PostEnforce` | No | Yes |
-| `@QueryEnforce` | Yes (query rewriting) | Yes (result filtering) |
-| `@Enforce*` (streaming) | Yes | Yes |
+| `@StreamEnforce` (streaming) | No | Yes (per item) |
 
-`@PreEnforce` evaluates the policy before the method runs. It can modify arguments but never sees the return value. `@PostEnforce` evaluates the policy after the method runs, using the return value as part of the authorization subscription. It can transform the response but cannot modify the arguments. `@QueryEnforce` does both: it rewrites the query before execution and can filter the result set after. The streaming enforcement annotations (`@EnforceTillDenied`, `@EnforceDropWhileDenied`, `@EnforceRecoverableIfDenied`) also wrap the method and have access to both interception points.
+`@PreEnforce` evaluates the policy before the method runs. It can modify arguments but never sees the return value. `@PostEnforce` evaluates the policy after the method runs, using the return value as part of the authorization subscription. It can transform the response but cannot modify the arguments. The streaming annotation `@StreamEnforce` applies the post-invocation point to every item the stream emits, so redaction obligations follow each element on its way to the client. Query rewriting needs no annotation of its own. A query-rewriting obligation on a `@PreEnforce` decision rewrites database queries while they are in flight, as shown further below.
 
 ### Pre-invocation: modifying arguments
 
@@ -246,23 +245,26 @@ This is the same `filterJsonContent` obligation, the same `MethodInvocationConst
 
 ### Pre-invocation at the database: query rewriting
 
-When the method being protected is a database query, argument transformation becomes row-level security. Spring's `@QueryEnforce` annotation integrates SAPL with R2DBC and MongoDB to rewrite queries before they reach the database. The database only returns rows the user is authorized to see. No post-query filtering. No data leakage through pagination.
+When the method being protected is a database query, argument transformation becomes row-level security. The database only returns rows the user is authorized to see. No post-query filtering. No data leakage through pagination.
 
-`@PreEnforce` and `@PostEnforce` use Spring AOP to intercept any method on any Spring bean. `@QueryEnforce` works differently. It hooks into Spring Data's repository proxy pipeline via `RepositoryFactoryCustomizer`, which means it understands the query semantics of the method it protects. It knows whether the method uses a `@Query` annotation or a Spring Data method-name query, and it transforms the query before the database executes it. The obligation conditions become part of the SQL WHERE clause or MongoDB filter document. The database only returns authorized rows.
+Query rewriting needs no dedicated annotation. You annotate the calling service method with `@PreEnforce` as usual, and the policy attaches a query-rewriting obligation. While that decision is being enforced, every query the method issues is intercepted, the obligation is merged into it, and the rewritten query is what reaches the driver. In Spring, the Boot starter activates this transparently when it sees `R2dbcRepository` or `ReactiveMongoTemplate` on the classpath. It wraps `DatabaseClient` for R2DBC and `ReactiveMongoTemplate` for MongoDB, so derived queries, `@Query` methods, and direct `databaseClient.sql(...)` calls all run through the wrapped bean. No repository annotations are needed.
 
 ```java
-@Repository
-public interface BookRepository extends R2dbcRepository<Book, Long> {
-    @QueryEnforce(action = "'findAll'")
-    Flux<Book> findAll();
+@Service
+public class BookService {
+
+    @PreEnforce(action = "'findAll'")
+    public Flux<Book> findAll() {
+        return bookRepository.findAll();
+    }
 }
 ```
 
-The policy attaches query conditions as obligations. The SDK translates these into WHERE clauses or MongoDB filter documents. The application code does not construct these conditions. The policy does.
+Three rules hold for every backend and SDK. The obligation can only narrow the user's query, never widen it, because it is AND-combined with whatever the user already requested. A malformed or unsupported obligation denies the decision, fail closed. And the integration must be registered before its obligations take effect, because a decision carrying a query-rewriting obligation with no matching integration is denied rather than silently unfiltered.
 
-#### SQL (R2DBC)
+#### SQL
 
-The `r2dbcQueryManipulation` obligation injects SQL WHERE clause fragments into the query:
+The `sql:queryRewriting` obligation carries typed criteria that become WHERE predicates:
 
 ```sapl
 set "book listing"
@@ -276,63 +278,47 @@ deny
 policy "enforce filtering"
 permit
 obligation {
-    "type": "r2dbcQueryManipulation",
-    "conditions": [
-        "category IN " + string.replace(
-            string.replace(
-                standard.toString(subject.principal.dataScope),
-                "[", "("),
-            "]", ")")
-    ]
+    "type": "sql:queryRewriting",
+    "criteria": [{
+        "column": "category",
+        "op": "in",
+        "value": subject.principal.dataScope
+    }]
 }
 ```
 
-A user with `dataScope: [1, 2, 3]` triggers the obligation `"conditions": ["category IN (1, 2, 3)"]`. The SDK appends this as a WHERE clause. The original `SELECT * FROM books` becomes `SELECT * FROM books WHERE category IN (1, 2, 3)`.
-
-The obligation supports additional fields beyond conditions:
+A user with `dataScope: [1, 2, 3]` turns the original `SELECT * FROM books` into `SELECT * FROM books WHERE category IN (1, 2, 3)`. The policy author writes the criteria, the SDK applies them, and the application code never sees the difference.
 
 | Field | Purpose | Example |
 |-------|---------|---------|
-| `conditions` | SQL WHERE fragments (AND-combined) | `["active = true", "role = 'USER'"]` |
-| `selection` | Column projection (whitelist or blacklist) | `{"type": "whitelist", "columns": ["id", "name"]}` |
-| `transformations` | SQL functions applied to columns | `{"firstname": "UPPER", "email": "LOWER"}` |
-| `alias` | Table alias for qualified column names | `"p"` |
+| `criteria` | Typed conditions, AND-joined, groupable with `and`/`or` | `{"column": "status", "op": "=", "value": "active"}` |
+| `conditions` | Raw SQL fragments for what the typed language cannot express | `["created_at > CURRENT_TIMESTAMP - INTERVAL '7 days'"]` |
+| `columns` | SELECT projection narrowing, intersected with the query's own projection | `["id", "name"]` |
 
 #### MongoDB
 
-The `mongoQueryManipulation` obligation injects MongoDB query documents:
+The `mongo:queryRewriting` obligation mirrors the SQL form without the `columns` projection:
 
 ```sapl
-set "book listing"
-first or abstain errors propagate
-for action == "findAll"
-
-policy "deny if scope null or empty"
-deny
-    subject.principal.dataScope in [null, undefined, []];
-
 policy "enforce filtering"
 permit
 obligation {
-    "type"       : "mongoQueryManipulation",
-    "conditions" : [
-        "{ 'category' : { '$in' : " + subject.principal.dataScope + " } }"
-    ]
+    "type": "mongo:queryRewriting",
+    "criteria": [{
+        "column": "category",
+        "op": "in",
+        "value": subject.principal.dataScope
+    }]
 }
 ```
 
-The conditions are MongoDB query documents as JSON strings. Multiple conditions are AND-combined. The SDK merges them with the repository method's existing `@Query` annotation.
+Typed criteria accept the same operators as SQL except `like` and `notLike`. For pattern matching, the `conditions` escape hatch carries raw query fragments with `$regex`, each merged into the query inside a top-level `$and`. Fragments must be strict JSON with double quotes, and a fragment that fails to parse denies the decision.
 
-| Field        | Purpose                                   | Example                                                      |
-|--------------|-------------------------------------------|--------------------------------------------------------------|
-| `conditions` | MongoDB query documents (AND-combined)    | `["{ 'status': 'active' }", "{ 'price': { '$lte': 100 } }"]` |
-| `selection`  | Field projection (whitelist or blacklist) | `{"type": "blacklist", "columns": ["password", "ssn"]}`      |
+Because the obligation format is identical across SDKs, the same policy produces the same narrowing everywhere that backend appears: `sql:queryRewriting` works on the Spring R2DBC integration and the Python SQLAlchemy integration, and `mongo:queryRewriting` works on Spring, the Python `sapl_pymongo` integration, the NestJS Mongoose integration, and the PHP Doctrine ODM integration.
 
-Both R2DBC and MongoDB query rewriting use built-in constraint handlers. No custom handler code is needed. The policy author writes the conditions, and the SDK applies them to the database query.
+One caution applies in every stack. Database access that bypasses the wrapped bean or session, such as a raw connection or an unwrapped second client, is not intercepted and runs unfiltered. Keep enforced reads on the integrated path, or you own row-level security manually for the paths outside it.
 
-For JPA (blocking), the same result is achieved using `@PreEnforce` with a custom `MethodInvocationConstraintHandlerProvider` that modifies the method's filter parameter before execution (as shown in the argument modification section above).
-
-See the [queryrewriting demos](https://github.com/heutelbeck/sapl-demos) for working examples with each database technology.
+For JPA (blocking), the same result is achieved using `@PreEnforce` with a custom `MethodInvocationConstraintHandlerProvider` that modifies the method's filter parameter before execution (as shown in the argument modification section above). See [Query Rewriting](/docs/latest/6_12_QueryRewriting/) for the full obligation reference and the per-integration coverage notes.
 
 ### Seven handler types
 

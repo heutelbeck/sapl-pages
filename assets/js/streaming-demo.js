@@ -70,9 +70,9 @@
         '<span class="lk">"user"</span>:<span class="'+uc+'">"'+u+'"</span>,'+
         '<span class="lk">"ip"</span>:<span class="'+ic+'">"'+ip+'"</span>}';
     } else if (type === 'sd-suspend') {
-      el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_SUSPENDED","message":"Critical threat - access denied"}';
+      el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_SUSPENDED","message":"Critical threat level. Stream suspended."}';
     } else if (type === 'sd-restore') {
-      el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_GRANTED","message":"Threat level changed - access granted"}';
+      el.innerHTML = '<span class="lp">data: </span>{"type":"ACCESS_GRANTED","message":"Threat level cleared. Stream resumed."}';
     }
     log.insertBefore(el, log.firstChild);
     while (log.children.length > 50) log.removeChild(log.lastChild);
@@ -83,8 +83,8 @@
   function stopStream() { if (dataInterval) { clearInterval(dataInterval); dataInterval = null; } }
 
   function setConn(s) {
-    var c = s === 'critical' ? 'sd-arrow-deny' : s === 'low' ? 'sd-arrow-warn' : '';
-    var p = s === 'critical' ? 'sd-pulse-deny' : s === 'low' ? 'sd-pulse-warn' : '';
+    var c = s === 'critical' ? 'sd-arrow-suspend' : '';
+    var p = s === 'critical' ? 'sd-pulse-suspend' : '';
     arrow1.className = 'sd-arrow ' + c;
     arrow2.className = 'sd-arrow ' + c;
     pulse1.className = 'sd-pulse ' + p;
@@ -98,9 +98,9 @@
 
   function setDecision(s) {
     if (s === 'critical') {
-      badge.className = 'sd-badge sd-badge-deny'; decision.textContent = 'DENY'; sub.className = 'sd-badge-sub';
+      badge.className = 'sd-badge sd-badge-suspend'; decision.textContent = 'SUSPEND'; sub.className = 'sd-badge-sub';
     } else if (s === 'low') {
-      badge.className = 'sd-badge sd-badge-warn'; decision.textContent = 'PERMIT'; sub.className = 'sd-badge-sub sd-badge-sub-visible';
+      badge.className = 'sd-badge sd-badge-permit'; decision.textContent = 'PERMIT'; sub.className = 'sd-badge-sub sd-badge-sub-visible';
     } else {
       badge.className = 'sd-badge sd-badge-permit'; decision.textContent = 'PERMIT'; sub.className = 'sd-badge-sub';
     }

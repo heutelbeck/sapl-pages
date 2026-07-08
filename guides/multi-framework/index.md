@@ -10,19 +10,19 @@ Write your authorization policies once. Enforce them identically in Spring, Flas
 
 ### How this works
 
-SAPL separates the authorization decision (PDP) from enforcement (PEP). Each framework SDK implements the same PEP behavior: subscribe to the PDP, enforce decisions, handle obligations and advice, apply constraint handlers. The [PEP Implementation Specification](/docs/8_1_PEPImplementationSpecification/) specifies this contract. All SDKs listed below are built against it.
+SAPL separates the authorization decision (PDP) from enforcement (PEP). Each framework SDK implements the same PEP behavior: subscribe to the PDP, enforce decisions, handle obligations and advice, apply constraint handlers. The [SDK documentation](/docs/latest/6_0_SDKsAndAPIs/) describes this shared contract. All SDKs listed below are built against it.
 
-Each pattern in this guide links to the relevant specification section. For framework-specific details, see the SDK documentation:
+For framework-specific details, see the SDK documentation:
 
 | Framework | SDK Documentation | Demo |
 |-----------|------------------|------|
-| Spring | [Spring SDK](/docs/6_3_Spring/) | [spring-demo](https://github.com/heutelbeck/sapl-demos/tree/master/spring-demo) |
-| Flask | [Flask SDK](/docs/6_6_Flask/) | [flask_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/flask_demo) |
-| FastAPI | [FastAPI SDK](/docs/6_7_FastAPI/) | [fastapi_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/fastapi_demo) |
-| Django | [Django SDK](/docs/6_5_Django/) | [django_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/django_demo) |
-| Tornado | [Tornado SDK](/docs/6_8_Tornado/) | [tornado_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/tornado_demo) |
-| NestJS | [NestJS SDK](/docs/6_4_NestJS/) | [sapl-nestjs-demo](https://github.com/heutelbeck/sapl-nestjs-demo) |
-| .NET | [.NET SDK](/docs/6_10_DotNet/) | [sapl-dotnet-demos](https://github.com/heutelbeck/sapl-dotnet-demos) |
+| Spring | [Spring SDK](/docs/latest/6_3_Spring/) | [spring-demo](https://github.com/heutelbeck/sapl-demos/tree/master/spring-demo) |
+| Flask | [Flask SDK](/docs/latest/6_6_Flask/) | [flask_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/flask_demo) |
+| FastAPI | [FastAPI SDK](/docs/latest/6_7_FastAPI/) | [fastapi_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/fastapi_demo) |
+| Django | [Django SDK](/docs/latest/6_5_Django/) | [django_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/django_demo) |
+| Tornado | [Tornado SDK](/docs/latest/6_8_Tornado/) | [tornado_demo](https://github.com/heutelbeck/sapl-python-demos/tree/main/tornado_demo) |
+| NestJS | [NestJS SDK](/docs/latest/6_4_NestJS/) | [sapl-nestjs-demo](https://github.com/heutelbeck/sapl-nestjs-demo) |
+| .NET | [.NET SDK](/docs/latest/6_10_DotNet/) | [sapl-dotnet-demos](https://github.com/heutelbeck/sapl-dotnet-demos) |
 
 The examples below show Spring, Flask, FastAPI, NestJS, and .NET side-by-side. Django and Tornado follow the same Python decorator pattern as Flask and FastAPI. Their full implementations are in the demo repositories linked above.
 
@@ -32,7 +32,7 @@ Each pattern shows the application code across frameworks, the shared SAPL polic
 
 ### 1. Manual PDP call
 
-The simplest integration: call the PDP directly and inspect the decision. No annotations, no decorators. Useful for understanding the subscription model. ([Spec: Basic Request-Response Enforcement](/docs/8_1_PEPImplementationSpecification/#42-basic-request-response-enforcement))
+The simplest integration: call the PDP directly and inspect the decision. No annotations, no decorators. Useful for understanding the subscription model.
 
 <div class="code-tabs">
   <div class="tab-bar">
@@ -120,7 +120,7 @@ Every framework creates the same subscription `{subject: "anonymous", action: "r
 
 ### 2. Declarative enforcement with content filtering
 
-One annotation or decorator replaces the manual PDP call. The framework handles the decision, and SAPL's built-in content filter blackens the SSN before the response reaches the client. ([Spec: PreEnforce](/docs/8_1_PEPImplementationSpecification/#71-preenforce-pre-method-authorization), [Content Filtering](/docs/8_1_PEPImplementationSpecification/#87-content-filtering-built-in-handler))
+One annotation or decorator replaces the manual PDP call. The framework handles the decision, and SAPL's built-in content filter blackens the SSN before the response reaches the client.
 
 <div class="code-tabs">
   <div class="tab-bar">
@@ -197,7 +197,7 @@ The application code never touches the SSN. The framework applies the filter aft
 
 ### 3. Argument manipulation via constraint handler
 
-The policy caps the transfer amount at 5000. A `MethodInvocationConstraintHandler` modifies the method argument before execution. The application code sees the already-capped value. ([Spec: Handler Types](/docs/8_1_PEPImplementationSpecification/#81-handler-types))
+The policy caps the transfer amount at 5000. A `MethodInvocationConstraintHandler` modifies the method argument before execution. The application code sees the already-capped value.
 
 <div class="code-tabs">
   <div class="tab-bar">
@@ -265,11 +265,11 @@ obligation
   }
 ```
 
-A `POST /api/transfer?amount=8000` results in `{"transferred": 5000}`. The policy also logs the access as a second obligation. Both obligations must be fulfilled for the permit to take effect. ([Spec: Obligation vs Advice](/docs/8_1_PEPImplementationSpecification/#83-obligation-vs-advice-error-semantics))
+A `POST /api/transfer?amount=8000` results in `{"transferred": 5000}`. The policy also logs the access as a second obligation. Both obligations must be fulfilled for the permit to take effect.
 
 ### 4. Field redaction via mapping handler
 
-A `MappingConstraintHandler` transforms the response after the method returns. The policy names which fields to redact. The handler replaces their values with `[REDACTED]`. ([Spec: Handler Composition](/docs/8_1_PEPImplementationSpecification/#84-handler-composition))
+A `MappingConstraintHandler` transforms the response after the method returns. The policy names which fields to redact. The handler replaces their values with `[REDACTED]`.
 
 <div class="code-tabs">
   <div class="tab-bar">
@@ -339,9 +339,9 @@ obligation
 
 The response arrives with `"ssn": "[REDACTED]"` and `"creditCard": "[REDACTED]"`. The `name`, `email`, and `balance` fields pass through unchanged. The policy decides which fields to redact, not the application code.
 
-### 5. Recoverable SSE streaming
+### 5. Suspend-aware SSE streaming
 
-The PDP continuously re-evaluates the policy. When the decision changes from PERMIT to DENY, events are suspended. When it flips back, events resume. The stream stays open throughout. ([Spec: EnforceRecoverableIfDenied](/docs/8_1_PEPImplementationSpecification/#75-enforcerecoverableifdenied-streaming-suspendresume-with-notification))
+The PDP continuously re-evaluates the policy. During permit windows, events flow. When the decision changes to SUSPEND, events pause but the stream stays open. When PERMIT returns, events resume on the same connection. A DENY would end the stream for good. The policy chooses between pausing and terminating with its effect verbs. The application code only declares whether the client should hear about the transitions.
 
 <div class="code-tabs">
   <div class="tab-bar">
@@ -352,94 +352,90 @@ The PDP continuously re-evaluates the policy. When the decision changes from PER
     <button class="tab" data-tab="dotnet" data-lang="java">.NET</button>
   </div>
   <div class="tab-content active" id="tab-spring" data-lang="java">
-<pre class="cm-source"><code>// Controller uses SDK utility to emit suspend/restore signals
-Flux&lt;ServerSentEvent&lt;Object&gt;&gt; heartbeatRecoverable() {
-    return recoverWith(
-            streamingService.heartbeatRecoverable().cast(Object.class),
-            e -&gt; {}, () -&gt; new StreamSignal("ACCESS_SUSPENDED", "Waiting for re-authorization"),
-            r -&gt; {}, () -&gt; new StreamSignal("ACCESS_RESTORED", "Authorization restored"))
-            .map(StreamingController::toSse);
-}
-
-// Service - signalAccessRecovery emits AccessRecoveredException on DENY-to-PERMIT
-@EnforceRecoverableIfDenied(action = "'stream:heartbeat'", resource = "'heartbeat'",
-        signalAccessRecovery = true)
-public Flux&lt;HeartbeatEvent&gt; heartbeatRecoverable() {
+<pre class="cm-source"><code>// Service: one annotation, the policy decides pause or terminate
+@StreamEnforce(action = "'stream:heartbeat'", resource = "'heartbeat'",
+        signalTransitions = true)
+public Flux&lt;HeartbeatEvent&gt; heartbeat() {
     return Flux.interval(Duration.ofSeconds(2))
             .map(tick -&gt; new HeartbeatEvent(seq.getAndIncrement(),
                     Instant.now().toString()));
+}
+
+// Controller: TransitionSignals turns boundary signals into callbacks
+Flux&lt;ServerSentEvent&lt;Object&gt;&gt; heartbeatSse() {
+    return TransitionSignals.onTransitions(
+            streamingService.heartbeat().cast(Object.class),
+            suspended -&gt; log.info("Stream suspended: {}", suspended.getMessage()),
+            granted -&gt; log.info("Stream resumed"))
+        .map(StreamingController::toSse);
 }</code></pre>
   </div>
   <div class="tab-content" id="tab-flask" data-lang="python">
-<pre class="cm-source"><code>@streaming_bp.route("/heartbeat/recoverable")
-@enforce_recoverable_if_denied(
-    action="stream:heartbeat", resource="heartbeat",
-    on_stream_deny=lambda d: {"type": "ACCESS_SUSPENDED",
-                               "message": "Waiting for re-authorization"},
-    on_stream_recover=lambda d: {"type": "ACCESS_RESTORED",
-                                  "message": "Authorization restored"},
-)
-def heartbeat_recoverable():
-    return heartbeat_source()</code></pre>
+<pre class="cm-source"><code>@streaming_bp.route("/stream/heartbeat")
+@stream_enforce(action="stream:heartbeat", resource="heartbeat",
+                signal_transitions=True)
+async def heartbeat():
+    seq = 0
+    while True:
+        yield {"seq": seq, "ts": datetime.now(timezone.utc).isoformat()}
+        seq += 1
+        await asyncio.sleep(2)</code></pre>
   </div>
   <div class="tab-content" id="tab-fastapi" data-lang="python">
-<pre class="cm-source"><code>@router.get("/heartbeat/recoverable")
-@enforce_recoverable_if_denied(
-    action="stream:heartbeat", resource="heartbeat",
-    on_stream_deny=lambda d: {"type": "ACCESS_SUSPENDED",
-                               "message": "Waiting for re-authorization"},
-    on_stream_recover=lambda d: {"type": "ACCESS_RESTORED",
-                                  "message": "Authorization restored"},
-)
-async def heartbeat_recoverable(request: Request):
-    return heartbeat_source()</code></pre>
+<pre class="cm-source"><code>@router.get("/stream/heartbeat")
+@stream_enforce(action="stream:heartbeat", resource="heartbeat",
+                signal_transitions=True)
+async def heartbeat(request: Request):
+    seq = 0
+    while True:
+        yield {"seq": seq, "ts": datetime.now(timezone.utc).isoformat()}
+        seq += 1
+        await asyncio.sleep(2)</code></pre>
   </div>
   <div class="tab-content" id="tab-nestjs" data-lang="javascript">
-<pre class="cm-source"><code>@EnforceRecoverableIfDenied({
-    action: 'stream:heartbeat', resource: 'heartbeat',
-    onStreamDeny: (_d, sub) =&gt; sub.next({ data: JSON.stringify(
-        { type: 'ACCESS_SUSPENDED', message: 'Waiting for re-authorization' }) }),
-    onStreamRecover: (_d, sub) =&gt; sub.next({ data: JSON.stringify(
-        { type: 'ACCESS_RESTORED', message: 'Authorization restored' }) }),
-})
-heartbeatRecoverable(): Observable&lt;any&gt; {
-    return interval(2000).pipe(map(i =&gt; ({ data: JSON.stringify(
-        { seq: i, ts: new Date().toISOString() }) })));
-}</code></pre>
+<pre class="cm-source"><code>// Service: the annotation enforces the Observable
+@StreamEnforce({ action: 'stream:heartbeat', resource: 'heartbeat',
+                 signalTransitions: true })
+heartbeat(): Observable&lt;any&gt; {
+    return interval(2000).pipe(map((i) =&gt; ({ seq: i,
+        ts: new Date().toISOString() })));
+}
+
+// Subscriber: TransitionSignals turns boundary values into callbacks
+const clean = TransitionSignals.onTransitions(
+    heartbeatService.heartbeat(),
+    (suspended) =&gt; log.info('Stream suspended'),
+    (granted) =&gt; log.info('Stream resumed'),
+);</code></pre>
   </div>
   <div class="tab-content" id="tab-dotnet" data-lang="java">
-<pre class="cm-source"><code>[HttpGet("heartbeat/recoverable")]
-public async Task HeartbeatRecoverable()
-{
-    var stream = _streamingService
-        .HeartbeatRecoverable(HttpContext.RequestAborted);
-    var withSignals = stream.RecoverWith(
-        onDenyItem: () =&gt; (object)new { type = "ACCESS_SUSPENDED",
-            message = "Waiting for re-authorization" },
-        onRecoverItem: () =&gt; (object)new { type = "ACCESS_RESTORED",
-            message = "Authorization restored" });
-    await WriteSseAsync(withSignals);
-}</code></pre>
+<pre class="cm-source"><code>[HttpGet("heartbeat")]
+[StreamEnforce(Action = "stream:heartbeat", Resource = "heartbeat",
+    SignalTransitions = true)]
+public IAsyncEnumerable&lt;Heartbeat&gt; Heartbeat() =&gt;
+    _streamingService.Heartbeats(HttpContext.RequestAborted);</code></pre>
   </div>
 </div>
 
-The policy uses the `<time.now>` PIP to cycle between PERMIT and DENY on 20-second boundaries:
+The policy cycles between PERMIT and SUSPEND on 20 second boundaries. The suspend fallback is what keeps the stream alive between the permit windows:
 
 ```sapl
-policy "streaming-heartbeat-time-based"
+set "streaming heartbeat"
+first or deny
+for action == "stream:heartbeat"
+
+policy "permit during open windows"
 permit
-  action == "stream:heartbeat";
   resource == "heartbeat";
   var second = time.secondOf(<time.now>);
   second >= 0 && second < 20 || second >= 40;
-obligation
-  {
-    "type": "logAccess",
-    "message": "Streaming heartbeat access"
-  }
+
+policy "suspend between windows"
+suspend
+  resource == "heartbeat";
 ```
 
-The PDP subscribes to `<time.now>` and pushes new decisions as the time condition changes. The client sees heartbeat events during PERMIT windows, `ACCESS_SUSPENDED` when the decision flips to DENY, and `ACCESS_RESTORED` when it flips back. No reconnection, no polling.
+The PDP subscribes to `<time.now>` and pushes a new decision whenever the window condition changes. The client sees heartbeat events during permit windows. When the decision flips to SUSPEND, the Python and .NET bindings render an `ACCESS_SUSPENDED` frame into the SSE stream, and Spring and NestJS surface a suspend signal to the `TransitionSignals` callbacks. On the next PERMIT the matching granted signal arrives and events resume. No reconnection, no polling. If the second policy said `deny` instead of `suspend`, the stream would terminate at the first window boundary. The choice between pausing and ending lives in the policy, not in the code.
 
 ### How it runs
 
@@ -453,6 +449,6 @@ Total: 28 | Passed: 28 | Failed: 0 | Skipped: 0
 
 ### Related
 
-- [PEP Implementation Specification](/docs/8_1_PEPImplementationSpecification/): the contract all SDKs implement
+- [SDKs and APIs](/docs/latest/6_0_SDKsAndAPIs/): streaming enforcement and constraint handling across all supported SDKs
 - [Spring Security guide](/guides/spring/): deeper dive into Spring-specific patterns
 - [Policy Operations](/guides/policy-ops/): git versioning, bundle signing, remote deployment

@@ -6,7 +6,8 @@
 > via publish-subscribe attribute streams, with zero overhead when
 > streaming is not used. SAPL provides SDKs and framework integrations
 > for Java (Spring Security), Python (Django, Flask, FastAPI, Tornado,
-> FastMCP), Node.js (NestJS, Express), and .NET (ASP.NET Core).
+> FastMCP), Node.js (NestJS, Express), .NET (ASP.NET Core), and
+> PHP (Symfony).
 
 ## Key Differentiators
 - Sub-microsecond median evaluation latency, 2M+ decisions/sec (8 cores, JVM)
@@ -47,6 +48,7 @@
 - [Tornado SDK](https://sapl.io/docs/latest/6_8_Tornado/): Async enforcement, streaming
 - [FastMCP SDK](https://sapl.io/docs/latest/6_9_FastMCP/): MCP server authorization (AI agent tool access)
 - [.NET SDK](https://sapl.io/docs/latest/6_10_DotNet/): Attributes, constraint handlers, SSE
+- [PHP SDK](https://sapl.io/docs/latest/6_11_PHP/): Symfony bundle, enforcement attributes, streaming SSE, Doctrine query rewriting
 
 ## Deployment
 - **Embedded PDP**: Runs inside a JVM application with policies from classpath, filesystem, or signed bundles
@@ -55,13 +57,14 @@
 - **Operations**: Health/readiness probes (Actuator), Prometheus metrics (decisions, latency, active subscriptions), structured decision logging, Kubernetes liveness/readiness/startup probes
 - **Signed bundles**: Ed25519 signatures for policy integrity verification
 
-## Streaming Enforcement Patterns
-All SDKs implement three PEP-side enforcement modes for streaming authorization:
-- **EnforceTillDenied**: stream terminates permanently when a deny decision arrives
-- **EnforceDropWhileDenied**: silently drops stream elements while denied, resumes when permitted again
-- **EnforceRecoverableIfDenied**: signals denial to the client but keeps the stream alive, resumes when permitted
+## Streaming Enforcement (permit, suspend, deny)
+Since SAPL 4.1, policies vote with three effect verbs: permit, deny, and suspend. DENY is terminal and ends the stream. SUSPEND pauses it: the PEP stops forwarding data, keeps the subscription alive, and the next PERMIT resumes the flow. PEPs that cannot suspend (one-shot request-response enforcement) treat SUSPEND as DENY, so the same policies protect both endpoint styles.
 
-These patterns make streaming authorization practical at the application level. The PDP streams decisions, and the PEP has concrete strategies for how to handle changing decisions on active data streams.
+All SDKs expose a single streaming enforcement annotation (`@StreamEnforce` in Spring and NestJS, `@stream_enforce` in the Python SDKs, `[StreamEnforce]` in .NET, `#[StreamEnforce]` in PHP) with two flags:
+- **signalTransitions**: when true, every suspend and resume boundary is surfaced to the client (signal callbacks via TransitionSignals in Spring and NestJS, in-band ACCESS_SUSPENDED / ACCESS_GRANTED frames in the SSE bindings). When false, the client sees data while permitted and silence while suspended.
+- **pauseRapDuringSuspend**: when true, the PEP unsubscribes from the protected data source while suspended and resubscribes on resume. When false, the source stays subscribed and items are silently dropped.
+
+Fail closed: DENY, INDETERMINATE, NOT_APPLICABLE, and unfulfillable obligations terminate the stream. Only an explicit SUSPEND pauses it. The PEP is a four-state machine (Pending, Permitting, Suspended, Terminated) driven by the PDP decision verb. Earlier 4.0.x SDKs used three PEP-side annotations (EnforceTillDenied, EnforceDropWhileDenied, EnforceRecoverableIfDenied). Since 4.1 the choice between terminating and pausing lives in the policy verb, not in application code.
 
 ## AI Security Guides
 - [RAG pipeline authorization](https://sapl.io/guides/ai-rag/): Document-level access control in retrieval-augmented generation
@@ -119,4 +122,4 @@ Heutelbeck, D. (2021). Demo: Attribute-Stream-Based Access Control (ASBAC) with 
 - License: Apache 2.0
 - Origin: European research (FTK, Horizon Europe grants No. 101080923 and No. 957852)
 - Self-hosted, no vendor lock-in, no proprietary dependencies
-- SDKs: Java/Spring, Python, Node.js/NestJS, .NET
+- SDKs: Java/Spring, Python, Node.js/NestJS, .NET, PHP/Symfony
