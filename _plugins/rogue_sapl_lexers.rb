@@ -23,7 +23,7 @@ module Rouge
         rule %r/"/, Str::Double, :string
         rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
         rule %r/\b(?:policy|set|import|as)\b/, Keyword::Declaration
-        rule %r/\b(?:permit|deny)\b/, Name::Constant
+        rule %r/\b(?:permit|deny|suspend)\b/, Name::Constant
         rule %r/\b(?:obligation|advice|transform|where|for|in|each|var|schema|enforced)\b/, Keyword
         rule %r/\b(?:first|priority|strict|unanimous|unique|or|and|abstain|errors|propagate)\b/, Keyword
         rule %r/\b(?:subject|action|resource|environment)\b/, Name::Builtin
@@ -73,7 +73,7 @@ module Rouge
         rule %r/\/\*/, Comment::Multiline, :multiline_comment
         rule %r/"/, Str::Double, :string
         rule %r/[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/, Num
-        rule %r/\b(?:permit|deny|indeterminate|not-applicable)\b/, Name::Constant
+        rule %r/\b(?:permit|deny|suspend|indeterminate|not-applicable)\b/, Name::Constant
         rule %r/\b(?:requirement|scenario|given|when|expect|then|verify)\b/, Keyword::Declaration
         rule %r/\b(?:subject|action|resource|environment)\b/, Name::Builtin
         rule %r/\b(?:attempts|emits|maps|called|matching|equals|containing|with|is|of|to|on|in|where|any|next|once|times|and|starting|ending)\b/, Keyword
