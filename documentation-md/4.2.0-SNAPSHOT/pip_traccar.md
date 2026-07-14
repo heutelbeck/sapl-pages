@@ -446,17 +446,19 @@ This may return a value like:
 
 ## geofenceGeometry
 
-```geofenceEntityId.<traccar.geofenceGeometry>``` is an attribute that converts geofence metadata into GeoJSON format
-for geometric representation. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
-server connection configuration.
+```geofenceEntityId.<traccar.geofenceGeometry(serverName)>``` is an attribute that converts geofence metadata into
+GeoJSON format for geometric representation.
+It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
 
 **Parameters:**
+
 - `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
+- `serverName` *(Text)*: The name of the operator-configured Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.geofenceGeometry>
+"12345".<traccar.geofenceGeometry("prod")>
 ```
 
 This may return a value like:
@@ -480,19 +482,17 @@ This may return a value like:
 
 ## geofenceGeometry
 
-```geofenceEntityId.<traccar.geofenceGeometry(serverName)>``` is an attribute that converts geofence metadata into
-GeoJSON format for geometric representation.
-It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
+```geofenceEntityId.<traccar.geofenceGeometry>``` is an attribute that converts geofence metadata into GeoJSON format
+for geometric representation. This method uses the environment variable `TRACCAR_CONFIG` to retrieve the
+server connection configuration.
 
 **Parameters:**
-
 - `geofenceEntityId` *(Text)*: The identifier of the geofence in the Traccar system.
-- `serverName` *(Text)*: The name of the operator-configured Traccar server.
 
 **Example:**
 
 ```
-"12345".<traccar.geofenceGeometry("prod")>
+"12345".<traccar.geofenceGeometry>
 ```
 
 This may return a value like:
@@ -592,13 +592,17 @@ This attribute may return a value like:
 
 ## geofences
 
-```<traccar.geofences>``` is an environment attribute that retrieves a list of all geofences from the Traccar server.
-It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
+```<traccar.geofences(serverName)>``` is an environment attribute that retrieves a list of all geofences from
+the Traccar server. It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
+
+**Parameters:**
+
+- `serverName` *(Text)*: The name of the operator-configured Traccar server.
 
 **Example:**
 
 ```
-<traccar.geofences>
+<traccar.geofences("prod")>
 ```
 
 This may return a value like:
@@ -619,17 +623,13 @@ This may return a value like:
 
 ## geofences
 
-```<traccar.geofences(serverName)>``` is an environment attribute that retrieves a list of all geofences from
-the Traccar server. It selects the named operator server from the `TRACCAR_CONFIG` environment variable.
-
-**Parameters:**
-
-- `serverName` *(Text)*: The name of the operator-configured Traccar server.
+```<traccar.geofences>``` is an environment attribute that retrieves a list of all geofences from the Traccar server.
+It uses the value of the environment variable `TRACCAR_CONFIG` to connect to the server.
 
 **Example:**
 
 ```
-<traccar.geofences("prod")>
+<traccar.geofences>
 ```
 
 This may return a value like:
