@@ -99,6 +99,24 @@ permit action == "api.call";
 
 ---
 
+## extractSubjectDn
+
+```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
+
+Returns the full DN string in RFC 2253 format. Use this for matching against
+specific organizations or organizational units in certificate-based access control.
+
+Example - Restrict access to specific department:
+```sapl
+policy "allow hr department only"
+permit action == "read" && resource.type == "personnel-records"
+  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
+  subjectDn =~ "OU=Human Resources,O=Acme Corp";
+```
+
+
+---
+
 ## extractIssuerDn
 
 ```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
@@ -302,24 +320,6 @@ policy "maintenance window access"
 permit action == "admin" && resource.type == "production"
   var maintenanceStart = "2025-06-15T02:00:00Z";
   x509.isValidAt(request.adminCertificate, maintenanceStart);
-```
-
-
----
-
-## extractSubjectDn
-
-```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
-
-Returns the full DN string in RFC 2253 format. Use this for matching against
-specific organizations or organizational units in certificate-based access control.
-
-Example - Restrict access to specific department:
-```sapl
-policy "allow hr department only"
-permit action == "read" && resource.type == "personnel-records"
-  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
-  subjectDn =~ "OU=Human Resources,O=Acme Corp";
 ```
 
 

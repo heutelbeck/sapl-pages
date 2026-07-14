@@ -29,22 +29,6 @@ These limits apply because this input may originate from the authorization subsc
 
 ---
 
-## valToXml
-
-```valToXml(value)```: Converts a SAPL value into an XML string representation.
-
-**Example:**
-```sapl
-policy "log_access_attempt"
-permit
-   var accessLog = {"user":"bob","resource":"/documents/report.pdf","action":"READ","timestamp":"2025-01-15T10:30:00Z"};
-   var logXml = xml.valToXml(accessLog);
-   // logXml contains XML-formatted access log
-```
-
-
----
-
 ## xmlToVal
 
 ```xmlToVal(TEXT xml)```: Converts a well-formed XML document into a SAPL value
@@ -61,6 +45,22 @@ permit
    var resourceXml = "<Resource><owner>alice</owner><classification>PUBLIC</classification></Resource>";
    var resource = xml.xmlToVal(resourceXml);
    resource.owner == subject.name;
+```
+
+
+---
+
+## valToXml
+
+```valToXml(value)```: Converts a SAPL value into an XML string representation.
+
+**Example:**
+```sapl
+policy "log_access_attempt"
+permit
+   var accessLog = {"user":"bob","resource":"/documents/report.pdf","action":"READ","timestamp":"2025-01-15T10:30:00Z"};
+   var logXml = xml.valToXml(accessLog);
+   // logXml contains XML-formatted access log
 ```
 
 
