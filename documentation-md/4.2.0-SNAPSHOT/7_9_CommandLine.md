@@ -163,6 +163,12 @@ secrets is rejected. Plaintext secrets are never written into a
 bundle. Generate the recipient keypair with
 'sapl bundle keygen-secrets'.
 
+Every bundle carries a .sapl-manifest.json recording the
+configurationId of the publication. Set it explicitly with
+`--configuration-id`, or a content-derived id of the form
+bundle@<hash16> is recorded. The resulting configuration id is
+printed on success for CI or agent capture.
+
 Optionally signs the bundle when a private key is provided.
 This is equivalent to creating then running 'sapl bundle sign'.
 
@@ -170,8 +176,9 @@ This is equivalent to creating then running 'sapl bundle sign'.
 **Synopsis**
 
 ```
-sapl bundle create [-hV] [--force] -i=<inputDir> [-k=<keyFile>]
-                          [--key-id=<keyId>] -o=<outputFile>
+sapl bundle create [-hV] [--force]
+                          [--configuration-id=<configurationId>] -i=<inputDir>
+                          [-k=<keyFile>] [--key-id=<keyId>] -o=<outputFile>
                           [--seal-to=<sealToFile>]
 ```
 
@@ -180,6 +187,7 @@ sapl bundle create [-hV] [--force] -i=<inputDir> [-k=<keyFile>]
 | Option | Description | Default |
 |--------|-------------|---------|
 | `-i, --input <inputDir>` | Input directory containing policies |  |
+| `--configuration-id <configurationId>` | Configuration id recorded in the bundle manifest (defaults to a content-derived id) |  |
 | `-k, --key <keyFile>` | Ed25519 private key file (PEM format) for signing |  |
 | `--key-id <keyId>` | Key identifier for rotation support | `default` |
 | `-o, --output <outputFile>` | Output bundle file path |  |
@@ -221,6 +229,8 @@ Extracts every file from a `.saplbundle` into the output directory:
 `pdp.json`, `.sapl` policies, secrets files, extension files, and
 critical-extensions.json. The manifest is not written, so the
 directory can be edited and repackaged with 'sapl bundle create'.
+The manifest's configuration id is printed; the unpacked sources
+carry none.
 
 With `-k` the signature is verified before unpacking and a mismatch
 aborts. With `--unseal-with`, secrets.sealed.json and every
@@ -369,6 +379,11 @@ authenticity at load time.
 A bundle containing plaintext secrets is refused. Unpack it,
 seal the directory, and re-create it before signing.
 
+When the input bundle carries a manifest, its configurationId,
+attribution, and audience are carried over into the signed
+bundle; the creation timestamp and engine version are re-minted
+because re-signing is a build event.
+
 By default, the input bundle is overwritten with the signed
 version. Use `-o` to write to a different file.
 
@@ -454,11 +469,13 @@ See Also: [sapl bundle sign](#sapl-bundle-sign), [sapl bundle inspect](#sapl-bun
 
 Show bundle contents and metadata.
 
-Displays the signature status, PDP configuration (pdp.json),
-all policies with their sizes, the secrets files with their
-sealing state, and the extensions with their payloads and
-critical markers. Secret values are never printed, only file
-names and sizes. Useful for auditing bundles before deployment.
+Displays the signature status, the manifest metadata
+(configuration id and attribution), PDP configuration
+(pdp.json), all policies with their sizes, the secrets files
+with their sealing state, and the extensions with their
+payloads and critical markers. Secret values are never
+printed, only file names and sizes. Useful for auditing
+bundles before deployment.
 
 The Integrity line is always explicit. With `-k` the signature
 and all file hashes are checked and reported as VERIFIED or

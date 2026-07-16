@@ -168,21 +168,6 @@ Returns: Boolean indicating overlap
 
 ---
 
-## isCgnat
-
-```cidr.isCgnat(STRING ipAddress)```
-
-Tests if an IPv4 address is in the Carrier-Grade NAT range (100.64.0.0/10).
-ISPs use this range for shared address space. Returns false for IPv6.
-
-Parameters:
-- ipAddress: IP address to test
-
-Returns: Boolean indicating CGNAT range
-
-
----
-
 ## isPrivateIpv4
 
 ```cidr.isPrivateIpv4(STRING ipAddress)```
@@ -239,6 +224,21 @@ Parameters:
 - ipAddress: IP address to test
 
 Returns: Boolean indicating documentation range
+
+
+---
+
+## isCgnat
+
+```cidr.isCgnat(STRING ipAddress)```
+
+Tests if an IPv4 address is in the Carrier-Grade NAT range (100.64.0.0/10).
+ISPs use this range for shared address space. Returns false for IPv6.
+
+Parameters:
+- ipAddress: IP address to test
+
+Returns: Boolean indicating CGNAT range
 
 
 ---
