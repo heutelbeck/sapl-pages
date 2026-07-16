@@ -123,7 +123,7 @@ to:
 {"decision":"PERMIT","obligations":[{"suffix":"UPDATED VIA GITOPS"}]}
 ```
 
-No restart, no redeployment. The `configurationId` in each bundle includes the Git commit hash for traceability.
+No restart, no redeployment. The pipeline stamps the Git commit hash into each bundle's configuration id via `sapl bundle create --configuration-id`, recording it in the signed bundle manifest for traceability: every decision log line carries the id of the exact commit that produced the policies.
 
 ### Run the demo
 
