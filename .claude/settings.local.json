@@ -19,7 +19,26 @@
       "Bash(jar tf:*)",
       "Bash(jar xf:*)",
       "Bash(pandoc --version)",
-      "Bash(xargs basename *)"
+      "Bash(xargs basename *)",
+      "WebFetch(domain:www.axiomatics.com)",
+      "WebFetch(domain:www.plainid.com)",
+      "WebFetch(domain:www.nextlabs.com)",
+      "WebFetch(domain:www.pingidentity.com)",
+      "WebFetch(domain:sgnl.ai)",
+      "WebFetch(domain:www.immuta.com)",
+      "WebFetch(domain:www.openpolicyagent.org)",
+      "WebSearch",
+      "WebFetch(domain:www.cerbos.dev)",
+      "WebFetch(domain:www.permit.io)",
+      "WebFetch(domain:www.osohq.com)",
+      "WebFetch(domain:openfga.dev)",
+      "WebFetch(domain:www.cedarpolicy.com)",
+      "WebFetch(domain:www.aserto.com)",
+      "WebFetch(domain:www.styra.com)",
+      "WebFetch(domain:aws.amazon.com)",
+      "WebFetch(domain:axiomatics.com)",
+      "WebFetch(domain:csrc.nist.gov)",
+      "WebFetch(domain:docs.cedarpolicy.com)"
     ]
   }
 }
