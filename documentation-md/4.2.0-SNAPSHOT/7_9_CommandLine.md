@@ -18,6 +18,7 @@ SAPL Node PDP server and policy CLI.
     - [`sapl bundle unpack`](#sapl-bundle-unpack) -- Unpack a policy bundle into a directory.
     - [`sapl bundle seal`](#sapl-bundle-seal) -- Seal a policy directory's secrets to a recipient.
     - [`sapl bundle unseal`](#sapl-bundle-unseal) -- Unseal a policy directory's secrets with the recipient key.
+    - [`sapl bundle reseal`](#sapl-bundle-reseal) -- Reseal a policy directory's secrets from one recipient to another.
     - [`sapl bundle sign`](#sapl-bundle-sign) -- Sign a policy bundle with an Ed25519 private key.
     - [`sapl bundle verify`](#sapl-bundle-verify) -- Verify a signed policy bundle against an Ed25519 public key.
     - [`sapl bundle inspect`](#sapl-bundle-inspect) -- Show bundle contents and metadata.
@@ -321,7 +322,7 @@ sapl bundle seal [-hV] -i=<inputDir> --seal-to=<recipientFile>
 sapl bundle seal -i ./policies --seal-to recipient.pub.jwk
 ```
 
-See Also: [sapl bundle unseal](#sapl-bundle-unseal), [sapl bundle keygen secrets](#sapl-bundle-keygen-secrets)
+See Also: [sapl bundle unseal](#sapl-bundle-unseal), [sapl bundle reseal](#sapl-bundle-reseal), [sapl bundle keygen secrets](#sapl-bundle-keygen-secrets)
 
 ### sapl bundle unseal
 
@@ -363,7 +364,64 @@ sapl bundle unseal [-hV] -i=<inputDir> --unseal-with=<recipientFile>
 sapl bundle unseal -i ./policies --unseal-with recipient.jwk
 ```
 
-See Also: [sapl bundle seal](#sapl-bundle-seal), [sapl bundle keygen secrets](#sapl-bundle-keygen-secrets)
+See Also: [sapl bundle seal](#sapl-bundle-seal), [sapl bundle reseal](#sapl-bundle-reseal), [sapl bundle keygen secrets](#sapl-bundle-keygen-secrets)
+
+### sapl bundle reseal
+
+Reseal a policy directory's secrets from one recipient to another.
+
+Rekeys every sealed secrets file in the directory from a source
+X25519 recipient private key to a target X25519 recipient public
+key, in place and under the same names: secrets.sealed.json stays
+secrets.sealed.json and each ext-<name>-secrets.sealed.json keeps
+its name, while their sealed leaves are decrypted with the source
+key and re-encrypted to the target key. The plaintext exists only
+transiently in memory; no cleartext is ever written.
+
+A single source key rekeys a uniformly sealed folder: every sealed
+leaf must have been sealed to the source key's id. A folder whose
+leaves are sealed under mixed key ids is out of scope for this
+command and fails closed. Plaintext secrets are rejected; seal the
+folder first. A folder mixing sealed and plaintext secrets is
+rejected. A sealed secrets file that actually holds cleartext leaves
+is rejected rather than passed through as a false success.
+
+Because the sealed files are rewritten where they already exist,
+`--force` is required to confirm overwriting them.
+
+
+**Synopsis**
+
+```
+sapl bundle reseal [-hV] [--force] -i=<inputDir> --seal-to=<sealToFile>
+                          --unseal-with=<unsealWithFile>
+```
+
+**Options**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-i, --input <inputDir>` | Directory whose sealed secrets are resealed |  |
+| `--unseal-with <unsealWithFile>` | X25519 source recipient private key (JWK file) the secrets are currently sealed to |  |
+| `--seal-to <sealToFile>` | X25519 target recipient public key (JWK file) to reseal the secrets to |  |
+| `--force` | Overwrite the existing sealed secrets files in place |  |
+| `-h, --help` | Show this help message and exit. |  |
+| `-V, --version` | Print version information and exit. |  |
+
+**Exit Codes**
+
+| Code | Description |
+|------|-------------|
+| 0 | Secrets resealed (or none found) |
+| 1 | Error (directory or key not found, sealed files present without --force, plaintext or mixed secrets, wrong source key, or I/O error) |
+
+**Examples**
+
+```shell
+sapl bundle reseal -i ./policies --unseal-with old.jwk --seal-to new.pub.jwk --force
+```
+
+See Also: [sapl bundle seal](#sapl-bundle-seal), [sapl bundle unseal](#sapl-bundle-unseal), [sapl bundle keygen secrets](#sapl-bundle-keygen-secrets)
 
 ### sapl bundle sign
 
