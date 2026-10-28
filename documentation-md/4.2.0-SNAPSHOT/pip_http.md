@@ -156,50 +156,6 @@ endpoints result in an error value.
 
 ---
 
-## get
-
-```(TEXT resourceUrl).<get(OBJECT requestSettings)>``` is an attribute of the resource identified by
-the ```resourceUrl```.
-This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP GET
-request and polls it according the the settings.
-
-Example:
-```sapl
-policy "http example"
-permit
-  "https://example.com/resources/123".<http.get({ })>.status == "HEALTHY";
-```
-
-
----
-
-## get
-
-```(TEXT resourceUrl).<get>``` is an attribute of the resource identified by the ```resourceUrl```.
-Performs an HTTP GET request with default settings.
-
-Example:
-```sapl
-policy "http example"
-permit
-  "https://example.com/resources/123".<http.get>.status == "HEALTHY";
-```
-
-
----
-
-## get
-
-
-
----
-
-## put
-
-
-
----
-
 ## put
 
 ```(TEXT resourceUrl).<put>``` is an attribute of the resource identified by the ```resourceUrl```.
@@ -221,6 +177,56 @@ policy "http example"
 permit
   "https://example.com/resources/123".<http.put({ "body": "\"test\"" })>.status == "OK";
 ```
+
+
+---
+
+## put
+
+
+
+---
+
+## get
+
+```(TEXT resourceUrl).<get(OBJECT requestSettings)>``` is an attribute of the resource identified by
+the ```resourceUrl```.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP GET
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.get({ })>.status == "HEALTHY";
+```
+
+
+---
+
+## get
+
+
+
+---
+
+## get
+
+```(TEXT resourceUrl).<get>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP GET request with default settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  "https://example.com/resources/123".<http.get>.status == "HEALTHY";
+```
+
+
+---
+
+## delete
+
 
 
 ---
@@ -250,16 +256,8 @@ permit
 
 ---
 
-## delete
-
-
-
----
-
 ## patch
 
-```(TEXT resourceUrl).<patch>``` is an attribute of the resource identified by the ```resourceUrl```.
-Performs an HTTP PATCH request with default settings.
 
 
 ---
@@ -283,12 +281,8 @@ permit
 
 ## patch
 
-
-
----
-
-## post
-
+```(TEXT resourceUrl).<patch>``` is an attribute of the resource identified by the ```resourceUrl```.
+Performs an HTTP PATCH request with default settings.
 
 
 ---
@@ -314,6 +308,12 @@ policy "http example"
 permit
   "https://example.com/resources/123".<http.post({ "body": "\"test\"" })>.status == "OK";
 ```
+
+
+---
+
+## post
+
 
 
 ---
