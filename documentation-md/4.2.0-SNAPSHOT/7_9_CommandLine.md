@@ -149,8 +149,8 @@ Create a policy bundle from a directory.
 Packages all `.sapl` policy files and `pdp.json` from the input
 directory into a `.saplbundle` file. Policies are validated for
 correct SAPL syntax during creation. Extension data
-(ext-<name>.json), extension secrets, PDP-level secrets, and
-critical-extensions.json are packaged too.
+(ext-<name>.json), extension secrets and PDP secrets are packaged too.
+Required extension names are declared in `pdp.json`.
 
 Secrets are handled by file name. A plaintext folder
 (secrets.json, ext-<name>-secrets.json) requires `--seal-to`: the
@@ -227,10 +227,10 @@ See Also: [sapl bundle sign](#sapl-bundle-sign), [sapl bundle seal](#sapl-bundle
 Unpack a policy bundle into a directory.
 
 Extracts every file from a `.saplbundle` into the output directory:
-`pdp.json`, `.sapl` policies, secrets files, extension files, and
-critical-extensions.json. The manifest is not written, so the
+`pdp.json`, `.sapl` policies, secrets files and extension files.
+The manifest is not written, so the
 directory can be edited and repackaged with 'sapl bundle create'.
-The manifest's configuration id is printed; the unpacked sources
+The manifest's configuration id is printed. The unpacked sources
 carry none.
 
 With `-k` the signature is verified before unpacking and a mismatch
@@ -430,7 +430,7 @@ Sign a policy bundle with an Ed25519 private key.
 Creates a manifest containing SHA-256 hashes of all files in
 the bundle and signs it with the provided Ed25519 private key.
 All files are preserved: `pdp.json`, policies, sealed secrets,
-extension files, and critical-extensions.json. The signature
+extension files. The signature
 enables the PDP server to verify bundle integrity and
 authenticity at load time.
 
@@ -531,7 +531,7 @@ Displays the signature status, the manifest metadata
 (configuration id and attribution), PDP configuration
 (pdp.json), all policies with their sizes, the secrets files
 with their sealing state, and the extensions with their
-payloads and critical markers. Secret values are never
+payloads and required markers. Secret values are never
 printed, only file names and sizes. Useful for auditing
 bundles before deployment.
 

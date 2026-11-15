@@ -270,25 +270,6 @@ permit action == "route";
 
 ---
 
-## hasDnsName
-
-```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
-
-Checks the dNSName Subject Alternative Names for the specified DNS name. The subject
-Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based hostname
-matching. This is simpler than extracting SANs and checking manually, and handles
-wildcard certificates correctly.
-
-Example - Verify certificate is valid for accessed domain:
-```sapl
-policy "validate domain match"
-permit action == "connect";
-  x509.hasDnsName(request.serverCertificate, resource.domain);
-```
-
-
----
-
 ## hasIpAddress
 
 ```hasIpAddress(TEXT certPem, TEXT ipAddress)```: Checks if certificate contains a specific IP address.
@@ -320,6 +301,25 @@ policy "maintenance window access"
 permit action == "admin" && resource.type == "production"
   var maintenanceStart = "2025-06-15T02:00:00Z";
   x509.isValidAt(request.adminCertificate, maintenanceStart);
+```
+
+
+---
+
+## hasDnsName
+
+```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
+
+Checks the dNSName Subject Alternative Names for the specified DNS name. The subject
+Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based hostname
+matching. This is simpler than extracting SANs and checking manually, and handles
+wildcard certificates correctly.
+
+Example - Verify certificate is valid for accessed domain:
+```sapl
+policy "validate domain match"
+permit action == "connect";
+  x509.hasDnsName(request.serverCertificate, resource.domain);
 ```
 
 

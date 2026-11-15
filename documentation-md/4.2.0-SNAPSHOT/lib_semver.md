@@ -57,7 +57,7 @@ Feature gating lets you enable advanced functionality only for clients meeting v
 ```sapl
 policy "advanced_analytics_feature"
 permit action.name == "useAdvancedAnalytics";
-  semver.isAtLeast(subject.appVersion, "3.2.0");
+  semver.isHigherOrEqual(subject.appVersion, "3.2.0");
 ```
 
 API compatibility checking ensures services can communicate properly. When services depend on each other, you need to verify they speak compatible API versions:
@@ -280,33 +280,6 @@ deny
 
 ---
 
-## isHigherOrEqual
-
-```isHigherOrEqual(TEXT version1, TEXT version2)```: Tests if version1 >= version2.
-
-```sapl
-policy "feature_gate"
-permit
-  action.name == "advancedFeature";
-  semver.isHigherOrEqual(request.version, "2.5.0");
-```
-
-
----
-
-## isLowerOrEqual
-
-```isLowerOrEqual(TEXT version1, TEXT version2)```: Tests if version1 <= version2.
-
-```sapl
-policy "version_ceiling"
-permit
-  semver.isLowerOrEqual(resource.apiVersion, "3.5.0");
-```
-
-
----
-
 ## satisfies
 
 ```satisfies(TEXT version, TEXT range)```: Tests if version satisfies range expression.
@@ -335,7 +308,7 @@ lowercase v-prefix removal, and other standard version formats.
 policy "normalize_version"
 permit
   var normalized = semver.coerce(request.version);
-  semver.isAtLeast(normalized, "2.0.0");
+  semver.isHigherOrEqual(normalized, "2.0.0");
 ```
 
 
@@ -349,6 +322,33 @@ permit
 policy "early_access_features"
 permit
   semver.isHigher(subject.clientVersion, "3.0.0");
+```
+
+
+---
+
+## isLowerOrEqual
+
+```isLowerOrEqual(TEXT version1, TEXT version2)```: Tests if version1 <= version2.
+
+```sapl
+policy "version_ceiling"
+permit
+  semver.isLowerOrEqual(resource.apiVersion, "3.5.0");
+```
+
+
+---
+
+## isHigherOrEqual
+
+```isHigherOrEqual(TEXT version1, TEXT version2)```: Tests if version1 >= version2.
+
+```sapl
+policy "feature_gate"
+permit
+  action.name == "advancedFeature";
+  semver.isHigherOrEqual(request.version, "2.5.0");
 ```
 
 
@@ -388,36 +388,6 @@ permit
 policy "exact_patch_match"
 permit
   semver.haveSamePatch(resource.version, "2.3.5");
-```
-
-
----
-
-## isAtLeast
-
-```isAtLeast(TEXT version, TEXT minimum)```: Tests if version meets minimum.
-
-Alias for isHigherOrEqual. Enforces minimum version requirements.
-
-```sapl
-policy "security_requirement"
-permit
-  semver.isAtLeast(request.version, resource.minimumSecureVersion);
-```
-
-
----
-
-## isAtMost
-
-```isAtMost(TEXT version, TEXT maximum)```: Tests if version is at or below maximum.
-
-Alias for isLowerOrEqual. Enforces maximum version constraints.
-
-```sapl
-policy "deprecated_after"
-deny
-  !semver.isAtMost(subject.apiVersion, "2.9.9");
 ```
 
 
@@ -464,7 +434,7 @@ Returns lowest version from array satisfying range, or null if none match.
 policy "require_minimum"
 permit
   var minimum = semver.minSatisfying(resource.supportedVersions, ">=1.0.0");
-  semver.isAtLeast(subject.clientVersion, minimum);
+  semver.isHigherOrEqual(subject.clientVersion, minimum);
 ```
 
 

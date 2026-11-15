@@ -136,6 +136,31 @@ permit action == "upload:document";
 
 ---
 
+## isCompliant
+
+```isCompliant(validationSubject, OBJECT schema)```:
+This function tests the `validationSubject` for compliance with the with the provided JSON schema `schema`.
+
+The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
+else it returns ```false```.
+
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+
+**Example:**
+```sapl
+policy "example"
+permit
+  var jsonSchema = {
+                     "type": "boolean"
+                   };
+  jsonschema.isCompliant(true, jsonSchema) == true;
+  jsonschema.isCompliant(123, jsonSchema) == false;
+```
+
+
+---
+
 ## validateWithExternalSchemas
 
 ```validateWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
@@ -186,31 +211,6 @@ permit action == "api:call";
     [addressSchema]
   );
   result.valid || result.errors[0].type == "required";
-```
-
-
----
-
-## isCompliant
-
-```isCompliant(validationSubject, OBJECT schema)```:
-This function tests the `validationSubject` for compliance with the with the provided JSON schema `schema`.
-
-The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
-If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
-else it returns ```false```.
-
-*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
-
-**Example:**
-```sapl
-policy "example"
-permit
-  var jsonSchema = {
-                     "type": "boolean"
-                   };
-  jsonschema.isCompliant(true, jsonSchema) == true;
-  jsonschema.isCompliant(123, jsonSchema) == false;
 ```
 
 
