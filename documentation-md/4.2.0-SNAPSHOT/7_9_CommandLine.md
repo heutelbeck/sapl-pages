@@ -728,7 +728,7 @@ sapl check [-hV] [--json-report] [--text-report] [--trace] [--remote
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
@@ -833,7 +833,7 @@ sapl decide [-hV] [--json-report] [--pretty] [--text-report] [--trace]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
@@ -931,7 +931,7 @@ sapl decide-once [-hV] [--json-report] [--pretty] [--text-report]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
@@ -1219,7 +1219,7 @@ sapl benchmark [-hV] [--latency] [--machine-readable] [--rbac]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
 | `--rbac` | Use built-in RBAC benchmark (no policy files or subscription needed). |  |
 | `--warmup-iterations <warmupIterations>` | Number of warmup iterations before measurement | `3` |
 | `--warmup-time <warmupTimeSeconds>` | Duration of each warmup iteration in seconds | `45` |
@@ -1299,7 +1299,7 @@ sapl loadtest [-hV] [--insecure] [--machine-readable] [--rsocket]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
 | `--url <url>` | HTTP server URL (default: http://localhost:8080) | `http://localhost:8080` |
 | `--rsocket` | Use RSocket/protobuf transport instead of HTTP |  |
 | `--host <rsocketHost>` | RSocket server host (default: localhost) | `localhost` |
