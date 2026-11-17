@@ -28,22 +28,6 @@ These limits apply because this input may originate from the authorization subsc
 
 ---
 
-## valToYaml
-
-```valToYaml(value)```: Converts a SAPL value into a YAML string representation.
-
-**Example:**
-```sapl
-policy "export_audit_log"
-permit
-   var auditEntry = {"user":"bob","action":"READ","resource":"/api/data","timestamp":"2025-01-15T10:30:00Z"};
-   var auditYaml = yaml.valToYaml(auditEntry);
-   // auditYaml contains YAML-formatted audit log entry
-```
-
-
----
-
 ## yamlToVal
 
 ```yamlToVal(TEXT yaml)```: Converts a well-formed YAML document into a SAPL value
@@ -59,6 +43,22 @@ permit
    var resourceConfig = "owner: alice\nclassification: CONFIDENTIAL\naccessLevel: 3";
    var resource = yaml.yamlToVal(resourceConfig);
    resource.owner == subject.name;
+```
+
+
+---
+
+## valToYaml
+
+```valToYaml(value)```: Converts a SAPL value into a YAML string representation.
+
+**Example:**
+```sapl
+policy "export_audit_log"
+permit
+   var auditEntry = {"user":"bob","action":"READ","resource":"/api/data","timestamp":"2025-01-15T10:30:00Z"};
+   var auditYaml = yaml.valToYaml(auditEntry);
+   // auditYaml contains YAML-formatted audit log entry
 ```
 
 
