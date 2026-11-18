@@ -17,7 +17,7 @@ attribute lists.
 ## Core Principles
 
 Array functions treat inputs as immutable collections and return new arrays. Equality
-comparison uses JSON value equality - numerically equivalent but differently formatted
+comparison uses JSON value equality. Numerically equivalent but differently formatted
 numbers (e.g., 0 versus 0.000) may not match. Empty arrays are valid inputs and follow
 mathematical conventions: empty union returns empty, empty intersection returns empty,
 sum of empty returns 0, product of empty returns 1.
@@ -236,7 +236,7 @@ Parameters:
 
 Returns: Sum of all elements
 
-Example - enforce rate limit:
+Example: enforce rate limit
 ```sapl
 policy "example"
 deny action == "api_call";
@@ -349,7 +349,7 @@ Parameters:
 
 Returns: New array with elements in array1 but not in array2
 
-Example - remove revoked permissions:
+Example: remove revoked permissions
 ```sapl
 policy "example"
 permit
@@ -397,7 +397,7 @@ Parameters:
 
 Returns: New array with all unique elements
 
-Example - combine permissions from multiple sources:
+Example: combine permissions from multiple sources
 ```sapl
 policy "example"
 permit
@@ -426,28 +426,6 @@ Example:
 policy "example"
 permit
     array.zip([1, 2, 3], ["a", "b", "c"]) == [[1, "a"], [2, "b"], [3, "c"]];
-```
-
-
----
-
-## avg
-
-```array.avg(ARRAY array)```
-
-Returns the arithmetic mean (average) of all numeric elements in the array. Returns
-an error for empty arrays. All elements must be numeric.
-
-Parameters:
-- array: Array of numbers to average
-
-Returns: Average value
-
-Example:
-```sapl
-policy "example"
-permit
-    array.avg(subject.performanceScores) >= 8.0;
 ```
 
 
@@ -515,7 +493,7 @@ permit
 
         Returns: New array with common elements
 
-        Example - find shared permissions:
+        Example: find shared permissions
 ```sapl
 policy "example"
 permit
@@ -543,7 +521,7 @@ Parameters:
 
 Returns: Boolean indicating whether elements appear in order
 
-Example - verify approval workflow sequence:
+Example: verify approval workflow sequence
 ```sapl
 policy "example"
 permit action == "finalize_contract";
@@ -593,7 +571,7 @@ Parameters:
 
 Returns: Array of all possible pairs
 
-Example - generate permission-resource combinations:
+Example: generate permission-resource combinations
 ```sapl
 policy "example"
 permit
@@ -601,6 +579,28 @@ permit
     var resources = ["doc1", "doc2"];
     var combinations = array.crossProduct(actions, resources);
     combinations == [ ["read" , "doc1"], ["read" , "doc2"], ["write" , "doc1"], ["write" , "doc2"]];
+```
+
+
+---
+
+## avg
+
+```array.avg(ARRAY array)```
+
+Returns the arithmetic mean (average) of all numeric elements in the array. Returns
+an error for empty arrays. All elements must be numeric.
+
+Parameters:
+- array: Array of numbers to average
+
+Returns: Average value
+
+Example:
+```sapl
+policy "example"
+permit
+    array.avg(subject.performanceScores) >= 8.0;
 ```
 
 

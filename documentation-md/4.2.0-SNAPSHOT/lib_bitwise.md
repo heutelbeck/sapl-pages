@@ -117,7 +117,7 @@ Parameters:
 
 Returns: Number of one-bits
 
-Example - enforce permission limit:
+Example: enforce permission limit
 ```sapl
 policy "example"
 deny action == "grant_permission";
@@ -140,7 +140,7 @@ Parameters:
 
 Returns: Value with bit set
 
-Example - grant specific permission:
+Example: grant specific permission
 ```sapl
 policy "example"
 permit action == "grant_read";
@@ -213,7 +213,7 @@ Parameters:
 
 Returns: Boolean indicating whether bit is set
 
-Example - check specific permission:
+Example: check specific permission
 ```sapl
 policy "example"
 permit action == "delete";
@@ -261,7 +261,7 @@ Parameters:
 
 Returns: Value with bit cleared
 
-Example - revoke specific permission:
+Example: revoke specific permission
 ```sapl
 policy "example"
 permit action == "revoke_write";
@@ -299,32 +299,6 @@ permit
 
 ---
 
-## leadingZeros
-
-```bitwise.leadingZeros(LONG value)```
-
-Returns the number of zero bits preceding the highest-order (leftmost) one-bit in
-the two's complement binary representation. Returns 64 if the value is zero (all
-bits are leading zeros). Useful for determining the position of the most significant
-set bit.
-
-Parameters:
-- value: Value to analyze
-
-Returns: Number of leading zero bits
-
-Example:
-```sapl
-policy "example"
-permit
-    bitwise.leadingZeros(0) == 64;
-    bitwise.leadingZeros(1) == 63;
-    bitwise.leadingZeros(8) == 60;
-```
-
-
----
-
 ## bitwiseAnd
 
 ```bitwise.bitwiseAnd(LONG left, LONG right)```
@@ -339,7 +313,7 @@ Parameters:
 
 Returns: Bitwise AND result
 
-Example - check if user has all required permissions:
+Example: check if user has all required permissions
 ```sapl
 policy "example"
 permit
@@ -363,7 +337,7 @@ Parameters:
 
 Returns: Bitwise OR result
 
-Example - combine direct and inherited permissions:
+Example: combine direct and inherited permissions
 ```sapl
 policy "example"
 permit
@@ -387,7 +361,7 @@ Parameters:
 
 Returns: Bitwise XOR result
 
-Example - find permission differences:
+Example: find permission differences
 ```sapl
 policy "example"
 permit
@@ -410,7 +384,7 @@ Parameters:
 
 Returns: Bitwise NOT result
 
-Example - invert permissions:
+Example: invert permissions
 ```sapl
 policy "example"
 permit
@@ -436,7 +410,7 @@ Parameters:
 
 Returns: Value with bit toggled
 
-Example - toggle debug mode:
+Example: toggle debug mode
 ```sapl
 policy "example"
 permit action == "toggle_feature";
@@ -542,6 +516,32 @@ permit
     bitwise.isPowerOfTwo(1024);
     !bitwise.isPowerOfTwo(0);
     !bitwise.isPowerOfTwo(7);
+```
+
+
+---
+
+## leadingZeros
+
+```bitwise.leadingZeros(LONG value)```
+
+Returns the number of zero bits preceding the highest-order (leftmost) one-bit in
+the two's complement binary representation. Returns 64 if the value is zero (all
+bits are leading zeros). Useful for determining the position of the most significant
+set bit.
+
+Parameters:
+- value: Value to analyze
+
+Returns: Number of leading zero bits
+
+Example:
+```sapl
+policy "example"
+permit
+    bitwise.leadingZeros(0) == 64;
+    bitwise.leadingZeros(1) == 63;
+    bitwise.leadingZeros(8) == 60;
 ```
 
 

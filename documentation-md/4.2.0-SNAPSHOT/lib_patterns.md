@@ -20,13 +20,13 @@ Glob patterns provide hierarchical wildcard matching that respects segment bound
 - Non-technical users need to write or understand patterns
 
 Glob patterns support:
-- `*` - Matches zero or more characters within a segment
-- `**` - Matches across segment boundaries
-- `?` - Matches exactly one character
-- `[abc]` or `[a-z]` - Character sets and ranges
-- `[!abc]` - Negated character sets
-- `{cat,dog,bird}` - Alternatives
-- `\` - Escape character for literal matching
+- `*`: Matches zero or more characters within a segment
+- `**`: Matches across segment boundaries
+- `?`: Matches exactly one character
+- `[abc]` or `[a-z]`: Character sets and ranges
+- `[!abc]`: Negated character sets
+- `{cat,dog,bird}`: Alternatives
+- `\`: Escape character for literal matching
 
 Delimiters define segment boundaries. When not specified, `.` is used by default.
 

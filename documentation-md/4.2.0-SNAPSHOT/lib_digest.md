@@ -22,8 +22,8 @@ and fingerprinting. All functions return lowercase hexadecimal strings.
 | `sha512`    | 512-bit | Maximum SHA-2 security                     |
 | `sha3_256`  | 256-bit | Alternative to SHA-2, different construction |
 | `sha3_512`  | 512-bit | Maximum SHA-3 security                     |
-| `md5`       | 128-bit | Legacy only - cryptographically broken     |
-| `sha1`      | 160-bit | Legacy only - cryptographically weak       |
+| `md5`       | 128-bit | Legacy only, cryptographically broken     |
+| `sha1`      | 160-bit | Legacy only, cryptographically weak       |
 
 ## Content Integrity
 

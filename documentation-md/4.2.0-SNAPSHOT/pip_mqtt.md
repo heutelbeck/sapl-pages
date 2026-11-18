@@ -29,9 +29,9 @@ The topic can be a single topic string or an array of topic strings.
 ## Quality of Service Levels
 
 MQTT QoS levels determine message delivery guarantees:
-* QoS 0: At most once - fire and forget, no acknowledgment
-* QoS 1: At least once - acknowledged delivery, possible duplicates
-* QoS 2: Exactly once - assured delivery, no duplicates
+* QoS 0: At most once, fire and forget, no acknowledgment
+* QoS 1: At least once, acknowledged delivery, possible duplicates
+* QoS 2: Exactly once, assured delivery, no duplicates
 
 ## Broker Configuration
 
@@ -44,11 +44,11 @@ Top-level `variables.mqtt` settings:
   `true` (defaults to `false`). Prefer `tls: true` for credentialed broker connections.
 * `defaultBrokerConfigName`: The `name` of the broker to use when no broker is
   specified in the policy (defaults to `"default"`)
-* `defaultResponse`: Response when no messages arrive before timeout --
+* `defaultResponse`: Response when no messages arrive before timeout:
   `"undefined"` or `"error"` (defaults to `"undefined"`)
 * `defaultResponseTimeout`: Timeout in milliseconds before emitting the default
   response (defaults to 2000)
-* `emitAtRetry`: Emit value on reconnection -- `"true"` or `"false"` (defaults to `"false"`)
+* `emitAtRetry`: Emit value on reconnection: `"true"` or `"false"` (defaults to `"false"`)
 * `maxPayloadSize`: Maximum incoming message payload in bytes (defaults to 1048576). A
   larger message fails closed to an error value rather than being decoded.
 * `maxTopicFilters`: Maximum number of topic filters accepted per subscription
@@ -184,13 +184,13 @@ With this configuration:
 Received messages are automatically converted based on their MQTT payload format:
 * Messages with content type `application/json` are parsed as JSON values
 * UTF-8 encoded text messages are returned as text values
-* Binary payloads are rejected with an error value; publish text, JSON, or an explicit encoded string
+* Binary payloads are rejected with an error value. Publish text, JSON, or an explicit encoded string
 
 ## Topic Wildcards
 
 The PIP supports MQTT topic wildcards for flexible subscriptions:
-* `+` - Single-level wildcard (matches one topic level)
-* `#` - Multi-level wildcard (matches zero or more topic levels, must be last)
+* `+`: Single-level wildcard (matches one topic level)
+* `#`: Multi-level wildcard (matches zero or more topic levels, must be last)
 
 Examples:
 * `sensors/+/temperature` matches `sensors/room1/temperature` and `sensors/room2/temperature`
@@ -256,7 +256,7 @@ Subscribes to MQTT topics on an operator-configured broker selected by name.
 
 The `brokerName` parameter is the name of a broker from the operator-configured
 `brokerConfig`. A policy may only select a broker by name or use the default. A
-policy may not supply an inline broker configuration object; doing so yields an
+policy may not supply an inline broker configuration object. Doing so yields an
 error value.
 
 Accepts a single topic string or an array of topic strings. Topic arrays are
@@ -281,9 +281,9 @@ permit
 Subscribes to MQTT topics with a specified Quality of Service level.
 
 QoS levels and their trade-offs:
-* QoS 0: At most once - fastest but may lose messages
-* QoS 1: At least once - acknowledged delivery, may receive duplicates
-* QoS 2: Exactly once - slowest but guaranteed
+* QoS 0: At most once, fastest but may lose messages
+* QoS 1: At least once, acknowledged delivery, may receive duplicates
+* QoS 2: Exactly once, slowest but guaranteed
 
 Accepts a single topic string or an array of topic strings. Topic arrays are
 bounded by `variables.mqtt.maxTopicFilters`. The total UTF-8 bytes across all

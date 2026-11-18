@@ -97,7 +97,7 @@ Parameters:
 
 Returns: Boolean indicating containment
 
-Example - restrict API access to corporate network:
+Example: restrict API access to corporate network
 
 ```sapl
 policy "corporate_api"
@@ -307,7 +307,7 @@ Parameters:
 
 Returns: Anonymized IP address string
 
-Example - log client access with privacy protection:
+Example: log client access with privacy protection
 
 ```sapl
 policy "privacy_log"
@@ -336,7 +336,7 @@ Parameters:
 
 Returns: Array of [cidrIndex, ipIndex] tuples for each match
 
-Example - verify any user IP matches trusted networks:
+Example: verify any user IP matches trusted networks
 
 ```sapl
 policy "multi_location"
@@ -385,7 +385,7 @@ Parameters:
 
 Returns: Hexadecimal SHA-256 hash (64 characters)
 
-Example - rate limit by subnet without storing IPs:
+Example: rate limit by subnet without storing IPs
 
 ```sapl
 policy "rate_limit"

@@ -86,7 +86,7 @@ certificate fields including subject, issuer, validity dates, serial number, and
 public key information. Use this when multiple certificate properties are needed
 in a single policy.
 
-Example - Validate multiple certificate properties for mTLS:
+Example: Validate multiple certificate properties for mTLS
 ```sapl
 policy "require valid partner certificate"
 permit action == "api.call";
@@ -106,7 +106,7 @@ permit action == "api.call";
 Returns the full DN string in RFC 2253 format. Use this for matching against
 specific organizations or organizational units in certificate-based access control.
 
-Example - Restrict access to specific department:
+Example: Restrict access to specific department
 ```sapl
 policy "allow hr department only"
 permit action == "read" && resource.type == "personnel-records"
@@ -124,7 +124,7 @@ permit action == "read" && resource.type == "personnel-records"
 Returns the full issuer DN string in RFC 2253 format. Use this to verify
 certificates were issued by trusted CAs.
 
-Example - Require certificates from internal CA:
+Example: Require certificates from internal CA
 ```sapl
 policy "internal ca only"
 permit
@@ -143,7 +143,7 @@ Returns just the CN field from the certificate subject, which typically contains
 the hostname or entity name. This is simpler than parsing the full DN when only
 the CN is needed.
 
-Example - Verify service identity in mTLS:
+Example: Verify service identity in mTLS
 ```sapl
 policy "service-to-service auth"
 permit action == "invoke";
@@ -161,7 +161,7 @@ permit action == "invoke";
 Returns the serial number as a decimal string. Use this for certificate revocation
 checking or tracking specific certificates in audit logs.
 
-Example - Block revoked certificates:
+Example: Block revoked certificates
 ```sapl
 policy "check revocation list"
 deny
@@ -179,7 +179,7 @@ deny
 Returns the date in ISO 8601 format. Use this to implement time-based access
 restrictions or maintenance windows.
 
-Example - Enforce staged certificate rollout:
+Example: Enforce staged certificate rollout
 ```sapl
 policy "new certificates only after cutover"
 permit
@@ -197,7 +197,7 @@ permit
 Returns the date in ISO 8601 format. Use this to implement proactive certificate
 renewal warnings or temporary access grants.
 
-Example - Warn about expiring certificates:
+Example: Warn about expiring certificates
 ```sapl
 policy "certificate expiring soon"
 permit
@@ -218,7 +218,7 @@ Computes the hash of the entire certificate using the specified algorithm (SHA-1
 SHA-256, or SHA-512). Returns the fingerprint as a hexadecimal string. Use this for
 certificate pinning to ensure the exact certificate is being used.
 
-Example - Certificate pinning for critical services:
+Example: Certificate pinning for critical services
 ```sapl
 policy "pin database certificate"
 permit action == "query" && resource.type == "production-db"
@@ -237,7 +237,7 @@ Computes the certificate fingerprint using the specified algorithm and compares 
 to the expected value. This implements certificate pinning to ensure the exact
 certificate is being used, preventing man-in-the-middle attacks.
 
-Example - Pin production service certificates:
+Example: Pin production service certificates
 ```sapl
 policy "verify pinned certificate"
 permit action == "connect" && resource.type == "payment-gateway"
@@ -259,7 +259,7 @@ Returns an array of SANs, which can include DNS names, IP addresses, email addre
 and URIs. Each entry is an object with type and value fields. Use this when the
 certificate subject doesn't match the accessed resource name.
 
-Example - Check SAN for virtual hosts:
+Example: Check SAN for virtual hosts
 ```sapl
 policy "allow san-based routing"
 permit action == "route";
@@ -279,7 +279,7 @@ Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based ho
 matching. This is simpler than extracting SANs and checking manually, and handles
 wildcard certificates correctly.
 
-Example - Verify certificate is valid for accessed domain:
+Example: Verify certificate is valid for accessed domain
 ```sapl
 policy "validate domain match"
 permit action == "connect";
@@ -296,7 +296,7 @@ permit action == "connect";
 Checks Subject Alternative Names for the specified IP address. Use this when
 authorizing connections from IP-identified clients rather than DNS-named hosts.
 
-Example - Authorize by client IP:
+Example: Authorize by client IP
 ```sapl
 policy "allow specific ips"
 permit action == "connect";
@@ -314,7 +314,7 @@ Returns true if the given timestamp falls within the certificate's validity peri
 (between notBefore and notAfter). Use this for time-based access or historical
 audit validation.
 
-Example - Check validity during maintenance window:
+Example: Check validity during maintenance window
 ```sapl
 policy "maintenance window access"
 permit action == "admin" && resource.type == "production"
