@@ -99,6 +99,19 @@ Example: If `resource.form = {"zip": "ABC"}` fails pattern validation,
 `result.errors` contains: `[{"path": "/zip", "message": "does not match
 pattern ^[0-9]{5}$", "type": "pattern", "schemaPath": "/properties/zip"}]`.
 
+## Patterns
+
+The `pattern` and `patternProperties` keywords use the syntax of RE2
+(https://github.com/google/re2/wiki/Syntax), the same syntax as the `=~`
+operator, and are matched in time linear in the length of the text. A
+pattern matches if it matches any part of the text, and `$` matches at
+the end of the text only. Look-around, backreferences, atomic groups and
+possessive quantifiers do not exist in this syntax. A schema with a pattern
+RE2 refuses is an error, even if the subject never reaches the pattern. A
+rule written with look-ahead is written as several `pattern` keywords under
+`allOf` instead:
+`{"type": "string", "minLength": 12, "allOf": [{"pattern": "[0-9]"}, {"pattern": "[A-Z]"}]}`.
+
 
 ---
 

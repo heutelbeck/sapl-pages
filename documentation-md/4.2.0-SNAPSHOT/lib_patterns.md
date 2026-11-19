@@ -32,11 +32,18 @@ Delimiters define segment boundaries. When not specified, `.` is used by default
 
 ## Regular Expressions
 
-Regular expressions provide full pattern matching power using standard regex syntax. Construction
-rules follow the Java Pattern class specification. Use them when:
+Regular expressions provide full pattern matching power in the syntax of RE2
+(https://github.com/google/re2/wiki/Syntax), the same syntax as the `=~` operator. Use them when:
 - Glob patterns cannot express the required matching logic
-- Advanced features like lookahead, backreferences, or precise quantifiers are needed
 - Complex validation rules require regex capabilities
+
+Regular expressions are matched in time linear in the length of the input and never backtrack.
+Look-around, backreferences, atomic groups and possessive quantifiers do not exist in this syntax and
+make a pattern invalid. The classes `\d`, `\w`, `\s` and `\b` hold ASCII characters only. Use
+`\p{L}`, `\p{Nd}` and similar Unicode classes for other scripts.
+
+In the replacement of `replaceAll`, `$1` or `${name}` insert a captured group, and a backslash makes the
+next character literal.
 
 ## When to Use Simple String Operations
 
@@ -45,9 +52,9 @@ For literal prefix, suffix, or substring checks, use the string library instead.
 
 ## Security
 
-All regex functions include protection against Regular Expression Denial of Service attacks.
-Patterns containing dangerous constructs like nested quantifiers `(a+)+`, excessive alternations,
-or nested wildcards are rejected before evaluation.
+Regular expressions never backtrack, so no pattern, not even one with nested quantifiers like `(a+)+`,
+can make matching take time exponential in the length of the input. Glob patterns are translated to
+regular expressions and are matched the same way.
 
 ## Limits
 
@@ -61,8 +68,8 @@ To bound memory and computation on untrusted input, the following limits apply:
   A larger explicit limit is reduced to 10000.
 - Glob patterns may nest alternative groups at most 50 levels deep, and a single glob pattern may contain
   at most 30 alternative groups.
-- Regular expressions may contain at most 100 top-level alternations. Patterns above this are rejected
-  as part of the denial-of-service protection.
+- A regular expression may compile to at most 10000 instructions, and its groups may nest at most 250
+  levels deep. Each repetition counts with its number of copies, so `(?:a{100}){101}` is too large.
 - The output of `replaceAll` may be at most 10000000 characters. Replacement stops with an error once the
   accumulated result exceeds this length.
 
@@ -78,8 +85,8 @@ PDP configuration.
 ```replaceAll(TEXT value, TEXT pattern, TEXT replacement)```: Replaces all regex matches with
 replacement text.
 
-Replacement can include backreferences like `$1` to refer to captured groups from parentheses
-in the pattern.
+Replacement can include references like `$1` or `${name}` to insert captured groups from
+parentheses in the pattern. A backslash makes the next character of the replacement literal.
 
 **Examples**:
 ```sapl
@@ -272,8 +279,8 @@ permit
 
 ```findMatches(TEXT pattern, TEXT value)```: Finds all matches of a regex pattern.
 
-Returns all non-overlapping matches. Maximum 10,000 matches returned. Patterns with dangerous
-constructs are rejected.
+Returns all non-overlapping matches. Maximum 10,000 matches returned. An invalid pattern returns
+an error.
 
 **Examples**:
 ```sapl
