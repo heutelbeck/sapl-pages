@@ -162,6 +162,22 @@ permit
 
 ---
 
+## overlaps
+
+```overlaps(LONG permissions1, LONG permissions2)```: Checks if two permission sets have any common bits.
+
+Returns true if at least one bit is set in both permission sets.
+
+**Examples:**
+```sapl
+policy "example"
+permit
+  permissions.overlaps(subject.permissions, resource.requiredPermissions);
+```
+
+
+---
+
 ## hasAll
 
 ```hasAll(LONG value, ARRAY masks)```: Checks if all specified permission bits are set.
@@ -294,17 +310,19 @@ permit action.name == "delegate";
 
 ---
 
-## overlaps
+## unixOwner
 
-```overlaps(LONG permissions1, LONG permissions2)```: Checks if two permission sets have any common bits.
+```unixOwner(LONG mode)```: Extracts the owner permission bits from a Unix file mode.
 
-Returns true if at least one bit is set in both permission sets.
+Returns the owner permissions as a value from 0-7, where bits represent
+read (4), write (2), and execute (1) permissions.
 
 **Examples:**
 ```sapl
 policy "example"
 permit
-  permissions.overlaps(subject.permissions, resource.requiredPermissions);
+  var mode = numeral.fromOctal("755");
+  var ownerPerms = permissions.unixOwner(mode);  // Returns 7 (rwx)
 ```
 
 
@@ -321,24 +339,6 @@ Returns true if no bits are set in both permission sets simultaneously.
 policy "example"
 permit
   permissions.areDisjoint(subject.permissions, resource.forbiddenPermissions);
-```
-
-
----
-
-## unixOwner
-
-```unixOwner(LONG mode)```: Extracts the owner permission bits from a Unix file mode.
-
-Returns the owner permissions as a value from 0-7, where bits represent
-read (4), write (2), and execute (1) permissions.
-
-**Examples:**
-```sapl
-policy "example"
-permit
-  var mode = numeral.fromOctal("755");
-  var ownerPerms = permissions.unixOwner(mode);  // Returns 7 (rwx)
 ```
 
 

@@ -22,17 +22,17 @@ Semantic versions follow the format `MAJOR.MINOR.PATCH[-PRERELEASE][+BUILDMETADA
 - PRERELEASE: Optional pre-release identifier with dot-separated alphanumeric parts (e.g., `alpha`, `beta.1`, `rc.2`)
 - BUILDMETADATA: Optional build metadata with dot-separated alphanumeric parts (e.g., `build.123`, `sha.5114f85`)
 
-Valid examples include `1.0.0`, `2.3.5-alpha`, and `1.0.0-beta.2+build.456`.
+Valid examples include `1.0.0`, `2.3.5-alpha`, and `1.0.0-beta.2+build.456`. Whitespace is not trimmed. Major, minor, patch and every numeric identifier are at most 9007199254740991. Numeric version components and numeric pre-release identifiers cannot have leading zeros. Build identifiers may have leading zeros. Identifiers contain only ASCII letters, digits and hyphens. There is no fixed version length limit.
 
 The library accepts a lowercase `v` prefix for compatibility with Git tags (e.g., `v1.0.0`). However, uppercase `V` is not supported. While the strict SemVer 2.0.0 specification excludes any prefix, lowercase `v` is widely adopted in version control systems.
 
 ## How Version Comparison Works
 
-Version precedence follows semantic versioning rules. Major, minor, and patch numbers are compared numerically. Pre-release versions always come before their corresponding normal versions (e.g., `1.0.0-alpha` is lower than `1.0.0`). When comparing pre-release identifiers, the comparison is alphanumeric. Build metadata never affects version precedence.
+Version precedence follows semantic versioning rules. Major, minor, and patch numbers are compared numerically. Pre-release versions always come before their corresponding normal versions (e.g., `1.0.0-alpha` is lower than `1.0.0`). Numeric pre-release identifiers compare numerically and precede other identifiers. Other identifiers compare lexically in ASCII order. A longer list of otherwise equal identifiers has higher precedence. Build metadata never affects version precedence.
 
 ## Expressing Version Ranges
 
-The library supports NPM-style range syntax for flexible version matching:
+The library supports the node-semver range grammar for flexible version matching:
 
 - **Operators**: `>=1.0.0`, `>1.0.0`, `<=2.0.0`, `<2.0.0`, `=1.0.0`
 - **Hyphen ranges**: `1.2.3 - 2.3.4` (both ends inclusive)
@@ -41,6 +41,10 @@ The library supports NPM-style range syntax for flexible version matching:
 - **Caret**: `^1.2.3` (allows minor-level changes: `>=1.2.3 <2.0.0`)
 - **OR**: `>=1.0.0 || >=2.0.0`
 - **AND**: `>=1.0.0 <2.0.0` (space-separated conditions)
+
+A missing component is a wildcard. Caret ranges follow the first nonzero component, with `^0.x` expanding to `>=0.0.0 <1.0.0-0` and `^0.0.x` to `>=0.0.0 <0.1.0-0`. Tilde also accepts `~>`. Empty ranges and empty alternatives match all releases. Range whitespace is ASCII whitespace. A pre-release satisfies a comparator set only if that set names a pre-release with the same major, minor and patch. Invalid versions and any invalid range token produce errors. Ivy ranges, `latest`, and `+` wildcards are refused.
+
+`isPreRelease` tests for pre-release identifiers, including in major zero. `isStable` requires a positive major and no pre-release identifiers. `isCompatibleWith` uses the second version as the required API, requiring matching major and minor when its major is zero and matching major otherwise. `diff` ignores build metadata. Version selection validates the range first and refuses every invalid array entry with its zero based index. Equal precedence preserves the first matching entry. Coercion extracts the first version shaped sequence of at most sixteen digits per component, fills missing components with zero, and discards pre-release and build suffixes. An invalid first sequence is an error.
 
 ## Common Authorization Scenarios
 
@@ -129,7 +133,7 @@ Returns error if string is not valid.
 Result fields:
 - `version`: Complete version without v-prefix
 - `major`, `minor`, `patch`: Version numbers
-- `isStable`: Boolean indicating stable release (no pre-release)
+- `isStable`: Boolean indicating a positive major and no pre-release identifiers
 - `isPreRelease`: Boolean indicating pre-release
 - `preRelease`: Array of pre-release identifiers
 - `buildMetadata`: Array of build metadata identifiers
@@ -207,53 +211,11 @@ deny
 
 ---
 
-## getMajor
-
-```getMajor(TEXT version)```: Extracts major version number.
-
-```sapl
-policy "api_v3_only"
-permit
-  semver.getMajor(subject.apiVersion) == 3;
-```
-
-
----
-
-## getMinor
-
-```getMinor(TEXT version)```: Extracts minor version number.
-
-```sapl
-policy "feature_availability"
-permit
-  semver.getMajor(subject.version) == 2;
-  semver.getMinor(subject.version) >= 3;
-```
-
-
----
-
-## getPatch
-
-```getPatch(TEXT version)```: Extracts patch version number.
-
-```sapl
-policy "specific_patch"
-permit
-  semver.getMajor(subject.version) == 1;
-  semver.getMinor(subject.version) == 0;
-  semver.getPatch(subject.version) >= 5;
-```
-
-
----
-
 ## isStable
 
 ```isStable(TEXT version)```: Tests if version is stable release.
 
-Returns true if version does not contain pre-release identifier.
+Returns true if the major is positive and no pre-release identifiers exist.
 
 ```sapl
 policy "production_ready"
@@ -269,7 +231,7 @@ permit
 
 ```isPreRelease(TEXT version)```: Tests if version is pre-release.
 
-Returns true if version contains pre-release identifier (e.g., alpha, beta, rc).
+Returns true if pre-release identifiers exist, including for major zero.
 
 ```sapl
 policy "block_unstable"
@@ -280,29 +242,13 @@ deny
 
 ---
 
-## satisfies
-
-```satisfies(TEXT version, TEXT range)```: Tests if version satisfies range expression.
-
-Returns true if version satisfies NPM-style range. Supports operators (>=, >, <=, <, =),
-hyphen ranges (1.2.3 - 2.3.4), X-ranges (1.2.x, 1.x, *), tilde (~1.2.3 allows patch),
-caret (^1.2.3 allows minor), and logical operators (||, space-separated AND).
-
-```sapl
-policy "version_range"
-permit
-  semver.satisfies(subject.clientVersion, ">=2.0.0 <3.0.0");
-```
-
-
----
-
 ## coerce
 
 ```coerce(TEXT value)```: Coerces string to valid semantic version.
 
-Normalizes common formats including partial versions (e.g., "1.2" becomes "1.2.0"),
-lowercase v-prefix removal, and other standard version formats.
+Extracts the first version shaped sequence with one to sixteen digits per component.
+Missing components become zero. Pre-release and build suffixes are discarded.
+The first sequence must have no leading zeros and all components must be at most 9007199254740991.
 
 ```sapl
 policy "normalize_version"
@@ -413,6 +359,8 @@ permit
 ```maxSatisfying(ARRAY versions, TEXT range)```: Finds highest version matching range.
 
 Returns highest version from array satisfying range, or null if none match.
+Validates the range first, even for an empty array. Every element must be a valid version text.
+An invalid element is an error naming its zero based index. Equal precedence preserves the first match.
 
 ```sapl
 policy "use_latest_compatible"
@@ -424,11 +372,74 @@ permit
 
 ---
 
+## getMajor
+
+```getMajor(TEXT version)```: Extracts major version number.
+
+```sapl
+policy "api_v3_only"
+permit
+  semver.getMajor(subject.apiVersion) == 3;
+```
+
+
+---
+
+## getMinor
+
+```getMinor(TEXT version)```: Extracts minor version number.
+
+```sapl
+policy "feature_availability"
+permit
+  semver.getMajor(subject.version) == 2;
+  semver.getMinor(subject.version) >= 3;
+```
+
+
+---
+
+## getPatch
+
+```getPatch(TEXT version)```: Extracts patch version number.
+
+```sapl
+policy "specific_patch"
+permit
+  semver.getMajor(subject.version) == 1;
+  semver.getMinor(subject.version) == 0;
+  semver.getPatch(subject.version) >= 5;
+```
+
+
+---
+
+## satisfies
+
+```satisfies(TEXT version, TEXT range)```: Tests if version satisfies range expression.
+
+Returns true if version satisfies NPM-style range. Supports operators (>=, >, <=, <, =),
+hyphen ranges (1.2.3 - 2.3.4), X-ranges (1.2.x, 1.x, *), tilde (~1.2.3 allows patch),
+caret (^1.2.3 allows minor), and logical operators (||, space-separated AND).
+Uses the node-semver grammar and excludes pre-releases unless the matching comparator set
+names a pre-release of the same numeric core. Invalid versions or range tokens are errors.
+
+```sapl
+policy "version_range"
+permit
+  semver.satisfies(subject.clientVersion, ">=2.0.0 <3.0.0");
+```
+
+
+---
+
 ## minSatisfying
 
 ```minSatisfying(ARRAY versions, TEXT range)```: Finds lowest version matching range.
 
 Returns lowest version from array satisfying range, or null if none match.
+Validates the range first, even for an empty array. Every element must be a valid version text.
+An invalid element is an error naming its zero based index. Equal precedence preserves the first match.
 
 ```sapl
 policy "require_minimum"
