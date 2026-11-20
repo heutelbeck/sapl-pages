@@ -354,24 +354,6 @@ permit
 
 ---
 
-## maxSatisfying
-
-```maxSatisfying(ARRAY versions, TEXT range)```: Finds highest version matching range.
-
-Returns highest version from array satisfying range, or null if none match.
-Validates the range first, even for an empty array. Every element must be a valid version text.
-An invalid element is an error naming its zero based index. Equal precedence preserves the first match.
-
-```sapl
-policy "use_latest_compatible"
-permit
-  var compatible = semver.maxSatisfying(resource.availableVersions, "^2.0.0");
-  compatible != null;
-```
-
-
----
-
 ## getMajor
 
 ```getMajor(TEXT version)```: Extracts major version number.
@@ -428,6 +410,24 @@ names a pre-release of the same numeric core. Invalid versions or range tokens a
 policy "version_range"
 permit
   semver.satisfies(subject.clientVersion, ">=2.0.0 <3.0.0");
+```
+
+
+---
+
+## maxSatisfying
+
+```maxSatisfying(ARRAY versions, TEXT range)```: Finds highest version matching range.
+
+Returns highest version from array satisfying range, or null if none match.
+Validates the range first, even for an empty array. Every element must be a valid version text.
+An invalid element is an error naming its zero based index. Equal precedence preserves the first match.
+
+```sapl
+policy "use_latest_compatible"
+permit
+  var compatible = semver.maxSatisfying(resource.availableVersions, "^2.0.0");
+  compatible != null;
 ```
 
 

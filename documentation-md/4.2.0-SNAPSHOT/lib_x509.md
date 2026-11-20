@@ -99,98 +99,6 @@ permit action == "api.call";
 
 ---
 
-## hasDnsName
-
-```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
-
-Checks the dNSName Subject Alternative Names for the specified DNS name. The subject
-Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based hostname
-matching. This is simpler than extracting SANs and checking manually, and handles
-wildcard certificates correctly.
-
-Example: Verify certificate is valid for accessed domain
-```sapl
-policy "validate domain match"
-permit action == "connect";
-  x509.hasDnsName(request.serverCertificate, resource.domain);
-```
-
-
----
-
-## extractSubjectDn
-
-```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
-
-Returns the full DN string in RFC 2253 format. Use this for matching against
-specific organizations or organizational units in certificate-based access control.
-
-Example: Restrict access to specific department
-```sapl
-policy "allow hr department only"
-permit action == "read" && resource.type == "personnel-records"
-  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
-  subjectDn =~ "OU=Human Resources,O=Acme Corp";
-```
-
-
----
-
-## extractIssuerDn
-
-```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
-
-Returns the full issuer DN string in RFC 2253 format. Use this to verify
-certificates were issued by trusted CAs.
-
-Example: Require certificates from internal CA
-```sapl
-policy "internal ca only"
-permit
-  var issuerDn = x509.extractIssuerDn(request.clientCertificate);
-  issuerDn =~ "CN=Acme Internal CA,O=Acme Corp";
-```
-
-
----
-
-## extractCommonName
-
-```extractCommonName(TEXT certPem)```: Extracts the Common Name from the subject.
-
-Returns just the CN field from the certificate subject, which typically contains
-the hostname or entity name. This is simpler than parsing the full DN when only
-the CN is needed.
-
-Example: Verify service identity in mTLS
-```sapl
-policy "service-to-service auth"
-permit action == "invoke";
-  var serviceName = x509.extractCommonName(request.clientCertificate);
-  serviceName in resource.allowedServices;
-```
-
-
----
-
-## extractSerialNumber
-
-```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
-
-Returns the serial number as a decimal string. Use this for certificate revocation
-checking or tracking specific certificates in audit logs.
-
-Example: Block revoked certificates
-```sapl
-policy "check revocation list"
-deny
-  var serial = x509.extractSerialNumber(request.clientCertificate);
-  serial in data.revokedSerials;
-```
-
-
----
-
 ## extractNotBefore
 
 ```extractNotBefore(TEXT certPem)```: Extracts the certificate validity start date.
@@ -289,6 +197,25 @@ permit action == "route";
 
 ---
 
+## hasDnsName
+
+```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
+
+Checks the dNSName Subject Alternative Names for the specified DNS name. The subject
+Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based hostname
+matching. This is simpler than extracting SANs and checking manually, and handles
+wildcard certificates correctly.
+
+Example: Verify certificate is valid for accessed domain
+```sapl
+policy "validate domain match"
+permit action == "connect";
+  x509.hasDnsName(request.serverCertificate, resource.domain);
+```
+
+
+---
+
 ## hasIpAddress
 
 ```hasIpAddress(TEXT certPem, TEXT ipAddress)```: Checks if certificate contains a specific IP address.
@@ -320,6 +247,79 @@ policy "maintenance window access"
 permit action == "admin" && resource.type == "production"
   var maintenanceStart = "2025-06-15T02:00:00Z";
   x509.isValidAt(request.adminCertificate, maintenanceStart);
+```
+
+
+---
+
+## extractSubjectDn
+
+```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
+
+Returns the full DN string in RFC 2253 format. Use this for matching against
+specific organizations or organizational units in certificate-based access control.
+
+Example: Restrict access to specific department
+```sapl
+policy "allow hr department only"
+permit action == "read" && resource.type == "personnel-records"
+  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
+  subjectDn =~ "OU=Human Resources,O=Acme Corp";
+```
+
+
+---
+
+## extractIssuerDn
+
+```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
+
+Returns the full issuer DN string in RFC 2253 format. Use this to verify
+certificates were issued by trusted CAs.
+
+Example: Require certificates from internal CA
+```sapl
+policy "internal ca only"
+permit
+  var issuerDn = x509.extractIssuerDn(request.clientCertificate);
+  issuerDn =~ "CN=Acme Internal CA,O=Acme Corp";
+```
+
+
+---
+
+## extractCommonName
+
+```extractCommonName(TEXT certPem)```: Extracts the Common Name from the subject.
+
+Returns just the CN field from the certificate subject, which typically contains
+the hostname or entity name. This is simpler than parsing the full DN when only
+the CN is needed.
+
+Example: Verify service identity in mTLS
+```sapl
+policy "service-to-service auth"
+permit action == "invoke";
+  var serviceName = x509.extractCommonName(request.clientCertificate);
+  serviceName in resource.allowedServices;
+```
+
+
+---
+
+## extractSerialNumber
+
+```extractSerialNumber(TEXT certPem)```: Extracts the certificate serial number.
+
+Returns the serial number as a decimal string. Use this for certificate revocation
+checking or tracking specific certificates in audit logs.
+
+Example: Block revoked certificates
+```sapl
+policy "check revocation list"
+deny
+  var serial = x509.extractSerialNumber(request.clientCertificate);
+  serial in data.revokedSerials;
 ```
 
 

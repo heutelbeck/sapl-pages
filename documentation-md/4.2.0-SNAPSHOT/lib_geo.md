@@ -517,6 +517,38 @@ permit
 
 ---
 
+## touches
+
+```touches(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
+Tests whether two geometries touch at their boundaries but do not overlap.
+
+**Inputs:**
+
+- `thisGeometry`: A geometry object in GeoJSON format.
+- `thatGeometry`: Another geometry object in GeoJSON format.
+
+**Output:**
+
+- Returns `true` if the geometries share at least one boundary point but no interior points.
+- Returns `false` otherwise.
+
+**Example:**
+
+```sapl
+policy "example"
+permit
+    var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
+    var polygon2 = { "type": "Polygon", "coordinates": [[[10,0], [10,10], [20,10], [20,0], [10,0]]] };
+    geo.touches(polygon1, polygon2) == true;
+```
+
+**Notes:**
+
+- Use this function to determine adjacency without overlap.
+
+
+---
+
 ## crosses
 
 ```crosses(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
@@ -643,38 +675,6 @@ permit
 **Notes:**
 
 - Suitable for geodesic distance checks, especially for large-scale geographic data.
-
-
----
-
-## touches
-
-```touches(GEOMETRY thisGeometry, GEOMETRY thatGeometry)```:
-Tests whether two geometries touch at their boundaries but do not overlap.
-
-**Inputs:**
-
-- `thisGeometry`: A geometry object in GeoJSON format.
-- `thatGeometry`: Another geometry object in GeoJSON format.
-
-**Output:**
-
-- Returns `true` if the geometries share at least one boundary point but no interior points.
-- Returns `false` otherwise.
-
-**Example:**
-
-```sapl
-policy "example"
-permit
-    var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    var polygon2 = { "type": "Polygon", "coordinates": [[[10,0], [10,10], [20,10], [20,0], [10,0]]] };
-    geo.touches(polygon1, polygon2) == true;
-```
-
-**Notes:**
-
-- Use this function to determine adjacency without overlap.
 
 
 ---

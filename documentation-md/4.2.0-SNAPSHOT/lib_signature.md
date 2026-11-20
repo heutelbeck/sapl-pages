@@ -221,6 +221,9 @@ Checks EdDSA (Edwards-curve Digital Signature Algorithm) signatures using the
 Ed25519 curve. Ed25519 is fast, secure, and has small keys and signatures.
 
 Standard in SSH keys, TLS 1.3, Signal Protocol, and many blockchain implementations.
+Public keys must canonically encode a nonidentity point in the prime-order subgroup.
+Invalid keys or signature text produce an error value. Invalid signature bytes,
+including noncanonical encodings and small order R points, return false.
 
 **Parameters:**
 - message: The original message that was signed
