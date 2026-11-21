@@ -18,11 +18,11 @@ Combined format: "2017-10-28T16:14:11".
 
 DIN 1355 uses DD.MM.YYYY for dates (e.g., "28.10.2017").
 
-RFC3339 is a strict profile of ISO 8601 requiring timezone information:
-YYYY-MM-DDTHH:MM:SS[.fraction](Z|±HH:MM)
-
-All functions accept ISO 8601 and RFC3339 timestamps. RFC3339 leap seconds (e.g., "23:59:60Z")
-are normalized to "23:59:59Z" by Java's temporal system.
+An instant uses a four-digit Gregorian year, a date, T, hours from 00 to 23, minutes and seconds.
+An optional fraction has one to nine digits. The offset is Z or a signed HH:MM up to 18:00.
+The letters T and Z accept either case. A leap second in the last UTC minute of the day
+denotes second 59 with the same fraction, including when written at another offset.
+Time functions that accept a date alone interpret it as midnight UTC. validRFC3339 requires a full timestamp.
 
 ## Timezone Handling
 
@@ -326,6 +326,170 @@ The expression ```time.weekOfYear("2021-11-08T13:00:00Z")``` returns ```45```.
 
 ---
 
+## endOfMonth
+
+```endOfMonth(TEXT dateTime)```: Returns the end of the month (last day at 23:59:59.999999999) for the given date-time at UTC.
+
+**Example:**
+
+The expression ```time.endOfMonth("2021-11-08T13:45:30Z")``` returns ```"2021-11-30T23:59:59.999999999Z"```.
+
+---
+
+## ageInYears
+
+```ageInYears(TEXT birthDate, TEXT currentDate)```: Calculates the age in complete years between
+birthDate and currentDate.
+
+Both dates must be ISO 8601 strings.
+
+**Example:**
+
+The expression ```time.ageInYears("1990-05-15", "2021-11-08")``` returns ```31```.
+
+---
+
+## minuteOf
+
+```minuteOf(TEXT isoDateTime)```: Returns the minute of an ISO 8601 string.
+
+**Example:**
+
+The expression ```time.minuteOf("2021-11-08T13:17:23Z")``` returns ```17```.
+
+---
+
+## dateOf
+
+```dateOf(TEXT isoDateTime)```: Returns the date part of an ISO 8601 string.
+
+**Example:**
+
+The expression ```time.dateOf("2021-11-08T13:00:00Z")``` returns ```"2021-11-08"```.
+
+---
+
+## offsetTime
+
+```offsetTime(TEXT isoTime)```: Parses an ISO 8601 time with offset and
+returns the matching time at UTC.
+
+**Example:**
+
+The expression ```time.offsetTime("13:12:35-05:00")``` returns ```"18:12:35"```.
+
+---
+
+## validUTC
+
+```validUTC(TEXT utcDateTime)```: Returns true if the value is a valid ISO 8601 UTC timestamp.
+
+**Example:**
+
+The expression ```time.validUTC("2021-11-08T13:00:00Z")``` returns ```true```.
+The expression ```time.validUTC("20111-000:00Z")``` returns ```false```.
+
+---
+
+## timeOf
+
+```timeOf(TEXT isoDateTime)```: Returns the local time of an ISO 8601 string, truncated to seconds.
+
+**Example:**
+
+The expression ```time.timeOf("2021-11-08T13:00:00Z")``` returns ```"13:00:00"```.
+
+---
+
+## timeAMPM
+
+```timeAMPM(TEXT timeInAMPM)```: Parses a time string in AM/PM format and converts it to 24-hour format.
+
+**Example:**
+
+The expression ```time.timeAMPM("08:12:35 PM")``` returns ```"20:12:35"```.
+
+---
+
+## localDin
+
+```localDin(TEXT dinDateTime)```: Parses a DIN date-time string without timezone offset using
+the PDP's system default timezone. Returns an ISO 8601 string.
+
+**Example:**
+
+With system default timezone Europe/Berlin, the expression
+```time.localDin("08.11.2021 13:00:00")``` returns ```"2021-11-08T12:00:00Z"```.
+
+---
+
+## toOffset
+
+```toOffset(TEXT utcTime, TEXT offsetId)```: Converts a UTC timestamp to a specific offset, returning
+an ISO 8601 timestamp with that offset.
+
+**Example:**
+
+The expression ```time.toOffset("2021-11-08T13:00:00Z", "+05:30")```
+returns ```"2021-11-08T18:30:00+05:30"```.
+
+---
+
+## startOfDay
+
+```startOfDay(TEXT dateTime)```: Returns the start of the day (00:00:00.000) for the given date-time at UTC.
+
+**Example:**
+
+The expression ```time.startOfDay("2021-11-08T13:45:30Z")``` returns ```"2021-11-08T00:00:00Z"```.
+
+---
+
+## hourOf
+
+```hourOf(TEXT isoDateTime)```: Returns the hour of an ISO 8601 string.
+
+**Example:**
+
+The expression ```time.hourOf("2021-11-08T13:17:23Z")``` returns ```13```.
+
+---
+
+## timeInZone
+
+```timeInZone(TEXT localTime, TEXT localDate, TEXT zoneId)```: Parses a time and date with a separate
+timezone parameter and returns the matching time at UTC.
+
+**Example:**
+
+The expression ```time.timeInZone("13:12:35", "2022-01-14", "US/Pacific")``` returns ```"21:12:35"```.
+
+---
+
+## toZone
+
+```toZone(TEXT utcTime, TEXT zoneId)```: Converts a UTC timestamp to a specific timezone, returning
+an ISO 8601 timestamp with offset.
+
+**Example:**
+
+The expression ```time.toZone("2021-11-08T13:00:00Z", "Europe/Berlin")```
+returns ```"2021-11-08T14:00:00+01:00"```.
+
+---
+
+## endOfWeek
+
+```endOfWeek(TEXT dateTime)```: Returns the end of the week (Sunday 23:59:59.999999999) for the given date-time at UTC.
+
+Weeks end on Sunday per ISO 8601.
+
+**Example:**
+
+The expression ```time.endOfWeek("2021-11-08T13:45:30Z")``` returns ```"2021-11-14T23:59:59.999999999Z"```.
+
+---
+
 ## offsetDateTime
 
 ```offsetDateTime(TEXT isoDateTime)```: Parses an ISO 8601 date-time with offset and
@@ -338,13 +502,45 @@ returns ```"2021-11-08T08:12:35Z"```.
 
 ---
 
-## startOfDay
+## localIso
 
-```startOfDay(TEXT dateTime)```: Returns the start of the day (00:00:00.000) for the given date-time at UTC.
+```localIso(TEXT localDateTime)```: Parses an ISO 8601 date-time string without timezone offset using
+the PDP's system default timezone.
 
 **Example:**
 
-The expression ```time.startOfDay("2021-11-08T13:45:30Z")``` returns ```"2021-11-08T00:00:00Z"```.
+With system default timezone Europe/Berlin, the expression
+```time.localIso("2021-11-08T13:00:00")``` returns ```"2021-11-08T12:00:00Z"```.
+
+---
+
+## endOfDay
+
+```endOfDay(TEXT dateTime)```: Returns the end of the day (23:59:59.999999999) for the given date-time at UTC.
+
+**Example:**
+
+The expression ```time.endOfDay("2021-11-08T13:45:30Z")``` returns ```"2021-11-08T23:59:59.999999999Z"```.
+
+---
+
+## endOfYear
+
+```endOfYear(TEXT dateTime)```: Returns the end of the year (December 31 at 23:59:59.999999999) for the given date-time at UTC.
+
+**Example:**
+
+The expression ```time.endOfYear("2021-11-08T13:45:30Z")``` returns ```"2021-12-31T23:59:59.999999999Z"```.
+
+---
+
+## secondOf
+
+```secondOf(TEXT isoDateTime)```: Returns the second of an ISO 8601 string.
+
+**Example:**
+
+The expression ```time.secondOf("2021-11-08T13:00:23Z")``` returns ```23```.
 
 ---
 
@@ -446,17 +642,6 @@ The expression ```time.timeBetween("2001-01-01", "2002-01-01", "YEARS")``` retur
 
 ---
 
-## validUTC
-
-```validUTC(TEXT utcDateTime)```: Returns true if the value is a valid ISO 8601 UTC timestamp.
-
-**Example:**
-
-The expression ```time.validUTC("2021-11-08T13:00:00Z")``` returns ```true```.
-The expression ```time.validUTC("20111-000:00Z")``` returns ```false```.
-
----
-
 ## validRFC3339
 
 ```validRFC3339(TEXT timestamp)```: Returns true if the value is a valid RFC3339 timestamp.
@@ -468,48 +653,6 @@ RFC3339 requires a timezone designator (Z or offset like +05:00).
 The expression ```time.validRFC3339("2021-11-08T13:00:00Z")``` returns ```true```.
 The expression ```time.validRFC3339("2021-11-08T13:00:00")``` returns ```false``` (missing timezone).
 The expression ```time.validRFC3339("2021-11-08")``` returns ```false``` (date only, no time).
-
----
-
-## endOfDay
-
-```endOfDay(TEXT dateTime)```: Returns the end of the day (23:59:59.999999999) for the given date-time at UTC.
-
-**Example:**
-
-The expression ```time.endOfDay("2021-11-08T13:45:30Z")``` returns ```"2021-11-08T23:59:59.999999999Z"```.
-
----
-
-## endOfWeek
-
-```endOfWeek(TEXT dateTime)```: Returns the end of the week (Sunday 23:59:59.999999999) for the given date-time at UTC.
-
-Weeks end on Sunday per ISO 8601.
-
-**Example:**
-
-The expression ```time.endOfWeek("2021-11-08T13:45:30Z")``` returns ```"2021-11-14T23:59:59.999999999Z"```.
-
----
-
-## endOfMonth
-
-```endOfMonth(TEXT dateTime)```: Returns the end of the month (last day at 23:59:59.999999999) for the given date-time at UTC.
-
-**Example:**
-
-The expression ```time.endOfMonth("2021-11-08T13:45:30Z")``` returns ```"2021-11-30T23:59:59.999999999Z"```.
-
----
-
-## endOfYear
-
-```endOfYear(TEXT dateTime)```: Returns the end of the year (December 31 at 23:59:59.999999999) for the given date-time at UTC.
-
-**Example:**
-
-The expression ```time.endOfYear("2021-11-08T13:45:30Z")``` returns ```"2021-12-31T23:59:59.999999999Z"```.
 
 ---
 
@@ -563,30 +706,6 @@ The expression ```time.truncateToYear("2021-11-08T13:45:30Z")``` returns ```"202
 
 ---
 
-## localIso
-
-```localIso(TEXT localDateTime)```: Parses an ISO 8601 date-time string without timezone offset using
-the PDP's system default timezone.
-
-**Example:**
-
-With system default timezone Europe/Berlin, the expression
-```time.localIso("2021-11-08T13:00:00")``` returns ```"2021-11-08T12:00:00Z"```.
-
----
-
-## localDin
-
-```localDin(TEXT dinDateTime)```: Parses a DIN date-time string without timezone offset using
-the PDP's system default timezone. Returns an ISO 8601 string.
-
-**Example:**
-
-With system default timezone Europe/Berlin, the expression
-```time.localDin("08.11.2021 13:00:00")``` returns ```"2021-11-08T12:00:00Z"```.
-
----
-
 ## dateTimeAtOffset
 
 ```dateTimeAtOffset(TEXT localDateTime, TEXT offsetId)```: Parses a local date-time string and
@@ -614,17 +733,6 @@ returns ```"2021-11-08T12:12:35Z"```.
 
 ---
 
-## offsetTime
-
-```offsetTime(TEXT isoTime)```: Parses an ISO 8601 time with offset and
-returns the matching time at UTC.
-
-**Example:**
-
-The expression ```time.offsetTime("13:12:35-05:00")``` returns ```"18:12:35"```.
-
----
-
 ## timeAtOffset
 
 ```timeAtOffset(TEXT localTime, TEXT offsetId)```: Parses a time with a separate offset parameter and
@@ -633,77 +741,6 @@ returns the matching time at UTC.
 **Example:**
 
 The expression ```time.timeAtOffset("13:12:35", "-05:00")``` returns ```"18:12:35"```.
-
----
-
-## timeInZone
-
-```timeInZone(TEXT localTime, TEXT localDate, TEXT zoneId)```: Parses a time and date with a separate
-timezone parameter and returns the matching time at UTC.
-
-**Example:**
-
-The expression ```time.timeInZone("13:12:35", "2022-01-14", "US/Pacific")``` returns ```"21:12:35"```.
-
----
-
-## timeAMPM
-
-```timeAMPM(TEXT timeInAMPM)```: Parses a time string in AM/PM format and converts it to 24-hour format.
-
-**Example:**
-
-The expression ```time.timeAMPM("08:12:35 PM")``` returns ```"20:12:35"```.
-
----
-
-## dateOf
-
-```dateOf(TEXT isoDateTime)```: Returns the date part of an ISO 8601 string.
-
-**Example:**
-
-The expression ```time.dateOf("2021-11-08T13:00:00Z")``` returns ```"2021-11-08"```.
-
----
-
-## timeOf
-
-```timeOf(TEXT isoDateTime)```: Returns the local time of an ISO 8601 string, truncated to seconds.
-
-**Example:**
-
-The expression ```time.timeOf("2021-11-08T13:00:00Z")``` returns ```"13:00:00"```.
-
----
-
-## hourOf
-
-```hourOf(TEXT isoDateTime)```: Returns the hour of an ISO 8601 string.
-
-**Example:**
-
-The expression ```time.hourOf("2021-11-08T13:17:23Z")``` returns ```13```.
-
----
-
-## minuteOf
-
-```minuteOf(TEXT isoDateTime)```: Returns the minute of an ISO 8601 string.
-
-**Example:**
-
-The expression ```time.minuteOf("2021-11-08T13:17:23Z")``` returns ```17```.
-
----
-
-## secondOf
-
-```secondOf(TEXT isoDateTime)```: Returns the second of an ISO 8601 string.
-
-**Example:**
-
-The expression ```time.secondOf("2021-11-08T13:00:23Z")``` returns ```23```.
 
 ---
 
@@ -749,43 +786,6 @@ Uses approximation: 1 year = 365.2425 days, 1 month = 30.436875 days.
 
 The expression ```time.durationToISOVerbose(31536000000)``` returns approximately ```"P1Y"```.
 The expression ```time.durationToISOVerbose(86400000)``` returns ```"P1D"```.
-
----
-
-## toZone
-
-```toZone(TEXT utcTime, TEXT zoneId)```: Converts a UTC timestamp to a specific timezone, returning
-an ISO 8601 timestamp with offset.
-
-**Example:**
-
-The expression ```time.toZone("2021-11-08T13:00:00Z", "Europe/Berlin")```
-returns ```"2021-11-08T14:00:00+01:00"```.
-
----
-
-## toOffset
-
-```toOffset(TEXT utcTime, TEXT offsetId)```: Converts a UTC timestamp to a specific offset, returning
-an ISO 8601 timestamp with that offset.
-
-**Example:**
-
-The expression ```time.toOffset("2021-11-08T13:00:00Z", "+05:30")```
-returns ```"2021-11-08T18:30:00+05:30"```.
-
----
-
-## ageInYears
-
-```ageInYears(TEXT birthDate, TEXT currentDate)```: Calculates the age in complete years between
-birthDate and currentDate.
-
-Both dates must be ISO 8601 strings.
-
-**Example:**
-
-The expression ```time.ageInYears("1990-05-15", "2021-11-08")``` returns ```31```.
 
 ---
 

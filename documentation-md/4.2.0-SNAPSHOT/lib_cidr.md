@@ -180,6 +180,69 @@ Returns: Boolean indicating overlap
 
 ---
 
+## anonymizeIp
+
+```cidr.anonymizeIp(STRING ipAddress, INT prefixLength)```
+
+Anonymizes an IP by zeroing host bits beyond the prefix length and returning
+its CIDR block including the prefix. An input block with a shorter prefix keeps
+that prefix. All addresses in the same subnet produce identical results.
+
+The prefix determines granularity. For IPv4, /24 preserves organization-level
+context (254 hosts), while /16 preserves city-level (65534 hosts). For IPv6,
+/48 represents a site and /64 represents a subnet.
+
+Parameters:
+- ipAddress: IP address to anonymize
+- prefixLength: Network bits to preserve
+
+Returns: Anonymized IP address string
+
+Example: log client access with privacy protection
+
+```sapl
+policy "privacy_log"
+permit
+obligation
+    {
+        "type": "log",
+        "subnet": cidr.anonymizeIp(subject.ipAddress, 24)
+    }
+```
+
+
+---
+
+## containsMatches
+
+```cidr.containsMatches(ARRAY cidrs, ARRAY cidrsOrIps)```
+
+Batch containment checking across multiple CIDRs and IPs. Returns index pairs
+identifying all matches as [cidrIndex, ipIndex]. More efficient than individual
+contains() calls when checking many addresses against many ranges.
+Each array is limited to 10000 addresses. At most 1000000 comparisons and
+65535 match tuples are allowed. Across families, IPv4 addresses are mapped
+into ::ffff:0:0/96 before comparison.
+
+Parameters:
+- cidrs: Array of CIDR strings to check against
+- cidrsOrIps: Array of IP addresses or CIDRs to test
+
+Returns: Array of [cidrIndex, ipIndex] tuples for each match
+
+Example: verify any user IP matches trusted networks
+
+```sapl
+policy "multi_location"
+permit
+    var trusted = ["10.0.0.0/8", "172.16.0.0/12"];
+    var matches = cidr.containsMatches(trusted, subject.recentIps);
+    matches != [];
+```
+
+
+---
+
 ## isPrivateIpv4
 
 ```cidr.isPrivateIpv4(STRING ipAddress)```
@@ -301,76 +364,14 @@ Returns: Boolean indicating broadcast address
 
 ---
 
-## anonymizeIp
-
-```cidr.anonymizeIp(STRING ipAddress, INT prefixLength)```
-
-Anonymizes an IP by zeroing host bits beyond the prefix length and returning
-its CIDR block including the prefix. An input block with a shorter prefix keeps
-that prefix. All addresses in the same subnet produce identical results.
-
-The prefix determines granularity. For IPv4, /24 preserves organization-level
-context (254 hosts), while /16 preserves city-level (65534 hosts). For IPv6,
-/48 represents a site and /64 represents a subnet.
-
-Parameters:
-- ipAddress: IP address to anonymize
-- prefixLength: Network bits to preserve
-
-Returns: Anonymized IP address string
-
-Example: log client access with privacy protection
-
-```sapl
-policy "privacy_log"
-permit
-obligation
-    {
-        "type": "log",
-        "subnet": cidr.anonymizeIp(subject.ipAddress, 24)
-    }
-```
-
-
----
-
-## containsMatches
-
-```cidr.containsMatches(ARRAY cidrs, ARRAY cidrsOrIps)```
-
-Batch containment checking across multiple CIDRs and IPs. Returns index pairs
-identifying all matches as [cidrIndex, ipIndex]. More efficient than individual
-contains() calls when checking many addresses against many ranges.
-Each array is limited to 10000 addresses. At most 1000000 comparisons and
-65535 match tuples are allowed. Across families, IPv4 addresses are mapped
-into ::ffff:0:0/96 before comparison.
-
-Parameters:
-- cidrs: Array of CIDR strings to check against
-- cidrsOrIps: Array of IP addresses or CIDRs to test
-
-Returns: Array of [cidrIndex, ipIndex] tuples for each match
-
-Example: verify any user IP matches trusted networks
-
-```sapl
-policy "multi_location"
-permit
-    var trusted = ["10.0.0.0/8", "172.16.0.0/12"];
-    var matches = cidr.containsMatches(trusted, subject.recentIps);
-    matches != [];
-```
-
-
----
-
 ## isPublicRoutable
 
 ```cidr.isPublicRoutable(STRING ipAddress)```
 
-Tests if an address is publicly routable. Returns true only if the address
-is not private, loopback, link-local, multicast, documentation, CGNAT,
-benchmark, reserved, or broadcast.
+Checks whether every address represented by the input is classified as
+globally reachable by the pinned IANA address registries. A prefix with
+zero host bits represents the whole block. Nonzero host bits represent
+the individual address. Network conditions determine actual reachability.
 
 Parameters:
 - ipAddress: IP address to test

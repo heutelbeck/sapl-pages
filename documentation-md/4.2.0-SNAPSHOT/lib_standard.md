@@ -58,21 +58,6 @@ permit
 
 ---
 
-## toString
-
-```toString(value)```: Converts any ```value``` to a string representation.
-
-
-**Example:**
-```sapl
-policy "example"
-permit
-  standard.asString([1,2,3]) == "[1,2,3]";
-```
-
-
----
-
 ## onErrorMap
 
 ```onErrorMap(guardedExpression, fallbackExpression)```: If evaluation of ```guardedExpression``` results in an error,
@@ -83,6 +68,21 @@ the ```fallback``` is returned instead. Otherwise the result of ```guardedExpres
 policy "example"
 permit
   standard.onErrorMap(1/0,999) == 999;
+```
+
+
+---
+
+## toString
+
+```toString(value)```: Converts any ```value``` to a string representation.
+
+
+**Example:**
+```sapl
+policy "example"
+permit
+  standard.asString([1,2,3]) == "[1,2,3]";
 ```
 
 

@@ -161,9 +161,8 @@ the sort order based on the type of the first element. Numeric arrays are sorted
 numerically, string arrays are sorted lexicographically. All elements must be of the
 same type. Returns an error for mixed types, or unsupported types.
 
-Numeric sorting uses floating-point comparison for performance, which is appropriate
-for SAPL's authorization policy use cases. Very large integers beyond 2^53 may lose
-precision during comparison.
+Numeric sorting compares exact decimal quantities and preserves the original values.
+Equal quantities retain their input order.
 
 Parameters:
 - array: Array to sort
