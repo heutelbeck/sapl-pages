@@ -99,79 +99,6 @@ permit action == "api.call";
 
 ---
 
-## extractSubjectDn
-
-```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
-
-Returns the full DN string in RFC 2253 format. Use this for matching against
-specific organizations or organizational units in certificate-based access control.
-
-Example: Restrict access to specific department
-```sapl
-policy "allow hr department only"
-permit action == "read" && resource.type == "personnel-records"
-  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
-  subjectDn =~ "OU=Human Resources,O=Acme Corp";
-```
-
-
----
-
-## hasDnsName
-
-```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
-
-Checks the dNSName Subject Alternative Names for the specified DNS name. The subject
-Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based hostname
-matching. This is simpler than extracting SANs and checking manually, and handles
-wildcard certificates correctly.
-
-Example: Verify certificate is valid for accessed domain
-```sapl
-policy "validate domain match"
-permit action == "connect";
-  x509.hasDnsName(request.serverCertificate, resource.domain);
-```
-
-
----
-
-## hasIpAddress
-
-```hasIpAddress(TEXT certPem, TEXT ipAddress)```: Checks if certificate contains a specific IP address.
-
-Checks Subject Alternative Names for the specified IP address. Use this when
-authorizing connections from IP-identified clients rather than DNS-named hosts.
-
-Example: Authorize by client IP
-```sapl
-policy "allow specific ips"
-permit action == "connect";
-  x509.hasIpAddress(request.clientCertificate, request.sourceIp);
-```
-
-
----
-
-## isValidAt
-
-```isValidAt(TEXT certPem, TEXT isoTimestamp)```: Checks if certificate is valid at a specific time.
-
-Returns true if the given timestamp falls within the certificate's validity period
-(including notBefore and notAfter). The timestamp uses the SAPL instant format with seconds
-and an explicit offset such as Z or +01:00.
-
-Example: Check validity during maintenance window
-```sapl
-policy "maintenance window access"
-permit action == "admin" && resource.type == "production"
-  var maintenanceStart = "2025-06-15T02:00:00Z";
-  x509.isValidAt(request.adminCertificate, maintenanceStart);
-```
-
-
----
-
 ## extractIssuerDn
 
 ```extractIssuerDn(TEXT certPem)```: Extracts the Issuer Distinguished Name.
@@ -320,6 +247,79 @@ policy "allow san-based routing"
 permit action == "route";
   var sans = x509.extractSubjectAltNames(request.clientCertificate);
   resource.hostname in sans[*].value;
+```
+
+
+---
+
+## hasDnsName
+
+```hasDnsName(TEXT certPem, TEXT dnsName)```: Checks if certificate contains a specific DNS name.
+
+Checks the dNSName Subject Alternative Names for the specified DNS name. The subject
+Common Name is deliberately not consulted, since RFC 9525 deprecates CN-based hostname
+matching. This is simpler than extracting SANs and checking manually, and handles
+wildcard certificates correctly.
+
+Example: Verify certificate is valid for accessed domain
+```sapl
+policy "validate domain match"
+permit action == "connect";
+  x509.hasDnsName(request.serverCertificate, resource.domain);
+```
+
+
+---
+
+## hasIpAddress
+
+```hasIpAddress(TEXT certPem, TEXT ipAddress)```: Checks if certificate contains a specific IP address.
+
+Checks Subject Alternative Names for the specified IP address. Use this when
+authorizing connections from IP-identified clients rather than DNS-named hosts.
+
+Example: Authorize by client IP
+```sapl
+policy "allow specific ips"
+permit action == "connect";
+  x509.hasIpAddress(request.clientCertificate, request.sourceIp);
+```
+
+
+---
+
+## isValidAt
+
+```isValidAt(TEXT certPem, TEXT isoTimestamp)```: Checks if certificate is valid at a specific time.
+
+Returns true if the given timestamp falls within the certificate's validity period
+(including notBefore and notAfter). The timestamp uses the SAPL instant format with seconds
+and an explicit offset such as Z or +01:00.
+
+Example: Check validity during maintenance window
+```sapl
+policy "maintenance window access"
+permit action == "admin" && resource.type == "production"
+  var maintenanceStart = "2025-06-15T02:00:00Z";
+  x509.isValidAt(request.adminCertificate, maintenanceStart);
+```
+
+
+---
+
+## extractSubjectDn
+
+```extractSubjectDn(TEXT certPem)```: Extracts the Subject Distinguished Name.
+
+Returns the full DN string in RFC 2253 format. Use this for matching against
+specific organizations or organizational units in certificate-based access control.
+
+Example: Restrict access to specific department
+```sapl
+policy "allow hr department only"
+permit action == "read" && resource.type == "personnel-records"
+  var subjectDn = x509.extractSubjectDn(request.clientCertificate);
+  subjectDn =~ "OU=Human Resources,O=Acme Corp";
 ```
 
 
