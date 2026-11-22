@@ -39,7 +39,7 @@ All attributes take a `requestSettings` object parameter with the following fiel
 | `accept` | text | `"application/json"` | Accepted response media type. |
 | `contentType` | text | `"application/json"` | Media type of the request body. |
 | `maxResponseBytes` | number | `1048576` | Maximum response body, SSE event, or WebSocket message size in bytes. An oversized payload fails closed to an error value. |
-| `secretsKey` | text | (none) | Selects a named credential set from secrets (see below). |
+| `secretsKey` | text | (none) | Selects the named HTTP service and any same-name credentials. |
 
 The `secretsKey` field is request metadata and is stripped before the HTTP request is
 sent.
@@ -62,15 +62,15 @@ its `allowedBaseUrls`. There is no unnamed default credential.
 
 ### Named Credentials
 
-Each entry lives at `secrets.http.<name>` and has two fields:
+Each entry lives at `secrets.http.<name>`:
 
 | Field | Description |
 |---|---|
-| `headers` | The credential headers to attach. |
+| `headers` | Optional credential headers to attach. |
 | `allowedBaseUrls` | The destinations the entry may be sent to. Required. An entry that declares none permits nothing. |
 
 For a request with `"secretsKey": "weather-api"`, the PDP resolves
-`secrets.http.weather-api` from each secrets source, checks the request `baseUrl`
+`secrets.http.weather-api` from each secrets source, checks the final request URL
 against that entry's `allowedBaseUrls`, and attaches its `headers` only if the
 destination is permitted.
 
@@ -136,7 +136,7 @@ returns an error instead of leaking the secret.
   (`Authorization` or `Proxy-Authorization`) is rejected. Supply credentials through
   the `secrets` channels instead and select them with `secretsKey`. The `secretsKey`
   field itself is non-sensitive metadata and is safe to use in policies.
-* A named secret is attached only when the request `baseUrl` matches that secret's
+* A named secret is attached only when the final request URL matches that secret's
   `allowedBaseUrls`. A secret with no matching entry, including one that declares none,
   is never sent. Because the match includes the scheme, cleartext transport is an
   explicit operator choice per destination, not a policy decision.
@@ -152,6 +152,87 @@ returns an error instead of leaking the secret.
 
 Connection timeout is 10 seconds, read timeout is 30 seconds. Unresponsive
 endpoints result in an error value.
+
+## Configure TLS trust
+
+The HTTP PIP uses the public service configuration for HTTPS, SSE and WSS. For a private CA, start with the following `pdp.json` settings and install the referenced profile before deployment. Multiple endpoints and PIPs can reference the same profile.
+
+```json
+{
+  "variables": {
+    "http": {
+      "services": {
+        "fleet": {
+          "allowedBaseUrls": [
+            "https://api.example.org/fleet",
+            "wss://api.example.org/events"
+          ],
+          "trustProfile": "site-ca"
+        }
+      }
+    }
+  }
+}
+```
+
+Select the service with `<http.get({"baseUrl":"https://api.example.org/fleet/status","secretsKey":"fleet"})>`. A named service applies its allowlist even to requests without headers. List HTTPS and WSS prefixes separately. A public request can omit the selector.
+
+Optional credentials use the same name. Each source of headers authorizes the final URL independently by scheme, host, port and path segment. For example, this narrower credential can reach `/fleet/status` and its descendants. A request for `/fleet/devices` using it fails before sending any headers. Subscription credentials can narrow the destination further. A credential can also have its own allowlist without a configured service.
+
+```json
+{
+  "http": {
+    "fleet": {
+      "allowedBaseUrls": [
+        "https://api.example.org/fleet/status"
+      ],
+      "headers": {
+        "Authorization": "Bearer REPLACE_WITH_TOKEN"
+      }
+    }
+  }
+}
+```
+
+The operator secrets file is `secrets.json` for explicitly enabled cleartext development or `secrets.sealed.json` for sealed deployment.
+
+### Obtain and verify the CA certificate
+
+Ask the administrator of the API or its TLS reverse proxy for its public CA certificate and confirm its SHA-256 fingerprint through your organization's PKI or another authenticated channel. A PEM file contains a `-----BEGIN CERTIFICATE-----` block. If the administrator provides a binary DER certificate, convert it first.
+
+```sh
+openssl x509 -inform DER -in issuer.cer -out ca.pem
+```
+
+If the CA is already in an approved Java truststore, export its trusted-certificate alias. `keytool` prompts for the store password.
+
+```sh
+keytool -exportcert -rfc -keystore truststore.p12 -alias issuing-ca -file ca.pem
+```
+
+Check the identity and fingerprint of each certificate before installing it.
+
+```sh
+openssl x509 -in ca.pem -noout -subject -issuer -fingerprint -sha256
+```
+
+### Install the named profile
+
+In the following command, `pdp.input.json` is the complete configuration with the endpoint settings above. `jq --rawfile` reads the public certificate including its PEM delimiters and line breaks. The resulting `pdp.json` keeps the other configuration fields.
+
+```sh
+jq --rawfile ca ca.pem '.variables.tlsTrustProfiles["site-ca"] = {trustedCaPem: $ca, includeDefaultTrustRoots: false}' pdp.input.json > pdp.json
+```
+
+| Endpoint setting | Trusted roots |
+| --- | --- |
+| Omit `trustProfile` | Runtime defaults. |
+| Select a profile with `includeDefaultTrustRoots` absent or `false` | Only the CA certificates in that profile. |
+| Select a profile with `includeDefaultTrustRoots: true` | Profile certificates and runtime defaults. |
+
+A named profile requires a nonempty `trustedCaPem` string. Each PEM block must contain a public X.509 certificate. The Java client uses the JVM trust configuration by default. The certificate must match the server's hostname. An invalid bundle, an unknown profile, or a profile on a plaintext endpoint prevents the new PDP configuration from taking effect.
+
+For a CA rollover, deploy the old and new CA certificates together as consecutive PEM blocks in the profile. After the service switches certificates, remove the retired CA and deploy the configuration again.
 
 
 ---
@@ -396,6 +477,14 @@ permit
 
 ## websocket
 
+```(TEXT resourceUrl).<websocket>``` is an attribute of the resource identified by the ```resourceUrl```.
+Connects to a WebSocket with default settings.
+
+
+---
+
+## websocket
+
 ```<websocket(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
 This attribute takes a ```requestSettings``` object as a parameter and connects to a Websocket and emits events
 as sent by the server. Upon connection, the ```body``` of the settings is sent to the server.
@@ -417,14 +506,6 @@ permit
 
 ## websocket
 
-```(TEXT resourceUrl).<websocket>``` is an attribute of the resource identified by the ```resourceUrl```.
-Connects to a WebSocket with default settings.
-
-
----
-
-## websocket
-
 ```(TEXT resourceUrl).<websocket(OBJECT requestSettings)>``` is an attribute of the resource identified by
 the ```resourceUrl```.
 This attribute takes a ```requestSettings``` object as a parameter and connects to a Websocket and emits events
@@ -435,7 +516,7 @@ Example:
 policy "http example"
 permit
   var request = { "body": "message" };
-  "https://example.com/status".<http.websocket(request)>.health == "GOOD";
+  "wss://example.com/status".<http.websocket(request)>.health == "GOOD";
 ```
 
 
