@@ -183,6 +183,21 @@ permit
 
 ## put
 
+```<put(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP PUT request and
+polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = {
+                    "baseUrl": "https://example.com",
+                    "path": "/status",
+                    "body": { "action": "turnOff", "resource": "heater" }
+                };
+  <http.put(request)>.status == "off";
+```
 
 
 ---
@@ -206,6 +221,23 @@ permit
 
 ## get
 
+```<get(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP GET request and
+polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = {
+                    "baseUrl": "https://example.com",
+                    "path": "/status"
+                };
+  <http.get(request)[{pollIntervalMs: 1000}]>.status == "OK";
+```
+The `[{pollIntervalMs: 1000}]` attribute option sets how often the engine
+re-evaluates the attribute (re-issues the request). It is optional and
+defaults to the engine-wide attribute poll interval.
 
 
 ---
@@ -227,6 +259,20 @@ permit
 
 ## delete
 
+```<delete(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP DELETE
+request and polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = {
+                    "baseUrl": "https://example.com",
+                    "path": "/status"
+                };
+  <http.delete(request)> != undefined;
+```
 
 
 ---
@@ -258,6 +304,21 @@ permit
 
 ## patch
 
+```<patch(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP PATCH request and
+polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = {
+                    "baseUrl": "https://example.com",
+                    "path": "/status",
+                    "body": { "action": "turnOff", "resource": "heater" }
+                };
+  <http.patch(request)>.status == "off";
+```
 
 
 ---
@@ -314,12 +375,42 @@ permit
 
 ## post
 
+```<post(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
+This attribute takes a ```requestSettings``` object as a parameter and performs the matching HTTP POST request and
+polls it according the the settings.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = {
+                    "baseUrl": "https://example.com",
+                    "path": "/status",
+                    "body": { "action": "turnOff", "resource": "heater" }
+                };
+  <http.post(request)>.status == "off";
+```
 
 
 ---
 
 ## websocket
 
+```<websocket(OBJECT requestSettings)>``` is an environment attribute stream and takes no left-hand arguments.
+This attribute takes a ```requestSettings``` object as a parameter and connects to a Websocket and emits events
+as sent by the server. Upon connection, the ```body``` of the settings is sent to the server.
+
+Example:
+```sapl
+policy "http example"
+permit
+  var request = {
+                    "baseUrl": "https://example.com",
+                    "path": "/status",
+                    "body": "message"
+                };
+  <http.websocket(request)>.health == "GOOD";
+```
 
 
 ---
