@@ -125,9 +125,9 @@ The result contains a `valid` boolean field and an `errors` array with detailed 
 validation failures. Each error includes the location in the subject (`path`), a human-readable message,
 the validation keyword that failed (`type`), and the schema location (`schemaPath`).
 
-The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+An invalid schema returns an error.
 
-*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
 
 **Example:**
 ```sapl
@@ -154,11 +154,11 @@ permit action == "upload:document";
 ```isCompliant(validationSubject, OBJECT schema)```:
 This function tests the `validationSubject` for compliance with the provided JSON schema `schema`.
 
-The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+An invalid schema returns an error.
 If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
 else it returns ```false```.
 
-*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
 
 **Example:**
 ```sapl
@@ -174,75 +174,20 @@ permit
 
 ---
 
-## validateWithExternalSchemas
-
-```validateWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
-This function validates the ```validationSubject``` against the provided JSON schema `schema` and returns
-a detailed validation result including error details.
-
-The result contains a `valid` boolean field and an `errors` array with detailed information about any
-validation failures. Each error includes the location in the subject (`path`), a human-readable message,
-the validation keyword that failed (`type`), and the schema location (`schemaPath`).
-
-The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
-If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
-looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
-If no $id field is provided, the schema will not be detectable.
-
-*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
-
-**Example:**
-```sapl
-policy "validate_api_request_with_shared_schemas"
-permit action == "api:call";
-  var addressSchema = {
-    "$id": "https://schemas.company.com/address",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "properties": {
-      "street": { "type": "string" },
-      "city": { "type": "string" },
-      "country": { "type": "string", "minLength": 2, "maxLength": 2 }
-    },
-    "required": ["street", "city", "country"]
-  };
-  var userSchema = {
-    "$id": "https://schemas.company.com/user",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "properties": {
-      "userId": { "type": "string", "format": "uuid" },
-      "email": { "type": "string", "format": "email" },
-      "role": { "enum": ["user", "admin", "auditor"] },
-      "address": { "$ref": "https://schemas.company.com/address" }
-    },
-    "required": ["userId", "email", "role"]
-  };
-  var result = jsonschema.validateWithExternalSchemas(
-    resource.userData,
-    userSchema,
-    [addressSchema]
-  );
-  result.valid || result.errors[0].type == "required";
-```
-
-
----
-
 ## isCompliantWithExternalSchemas
 
 ```isCompliantWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
 This function tests the ```validationSubject``` for compliance with the provided JSON
 schema `schema`.
 
-The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+An invalid schema returns an error.
 If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
 else it returns ```false```.
 If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
 looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
 If no $id field is provided, the schema will not be detectable.
 
-*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
 
 **Example:**
 ```sapl
@@ -281,6 +226,61 @@ permit
            "C" : { "x" : 1, "y" : 2, "z" : 3 }
         };
   isCompliantWithExternalSchemas(invalid, schema, [externals]) == false;
+```
+
+
+---
+
+## validateWithExternalSchemas
+
+```validateWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
+This function validates the ```validationSubject``` against the provided JSON schema `schema` and returns
+a detailed validation result including error details.
+
+The result contains a `valid` boolean field and an `errors` array with detailed information about any
+validation failures. Each error includes the location in the subject (`path`), a human-readable message,
+the validation keyword that failed (`type`), and the schema location (`schemaPath`).
+
+An invalid schema returns an error.
+If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
+looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
+If no $id field is provided, the schema will not be detectable.
+
+The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
+
+**Example:**
+```sapl
+policy "validate_api_request_with_shared_schemas"
+permit action == "api:call";
+  var addressSchema = {
+    "$id": "https://schemas.company.com/address",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "street": { "type": "string" },
+      "city": { "type": "string" },
+      "country": { "type": "string", "minLength": 2, "maxLength": 2 }
+    },
+    "required": ["street", "city", "country"]
+  };
+  var userSchema = {
+    "$id": "https://schemas.company.com/user",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "userId": { "type": "string", "format": "uuid" },
+      "email": { "type": "string", "format": "email" },
+      "role": { "enum": ["user", "admin", "auditor"] },
+      "address": { "$ref": "https://schemas.company.com/address" }
+    },
+    "required": ["userId", "email", "role"]
+  };
+  var result = jsonschema.validateWithExternalSchemas(
+    resource.userData,
+    userSchema,
+    [addressSchema]
+  );
+  result.valid || result.errors[0].type == "required";
 ```
 
 
