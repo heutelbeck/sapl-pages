@@ -14,15 +14,6 @@ Network-based access control using IP addresses and CIDR notation. Test membersh
 validate configurations, anonymize addresses for privacy compliance, and calculate
 subnet properties.
 
-## Address Syntax
-
-IPv4 addresses use four decimal parts from 0 to 255 without leading zeros.
-IPv6 addresses use the text forms of RFC 4291 section 2.2, including embedded
-IPv4 dotted quads. An optional prefix is a decimal number from 0 to 32 for IPv4
-or 0 to 128 for IPv6, without leading zeros. Zones, masks, ranges, wildcards,
-other numeric forms, empty text and surrounding whitespace are invalid.
-Functions return an error for invalid addresses. `isValid` returns false.
-
 ## Access Control Patterns
 
 Restrict access based on network location. Check if client IPs fall within trusted
@@ -70,7 +61,7 @@ permit action == "create_subnet";
 To bound memory and computation on untrusted input, the following limits apply:
 
 - `expand` rejects a CIDR range that contains more than 65535 addresses, returning an error.
-- `containsMatches` rejects more than 10000 addresses per array, more than 1000000 pairwise comparisons or more than 65535 emitted match tuples.
+- `containsMatches` rejects more than 1000000 pairwise comparisons or more than 65535 emitted match tuples.
 - `merge` rejects more than 1000 input addresses, returning an error.
 
 These limits apply because this input may originate from the authorization subscription or from policy information points, which are not vetted to the same degree as the policies and variables shipped with the PDP configuration.
@@ -98,8 +89,7 @@ Returns: Array of IP address strings
 ```cidr.contains(STRING cidr, STRING cidrOrIp)```
 
 Tests if an IP address or CIDR range falls within another CIDR. Works with both
-IPv4 and IPv6 addresses. Across families, IPv4 addresses are mapped into
-::ffff:0:0/96 before comparison.
+IPv4 and IPv6 addresses. Mixing address families returns false.
 
 Parameters:
 - cidr: The containing CIDR range (e.g., "10.0.0.0/8")
@@ -107,7 +97,7 @@ Parameters:
 
 Returns: Boolean indicating containment
 
-Example: restrict API access to corporate network
+Example - restrict API access to corporate network:
 
 ```sapl
 policy "corporate_api"
@@ -124,8 +114,7 @@ permit action == "call_api";
 
 Consolidates IP addresses and subnets into the minimal set of non-overlapping CIDRs.
 Eliminates duplicates, removes contained ranges, and combines adjacent blocks. IPv6
-addresses use RFC 5952 canonical form. Results are sorted by address family
-with IPv4 first, then by lowest address.
+addresses use RFC 5952 canonical form.
 
 Parameters:
 - addresses: Array of IP addresses and CIDR strings
@@ -169,76 +158,12 @@ Returns: Boolean indicating validity
 
 Tests whether two CIDR ranges share any addresses. Use this to validate network
 allocations don't conflict or to detect overlapping security zones.
-Across families, IPv4 addresses are mapped into ::ffff:0:0/96 before comparison.
 
 Parameters:
 - cidr1: First CIDR range
 - cidr2: Second CIDR range
 
 Returns: Boolean indicating overlap
-
-
----
-
-## anonymizeIp
-
-```cidr.anonymizeIp(STRING ipAddress, INT prefixLength)```
-
-Anonymizes an IP by zeroing host bits beyond the prefix length and returning
-its CIDR block including the prefix. An input block with a shorter prefix keeps
-that prefix. All addresses in the same subnet produce identical results.
-
-The prefix determines granularity. For IPv4, /24 preserves organization-level
-context (254 hosts), while /16 preserves city-level (65534 hosts). For IPv6,
-/48 represents a site and /64 represents a subnet.
-
-Parameters:
-- ipAddress: IP address to anonymize
-- prefixLength: Network bits to preserve
-
-Returns: Anonymized IP address string
-
-Example: log client access with privacy protection
-
-```sapl
-policy "privacy_log"
-permit
-obligation
-    {
-        "type": "log",
-        "subnet": cidr.anonymizeIp(subject.ipAddress, 24)
-    }
-```
-
-
----
-
-## containsMatches
-
-```cidr.containsMatches(ARRAY cidrs, ARRAY cidrsOrIps)```
-
-Batch containment checking across multiple CIDRs and IPs. Returns index pairs
-identifying all matches as [cidrIndex, ipIndex]. More efficient than individual
-contains() calls when checking many addresses against many ranges.
-Each array is limited to 10000 addresses. At most 1000000 comparisons and
-65535 match tuples are allowed. Across families, IPv4 addresses are mapped
-into ::ffff:0:0/96 before comparison.
-
-Parameters:
-- cidrs: Array of CIDR strings to check against
-- cidrsOrIps: Array of IP addresses or CIDRs to test
-
-Returns: Array of [cidrIndex, ipIndex] tuples for each match
-
-Example: verify any user IP matches trusted networks
-
-```sapl
-policy "multi_location"
-permit
-    var trusted = ["10.0.0.0/8", "172.16.0.0/12"];
-    var matches = cidr.containsMatches(trusted, subject.recentIps);
-    matches != [];
-```
 
 
 ---
@@ -364,14 +289,73 @@ Returns: Boolean indicating broadcast address
 
 ---
 
+## anonymizeIp
+
+```cidr.anonymizeIp(STRING ipAddress, INT prefixLength)```
+
+Anonymizes an IP by zeroing host bits beyond the prefix length. All addresses
+in the same subnet produce identical results. Enables GDPR-compliant logging
+while maintaining geographic or organizational context.
+
+The prefix determines granularity. For IPv4, /24 preserves organization-level
+context (254 hosts), while /16 preserves city-level (65534 hosts). For IPv6,
+/48 represents a site and /64 represents a subnet.
+
+Parameters:
+- ipAddress: IP address to anonymize
+- prefixLength: Network bits to preserve
+
+Returns: Anonymized IP address string
+
+Example - log client access with privacy protection:
+
+```sapl
+policy "privacy_log"
+permit
+obligation
+    {
+        "type": "log",
+        "subnet": cidr.anonymizeIp(subject.ipAddress, 24)
+    }
+```
+
+
+---
+
+## containsMatches
+
+```cidr.containsMatches(ARRAY cidrs, ARRAY cidrsOrIps)```
+
+Batch containment checking across multiple CIDRs and IPs. Returns index pairs
+identifying all matches as [cidrIndex, ipIndex]. More efficient than individual
+contains() calls when checking many addresses against many ranges.
+
+Parameters:
+- cidrs: Array of CIDR strings to check against
+- cidrsOrIps: Array of IP addresses or CIDRs to test
+
+Returns: Array of [cidrIndex, ipIndex] tuples for each match
+
+Example - verify any user IP matches trusted networks:
+
+```sapl
+policy "multi_location"
+permit
+    var trusted = ["10.0.0.0/8", "172.16.0.0/12"];
+    var matches = cidr.containsMatches(trusted, subject.recentIps);
+    matches != [];
+```
+
+
+---
+
 ## isPublicRoutable
 
 ```cidr.isPublicRoutable(STRING ipAddress)```
 
-Checks whether every address represented by the input is classified as
-globally reachable by the pinned IANA address registries. A prefix with
-zero host bits represents the whole block. Nonzero host bits represent
-the individual address. Network conditions determine actual reachability.
+Tests if an address is publicly routable. Returns true only if the address
+is not private, loopback, link-local, multicast, documentation, CGNAT,
+benchmark, reserved, or broadcast.
 
 Parameters:
 - ipAddress: IP address to test
@@ -386,7 +370,7 @@ Returns: Boolean indicating publicly routable address
 ```cidr.hashIpPrefix(STRING ipAddress, INT prefixLength, STRING salt)```
 
 Hashes an IP prefix with a salt for privacy-preserving analytics and rate limiting.
-First anonymizes to a CIDR block including its prefix, then applies SHA-256 to produce a pseudonymous
+First anonymizes to subnet level, then applies SHA-256 to produce a pseudonymous
 identifier. Same subnet and salt always produce the same hash.
 
 The salt must be secret and unique per application. Without it, attackers can
@@ -401,7 +385,7 @@ Parameters:
 
 Returns: Hexadecimal SHA-256 hash (64 characters)
 
-Example: rate limit by subnet without storing IPs
+Example - rate limit by subnet without storing IPs:
 
 ```sapl
 policy "rate_limit"
@@ -465,10 +449,9 @@ Returns: Address count as string
 
 ```cidr.getUsableHostCount(STRING cidr)```
 
-Returns usable host addresses as a string to handle large IPv6 ranges.
-An address without a prefix is a block of one. IPv4 /31 and IPv6 /127 blocks
-have two usable hosts. Larger IPv4 blocks exclude network and broadcast
-addresses. Larger IPv6 blocks exclude the subnet router anycast address.
+Returns usable host addresses in a CIDR range. For IPv4, excludes network and
+broadcast addresses. For /31 and /32, returns 0. Returns string to handle
+large IPv6 ranges.
 
 Parameters:
 - cidr: CIDR range
@@ -482,8 +465,7 @@ Returns: Usable host count as string
 
 ```cidr.getFirstUsableAddress(STRING cidr)```
 
-Returns the first usable host address. Blocks of one or two addresses use
-all their addresses. Larger blocks exclude the network address.
+Returns the first usable host address (network address + 1).
 
 Parameters:
 - cidr: CIDR range
@@ -497,9 +479,8 @@ Returns: First usable address string
 
 ```cidr.getLastUsableAddress(STRING cidr)```
 
-Returns the last usable host address. Blocks of one or two addresses use
-all their addresses. Larger IPv4 blocks exclude the broadcast address.
-IPv6 uses the last address in the block.
+Returns the last usable host address. For IPv4, returns broadcast address - 1.
+For IPv6, returns the last address in the range.
 
 Parameters:
 - cidr: CIDR range

@@ -7,13 +7,7 @@ nav_order: 204
 # time
 
 Policy Information Point and attributes for retrieving current date and time information and
-basic temporal logic. Local time predicates follow the displayed time in the selected zone.
-A forward clock change can skip a checkpoint and a backward change can cross it twice.
-For a 02:17 checkpoint in Europe/Berlin, the spring jump to 03:00 ends the before period.
-In autumn the clock returns to 02:00, and the before period lasts until the second 02:17.
-Local time ranges include their start and exclude their end. Equal endpoints give an empty range.
-The pair 00:00 and 23:59:59.999999999 denotes the full day in either order.
-The after predicate is always true for 00:00 and always false for 23:59:59.999999999.
+basic temporal logic.
 
 
 
@@ -120,7 +114,7 @@ Alternatively, assume that the current time is ```"2021-11-08T13:00:00Z"``` then
 ```<time.localTimeIsAfter(TEXT checkpoint, TEXT timezone)>``` is an environment attribute stream and takes no
 left-hand arguments.
 ```<time.localTimeIsAfter(checkpoint, timezone)>``` ```true```, if the current time of the day without date is
-at or after the ```checkpoint``` time (e.g., "17:00") in the given ```timezone``` (e.g., "Europe/Berlin") and
+after the ```checkpoint``` time (e.g., "17:00") in the given ```timezone``` (e.g., "Europe/Berlin") and
 ```false``` otherwise. This is examined relative to the current day. I.e., the answer toggles at "00:00".
 
 Example:
@@ -136,7 +130,7 @@ permit action == "work";
 ## localTimeIsAfter
 
 ```<time.localTimeIsAfter(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.localTimeIsAfter(checkpoint)>``` ```true```, if the current time of the day without date is at or after the
+```<time.localTimeIsAfter(checkpoint)>``` ```true```, if the current time of the day without date is after the
 ```checkpoint``` time (e.g., "17:00") in the clock's configured timezone and ```false``` otherwise.
 This is examined relative to the current day. I.e., the answer toggles at "00:00".
 This *attribute is not polling the clock* and should be used instead of doing manual comparisons against
@@ -155,7 +149,7 @@ permit action == "work";
 ## localTimeIsBefore
 
 ```<time.localTimeIsBefore(TEXT checkpoint)>``` is an environment attribute stream and takes no left-hand arguments.
-```<time.localTimeIsBefore(checkpoint)>``` ```false```, if the current time of the day without date is at or after the
+```<time.localTimeIsBefore(checkpoint)>``` ```false```, if the current time of the day without date is after the
 ```checkpoint``` time (e.g., "17:00") in the clock's configured timezone and ```true``` otherwise.
 This is examined relative to the current day. I.e., the answer toggles at "00:00".
 This *attribute is not polling the clock* and should be used instead of doing manual comparisons against
@@ -176,7 +170,7 @@ permit action == "work";
 ```<time.localTimeIsBefore(TEXT checkpoint, TEXT timezone)>``` is an environment attribute stream and takes no
 left-hand arguments.
 ```<time.localTimeIsBefore(checkpoint, timezone)>``` ```false```, if the current time of the day without date is
-at or after the ```checkpoint``` time (e.g., "17:00") in the given ```timezone``` (e.g., "Europe/Berlin") and
+after the ```checkpoint``` time (e.g., "17:00") in the given ```timezone``` (e.g., "Europe/Berlin") and
 ```true``` otherwise.
 
 Example:
@@ -194,7 +188,7 @@ permit action == "work";
 ```<time.localTimeIsBetween(TEXT startTime, TEXT endTime)>``` is an environment attribute stream and takes no left-hand
 arguments.
 ```<time.localTimeIsBetween(startTime, endTime)>``` ```true```, if the current time in the clock's configured
-timezone is in the range from ```startTime``` (inclusive) to ```endTime``` (exclusive).
+timezone is between the ```startTime``` and the ```endTime``` and ```false``` otherwise.
 If the time of the first parameter is after the time of the second parameter, the interval is considered to be the
 one between the two times, crossing the midnight border of the days.
 
@@ -213,7 +207,7 @@ permit action == "work";
 ```<time.localTimeIsBetween(TEXT startTime, TEXT endTime, TEXT timezone)>``` is an environment attribute stream
 and takes no left-hand arguments.
 ```<time.localTimeIsBetween(startTime, endTime, timezone)>``` ```true```, if the current time in the given
-```timezone``` (e.g., "Europe/Berlin") is in the range from ```startTime``` (inclusive) to ```endTime``` (exclusive) and ```false```
+```timezone``` (e.g., "Europe/Berlin") is between the ```startTime``` and the ```endTime``` and ```false```
 otherwise. If the time of the first parameter is after the time of the second parameter, the interval is
 considered to be the one between the two times, crossing the midnight border of the days.
 

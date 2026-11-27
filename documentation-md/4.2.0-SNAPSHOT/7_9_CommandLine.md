@@ -56,16 +56,9 @@ Any Spring Boot property can be overridden on the command line:
   --sapl.pdp.rsocket.enabled=false
   --sapl.pdp.rsocket.port=7000
 
-The server refuses to start without TLS, unless plaintext is
-allowed, and without an authentication mode, unless anonymous
-access is allowed. The rule holds on localhost too. Each opt-in
-logs a warning at every start that names where it was set.
-
-Opt-ins for local development:
-  `--no-tls`    serve without TLS
-              (as --io.sapl.node.allow-no-tls=true)
+Shortcut for local development:
   `--no-auth`   accept unauthenticated requests
-              (as --io.sapl.node.allow-no-auth=true)
+              (alias for --io.sapl.node.allow-no-auth=true)
 
 Key configuration areas: policy source type (DIRECTORY, BUNDLES),
 authentication (no-auth, basic, API key, OAuth2), TLS, RSocket,
@@ -95,14 +88,14 @@ sapl server [-hV]
 **Examples**
 
 ```shell
-# Start with the configuration in config/application.yml
+# Start with default settings
 sapl server
 
-# Local development without TLS and authentication
-sapl server --no-tls --no-auth
+# Local development without authentication
+sapl server --no-auth
 
-# Serve one certificate on both APIs
-sapl server --io.sapl.node.tls.certificate-chain=tls/server.pem --io.sapl.node.tls.private-key=tls/server.key
+# Start on a custom port
+sapl server --server.port=9090
 
 # Use a custom configuration file
 sapl server --spring.config.location=file:/etc/sapl/application.yml
@@ -383,12 +376,12 @@ key, in place and under the same names: secrets.sealed.json stays
 secrets.sealed.json and each ext-<name>-secrets.sealed.json keeps
 its name, while their sealed leaves are decrypted with the source
 key and re-encrypted to the target key. The plaintext exists only
-transiently in memory. No cleartext is ever written.
+transiently in memory; no cleartext is ever written.
 
 A single source key rekeys a uniformly sealed folder: every sealed
 leaf must have been sealed to the source key's id. A folder whose
 leaves are sealed under mixed key ids is out of scope for this
-command and fails closed. Plaintext secrets are rejected. Seal the
+command and fails closed. Plaintext secrets are rejected; seal the
 folder first. A folder mixing sealed and plaintext secrets is
 rejected. A sealed secrets file that actually holds cleartext leaves
 is rejected rather than passed through as a false success.
@@ -446,7 +439,7 @@ seal the directory, and re-create it before signing.
 
 When the input bundle carries a manifest, its configurationId,
 attribution, and audience are carried over into the signed
-bundle. The creation timestamp and engine version are re-minted
+bundle; the creation timestamp and engine version are re-minted
 because re-signing is a build event.
 
 By default, the input bundle is overwritten with the signed
@@ -735,7 +728,7 @@ sapl check [-hV] [--json-report] [--text-report] [--trace] [--remote
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
@@ -840,7 +833,7 @@ sapl decide [-hV] [--json-report] [--pretty] [--text-report] [--trace]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
@@ -878,7 +871,7 @@ Evaluates the authorization subscription against policies once and
 prints the full decision to stdout as a JSON object containing the
 decision (PERMIT, DENY, SUSPEND, NOT_APPLICABLE, INDETERMINATE), any
 obligations, advice, and resource transformations. The JSON is compact
-by default. Pass `--pretty` for an indented, human-readable form.
+by default; pass `--pretty` for an indented, human-readable form.
 
 By default, policies are loaded from ~/.sapl/. Use
 `--dir` for a different directory, `--bundle` for a bundle file, or
@@ -938,7 +931,7 @@ sapl decide-once [-hV] [--json-report] [--pretty] [--text-report]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
 | `--trace` | Print the full policy evaluation trace to stderr |  |
 | `--json-report` | Print a machine-readable JSON evaluation report to stderr |  |
 | `--text-report` | Print a human-readable text evaluation report to stderr |  |
@@ -1226,7 +1219,7 @@ sapl benchmark [-hV] [--latency] [--machine-readable] [--rbac]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
 | `--rbac` | Use built-in RBAC benchmark (no policy files or subscription needed). |  |
 | `--warmup-iterations <warmupIterations>` | Number of warmup iterations before measurement | `3` |
 | `--warmup-time <warmupTimeSeconds>` | Duration of each warmup iteration in seconds | `45` |
@@ -1306,7 +1299,7 @@ sapl loadtest [-hV] [--insecure] [--machine-readable] [--rsocket]
 | `-a, --action <action>` | Action as a JSON value (string, number, object, or array) |  |
 | `-r, --resource <resource>` | Resource as a JSON value (string, number, object, or array) |  |
 | `-e, --environment <environment>` | Environment as a JSON value (optional context for policy evaluation) |  |
-| `--secrets <secrets>` | Secrets as a JSON object (for Policy Information Points, not readable by policies) |  |
+| `--secrets <secrets>` | Secrets as a JSON object (available to policies via the secrets() function) |  |
 | `--url <url>` | HTTP server URL (default: http://localhost:8080) | `http://localhost:8080` |
 | `--rsocket` | Use RSocket/protobuf transport instead of HTTP |  |
 | `--host <rsocketHost>` | RSocket server host (default: localhost) | `localhost` |

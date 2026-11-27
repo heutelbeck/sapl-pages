@@ -99,19 +99,6 @@ Example: If `resource.form = {"zip": "ABC"}` fails pattern validation,
 `result.errors` contains: `[{"path": "/zip", "message": "does not match
 pattern ^[0-9]{5}$", "type": "pattern", "schemaPath": "/properties/zip"}]`.
 
-## Patterns
-
-The `pattern` and `patternProperties` keywords use the syntax of RE2
-(https://github.com/google/re2/wiki/Syntax), the same syntax as the `=~`
-operator, and are matched in time linear in the length of the text. A
-pattern matches if it matches any part of the text, and `$` matches at
-the end of the text only. Look-around, backreferences, atomic groups and
-possessive quantifiers do not exist in this syntax. A schema with a pattern
-RE2 refuses is an error, even if the subject never reaches the pattern. A
-rule written with look-ahead is written as several `pattern` keywords under
-`allOf` instead:
-`{"type": "string", "minLength": 12, "allOf": [{"pattern": "[0-9]"}, {"pattern": "[A-Z]"}]}`.
-
 
 ---
 
@@ -125,9 +112,9 @@ The result contains a `valid` boolean field and an `errors` array with detailed 
 validation failures. Each error includes the location in the subject (`path`), a human-readable message,
 the validation keyword that failed (`type`), and the schema location (`schemaPath`).
 
-An invalid schema returns an error.
+The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
 
-The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
 
 **Example:**
 ```sapl
@@ -152,13 +139,13 @@ permit action == "upload:document";
 ## isCompliant
 
 ```isCompliant(validationSubject, OBJECT schema)```:
-This function tests the `validationSubject` for compliance with the provided JSON schema `schema`.
+This function tests the `validationSubject` for compliance with the with the provided JSON schema `schema`.
 
-An invalid schema returns an error.
+The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
 If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
 else it returns ```false```.
 
-The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
 
 **Example:**
 ```sapl
@@ -174,20 +161,75 @@ permit
 
 ---
 
+## validateWithExternalSchemas
+
+```validateWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
+This function validates the ```validationSubject``` against the provided JSON schema `schema` and returns
+a detailed validation result including error details.
+
+The result contains a `valid` boolean field and an `errors` array with detailed information about any
+validation failures. Each error includes the location in the subject (`path`), a human-readable message,
+the validation keyword that failed (`type`), and the schema location (`schemaPath`).
+
+The schema itself cannot be validated and improper schema definitions may lead to unexpected results.
+If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
+looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
+If no $id field is provided, the schema will not be detectable.
+
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
+
+**Example:**
+```sapl
+policy "validate_api_request_with_shared_schemas"
+permit action == "api:call";
+  var addressSchema = {
+    "$id": "https://schemas.company.com/address",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "street": { "type": "string" },
+      "city": { "type": "string" },
+      "country": { "type": "string", "minLength": 2, "maxLength": 2 }
+    },
+    "required": ["street", "city", "country"]
+  };
+  var userSchema = {
+    "$id": "https://schemas.company.com/user",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "userId": { "type": "string", "format": "uuid" },
+      "email": { "type": "string", "format": "email" },
+      "role": { "enum": ["user", "admin", "auditor"] },
+      "address": { "$ref": "https://schemas.company.com/address" }
+    },
+    "required": ["userId", "email", "role"]
+  };
+  var result = jsonschema.validateWithExternalSchemas(
+    resource.userData,
+    userSchema,
+    [addressSchema]
+  );
+  result.valid || result.errors[0].type == "required";
+```
+
+
+---
+
 ## isCompliantWithExternalSchemas
 
 ```isCompliantWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
-This function tests the ```validationSubject``` for compliance with the provided JSON
+This function tests the ```validationSubject``` for compliance with the with the provided JSON
 schema `schema`.
 
-An invalid schema returns an error.
+The schema itself cannot be validated and improper schema definitions may lead to unexcpected results.
 If ```validationSubject``` is compliant with the ```schema```, the function returns ```true```,
 else it returns ```false```.
 If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
 looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
 If no $id field is provided, the schema will not be detectable.
 
-The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
+*Note:* The schema is expected to comply with: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12)
 
 **Example:**
 ```sapl
@@ -226,61 +268,6 @@ permit
            "C" : { "x" : 1, "y" : 2, "z" : 3 }
         };
   isCompliantWithExternalSchemas(invalid, schema, [externals]) == false;
-```
-
-
----
-
-## validateWithExternalSchemas
-
-```validateWithExternalSchemas(validationSubject, OBJECT jsonSchema, ARRAY externalSchemas)```:
-This function validates the ```validationSubject``` against the provided JSON schema `schema` and returns
-a detailed validation result including error details.
-
-The result contains a `valid` boolean field and an `errors` array with detailed information about any
-validation failures. Each error includes the location in the subject (`path`), a human-readable message,
-the validation keyword that failed (`type`), and the schema location (`schemaPath`).
-
-An invalid schema returns an error.
-If the ```jsonSchema``` contains external references to other ```schemas```, the validation function
-looks up the schemas in ```externalSchemas``` based on explicitly defined ```$id``` field in the schemas.
-If no $id field is provided, the schema will not be detectable.
-
-The default dialect is [JSON Schema 2020-12](https://json-schema.org/draft/2020-12).
-
-**Example:**
-```sapl
-policy "validate_api_request_with_shared_schemas"
-permit action == "api:call";
-  var addressSchema = {
-    "$id": "https://schemas.company.com/address",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "properties": {
-      "street": { "type": "string" },
-      "city": { "type": "string" },
-      "country": { "type": "string", "minLength": 2, "maxLength": 2 }
-    },
-    "required": ["street", "city", "country"]
-  };
-  var userSchema = {
-    "$id": "https://schemas.company.com/user",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "properties": {
-      "userId": { "type": "string", "format": "uuid" },
-      "email": { "type": "string", "format": "email" },
-      "role": { "enum": ["user", "admin", "auditor"] },
-      "address": { "$ref": "https://schemas.company.com/address" }
-    },
-    "required": ["userId", "email", "role"]
-  };
-  var result = jsonschema.validateWithExternalSchemas(
-    resource.userData,
-    userSchema,
-    [addressSchema]
-  );
-  result.valid || result.errors[0].type == "required";
 ```
 
 

@@ -81,7 +81,7 @@ The `publicKeyServer` field configures a remote endpoint that serves public keys
 keyed by the token's key ID. The URI must use `https`: a key fetched over plain `http` can be
 substituted by a network attacker who could then forge tokens this PIP would accept as trusted.
 A non-`https` URI is rejected and the token is treated as untrusted. For local development only,
-set `"allowInsecureHttp": true` in `publicKeyServer` to permit an `http` URI. This is logged with
+set `"allowInsecureHttp": true` in `publicKeyServer` to permit an `http` URI; this is logged with
 a prominent warning and must never be used in production. TLS authenticates the key server and
 protects the keys in transit. Keys in the `whitelist` are configured locally and are not affected.
 
@@ -124,66 +124,6 @@ exceeds this value, the token is treated as `NEVER_VALID`. Defaults to 0 (disabl
 * Audience (`aud`) and issuer (`iss`) claims are not validated by the PIP.
   These are exposed in `<jwt.token>.payload` for policy authors to check
   directly in policy conditions.
-
-## Configure TLS trust
-
-The JWT PIP reads its endpoint from the public PDP configuration. For a private CA, start with the following `pdp.json` settings and install the referenced profile before deployment. Multiple endpoints and PIPs can reference the same profile.
-
-```json
-{
-  "variables": {
-    "jwt": {
-      "publicKeyServer": {
-        "uri": "https://issuer.example.org/keys/{kid}",
-        "method": "GET",
-        "trustProfile": "site-ca"
-      }
-    }
-  }
-}
-```
-
-The operator sets a fixed host. The token's `kid` selects a signing key on that host. The CA authenticates the HTTPS server, and the fetched public key verifies the JWT signature. Changing the effective trust settings requires a fresh lookup before a cached key can be used with the new settings. Local `whitelist` keys work offline.
-
-The PEP supplies the JWT in the authorization subscription's `secrets` object and the policy reads `<jwt.token>`. No PDP credential is required for this key lookup.
-
-### Obtain and verify the CA certificate
-
-Ask the administrator of the JWT signing-key server or its HTTPS reverse proxy for its public CA certificate and confirm its SHA-256 fingerprint through your organization's PKI or another authenticated channel. A PEM file contains a `-----BEGIN CERTIFICATE-----` block. If the administrator provides a binary DER certificate, convert it first.
-
-```sh
-openssl x509 -inform DER -in issuer.cer -out ca.pem
-```
-
-If the CA is already in an approved Java truststore, export its trusted-certificate alias. `keytool` prompts for the store password.
-
-```sh
-keytool -exportcert -rfc -keystore truststore.p12 -alias issuing-ca -file ca.pem
-```
-
-Check the identity and fingerprint of each certificate before installing it.
-
-```sh
-openssl x509 -in ca.pem -noout -subject -issuer -fingerprint -sha256
-```
-
-### Install the named profile
-
-In the following command, `pdp.input.json` is the complete configuration with the endpoint settings above. `jq --rawfile` reads the public certificate including its PEM delimiters and line breaks. The resulting `pdp.json` keeps the other configuration fields.
-
-```sh
-jq --rawfile ca ca.pem '.variables.tlsTrustProfiles["site-ca"] = {trustedCaPem: $ca, includeDefaultTrustRoots: false}' pdp.input.json > pdp.json
-```
-
-| Endpoint setting | Trusted roots |
-| --- | --- |
-| Omit `trustProfile` | Runtime defaults. |
-| Select a profile with `includeDefaultTrustRoots` absent or `false` | Only the CA certificates in that profile. |
-| Select a profile with `includeDefaultTrustRoots: true` | Profile certificates and runtime defaults. |
-
-A named profile requires a nonempty `trustedCaPem` string. Each PEM block must contain a public X.509 certificate. The Java client uses the JVM trust configuration by default. The certificate must match the server's hostname. An invalid bundle, an unknown profile, or a profile on a plaintext endpoint prevents the new PDP configuration from taking effect.
-
-For a CA rollover, deploy the old and new CA certificates together as consecutive PEM blocks in the profile. After the service switches certificates, remove the retired CA and deploy the configuration again.
 
 
 ---

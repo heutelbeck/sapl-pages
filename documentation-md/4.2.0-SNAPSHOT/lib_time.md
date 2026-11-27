@@ -18,11 +18,11 @@ Combined format: "2017-10-28T16:14:11".
 
 DIN 1355 uses DD.MM.YYYY for dates (e.g., "28.10.2017").
 
-An instant uses a four-digit Gregorian year, a date, T, hours from 00 to 23, minutes and seconds.
-An optional fraction has one to nine digits. The offset is Z or a signed HH:MM up to 18:00.
-The letters T and Z accept either case. A leap second in the last UTC minute of the day
-denotes second 59 with the same fraction, including when written at another offset.
-Time functions that accept a date alone interpret it as midnight UTC. validRFC3339 requires a full timestamp.
+RFC3339 is a strict profile of ISO 8601 requiring timezone information:
+YYYY-MM-DDTHH:MM:SS[.fraction](Z|±HH:MM)
+
+All functions accept ISO 8601 and RFC3339 timestamps. RFC3339 leap seconds (e.g., "23:59:60Z")
+are normalized to "23:59:59Z" by Java's temporal system.
 
 ## Timezone Handling
 
@@ -326,6 +326,18 @@ The expression ```time.weekOfYear("2021-11-08T13:00:00Z")``` returns ```45```.
 
 ---
 
+## offsetDateTime
+
+```offsetDateTime(TEXT isoDateTime)```: Parses an ISO 8601 date-time with offset and
+returns the matching ISO 8601 instant at UTC.
+
+**Example:**
+
+The expression ```time.offsetDateTime("2021-11-08T13:12:35+05:00")```
+returns ```"2021-11-08T08:12:35Z"```.
+
+---
+
 ## startOfDay
 
 ```startOfDay(TEXT dateTime)```: Returns the start of the day (00:00:00.000) for the given date-time at UTC.
@@ -599,18 +611,6 @@ See [timezone database](https://en.wikipedia.org/wiki/List_of_tz_database_time_z
 
 The expression ```time.dateTimeAtZone("2021-11-08T13:12:35", "Europe/Berlin")```
 returns ```"2021-11-08T12:12:35Z"```.
-
----
-
-## offsetDateTime
-
-```offsetDateTime(TEXT isoDateTime)```: Parses an ISO 8601 date-time with offset and
-returns the matching ISO 8601 instant at UTC.
-
-**Example:**
-
-The expression ```time.offsetDateTime("2021-11-08T13:12:35+05:00")```
-returns ```"2021-11-08T08:12:35Z"```.
 
 ---
 

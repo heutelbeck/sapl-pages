@@ -57,7 +57,7 @@ obligation
 To bound memory and computation on untrusted input, the following limits apply:
 
 - The input is limited to 1 MB.
-- Parsing is bounded to a maximum nesting depth of 500. Numbers allow 1000 coefficient digits and up to 1010 characters including sign, decimal point, and exponent.
+- Parsing is bounded to a maximum nesting depth of 500 and a maximum number length of 1000 characters.
 - Serialization output is limited to 10000000 characters.
 
 These limits apply because this input may originate from the authorization subscription or from policy information points, which are not vetted to the same degree as the policies and variables shipped with the PDP configuration.

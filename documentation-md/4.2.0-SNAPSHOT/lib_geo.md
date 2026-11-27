@@ -6,7 +6,7 @@ nav_order: 108
 ---
 # geo
 
-A function library to manipulate, inspect, and convert geographic data.
+A function library to manipulate, inspect, and convert geograpihc data.
 
 # Geographic Function Library
 
@@ -31,18 +31,7 @@ GeoJSON is a widely used format for encoding geographic data structures. It supp
 - **MultiPoint, MultiLineString, MultiPolygon:** Collections of points, lines, or polygons.
 - **GeometryCollection:** Groups multiple geometries into a single structure.
 
-Inputs must be geometries, not Feature or FeatureCollection objects. Each position has at least two numbers.
-Results are RFC 7946 geometries without a `crs` member. Empty coordinate arrays represent empty geometries.
-Distances require nonempty geometries. Geodesic distances use longitude and latitude in degrees.
-
-## Numerical Tolerances
-PDP implementations use different geometry libraries and may approximate computed results differently.
-Planar predicates use the supplied coordinate units and the floating-point topology of JTS.
-Use ordinary coordinate ranges for the chosen reference system. Extreme scales and nearly degenerate shapes
-can change a predicate result. For geofencing, verify who supplies the location and the perimeter used by the policy.
-- `buffer`: Up to 1 percent of the absolute buffer width in coordinate units, because circular arcs are approximated by line segments.
-- `geoDistance`, `geodesicDistance`, `isWithinGeodesicDistance`: Up to 1 millimeter in the computed distance, because ellipsoidal geodesics use numerical approximations. Threshold decisions within this distance may differ.
-- `union`, `intersection`, `difference`, `symDifference`: Up to 0.000001 coordinate units in the symmetric discrete Hausdorff distance between result boundaries. Overlay algorithms use different precision grids and intersection calculations. This tolerance applies to ordinary finite coordinate ranges and does not guarantee accuracy for arbitrary coordinate magnitudes or degenerate inputs.
+GeoJSON also includes properties for defining coordinate reference systems, though it defaults to WGS84 (EPSG:4326).
 
 ## Use Cases
 The library is suitable for:
@@ -65,8 +54,6 @@ and fails closed to an error value when a limit is exceeded:
 - A geometry collection may contain at most 50,000 members.
 - The collection comparisons `subset` and `atLeastOneMemberOf` are quadratic, so they are
   additionally capped at 1,000,000 pairwise checks.
-- Distance searches allow up to 1,000,000 candidate comparisons. Planar `isWithinDistance` returns
-  false immediately when the bounding boxes are already farther apart than the threshold.
 
 These limits comfortably accommodate detailed real-world boundaries. They apply because
 this input may originate from the authorization subscription or from policy information
@@ -75,7 +62,7 @@ with the PDP configuration.
 
 KML and GML inputs are parsed with external entity and remote schema resolution disabled,
 so a document cannot make the PDP fetch an external entity or schema (no server-side
-request forgery). Only the schemas bundled locally with the engine are used.
+request forgery); only the schemas bundled locally with the engine are used.
 
 For more details, refer to individual function documentation.
 
@@ -130,7 +117,7 @@ the new geometry.
 policy "example"
 permit
     var point = { "type": "Point", "coordinates": [0, 0] };
-    geo.area(geo.buffer(point, 10.0)) > 300;
+    geo.buffer(point, 10.0) == { "type": "Polygon", "coordinates": [[[10,0], [0,10], [-10,0], [0,-10], [10,0]]] };
 ```
 
 **Notes:**
@@ -257,7 +244,7 @@ policy "example"
 permit
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    geo.area(geo.difference(polygon1, polygon2)) == 75;
+    geo.difference(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
 ```
 
 **Notes:**
@@ -331,7 +318,7 @@ permit
 
 ## union
 
-```union(GEOMETRY... geometries)```: Returns the union of an arbitrary number of geometries.
+```union(GEOMETRY... geometries)```: Returns the union of an arbritrary number of geometries.
 
 **Inputs:**
 
@@ -348,13 +335,13 @@ policy "example"
 permit
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    geo.area(geo.union(polygon1, polygon2)) == 175;
+    geo.union(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [5,10], [5,15], [15,15], [15,5], [10,5], [10,0], [0,0]]] };
 ```
 
 **Notes:**
 
 - Merges overlapping areas of geometries.
-- Accepts single geometries and multi geometries. GeometryCollection inputs are refused when combined with nonempty geometries.
+- Accepts geometry collections as input.
 
 
 ---
@@ -516,7 +503,7 @@ permit
 
 **Notes:**
 
-- Only exact matches are considered equal. Differences in precision or coordinate order will result in `false`.
+- Only exact matches are considered equal; differences in precision or coordinate order will result in `false`.
 - Suitable for testing identical geometries in scenarios requiring strict equality.
 
 
@@ -674,7 +661,7 @@ policy "example"
 permit
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    geo.isWithinGeodesicDistance(point1, point2, 160) == true;
+    geo.isWithinGeoDistance(point1, point2, 150) == true;
 ```
 
 **Notes:**
@@ -702,7 +689,7 @@ permit
 policy "example"
 permit
     var polygon = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
-    geo.length(geo.boundary(polygon)) == 40;
+    geo.boundary(polygon) == { "type": "LineString", "coordinates": [[0,0], [0,10], [10,10], [10,0], [0,0]] };
 ```
 
 **Notes:**
@@ -760,7 +747,7 @@ permit
 policy "example"
 permit
     var points = { "type": "MultiPoint", "coordinates": [[0,0], [0,10], [10,10], [10,0]] };
-    geo.area(geo.convexHull(points)) == 100;
+    geo.convexHull(points) == { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
 ```
 
 **Notes:**
@@ -777,8 +764,8 @@ permit
 
 **Inputs:**
 
-- `thisGeometry`: A geometry object in GeoJSON format.
-- `thatGeometry`: Another geometry object in GeoJSON format.
+- `geometryThis`: A geometry object in GeoJSON format.
+- `geometryThat`: Another geometry object in GeoJSON format.
 
 **Output:**
 
@@ -791,7 +778,7 @@ policy "example"
 permit
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    geo.area(geo.intersection(polygon1, polygon2)) == 25;
+    geo.intersection(polygon1, polygon2) == { "type": "Polygon", "coordinates": [[[5,5], [5,10], [10,10], [10,5], [5,5]]] };
 ```
 
 **Notes:**
@@ -822,7 +809,7 @@ policy "example"
 permit
     var polygon1 = { "type": "Polygon", "coordinates": [[[0,0], [0,10], [10,10], [10,0], [0,0]]] };
     var polygon2 = { "type": "Polygon", "coordinates": [[[5,5], [5,15], [15,15], [15,5], [5,5]]] };
-    geo.area(geo.symDifference(polygon1, polygon2)) == 150;
+    geo.symDifference(polygon1, polygon2) == { "type": "MultiPolygon", "coordinates": [[[[0,0], [0,10], [10,10], [10,0], [0,0]]], [[[5,5], [5,15], [15,15], [15,5], [5,5]]]] };
 ```
 
 **Notes:**
@@ -853,7 +840,7 @@ policy "example"
 permit
     var point1 = { "type": "Point", "coordinates": [0, 0] };
     var point2 = { "type": "Point", "coordinates": [0.001, 0.001] };
-    geo.geodesicDistance(point1, point2) <= 157.25;
+    geo.geoDistance(point1, point2) <= 157.25;
 ```
 
 **Notes:**
@@ -866,7 +853,7 @@ permit
 
 ## geoDistance
 
-```geoDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, TEXT coordinateReferenceSystem)```:
+```geodesicDistance(GEOMETRY thisGeometry, GEOMETRY thatGeometry, TEXT coordinateReferenceSystem)```:
 Returns the shortest geodesic distance between two geometries in meters.
 
 **Inputs:**
@@ -1143,7 +1130,7 @@ permit
 ```sapl
 policy "example"
 permit
-    geo.milesToMeter(1.0) == 1609.344;
+    geo.milesToMeter(1.0) == 1609.34;
 ```
 
 **Notes:**
@@ -1197,7 +1184,7 @@ permit
 ```sapl
 policy "example"
 permit
-    geo.degreeToMeter(1.0) > 111000;
+    geo.degreeToMeter(1.0) == 111319.9;
 ```
 
 **Notes:**
@@ -1279,7 +1266,7 @@ permit
 ```sapl
 policy "example"
 permit
-    var gmlData = "<gml:Point xmlns:gml='http://www.opengis.net/gml'><gml:coordinates>10,20</gml:coordinates></gml:Point>";
+    var gmlData = "<gml:Point><gml:coordinates>10,20</gml:coordinates></gml:Point>";
     geo.gml3ToGeoJSON(gmlData) == { "type": "Point", "coordinates": [10, 20] };
 ```
 
@@ -1307,7 +1294,7 @@ permit
 ```sapl
 policy "example"
 permit
-    var gmlData = "<gml:Point xmlns:gml='http://www.opengis.net/gml'><gml:coordinates>10,20</gml:coordinates></gml:Point>";
+    var gmlData = "<gml:Point><gml:coordinates>10,20</gml:coordinates></gml:Point>";
     geo.gml2ToGeoJSON(gmlData) == { "type": "Point", "coordinates": [10, 20] };
 ```
 
